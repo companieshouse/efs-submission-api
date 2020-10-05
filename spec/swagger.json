@@ -1,0 +1,1316 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Emergency Filing Service API",
+    "description": "Emergency Filing Service API specification",
+    "version": "0.01"
+  },
+  "basePath": "/efs-submissions-api",
+  "schemes": [
+    "https"
+  ],
+  "tags": [
+    {
+      "name": "new",
+      "description": "New submission resource"
+    },
+    {
+      "name": "query",
+      "description": "fetch resource(s)"
+    },
+    {
+      "name": "update",
+      "description": "update a resource"
+    },
+    {
+      "name": "company",
+      "description": "Company name and Number"
+    },
+    {
+      "name": "form",
+      "description": "Form type"
+    },
+    {
+      "name": "category",
+      "description": "Form category"
+    },
+    {
+      "name": "files",
+      "description": "Uploaded metadata for files"
+    },
+    {
+      "name": "payment",
+      "description": "Reference to a third party external payment service"
+    },
+    {
+      "name": "report",
+      "description": "Generate a report"
+    },
+    {
+      "name": "submit submission",
+      "description": "Completion of the submission"
+    },
+    {
+      "name": "form templates",
+      "description": "Retrieval of all form types"
+    },
+    {
+      "name": "events",
+      "description": "FES Integration endpoints"
+    },
+    {
+      "name": "queue PDFs",
+      "description": "Poll submissions to process PDFs for FES or process by email for non FES forms"
+    },
+    {
+      "name": "notify submissions stuck",
+      "description": "Poll for submissions stuck in PROCESSING and notify relevant teams"
+    },
+    {
+      "name": "queue emails",
+      "description": "Poll submissions to send emails"
+    },
+    {
+      "name": "company authentication",
+      "description": "This relates to CHS company authentication"
+    }
+  ],
+  "parameters": {
+    "submission-id": {
+      "name": "submission-id",
+      "in": "path",
+      "description": "Unique submission selector",
+      "required": true,
+      "type": "string",
+      "pattern": "^[a-f0-9]{16}$",
+      "x-example": "eb4668886a6db281"
+    },
+    "category-id": {
+      "name": "category-id",
+      "in": "path",
+      "description": "Unique form category selector",
+      "required": true,
+      "type": "string",
+      "x-example": "Insolvency"
+    },
+    "template-id": {
+      "name": "template-id",
+      "in": "path",
+      "description": "Unique form template selector",
+      "required": true,
+      "type": "string",
+      "x-example": "RP06"
+    },
+    "email-address": {
+      "name": "email-address",
+      "in": "path",
+      "description": "An email address",
+      "required": true,
+      "type": "string",
+      "format": "email",
+      "x-example": "demo@ch.gov.uk"
+    }
+  },
+  "responses": {
+    "Conflict": {
+      "description": "Request valid but not consistent with state of resource"
+    },
+    "Created": {
+      "description": "Submission created",
+      "schema": {
+        "$ref": "#/definitions/submission-id"
+      }
+    },
+    "Updated": {
+      "description": "Resource updated",
+      "schema": {
+        "type": "object",
+        "title": "Resource updated",
+        "description": "Resource updated",
+        "properties": {
+          "id": {
+            "$ref": "#/definitions/submissionResponse"
+          }
+        }
+      }
+    },
+    "BadRequest": {
+      "description": "Incomplete or malformed request"
+    },
+    "NotFound": {
+      "description": "Requested resource was not found"
+    },
+    "Unauthorised": {
+      "description": "Invalid or missing credentials"
+    }
+  },
+  "paths": {
+    "/submissions/new": {
+      "post": {
+        "x-operationName": "newSubmission",
+        "tags": [
+          "new"
+        ],
+        "summary": "Start a new EFS submission",
+        "operationId": "newSubmission",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "presenter",
+            "in": "body",
+            "description": "Details of the presenter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/presenter"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/Created"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          }
+        }
+      }
+    },
+    "/submission/{submission-id}/company": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/submission-id"
+        }
+      ],
+      "put": {
+        "summary": "Add/update details for the company",
+        "x-operationName": "submitCompany",
+        "tags": [
+          "company",
+          "update"
+        ],
+        "operationId": "submitCompany",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "company",
+            "in": "body",
+            "description": "Details of the company",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/company"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Updated"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/submission/{submission-id}/form": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/submission-id"
+        }
+      ],
+      "put": {
+        "summary": "Add/update details for the form type",
+        "x-operationName": "submitFormType",
+        "tags": [
+          "form",
+          "update"
+        ],
+        "operationId": "submitFormType",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "form",
+            "in": "body",
+            "description": "Details of the form type",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/formType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Updated"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/submission/{submission-id}/files": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/submission-id"
+        }
+      ],
+      "put": {
+        "summary": "Add/update details for the files",
+        "x-operationName": "submitFiles",
+        "tags": [
+          "files",
+          "update"
+        ],
+        "operationId": "submitFiles",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "files",
+            "in": "body",
+            "description": "Details of the files",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/files"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Updated"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/submission/{submission-id}/payment": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/submission-id"
+        }
+      ],
+      "put": {
+        "summary": "Add/update details for the payment reference",
+        "x-operationName": "submitPaymentReference",
+        "tags": [
+          "payment",
+          "update"
+        ],
+        "operationId": "submitPaymentReference",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "payment",
+            "in": "body",
+            "description": "Details of the payment reference",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/payment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Updated"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/payment-reports/finance": {
+      "post": {
+        "summary": "Generate Finance reports (paid submission with a successful, failed statuses)",
+        "x-operationName": "generateFinanceReports",
+        "tags": [
+          "payment",
+          "report"
+        ],
+        "operationId": "generateFinanceReports",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/payment-reports/scotland": {
+      "post": {
+        "summary": "Generate Scotland reports (paid Scottish form submission with a successful status)",
+        "x-operationName": "generateScotlandReports",
+        "tags": [
+          "payment",
+          "report"
+        ],
+        "operationId": "generateScotlandReports",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/submission/{submission-id}": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/submission-id"
+        }
+      ],
+      "get": {
+        "summary": "Fetch details of a submission",
+        "x-operationName": "getSubmission",
+        "tags": [
+          "get submission",
+          "query"
+        ],
+        "operationId": "getSubmission",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Submission details",
+            "schema": {
+              "$ref": "#/definitions/submission"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "summary": "Set the status of the submission to be complete",
+        "x-operationName": "completeSubmission",
+        "tags": [
+          "submit submission",
+          "update"
+        ],
+        "operationId": "completeSubmission",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Updated"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/form-templates": {
+      "parameters": [
+        {
+          "in": "query",
+          "name": "category",
+          "description": "Parent category(ies) of the form template(s)",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Fetch form templates by optional parent category(ies), or all form templates if omitted",
+        "x-operationName": "getFormTemplates",
+        "tags": [
+          "form",
+          "query"
+        ],
+        "operationId": "getFormsTemplates",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "FormTemplates",
+            "schema": {
+              "$ref": "#/definitions/forms"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/form-template/{template-id}": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/template-id"
+        }
+      ],
+      "get": {
+        "summary": "Fetch a specific form template by ID",
+        "x-operationName": "getFormTemplate",
+        "tags": [
+          "form",
+          "query"
+        ],
+        "operationId": "getFormsTemplate",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "FormTemplates",
+            "schema": {
+              "$ref": "#/definitions/form"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/category-templates": {
+      "parameters": [
+        {
+          "in": "query",
+          "name": "parent",
+          "description": "Parent category(ies) of the form category(ies)",
+          "required": false,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Fetch form categories by optional parent category(ies), or all categories if omitted",
+        "x-operationName": "getFormCategories",
+        "tags": [
+          "category",
+          "query"
+        ],
+        "operationId": "getFormCategories",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "FormCategories",
+            "schema": {
+              "$ref": "#/definitions/form_categories"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/category-template/{category-id}": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/category-id"
+        }
+      ],
+      "get": {
+        "summary": "Fetch a specific form category",
+        "x-operationName": "getFormCategory",
+        "tags": [
+          "category",
+          "query"
+        ],
+        "operationId": "getFormsCategory",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "FormCategories",
+            "schema": {
+              "$ref": "#/definitions/form_category"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/healthcheck": {
+      "get": {
+        "summary": "Service health check",
+        "x-operationName": "healthCheck",
+        "tags": [
+          "information"
+        ],
+        "operationId": "healthCheck",
+        "description": "Checks the service is running.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ServiceStatus"
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/events/queue-files": {
+      "post": {
+        "summary": "Poll for submitted applications. Queue PDFs for FES enabled forms in SQS and change status to PROCESSING. Otherwise email submitted applications and change status to PROCESSED_BY_EMAIL",
+        "x-operationName": "queuePDFs",
+        "tags": [
+          "queue PDFs",
+          "events"
+        ],
+        "operationId": "queuePDFs",
+        "responses": {
+          "200": {
+            "description": "The request completed successfully"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          }
+        }
+      }
+    },
+    "/events/handle-delayed-submissions": {
+      "post": {
+        "summary": "Poll for submissions stuck in PROCESSING and notify relevant teams",
+        "x-operationName": "notifySubmissionsStuck",
+        "tags": [
+          "notify submissions stuck",
+          "events"
+        ],
+        "operationId": "notifySubmissionsStuck",
+        "responses": {
+          "200": {
+            "description": "The request completed successfully"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          }
+        }
+      }
+    },
+    "/events/submissions/{submission-id}/files/{file-id}": {
+      "post": {
+        "summary": "Update the metadata of an attached file",
+        "x-operationName": "updateAttachmentMetadata",
+        "tags": [
+          "events"
+        ],
+        "operationId": "updateAttachmentMetadata",
+        "parameters": [
+          {
+            "name": "submission-id",
+            "in": "path",
+            "description": "Unique submission selector",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-f0-9]{16}$",
+            "x-example": "eb4668886a6db281"
+          },
+          {
+            "name": "file-id",
+            "in": "path",
+            "description": "Unique file identifier",
+            "required": true,
+            "type": "string",
+            "format": "UUID",
+            "x-example": "78268fd9-54f1-4745-a3b3-170b59ca9564"
+          },
+          {
+            "name": "conversion_status",
+            "in": "body",
+            "description": "Updated metadata for a file attached to the submission",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateAttachmentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request completed successfully"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/fes/submissions/{barcode}/complete": {
+      "post": {
+        "summary": "Notify submission outcome and send relevant email using chs-notification-api",
+        "x-operationName": "notifyOutcome",
+        "tags": [
+          "events"
+        ],
+        "operationId": "notifyOutcome",
+        "parameters": [
+          {
+            "name": "barcode",
+            "in": "path",
+            "description": "FES barcode",
+            "required": true,
+            "type": "string",
+            "pattern": "Y[0-9A-Z]{7}",
+            "x-example": "Y9357QG8"
+          },
+          {
+            "name": "status",
+            "in": "body",
+            "description": "Outcome of the submission examination",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/fesStatusRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Updated"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/company-authentication/allow-list/{email-address}": {
+      "parameters": [
+        {
+          "$ref": "#/parameters/email-address"
+        }
+      ],
+      "get": {
+        "summary": "Check whether an email address is on the allow list",
+        "x-operationName": "isOnAllowList",
+        "tags": [
+          "category",
+          "query"
+        ],
+        "operationId": "isOnAllowList",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Check allow list call is successful",
+            "schema": {
+              "$ref": "#/definitions/booleanResult"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "submissionResponse": {
+      "title": "Submission response",
+      "description": "Submission response",
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/submission-id"
+        }
+      }
+    },
+    "submission-id": {
+      "title": "Submission ID",
+      "description": "Submission ID",
+      "type": "string",
+      "minLength": 16,
+      "maxLength": 16,
+      "pattern": "[a-f0-9]{16}$",
+      "example": "eb4668886a6db281"
+    },
+    "template-id": {
+      "title": "Form template ID",
+      "description": "Form template ID",
+      "type": "string",
+      "example": "RP06"
+    },
+    "presenter": {
+      "description": "Person making the application",
+      "title": "Presenter",
+      "type": "object",
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "$ref": "#/definitions/email"
+        }
+      }
+    },
+    "email": {
+      "type": "string",
+      "title": "Email address",
+      "description": "email address",
+      "format": "email",
+      "example": "elangworth@example.mail.com"
+    },
+    "company": {
+      "description": "Company number and name",
+      "title": "Company",
+      "required": [
+        "company_name",
+        "company_number"
+      ],
+      "properties": {
+        "company_name": {
+          "type": "string",
+          "example": "Ritchie Group",
+          "description": "Existing or proposed company name"
+        },
+        "company_number": {
+          "type": "string",
+          "example": "000000007",
+          "description": "Existing company number"
+        }
+      }
+    },
+    "payment": {
+      "description": "Payment reference",
+      "title": "Payment reference",
+      "required": [
+        "payment_reference"
+      ],
+      "properties": {
+        "payment_reference": {
+          "type": "string",
+          "example": "1234567890",
+          "description": "Payment reference"
+        }
+      }
+    },
+    "formType": {
+      "description": "Form type",
+      "title": "Type of form",
+      "required": [
+        "form_type"
+      ],
+      "properties": {
+        "form_type": {
+          "$ref": "#/definitions/template-id"
+        }
+      }
+    },
+    "files": {
+      "description": "Collection of files",
+      "title": "File list",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/file"
+      }
+    },
+    "file": {
+      "description": "File metadata",
+      "title": "File metadata",
+      "required": [
+        "file_id",
+        "file_name",
+        "file_size"
+      ],
+      "properties": {
+        "file_id": {
+          "type": "string",
+          "example": "5e984ca40ce6ad81586ea4d9",
+          "description": "File id"
+        },
+        "file_name": {
+          "type": "string",
+          "example": "SHO1.pdf",
+          "description": "File name"
+        },
+        "file_size": {
+          "type": "number",
+          "format": "long",
+          "example": 1234,
+          "description": "File size"
+        }
+      }
+    },
+    "form_categories": {
+      "description": "Collection of form categories",
+      "title": "Form category list",
+      "type": "array",
+      "minItems": 0,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/form_category"
+      }
+    },
+    "form_category": {
+      "description": "Category of form template",
+      "title": "Form category",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "SCOT",
+          "description": "form category id (unique)"
+        },
+        "name": {
+          "type": "string",
+          "example": "Scottish jurisdiction",
+          "description": "descriptive name"
+        },
+        "form_categories": {
+          "$ref": "#/definitions/form_categories"
+        }
+      }
+    },
+    "forms": {
+      "description": "Collection of forms",
+      "title": "Form list",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/form"
+      }
+    },
+    "form": {
+      "description": "Form Template",
+      "title": "Form template",
+      "required": [
+        "form_type",
+        "form_name",
+        "form_categories",
+        "fee",
+        "isAuthenticationRequired",
+        "isInternalEmailRequired",
+        "isFesEnabled"
+      ],
+      "properties": {
+        "form_type": {
+          "type": "string",
+          "example": "SH04",
+          "description": "Type of form"
+        },
+        "form_name": {
+          "type": "string",
+          "example": "Notify a sale or transfer of treasury shares",
+          "description": "Name of form"
+        },
+        "form_categories": {
+          "$ref": "#/definitions/form_categories"
+        },
+        "fee": {
+          "type": "string",
+          "example": "10.00",
+          "description": "Form fee"
+        },
+        "isAuthenticationRequired": {
+          "type": "boolean",
+          "example": "false",
+          "description": "Is authentication required?"
+        },
+        "isInternalEmailRequired": {
+          "type": "boolean",
+          "example": "false",
+          "description": "Is internal email required?"
+        },
+        "isFesEnabled": {
+          "type": "boolean",
+          "example": "false",
+          "description": "FES enabled?"
+        }
+      }
+    },
+    "ServiceStatus": {
+      "title": "Service Status",
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "UP"
+        }
+      }
+    },
+    "submission": {
+      "type": "object",
+      "title": "Submission",
+      "required": [
+        "id",
+        "confirmation_reference",
+        "created_at",
+        "last_modified_at",
+        "presenter",
+        "company",
+        "status",
+        "form"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Submission id",
+          "description": "Unique identifer of a submission",
+          "example": "123456"
+        },
+        "confirmation_reference": {
+          "type": "string",
+          "description": "user-friendly reference for confirmation screen and email",
+          "title": "Confirmation reference",
+          "example": "b7hg xnpd mydt 3t81"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Created at date time",
+          "description": "Date and time the submission was created",
+          "example": "2020-03-11T11:15:38.633Z"
+        },
+        "submitted_at": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Submitted at date time",
+          "description": "Date and time the submission was submitted",
+          "example": "2020-03-11T11:15:38.633Z"
+        },
+        "last_modified_at": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Last modified at date time",
+          "description": "Date and time the submission was last updated",
+          "example": "2020-03-11T11:15:38.633Z"
+        },
+        "presenter": {
+          "$ref": "#/definitions/presenter"
+        },
+        "company": {
+          "$ref": "#/definitions/company"
+        },
+        "payment_reference": {
+          "type": "string",
+          "title": "payment reference",
+          "description": "Payment Reference for a form submission",
+          "example": "46456"
+        },
+        "fee_on_submission": {
+          "type": "string",
+          "title": "fee amount paid by user",
+          "description": "fee amount at time submission was made",
+          "example": "17"
+        },
+        "status": {
+          "title": "Submission Status",
+          "type": "string",
+          "enum": [
+            "OPEN",
+            "SUBMITTED",
+            "REJECTED_BY_VIRUS_SCAN",
+            "PROCESSED_BY_EMAIL",
+            "PROCESSING",
+            "REJECTED_BY_DOCUMENT_CONVERTER",
+            "READY_TO_SUBMIT",
+            "SENT_TO_FES",
+            "ACCEPTED",
+            "REJECTED"
+          ],
+          "example": "OPEN"
+        },
+        "form": {
+          "type": "object",
+          "properties": {
+            "barcode": {
+              "type": "string",
+              "title": "Barcode required for FES",
+              "description": "Barcode required for FES",
+              "example": "Y9357QG8"
+            },
+            "form_type": {
+              "type": "string",
+              "title": "Type of form",
+              "description": "Type of form",
+              "example": "SH04"
+            },
+            "file_details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "file_id": {
+                    "type": "string",
+                    "title": "File identifier",
+                    "description": "File identifier",
+                    "example": "123456"
+                  },
+                  "file_name": {
+                    "type": "string",
+                    "example": "SHO1.pdf",
+                    "description": "File name"
+                  },
+                  "file_size": {
+                    "type": "number",
+                    "format": "long",
+                    "example": 1234,
+                    "description": "File size"
+                  },
+                  "converted_file_id": {
+                    "$ref": "#/definitions/convertedFileId"
+                  },
+                  "conversion_status": {
+                    "$ref": "#/definitions/fileConversionStatus"
+                  },
+                  "number_of_pages": {
+                    "$ref": "#/definitions/numberOfPages"
+                  },
+                  "last_modified_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "title": "Last modified at date time",
+                    "description": "Date and time the submission was last updated",
+                    "example": "2020-03-11T11:15:38.633Z"
+                  }
+                }
+              }
+            }
+          },
+          "title": "Form details",
+          "description": "Form details"
+        },
+        "reject_reasons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "reason": {
+                "type": "string",
+                "title": "Reject reason",
+                "description": "Reject reason recorded in CHIPS",
+                "example": "You have not used the correct form"
+              }
+            }
+          }
+        }
+      }
+    },
+    "fesStatusRequest": {
+      "title": "Request containing CHIPS examination status",
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/fesStatus"
+        }
+      }
+    },
+    "fesStatus": {
+      "title": "CHIPS examination status",
+      "type": "string",
+      "enum": [
+        "ACCEPTED",
+        "REJECTED"
+      ],
+      "example": "ACCEPTED"
+    },
+    "fileConversionStatus": {
+      "type": "string",
+      "enum": [
+        "WAITING",
+        "CLEAN_AV",
+        "FAILED_AV",
+        "QUEUED",
+        "CONVERTED",
+        "FAILED"
+      ]
+    },
+    "fileConversionStatusResult": {
+      "type": "string",
+      "enum": [
+        "CONVERTED",
+        "FAILED"
+      ]
+    },
+    "convertedFileId": {
+      "type": "string",
+      "title": "Converted file identifier",
+      "description": "Converted file identifier",
+      "example": "654321"
+    },
+    "numberOfPages": {
+      "type": "number",
+      "format": "integer",
+      "example": 1234,
+      "description": "Number of pages in the converted file"
+    },
+    "updateAttachmentRequest": {
+      "type": "object",
+      "title": "Updated attachment metadata",
+      "description": "Updated attachment metadata",
+      "properties": {
+        "converted_file_id": {
+          "$ref": "#/definitions/convertedFileId"
+        },
+        "conversion_status": {
+          "$ref": "#/definitions/fileConversionStatusResult"
+        },
+        "number_of_pages": {
+          "$ref": "#/definitions/numberOfPages"
+        }
+      }
+    },
+    "booleanResult": {
+      "type": "boolean",
+      "title": "Boolean result",
+      "description": "true or false",
+      "example": true
+    }
+  }
+}

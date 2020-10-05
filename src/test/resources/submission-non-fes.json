@@ -1,0 +1,28 @@
+{
+  "_id" : ObjectId("1234abcd5678defa9012bcde"),
+  "confirmation_reference" : "abcd 1234 efgh 5678",
+  "created_at" : ISODate("2020-01-01T12:00:00.000Z"),
+  "submitted_at": ISODate("2020-01-01T12:20:00.000Z"),
+  "last_modified_at" : ISODate("2020-01-01T12:30:00.000Z"),
+  "company" : {
+    "company_number" : "12345678",
+    "company_name" : "DRAGON PLC"
+  },
+  "presenter" : {
+    "email" : "demo@companieshouse.gov.uk"
+  },
+  "status" : "SUBMITTED",
+  "form" : {
+    "form_type" : "RP02A",
+    "file_details" : [
+      {
+        "file_id" : "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "file_name" : "RP02A.pdf",
+        "file_size" : NumberLong(100),
+        "conversion_status" : "WAITING",
+        "last_modified_at" : ISODate("2020-01-01T12:15:00.000Z")
+      }
+    ]
+  },
+  "_class": "uk.gov.companieshouse.efs.api.submissions.model.Submission"
+}
