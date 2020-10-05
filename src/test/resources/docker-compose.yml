@@ -1,0 +1,53 @@
+version: '3'
+services:
+  efs-zookeeper:
+    image: confluentinc/cp-zookeeper:5.5.1
+    ports:
+      - 2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  efs-kafka:
+    image: confluentinc/cp-kafka:5.5.1
+    expose:
+      - 29092
+    ports:
+      - 39092:39092
+    depends_on:
+      - efs-zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: efs-zookeeper:2181
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://efs-kafka:29092,PLAINTEXT_HOST://${REMOTE_DOCKER_HOSTNAME:-localhost}:39092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+  efs-confluent:
+    image: confluentinc/cp-schema-registry:5.5.1
+    ports:
+      - 8081
+    depends_on:
+      - efs-kafka
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: efs-zookeeper:2181
+      SCHEMA_REGISTRY_HOST_NAME: ${REMOTE_DOCKER_HOSTNAME:-localhost}
+  efs-mongodb:
+    image: mongo:3.6
+    ports:
+      - 27017
+  efs-mock-server:
+    image: jamesdbloom/mockserver:mockserver-5.5.4
+    ports:
+      - 1080
+#  efs-oracle:
+#    image: ${ORACLE_IMAGE_NAME}
+#    ports:
+#      - 1521
+  efs-localstack:
+    image: localstack/localstack:0.10.8
+    ports:
+      - 4572
+      - 4576
+    environment:
+      SERVICES: s3,sqs
+      HOSTNAME_EXTERNAL: ${REMOTE_DOCKER_HOSTNAME:-localhost}

@@ -1,0 +1,2773 @@
+[ {
+  "_id" : "SLPCS01",
+  "formName" : "SLP CS01 - Confirmation statement for a Scottish limited partnership",
+  "formCategory" : "SLP",
+  "fee" : "17",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SLPPSC01",
+  "formName" : "SLP PSC01 - Give notice of individual person with significant control of a Scottish limited partnership",
+  "formCategory" : "SLP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SLPPSC02",
+  "formName" : "SLP PSC02 - Give notice of relevant legal entity with significant control of a Scottish limited partnership",
+  "formCategory" : "SLP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SLPPSC03",
+  "formName" : "SLP PSC03 - Give notice of other registrable person with significant control of a Scottish limited partnership",
+  "formCategory" : "SLP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SLPPSC04",
+  "formName" : "SLP PSC04 - Give notice to change details of a person with significant control of a Scottish limited partnership",
+  "formCategory" : "SLP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SLPPSC05",
+  "formName" : "SLP PSC05 - Give details of relevant legal entity with significant control of a Scottish limited partnership",
+  "formCategory" : "SLP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SLPPSC06",
+  "formName" : "SLP PSC06 - Give notice changing details of other person with significant control of a Scottish limited partnership",
+  "formCategory" : "SLP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SLPPSC07",
+  "formName" : "SLP PSC07 - Give notice of ceasing to be a PSC, RLE or ORP of a Scottish limited partnership",
+  "formCategory" : "SLP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SLPPSC08",
+  "formName" : "SLP PSC08 - Give notice of a person of PSC statements for a Scottish limited partnership",
+  "formCategory" : "SLP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SLPPSC09",
+  "formName" : "SLP PSC09 - Give notice of update to PSC statements for a Scottish limited partnership",
+  "formCategory" : "SLP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQPCS01",
+  "formName" : "SQP CS01 - Confirmation statement for a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "17",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQP2",
+  "formName" : "SQP2 - Give notice of a change of details for a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQP3",
+  "formName" : "SQP3 - Give notice of ceasing to be a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQPPSC01",
+  "formName" : "SQP PSC01 - Give notice of individual person with significant control of a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQPPSC02",
+  "formName" : "SQP PSC02 - Give notice of relevant legal entity with significant control of a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQPPSC03",
+  "formName" : "SQP PSC03 - Give notice of other registrable person with significant control of a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQPPSC04",
+  "formName" : "SQP PSC04 - Give notice to change details of a person with significant control of a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQPPSC05",
+  "formName" : "SQP PSC05 - Give details of relevant legal entity with significant control of a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQPPSC06",
+  "formName" : "SQP PSC06 - Give notice changing details of other person with significant control of a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQPPSC07",
+  "formName" : "SQP PSC07 - Give notice of ceasing to be a PSC, RLE or ORP of a Scottish Qualifying Partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQPPSC08",
+  "formName" : "SQP PSC08 - Give notice of PSC statements for a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SQPPSC09",
+  "formName" : "SQP PSC09 - Give notice of update to PSC statements for a Scottish qualifying partnership",
+  "formCategory" : "SQP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : true
+}, {
+  "_id" : "RP02A",
+  "formName" : "RP02A - Apply for rectification by the registrar of companies",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "RP02B",
+  "formName" : "RP02B - Apply for rectification for a change of registered address",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "RP03",
+  "formName" : "RP03 - Object to a request to rectify the register",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "RP06",
+  "formName" : "RP06 - Apply to remove material about a director",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "RP07",
+  "formName" : "RP07 - Apply to change a company's disputed registered office address",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "RPCH01",
+  "formName" : "RPCH01 - Correct a director's date of birth",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "LLRP02A",
+  "formName" : "LL RP02A - Apply for rectification by the registrar for a limited liability partnership",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "LLRP02B",
+  "formName" : "LL RP02B - Apply for rectification of change of registered address of a limited liability partnership",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "LLRP03",
+  "formName" : "LL RP03 - Object to a request to rectify the register of a limited liability partnership",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "LLRP07",
+  "formName" : "LL RP07 - Apply to change a disputed registered office address of a limited liability partnership",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "LLRPCH01",
+  "formName" : "LL RPCH01 - Correct birthdate of member of a limited liability partnership",
+  "formCategory" : "RP",
+  "fee" : "",
+  "isAuthenticationRequired" : false,
+  "isFesEnabled" : false
+}, {
+  "_id" : "CC01",
+  "formName" : "CC01 - Give notice of restriction on the company's articles",
+  "formCategory" : "CC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CC02",
+  "formName" : "CC02 - Give notice of removal of restriction on company's articles",
+  "formCategory" : "CC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CC04",
+  "formName" : "CC04 - Notify the change of company's objects",
+  "formCategory" : "CC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CC05",
+  "formName" : "CC05 - Change constitution by enactment",
+  "formCategory" : "CC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CC06",
+  "formName" : "CC06 - Change constitution by order of court or other authority",
+  "formCategory" : "CC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "MA",
+  "formName" : "Articles",
+  "formCategory" : "CC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "RESOLUTIONS",
+  "formName" : "Resolution",
+  "formCategory" : "CC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "MT01",
+  "formName" : "MT01 - Notice that moratorium has come into force",
+  "formCategory" : "CIGA2000",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "MT02",
+  "formName" : "MT02 - Notice that moratorium has ended or been extended",
+  "formCategory" : "CIGA2000",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "MT03",
+  "formName" : "MT03 - Notice of early end of moratorium",
+  "formCategory" : "CIGA2000",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "MT04",
+  "formName" : "MT04 - Notice of end of moratorium by a monitor",
+  "formCategory" : "CIGA2000",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "MT05",
+  "formName" : "MT05 - Notice of end of moratorium by a court",
+  "formCategory" : "CIGA2000",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "MT06",
+  "formName" : "MT06 - Notice of end of moratorium following disposal of application for extension by the court or following CVA proposal taking effect or being withdrawn",
+  "formCategory" : "CIGA2000",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "MT07",
+  "formName" : "MT07 - Court order permitting disposal of property or goods",
+  "formCategory" : "CIGA2000",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "MT08",
+  "formName" : "MT08 - Notice of replacement or additional monitor following court order",
+  "formCategory" : "CIGA2000",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "MT09",
+  "formName" : "MT09 - Notice of monitor ceasing to act following court order",
+  "formCategory" : "CIGA2000",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.1",
+  "formName" : "1.1 - Notice of voluntary arrangement taking effect",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.1(Scot)",
+  "formName" : "1.1 (Scotland) - Notice of voluntary arrangement taking effect",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.11",
+  "formName" : "1.11 - Notice of commencement of moratorium",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.11(Scot)",
+  "formName" : "1.11 (Scotland) - Notice of commencement of moratorium",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.12",
+  "formName" : "1.12 - Notice of extension or continuation of moratorium",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.12(Scot)",
+  "formName" : "1.12 (Scotland) - Notice of extension or continuation of moratorium",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.14",
+  "formName" : "1.14 - Notice of ending of moratorium",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.14(Scot)",
+  "formName" : "1.14 (Scotland) - Notice of ending of moratorium",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.16",
+  "formName" : "1.16 - Notice of withdrawal of nominee's consent to act",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.16(Scot)",
+  "formName" : "1.16 (Scotland) - Notice of withdrawal of nominee's consent to act",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.18",
+  "formName" : "1.18 - Notice of the appointment of a replacement nominee",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.18(Scot)",
+  "formName" : "1.18 (Scotland) - Notice of the appointment of a replacement nominee",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.2",
+  "formName" : "1.2 - Notice of order, revocation or suspension of voluntary arrangement",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.2(Scot)",
+  "formName" : "1.2 (Scotland) - Notice of order, revocation or suspension of voluntary arrangement",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.3",
+  "formName" : "1.3 - Notice of supervisor's abstract of receipts and payments",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.3(Scot)",
+  "formName" : "1.3 (Scotland) - Notice of supervisor’s abstract of receipts and payments",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.4",
+  "formName" : "1.4 - Notice of completion of voluntary arrangement",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.4(Scot)",
+  "formName" : "1.4 (Scotland) - Notice of completion of voluntary arrangement",
+  "formCategory" : "IA1986_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2(Scot)",
+  "formName" : "2 (Scotland) - Notice of the appointment of a receiver by a court",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.1(Scot)",
+  "formName" : "2.1 (Scotland) - Notice of petition for administration order",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.11(Scot)",
+  "formName" : "2.11 (Scotland) - Notice of order to deal with secured property",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.11B(Scot)",
+  "formName" : "2.11B (Scotland) - Notice of appointment of administrative receiver, receiver or manager",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.12(Scot)",
+  "formName" : "2.12 (Scotland) - Notice of variation of administration order",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.12B",
+  "formName" : "2.12B(CH) - Notice of administrator's appointment",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.15B(Scot)",
+  "formName" : "2.15B (Scotland) - Notice of statement of affairs",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.16B",
+  "formName" : "2.16B - Notice of statement of affairs",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.16B(Scot)",
+  "formName" : "2.16B (Scotland) - Statement of administrator's proposal",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.16BZ(Scot)",
+  "formName" : "2.16BZ (Scotland) - Notice of deemed approval of proposal",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.17B",
+  "formName" : "2.17B - Notice of a statement of administrator's proposals",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.17B(Scot)",
+  "formName" : "2.17B (Scotland) - Statement of administrator's revised proposal",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.18B",
+  "formName" : "2.18B(CH) - Notice of extension of time period",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.18B(Scot)",
+  "formName" : "2.18B (Scotland) - Notice of result of meeting of creditors",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.19B(Scot)",
+  "formName" : "2.19B (Scotland) - Notice of order to deal with secured property",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.2(Scot)",
+  "formName" : "2.2 (Scotland) - Notice of administration order",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.2B(Scot)",
+  "formName" : "2.2B (Scotland) - Notice of petition for administration order",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.20B(Scot)",
+  "formName" : "2.20B (Scotland) - Administrator's progress report",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.21B(Scot)",
+  "formName" : "2.21B (Scotland) - Notice of automatic end of administration",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.22B",
+  "formName" : "2.22B(CH) - Notice of administrator's revised proposals",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.22B(Scot)",
+  "formName" : "2.22B (Scotland) - Notice of extension of period of administration",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.23B",
+  "formName" : "2.23B(CH) - Notice of result of creditors' meeting",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.23B(Scot)",
+  "formName" : "2.23B (Scotland) - Notice of end of administration",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.24B",
+  "formName" : "2.24B(CH) - Notice of administrator’s progress report",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.24B(Scot)",
+  "formName" : "2.24B (Scotland) - Notice of court order ending administration",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.25B(Scot)",
+  "formName" : "2.25B (Scotland) - Notice of move from administration to creditors' voluntary liquidation",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.26B",
+  "formName" : "2.26B(CH) - Amend certificate of constitution of creditors’ committee",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.26B(Scot)",
+  "formName" : "2.26B (Scotland) - Notice of move from administration to dissolution",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.27B",
+  "formName" : "2.27B - Notice by administrator of a change in committee",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.27B(Scot)",
+  "formName" : "2.27B (Scotland) - Notice of court order in respect of date of dissolution",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.28B",
+  "formName" : "2.28B - Notice of order to deal with charged property",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.29B(Scot)",
+  "formName" : "2.29B (Scotland) - Notice of resignation by administrator",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.3(Scot)",
+  "formName" : "2.3 (Scotland) - Notice of dismissal of petition for administration order",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.3B(Scot)",
+  "formName" : "2.3B (Scotland) - Notice of dismissal of petition for administration order",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.30B",
+  "formName" : "2.30B(CH) - Notice of the automatic end of administration",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.30B(Scot)",
+  "formName" : "2.30B (Scotland) - Notice of vacation of office by administrator",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.31B",
+  "formName" : "2.31B - Notice of the extension of period of administration",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.31B(Scot)",
+  "formName" : "2.31B (Scotland) - Notice of appointment of replacement/additional administrator",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.32B",
+  "formName" : "2.32B(CH) - Notice of the end of administration",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.32B(Scot)",
+  "formName" : "2.32B (Scotland) - Notice of insufficient property for distribution to unsecured creditors other than by virtue",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.33B",
+  "formName" : "2.33B - Notice of court order ending administration",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.34B",
+  "formName" : "2.34B - Notice of move from administration to creditors’ voluntary liquidation",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.35B",
+  "formName" : "2.35B - Notice of move from administration to dissolution",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.36B",
+  "formName" : "2.36B - Notice to registrar of companies in respect of date of dissolution",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.38B",
+  "formName" : "2.38B(CH) - Notice of resignation by administrator",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.39B",
+  "formName" : "2.39B - Notice of vacation of office by administrator",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.4(Scot)",
+  "formName" : "2.4 (Scotland) - Notice of discharge of administration order",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.40B",
+  "formName" : "2.40B - Notice of appointment of replacement/additional administrator",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.7(Scot)",
+  "formName" : "2.7 (Scotland) - Notice of statement of administrator's proposals",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.8(Scot)",
+  "formName" : "2.8 (Scotland) - Notice of result of meeting creditors",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.9(Scot)",
+  "formName" : "2.9 (Scotland) - Administrator's abstract of receipts and payments",
+  "formCategory" : "IA1986_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.3",
+  "formName" : "3.3 - Make statement of affairs in administrative receivership",
+  "formCategory" : "IA1986_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.6",
+  "formName" : "3.6(CH) - Notice of abstract of receipts and payments",
+  "formCategory" : "IA1986_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.7",
+  "formName" : "3.7 - Notice of administrative receiver's death",
+  "formCategory" : "IA1986_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.8",
+  "formName" : "3.8 - Notice of order to dispose of charged property",
+  "formCategory" : "IA1986_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.10",
+  "formName" : "3.10 - Notice of administrative receiver's report",
+  "formCategory" : "IA1986_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1(Scot)",
+  "formName" : "Form 1 (Scotland) - Notice of appointment of administrative receiver, receiver or manager",
+  "formCategory" : "IA1986_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "600",
+  "formName" : "600 - Appoint liquidator in voluntary winding up",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.15A",
+  "formName" : "4.15A - Notice of appointment of provisional liquidator",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.17(Scot)",
+  "formName" : "4.17 (Scotland) - Notice of final account prior to dissolution in a winding up by the court",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.2(Scot)",
+  "formName" : "4.2 (Scotland) - Notice of winding up order",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.20",
+  "formName" : "4.20 - Make statement of company's affairs",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.27(Scot)",
+  "formName" : "4.27 (Scotland) - Notice of court order staying or sisting proceedings in a winding up by the court",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.31",
+  "formName" : "4.31 - Notice of appointment of liquidator",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.31(Scot)",
+  "formName" : "4.31 (Scotland) - Notice to registrar of companies in respect of order under section 176A",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.33",
+  "formName" : "4.33 - Notice of resignation as voluntary liquidator",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.35",
+  "formName" : "4.35 - Notice of court order granting liquidator to resign",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.38",
+  "formName" : "4.38 - Notice of removal of voluntary liquidator",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.40",
+  "formName" : "4.40 - Notice of ceasing to act as voluntary liquidator",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "F4.41",
+  "formName" : "F4.41 - Notice of the statement of affairs",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.43",
+  "formName" : "4.43 - Notice of the final meeting of creditors",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.44",
+  "formName" : "4.44 - Notice of the death of the voluntary liquidator",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.51",
+  "formName" : "4.51 - Notice by certificate that creditors paid in full",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.68",
+  "formName" : "4.68 - Notice of the liquidator's progress report",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.69",
+  "formName" : "4.69 - Notice of order of court on appeal",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.70",
+  "formName" : "4.70 - Declaration of solvency",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.71",
+  "formName" : "4.71 - Notice of final meeting in members' voluntary winding up",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.72",
+  "formName" : "4.72 - Notice of final meeting in creditors' voluntary winding up",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.9(Scot)",
+  "formName" : "4.9 (Scotland) - Notice of order of appointment of provisional liquidator in a winding up by the court",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "F10.2",
+  "formName" : "F10.2 - Notice of disclaimer under section 178 of Insolvency Act",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "12.1",
+  "formName" : "12.1 - Notice in respect of order under section 176a",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "F14",
+  "formName" : "F14 - Notice of a winding up order",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "L64.01",
+  "formName" : "L64.01 - Early completion of winding up",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "L64.04",
+  "formName" : "L64.04 - Deferment of dissolution (compulsory)",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "L64.07",
+  "formName" : "L64.07 - Completion of winding up",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "L72.18",
+  "formName" : "L72.18 - Winding up covering letter",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "COCOMP",
+  "formName" : "COCOMP - Order of court to wind up",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "COLIQ",
+  "formName" : "COLIQ - Deferment of dissolution",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "DETERMINAT",
+  "formName" : "DETERMINATION - Determination for LLPs",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "O/C DISCLOSE",
+  "formName" : "O/C DISCLOSE - Order of court limiting disclosure",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "O/C LTD DISCL",
+  "formName" : "O/C LTD DISCLOSE - Order of court limiting disclosure",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "O/C EARLY DISS",
+  "formName" : "O/C EARLY DISS - Order of court: early dissolution",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "O/C PROV RECALL",
+  "formName" : "O/C PROV RECALL - Order of court: recall of provisional liquidator",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "OCRESCIND",
+  "formName" : "O/C RESCIND - Order of court to rescind winding up",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "O/C STAY",
+  "formName" : "O/C STAY - Order of court to stay strike off",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "O/C UNSTAY",
+  "formName" : "O/C UNSTAY - Order of court to unstay strike off",
+  "formCategory" : "IA1986_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "NDISC",
+  "formName" : "NDISC - Notice of disclaimer under section 178 of the Insolvency Act 1986",
+  "formCategory" : "IA1986_NOD",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "NDISCA",
+  "formName" : "NDISCA - Notice attached to NDISC",
+  "formCategory" : "IA1986_NOD",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM1",
+  "formName" : "VAM1 - Notice of the commencement of moratorium",
+  "formCategory" : "INSEW2016_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM2",
+  "formName" : "VAM2 - Notice of continuation of moratorium",
+  "formCategory" : "INSEW2016_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM3",
+  "formName" : "VAM3 - Notice of decision extending or further extending moratorium",
+  "formCategory" : "INSEW2016_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM4",
+  "formName" : "VAM4 - Notice of a court order in relation to a moratorium",
+  "formCategory" : "INSEW2016_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM5",
+  "formName" : "VAM5 - Notice of the withdrawal of nominee's consent to act",
+  "formCategory" : "INSEW2016_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM6",
+  "formName" : "VAM6 - Notice of the appointment of a replacement nominee",
+  "formCategory" : "INSEW2016_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM7",
+  "formName" : "VAM7 - Notice of the end of moratorium",
+  "formCategory" : "INSEW2016_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAMC",
+  "formName" : "VAMC - Notice of a court order in respect of a voluntary arrangement or moratorium",
+  "formCategory" : "INSEW2016_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CVA1",
+  "formName" : "CVA1 - Notice of voluntary arrangement taking effect",
+  "formCategory" : "INSEW2016_CVA",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CVA2",
+  "formName" : "CVA2 - Notice of order of revocation or suspension of voluntary arrangement",
+  "formCategory" : "INSEW2016_CVA",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CVA3",
+  "formName" : "CVA3 - Notice of supervisor's progress report in voluntary arrangement",
+  "formCategory" : "INSEW2016_CVA",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CVA4",
+  "formName" : "CVA4 - Notice of termination or full implementation of voluntary arrangement",
+  "formCategory" : "INSEW2016_CVA",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM01",
+  "formName" : "AM01 - Notice of administrator's appointment",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM02",
+  "formName" : "AM02 - Notice of statement of affairs in administration",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM03",
+  "formName" : "AM03 - Notice of administrator's proposals",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM04",
+  "formName" : "AM04 - Notice of the extension of time to deliver administrator's proposals",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM05",
+  "formName" : "AM05 - Notice of extension of time to seek approval",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM06",
+  "formName" : "AM06 - Notice of approval of administrator's proposals",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM07",
+  "formName" : "AM07 - Notice of creditor's decision on administrator's proposals",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM08",
+  "formName" : "AM08 - Notice of revision of administrator's proposals",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM09",
+  "formName" : "AM09 - Notice of result of creditor's decision",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM10",
+  "formName" : "AM10 - Notice of administrator's progress report",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM11",
+  "formName" : "AM11 - Notice of appointment of replacement or additional administrator",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM12",
+  "formName" : "AM12 - Notice of order limiting disclosure",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM13",
+  "formName" : "AM13 - Notice of rescission or amendment of order limiting disclosure",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM14",
+  "formName" : "AM14 - Notice of an order to dispose of charged property",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM15",
+  "formName" : "AM15 - Notice of resignation of administrator",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM16",
+  "formName" : "AM16 - Notice of order removing administrator from office",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM17",
+  "formName" : "AM17 - Notice of vacation of office",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM18",
+  "formName" : "AM18 - Notice of deceased administrator",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM19",
+  "formName" : "AM19 - Notice of the extension of period of administration",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM20",
+  "formName" : "AM20 - Notice of automatic end of administration",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM21",
+  "formName" : "AM21 - Notice of end of administration",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM22",
+  "formName" : "AM22 - Notice of a move from administration to creditors' voluntary liquidation",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM23",
+  "formName" : "AM23 - Notice of move from administration to dissolution",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM24",
+  "formName" : "AM24 - Notice of a court order in respect of date of dissolution",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM25",
+  "formName" : "AM25 - Notice of court order ending administration",
+  "formCategory" : "INSEW2016_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "REC1",
+  "formName" : "REC1 - Notice of administrative receiver's report",
+  "formCategory" : "INSEW2016_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "REC2",
+  "formName" : "REC2 - Notice of summary of receipts and payments",
+  "formCategory" : "INSEW2016_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "REC3",
+  "formName" : "REC3 - Notice of order of disposal of charged property",
+  "formCategory" : "INSEW2016_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "REC4",
+  "formName" : "REC4 - Notice of statement of affairs in administrative receivership",
+  "formCategory" : "INSEW2016_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "REC5",
+  "formName" : "REC5 - Notice of deceased administrative receiver",
+  "formCategory" : "INSEW2016_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "RM01",
+  "formName" : "RM01 - Notice of appointment of receiver or manager",
+  "formCategory" : "INSEW2016_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "RM02",
+  "formName" : "RM02 - Notice of ceasing to act as receiver or manager",
+  "formCategory" : "INSEW2016_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ01",
+  "formName" : "LIQ01 - Notice of statutory declaration of solvency",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ02",
+  "formName" : "LIQ02 - Notice of statement of affairs",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ03",
+  "formName" : "LIQ03 - Notice of progress report in voluntary winding up",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ04",
+  "formName" : "LIQ04 - Notice of order deferring the date of dissolution in MVL or CVL",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ05",
+  "formName" : "LIQ05 - Notice of order limiting disclosure of statement of affairs in CVL",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ06",
+  "formName" : "LIQ06 - Notice of liquidator's resignation in MVL or CVL",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ07",
+  "formName" : "LIQ07 - Notice of removal of liquidator by creditors",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ08",
+  "formName" : "LIQ08 - Notice of loss of qualification as insolvency practitioner in MVL and CVL",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ09",
+  "formName" : "LIQ09 - Notice of deceased liquidator in MVL and CVL",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ10",
+  "formName" : "LIQ10 - Notice of removal of liquidator by court in MVL and CVL",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ11",
+  "formName" : "LIQ11 - Notice of removal of liquidator by company meeting in MVL",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ12",
+  "formName" : "LIQ12 - Notice of release of former liquidator by secretary of state in MVL or CVL",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ13",
+  "formName" : "LIQ13 - Notice of final account prior to dissolution in MVL",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ14",
+  "formName" : "LIQ14 - Notice of final account prior to dissolution in CVL",
+  "formCategory" : "INSEW2016_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU01",
+  "formName" : "WU01 - Notice of court order in a winding up",
+  "formCategory" : "INSEW2016_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU02",
+  "formName" : "WU02 - Notice of order of appointment of provisional liquidator",
+  "formCategory" : "INSEW2016_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU03",
+  "formName" : "WU03 - Notice of termination of appointment of provisional liquidator",
+  "formCategory" : "INSEW2016_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU04",
+  "formName" : "WU04 - Notice of the appointment of liquidator in a winding up by the court",
+  "formCategory" : "INSEW2016_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU07",
+  "formName" : "WU07 - Notice of a progress report in a winding up by the court",
+  "formCategory" : "INSEW2016_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU13",
+  "formName" : "WU13 - Notice of order of court on appeal against decision",
+  "formCategory" : "INSEW2016_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU14",
+  "formName" : "WU14 - Notice of an order for removal of liquidator",
+  "formCategory" : "INSEW2016_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU15",
+  "formName" : "WU15 - Notice of the final account prior to dissolution",
+  "formCategory" : "INSEW2016_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "COM1",
+  "formName" : "COM1 - Notice of establishment of creditors' or liquidation committee",
+  "formCategory" : "INSEW2016_COM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "COM2",
+  "formName" : "COM2 - Notice of change of membership of a creditors' or liquidation committee",
+  "formCategory" : "INSEW2016_COM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "COM3",
+  "formName" : "COM3 - Notice of continuation of creditors' committee",
+  "formCategory" : "INSEW2016_COM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "COM4",
+  "formName" : "COM4 - Notice of cessation of liquidation committee",
+  "formCategory" : "INSEW2016_COM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "NOCP",
+  "formName" : "NOCP - Give notice of a court order under section 176A (5) ",
+  "formCategory" : "INSEW2016_EXP",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM01(Scot)",
+  "formName" : "AM01 (Scot) - Notice of administrator's appointment",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM02(Scot)",
+  "formName" : "AM02 (Scot) - Notice of statement of affairs in administration",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM03(Scot)",
+  "formName" : "AM03 (Scot) - Notice of administrator's proposals",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM04(Scot)",
+  "formName" : "AM04 (Scot) - Notice of the extension of time to deliver administrator's proposals",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM05(Scot)",
+  "formName" : "AM05 (Scot) - Notice of extension of time to seek approval",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM06(Scot)",
+  "formName" : "AM06 (Scot) - Notice of approval of administrator's proposals",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM07(Scot)",
+  "formName" : "AM07 (Scot) - Notice of creditor's decision on administrator's proposals",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM08(Scot)",
+  "formName" : "AM08 (Scot) - Notice of revision of administrator's proposals",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM09(Scot)",
+  "formName" : "AM09 (Scot) - Notice of result of a creditor's decision",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM10(Scot)",
+  "formName" : "AM10 (Scot) - Notice of administrator's progress report",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM11(Scot)",
+  "formName" : "AM11 (Scot) - Appoint a replacement or additional administrator",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM12(Scot)",
+  "formName" : "AM12 (Scot) - Notice of order limiting disclosure",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM13(Scot)",
+  "formName" : "AM13 (Scot) - Rescission or amendment of order limiting disclosure",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM14(Scot)",
+  "formName" : "AM14 (Scot) - Notice of an order to dispose of charged property",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM15(Scot)",
+  "formName" : "AM15 (Scot) - Resignation of administrator",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM16(Scot)",
+  "formName" : "AM16 (Scot) - Notice of order removing administrator from office",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM17(Scot)",
+  "formName" : "AM17 (Scot) - Notice of vacation of office",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM18(Scot)",
+  "formName" : "AM18 (Scot) - Notice of a deceased administrator",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM19(Scot)",
+  "formName" : "AM19 (Scot) - Extend the period of administration",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM20(Scot)",
+  "formName" : "AM20 (Scot) - Notice of automatic end of administration",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM21(Scot)",
+  "formName" : "AM21 (Scot) - Notice of end of administration",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM22(Scot)",
+  "formName" : "AM22 (Scot) - Move a Scottish company from administration to creditors' voluntary liquidation",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM23(Scot)",
+  "formName" : "AM23 (Scot) - Move a Scottish company from administration to dissolution",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM24(Scot)",
+  "formName" : "AM24 (Scot) - Notice of a court order in respect of date of dissolution",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AM25(Scot)",
+  "formName" : "AM25 (Scot) - Notice of court order ending administration",
+  "formCategory" : "INSSC2018_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "COM1(Scot)",
+  "formName" : "COM1 (Scot) - Notice of establishment of creditors’ committee (administration)",
+  "formCategory" : "INSSC2018_COM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "COM2(Scot)",
+  "formName" : "COM2 (Scot) - Notice of change of membership of a creditors’ committee (administration)",
+  "formCategory" : "INSSC2018_COM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CVA1(Scot)",
+  "formName" : "CVA1 (Scot) - Notice of voluntary arrangement taking effect",
+  "formCategory" : "INSSC2018_CVA",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CVA2(Scot)",
+  "formName" : "CVA2 (Scot) - Notice of an order of revocation or suspension of voluntary arrangement",
+  "formCategory" : "INSSC2018_CVA",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CVA3(Scot)",
+  "formName" : "CVA3 (Scot) - Notice of a supervisor's progress report in voluntary arrangement",
+  "formCategory" : "INSSC2018_CVA",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "CVA4(Scot)",
+  "formName" : "CVA4 (Scot) - Terminate or fully implement voluntary arrangement",
+  "formCategory" : "INSSC2018_CVA",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM1(Scot)",
+  "formName" : "VAM1 (Scot) - Notice of the commencement of moratorium",
+  "formCategory" : "INSSC2018_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM2(Scot)",
+  "formName" : "VAM2 (Scot) - Notice of continuation of moratorium",
+  "formCategory" : "INSSC2018_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM3(Scot)",
+  "formName" : "VAM3 (Scot) - Notice of decision extending or further extending moratorium",
+  "formCategory" : "INSSC2018_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM4(Scot)",
+  "formName" : "VAM4 (Scot) - Notice of a court order in relation to a moratorium",
+  "formCategory" : "INSSC2018_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM5(Scot)",
+  "formName" : "VAM5 (Scot) - Withdrawal of nominee's consent to act",
+  "formCategory" : "INSSC2018_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM6(Scot)",
+  "formName" : "VAM6 (Scot) - Appoint a replacement nominee",
+  "formCategory" : "INSSC2018_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM7(Scot)",
+  "formName" : "VAM7 (Scot) - Notice of the end of moratorium",
+  "formCategory" : "INSSC2018_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAM8(Scot)",
+  "formName" : "VAM8 (Scot) - Notice of disposal of charged property during a moratorium",
+  "formCategory" : "INSSC2018_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VAMC(Scot)",
+  "formName" : "VAMC (Scot) - Notice of a court order in respect of a voluntary arrangement or moratorium",
+  "formCategory" : "INSSC2018_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "NOCP(Scot)",
+  "formName" : "NOCP (Scot) - Notice of a court order under section 176A(5)",
+  "formCategory" : "INSSC2018_EXP",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ04(Scot)",
+  "formName" : "LIQ04 (Scot) - Notice of order deferring the date of dissolution",
+  "formCategory" : "INSSC2018_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ13(Scot)",
+  "formName" : "LIQ13 (Scot) - Final account prior to dissolution in MVL",
+  "formCategory" : "INSSC2018_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ14(Scot)",
+  "formName" : "LIQ14 (Scot) - Final account prior to dissolution in CVL",
+  "formCategory" : "INSSC2018_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LIQ15(Scot)",
+  "formName" : "LIQ15 (Scot) - Notice of a court order staying or sisting proceedings in a CVL or MVL winding up",
+  "formCategory" : "INSSC2018_VL",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "REC1(Scot)",
+  "formName" : "REC1 (Scot) - Notice of receiver's report",
+  "formCategory" : "INSSC2018_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "REC3(Scot)",
+  "formName" : "REC3 (Scot) - Notice of authorisation to dispose of secured property in receivership",
+  "formCategory" : "INSSC2018_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "REC5(Scot)",
+  "formName" : "REC5 (Scot) - Notice of a deceased receiver",
+  "formCategory" : "INSSC2018_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "RECSOA(Scot)",
+  "formName" : "RECSOA (Scot) - Statement of affairs",
+  "formCategory" : "INSSC2018_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "RM01(Scot)",
+  "formName" : "RM01 (Scot) - Notice of appointment of a receiver",
+  "formCategory" : "INSSC2018_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "RM02(Scot)",
+  "formName" : "RM02 (Scot) - Notice of ceasing to act as a receiver",
+  "formCategory" : "INSSC2018_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU01(Scot)",
+  "formName" : "WU01 (Scot) - Notice of a court order in a winding up",
+  "formCategory" : "INSSC2018_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU02(Scot)",
+  "formName" : "WU02 (Scot) - Notice of order of appointment of a provisional liquidator",
+  "formCategory" : "INSSC2018_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU03(Scot)",
+  "formName" : "WU03 (Scot) - Notice of termination of appointment of provisional liquidator",
+  "formCategory" : "INSSC2018_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU15(Scot)",
+  "formName" : "WU15 (Scot) - Notice of the final account prior to the dissolution",
+  "formCategory" : "INSSC2018_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU16(Scot)",
+  "formName" : "WU16 (Scot) - Early dissolution of a Scottish company in a winding up by the court",
+  "formCategory" : "INSSC2018_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU17(Scot)",
+  "formName" : "WU17 (Scot) - Defer the dissolution of a Scottish company in a winding up by the court",
+  "formCategory" : "INSSC2018_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "WU18(Scot)",
+  "formName" : "WU18 (Scot) - Notice of a court order staying or sisting proceedings in a winding up order by the court",
+  "formCategory" : "INSSC2018_WU",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.1(NI)",
+  "formName" : "1.1 - Notice of voluntary arrangement taking effect",
+  "formCategory" : "INIO1989_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.11(NI)",
+  "formName" : "1.11 - Notice of commencement of moratorium",
+  "formCategory" : "INIO1989_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.12(NI)",
+  "formName" : "1.12 - Notice of extension or continuation of moratorium",
+  "formCategory" : "INIO1989_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.14(NI)",
+  "formName" : "1.14 - Notice of ending of moratorium",
+  "formCategory" : "INIO1989_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.16(NI)",
+  "formName" : "1.16 - Notice of withdrawal of nominee's consent to act",
+  "formCategory" : "INIO1989_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.18(NI)",
+  "formName" : "1.18 - Notice of the appointment of a replacement nominee",
+  "formCategory" : "INIO1989_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.2(NI)",
+  "formName" : "1.2 - Notice of order, revocation or suspension of voluntary arrangement",
+  "formCategory" : "INIO1989_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.3(NI)",
+  "formName" : "1.3 - Notice of supervisor’s abstract of receipts and payments",
+  "formCategory" : "INIO1989_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "1.4(NI)",
+  "formName" : "1.4 - Notice of completion of voluntary arrangement",
+  "formCategory" : "INIO1989_CVAM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.07(NI)",
+  "formName" : "2.07 - Notice of administration order",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.08(NI)",
+  "formName" : "2.08 - Administration order",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.12B(NI)",
+  "formName" : "2.12B - Notice of administrator's appointment",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.14B(NI)",
+  "formName" : "2.14B - Statement of affairs",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.15B(NI)",
+  "formName" : "2.15B - Statement of concurrence",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.16(NI)",
+  "formName" : "2.16 - Administrator's abstracts",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.16B(NI)",
+  "formName" : "2.16B - Notice of statement of affairs",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.17B(NI)",
+  "formName" : "2.17B - Statement of administrator's proposals",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.18B(NI)",
+  "formName" : "2.18B - Notice of extension of time period",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.18BA(NI)",
+  "formName" : "2.18BA - Notice of deemed approval of proposals",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.19(NI)",
+  "formName" : "2.19 - Notice of order to deal with charged property",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.20(NI)",
+  "formName" : "2.20 - Notice of discharge of administration order",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.21(NI)",
+  "formName" : "2.21 - Notice of variation of administration order",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.22(NI)",
+  "formName" : "2.22 - Statement of administrator's proposals",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.22B(NI)",
+  "formName" : "2.22B - Statement of administrator's revised proposals",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.23B(NI)",
+  "formName" : "2.23B - Notice of result of creditors’ meeting",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.24(NI)",
+  "formName" : "2.24 - Notice of result of meeting of creditors",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.24B(NI)",
+  "formName" : "2.24B - Notice of administrator’s progress report",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.26B(NI)",
+  "formName" : "2.26B - Amend certificate of constitution of creditors’ committee",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.27B(NI)",
+  "formName" : "2.27B - Notice by administrator of a change in committee membership",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.28B(NI)",
+  "formName" : "2.28B - Notice of order to deal with charged property",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.30B(NI)",
+  "formName" : "2.30B - Notice of automatic end of administration",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.31B(NI)",
+  "formName" : "2.31B - Notice of the extension period of administration",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.32B(NI)",
+  "formName" : "2.32B - Notice of end of administration",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.33B(NI)",
+  "formName" : "2.33B - Notice of court order ending administration",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.34B(NI)",
+  "formName" : "2.34B - Notice of move from administration to creditors’ voluntary liquidation",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.35B(NI)",
+  "formName" : "2.35B - Notice of move from administration to dissolution",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.36B(NI)",
+  "formName" : "2.36B - Notice to registrar of companies in respect of date of dissolution",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.38B(NI)",
+  "formName" : "2.38B - Notice of resignation by administrator",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.39B(NI)",
+  "formName" : "2.39B - Notice of vacation of office by administrator",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.4(NI)",
+  "formName" : "2.4 - Notice of appointment of replacement/additional administrator",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "2.40B(NI)",
+  "formName" : "2.40B - Notice of appointment of replacement/additional administrator",
+  "formCategory" : "INIO1989_ADM",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.04(NI)",
+  "formName" : "3.04 - Statement of affairs receivership",
+  "formCategory" : "INIO1989_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.05(NI)",
+  "formName" : "3.05 - Statement of affairs in administrative receivership following report to creditors",
+  "formCategory" : "INIO1989_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.06(NI)",
+  "formName" : "3.06 - Certificate of constitution (amended certificate) of creditors' committee",
+  "formCategory" : "INIO1989_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.07(NI)",
+  "formName" : "3.07 - Administrative receiver's report as to change in membership of creditors' committee",
+  "formCategory" : "INIO1989_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.08(NI)",
+  "formName" : "3.08 - Receiver or manager or administrative receiver's abstract of receipts and payment",
+  "formCategory" : "INIO1989_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.09(NI)",
+  "formName" : "3.09 - Notice of administrative receiver's death",
+  "formCategory" : "INIO1989_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.10(NI)",
+  "formName" : "3.10 - Notice of order to dispose of charged property",
+  "formCategory" : "INIO1989_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3.12(NI)",
+  "formName" : "3.12 - Administrative receiver's report",
+  "formCategory" : "INIO1989_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LRESC(NI)",
+  "formName" : "Creditors' voluntary liquidation resolution",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LRESM(NI)",
+  "formName" : "Members' voluntary liquidation resolution",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "L21(NI)",
+  "formName" : "L21 - Early completion of winding up",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "L22(NI)",
+  "formName" : "L22 - Completion of winding up",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "L131(NI)",
+  "formName" : "L131 - Deferment of dissolution (compulsory)",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "VL1",
+  "formName" : "VL1 - Notice of appointment of liquidator: voluntary winding up (members or creditors)",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.16(NI)",
+  "formName" : "4.16 - Notice of appointment of provisional liquidator",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.16A(NI)",
+  "formName" : "4.16A - Notice of appointment of provisional liquidator in winding up by the court",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.19(NI)",
+  "formName" : "4.19 - Statement of affairs: voluntary liquidation",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.21(NI)",
+  "formName" : "4.21 - Statement of affairs",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.23(NI)",
+  "formName" : "4.23 - Deferment of dissolution",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.26(NI)",
+  "formName" : "4.26 - Proof of debt",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.32(NI)",
+  "formName" : "4.32 - Notice of appointment of a liquidator in winding up by the court",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.34(NI)",
+  "formName" : "4.34 - Notice of resignation as voluntary liquidator under Article 145(5) of the Insolvency (Northern Ireland) Order 1989",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.36(NI)",
+  "formName" : "4.36 - Notice of order of court granting liquidator leave to resign",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.39(NI)",
+  "formName" : "4.39 - Certificate of removal of voluntary liquidator",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.41(NI)",
+  "formName" : "4.41 - Notice of ceasing to act as voluntary liquidator",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.44(NI)",
+  "formName" : "4.44 - Notice of final meeting of creditors",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.45(NI)",
+  "formName" : "4.45 - Notice of death of voluntary liquidator",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.47(NI)",
+  "formName" : "4.47 - Notice of vacation of office by voluntary liquidator",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.52(NI)",
+  "formName" : "4.52 - Certificate that creditors have been paid in full",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.53(NI)",
+  "formName" : "4.53 - Liquidator's certificate of continuance of liquidation committee",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.69(NI)",
+  "formName" : "4.69 - Liquidator's statement of receipts and payments",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.70(NI)",
+  "formName" : "4.70 - Order of court on appeal against secretary of state's decision",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.71(NI)",
+  "formName" : "4.71 - Declaration of solvency",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.72(NI)",
+  "formName" : "4.72 - Return of final meeting in a members' voluntary winding up",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "4.73(NI)",
+  "formName" : "4.73 - Return of final meeting in a creditors' voluntary winding up",
+  "formCategory" : "INIO1989_LIQ",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "OSDS02",
+  "formName" : "OS DS02 - Termination of overseas company insolvency proceedings",
+  "formCategory" : "OCR2009",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "OSLQ01",
+  "formName" : "OS LQ01 - Appointment of liquidator of overseas company",
+  "formCategory" : "OCR2009",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "OSLQ02",
+  "formName" : "OS LQ02 - Insolvency proceedings against overseas company",
+  "formCategory" : "OCR2009",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "OSLQ03",
+  "formName" : "OS LQ03 - Notice of winding up of an overseas company",
+  "formCategory" : "OCR2009",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "OSLQ04",
+  "formName" : "OS LQ04 - Cessation of overseas company subject to insolvency proceedings",
+  "formCategory" : "OCR2009",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LLRM01",
+  "formName" : "LL RM01 - Notice of appointment of an administrative receiver, receiver or manager",
+  "formCategory" : "LLPR2009",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LLRM02",
+  "formName" : "LL RM02 - Notice of ceasing to act as an administrative receiver, receiver or manager",
+  "formCategory" : "LLPR2009",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LRESEX",
+  "formName" : "Extraordinary resolution to wind up",
+  "formCategory" : "INS_RES",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "LRESSP",
+  "formName" : "Special resolution to wind up",
+  "formCategory" : "INS_RES",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "3(Scot)",
+  "formName" : "Form 3 (Scotland) - Cease to act as administrative receiver, receiver or manager",
+  "formCategory" : "IA1986_REC",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "AD01",
+  "formName" : "AD01 – Change a company’s registered office address",
+  "formCategory" : "INSCROA",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH02",
+  "formName" : "SH02 - Consolidate, sub-divide, redeem shares or re-convert stock into shares",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH04",
+  "formName" : "SH04 - Notify a sale or transfer of treasury shares",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH05",
+  "formName" : "SH05 - Notify a cancellation of treasury shares",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH06",
+  "formName" : "SH06 - Notify a cancellation of shares",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH07",
+  "formName" : "SH07 - Notify a cancellation of shares held by or for a public company",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH08",
+  "formName" : "SH08 - Notify a name or other designation of class of shares",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH09",
+  "formName" : "SH09 - Allotting a new class of shares by an unlimited company",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH10",
+  "formName" : "SH10 - Give notice of particulars of variation of rights attached to shares",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH11",
+  "formName" : "SH11 - Give notice of a new class of members",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH12",
+  "formName" : "SH12 - Give notice of particulars of variation of class rights",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH13",
+  "formName" : "SH13 - Give notice of name or other designation of class of members",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH14",
+  "formName" : "SH14 - Notify a redenomination of shares",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH15",
+  "formName" : "SH15 - Notify a reduction of capital following redenomination",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH16",
+  "formName" : "SH16 - Give notice of application to court to cancel special resolution",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+}, {
+  "_id" : "SH17",
+  "formName" : "SH17 - Give notice by the company of application to cancel special resolution",
+  "formCategory" : "SH",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true
+} ]
