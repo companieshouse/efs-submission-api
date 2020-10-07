@@ -33,7 +33,6 @@ import uk.gov.companieshouse.efs.api.email.mapper.InternalEmailMapperFactory;
 import uk.gov.companieshouse.efs.api.interceptor.AuthenticationHelper;
 import uk.gov.companieshouse.efs.api.interceptor.AuthenticationHelperImpl;
 import uk.gov.companieshouse.efs.api.interceptor.UserAuthenticationInterceptor;
-import uk.gov.companieshouse.efs.api.paymentreports.service.OutputStreamWriterFactory;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.UuidGenerator;
 import uk.gov.companieshouse.logging.Logger;
@@ -60,8 +59,6 @@ public class Config {
     private String barcodeGeneratorServiceUrl;
     @Value("${file.bucket.name}")
     private String fileBucketName;
-    @Value("${payment.report.bucket.name}")
-    private String paymentReportBucketName;
 
     public Config() {
         // required no-arg constructor
@@ -76,11 +73,6 @@ public class Config {
     @Bean
     public Clock clock() {
         return Clock.systemUTC();
-    }
-
-    @Bean
-    public OutputStreamWriterFactory reportStreamWriterFactory() {
-        return new OutputStreamWriterFactory();
     }
 
     @Bean
@@ -122,11 +114,6 @@ public class Config {
     @Bean("file-bucket-name")
     String fileBucketName() {
         return fileBucketName;
-    }
-
-    @Bean("payment-report-bucket-name")
-    String paymentReportBucketName() {
-        return paymentReportBucketName;
     }
 
     /**
