@@ -3,24 +3,23 @@ package uk.gov.companieshouse.efs.api.submissions.service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.efs.submissions.CompanyApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.FileListApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FormTypeApi;
-import uk.gov.companieshouse.api.model.efs.submissions.PaymentReferenceApi;
 import uk.gov.companieshouse.api.model.efs.submissions.PresenterApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
+import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.mapper.CompanyMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.FileDetailsMapper;
-import uk.gov.companieshouse.efs.api.submissions.mapper.PaymentReferenceMapper;
+import uk.gov.companieshouse.efs.api.submissions.mapper.PaymentSessionMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.PresenterMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.SubmissionMapper;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
@@ -46,7 +45,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     private PresenterMapper presenterMapper;
     private CompanyMapper companyMapper;
     private FileDetailsMapper fileDetailsMapper;
-    private PaymentReferenceMapper paymentReferenceMapper;
+    private PaymentSessionMapper paymentSessionMapper;
     private CurrentTimestampGenerator timestampGenerator;
     private ConfirmationReferenceGeneratorService confirmationReferenceGenerator;
     private FormTemplateService formTemplateService;
@@ -57,7 +56,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Autowired
     public SubmissionServiceImpl(SubmissionRepository submissionRepository, SubmissionMapper submissionMapper,
         PresenterMapper presenterMapper, CompanyMapper companyMapper, FileDetailsMapper fileDetailsMapper,
-        PaymentReferenceMapper paymentReferenceMapper, CurrentTimestampGenerator timestampGenerator,
+        PaymentSessionMapper paymentSessionMapper, CurrentTimestampGenerator timestampGenerator,
         ConfirmationReferenceGeneratorService confirmationReferenceGenerator, FormTemplateService formTemplateService,
         EmailService emailService, Validator<Submission> validator) {
         this.submissionRepository = submissionRepository;
@@ -65,7 +64,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         this.presenterMapper = presenterMapper;
         this.companyMapper = companyMapper;
         this.fileDetailsMapper = fileDetailsMapper;
-        this.paymentReferenceMapper = paymentReferenceMapper;
+        this.paymentSessionMapper = paymentSessionMapper;
         this.timestampGenerator = timestampGenerator;
         this.confirmationReferenceGenerator = confirmationReferenceGenerator;
         this.formTemplateService = formTemplateService;
@@ -140,26 +139,14 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public SubmissionResponseApi updateSubmissionWithPaymentReference(String id,
-        PaymentReferenceApi paymentReferenceApi) {
-        LOGGER.debug(String.format("Attempting to update payment reference for submission with id: [%s]", id));
-        Submission submission = this.getSubmissionForUpdate(id);
-        submission.setPaymentReference(paymentReferenceMapper.map(paymentReferenceApi));
-        submissionRepository.updateSubmission(submission);
-        LOGGER.debug(String.format("Successfully updated payment reference for submission with id: [%s]", id));
-
-        return new SubmissionResponseApi(id);
-    }
-
-    @Override
-    public SubmissionResponseApi updateSubmissionWithFeeOnSubmission(final String id) {
-        LOGGER.debug(String.format("Attempting to update fee on submission for submission with id: [%s]", id));
+    public SubmissionResponseApi updateSubmissionWithPaymentSessions(String id,
+        SessionListApi paymentSessions) {
+        LOGGER.debug(String.format("Attempting to update payment sessions for submission with id: [%s]", id));
         Submission submission = this.getSubmissionForUpdate(id);
 
-        submission.setFeeOnSubmission(
-            formTemplateService.getFormTemplate(submission.getFormDetails().getFormType()).getFee());
+        submission.setPaymentSessions(paymentSessions);
         submissionRepository.updateSubmission(submission);
-        LOGGER.debug(String.format("Successfully updated fee on submission for submission with id: [%s]", id));
+        LOGGER.debug(String.format("Successfully updated payment sessions for submission with id: [%s]", id));
 
         return new SubmissionResponseApi(id);
     }

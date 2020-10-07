@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
@@ -35,19 +36,19 @@ public class SubmissionValidator implements Validator<Submission> {
 
         if (input.getPresenter() == null) {
             throw new SubmissionValidationException(String.format("Presenter details are absent in submission [%s]", input.getId()));
-        } else if (isBlank(input.getPresenter().getEmail())) {
+        } else if (StringUtils.isBlank(input.getPresenter().getEmail())) {
             throw new SubmissionValidationException(String.format("Presenter email is absent in submission [%s]", input.getId()));
         } else if (input.getCompany() == null) {
             throw new SubmissionValidationException(String.format("Company details are absent in submission [%s]", input.getId()));
-        } else if (isBlank(input.getCompany().getCompanyNumber())) {
+        } else if (StringUtils.isBlank(input.getCompany().getCompanyNumber())) {
             throw new SubmissionValidationException(String.format("Company number is absent in submission [%s]", input.getId()));
-        } else if (isBlank(input.getCompany().getCompanyName())) {
+        } else if (StringUtils.isBlank(input.getCompany().getCompanyName())) {
             throw new SubmissionValidationException(String.format("Company name is absent in submission [%s]", input.getId()));
         } else if (input.getFormDetails() == null) {
             throw new SubmissionValidationException(String.format("Form details are absent in submission [%s]", input.getId()));
-        } else if (isBlank(input.getFormDetails().getFormType())) {
+        } else if (StringUtils.isBlank(input.getFormDetails().getFormType())) {
             throw new SubmissionValidationException(String.format("Form type is absent in submission [%s]", input.getId()));
-        } else if (isBlank(input.getConfirmationReference())) {
+        } else if (StringUtils.isBlank(input.getConfirmationReference())) {
             throw new SubmissionValidationException(String.format("Confirmation reference is absent in submission [%s]", input.getId()));
         }
 
@@ -64,13 +65,13 @@ public class SubmissionValidator implements Validator<Submission> {
             throw new SubmissionValidationException(
                     String.format("File details contains null in submission [%s]", input.getId()));
         }
-        if (isPaymentRequired(theForm) && isBlank(input.getPaymentReference())) {
+        if (isPaymentRequired(theForm) && CollectionUtils.isEmpty(input.getPaymentSessions())) {
             throw new SubmissionValidationException(
-                    String.format("Payment reference is absent for fee paying form [%s] in submission [%s]",
+                    String.format("At least one payment session is absent for fee paying form [%s] in submission [%s]",
                     theForm.getFormType(), input.getId()));
-        } else if (!isPaymentRequired(theForm) && !isBlank(input.getPaymentReference())) {
+        } else if (!isPaymentRequired(theForm) && !CollectionUtils.isEmpty(input.getPaymentSessions())) {
             throw new SubmissionValidationException(
-                    String.format("Payment reference is present for the non fee paying form [%s] in submission [%s]",
+                    String.format("At least one payment session is present for the non fee paying form [%s] in submission [%s]",
                     theForm.getFormType(), input.getId()));
         } else if (theForm.isFesEnabled() && input.getFormDetails().getFileDetailsList().size() > 1) {
             throw new SubmissionValidationException(String.format("Attachments present in submission [%s] for FES enabled form [%s]",
@@ -86,10 +87,6 @@ public class SubmissionValidator implements Validator<Submission> {
 
         LOGGER.info(String.format("Successfully validated submission with id: [%s]", input.getId()));
 
-    }
-
-    private boolean isBlank(String info) {
-        return info == null || info.isEmpty();
     }
 
     private boolean isPaymentRequired(final FormTemplate form) {

@@ -19,6 +19,8 @@ import uk.gov.companieshouse.api.model.efs.submissions.RejectReasonApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionFormApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
+import uk.gov.companieshouse.api.model.paymentsession.SessionApi;
+import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
@@ -27,14 +29,14 @@ import uk.gov.companieshouse.efs.api.submissions.model.RejectReason;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 
 @ExtendWith(MockitoExtension.class)
-public class SubmissionMapperTest {
+class SubmissionMapperTest {
 
     private static final String SUBMISSION_ID = "1";
     private static final String CONFIRMATION_REFERENCE = "1 2 3 4";
     private static final String EMAIL_ADDRESS = "demo@ch.gov.uk";
     private static final String COMPANY_NUMBER = "12345678";
     private static final String COMPANY_NAME = "ACME";
-    private static final String PAYMENT_REFERENCE = "54321";
+    private static final SessionApi PAYMENT_SESSION = new SessionApi("7777777777", "random-state");
     private static final String FEE_ON_SUBMISSION = "17";
     private static final Boolean CONFIRM_AUTHORISED = true;
     private static final String BARCODE = "Y9999999";
@@ -45,6 +47,7 @@ public class SubmissionMapperTest {
     private static final String CONVERTED_FILE_ID = "abc124";
     private static final String REJECT_REASON = "Test Reject Reason";
     private SubmissionMapper mapper;
+    public static final SessionListApi PAYMENT_SESSIONS = new SessionListApi(Collections.singletonList(PAYMENT_SESSION));
 
     @BeforeEach
     void setUp() {
@@ -107,7 +110,7 @@ public class SubmissionMapperTest {
                 .withPresenter(new Presenter(EMAIL_ADDRESS))
                 .withCompany(new Company(COMPANY_NUMBER, COMPANY_NAME))
                 .withStatus(SubmissionStatus.ACCEPTED)
-                .withPaymentReference(PAYMENT_REFERENCE)
+                .withPaymentSessions(PAYMENT_SESSIONS)
                 .withFeeOnSubmission(FEE_ON_SUBMISSION)
                 .withConfirmAuthorised(CONFIRM_AUTHORISED)
                 .withFormDetails(FormDetails.builder()
@@ -130,7 +133,7 @@ public class SubmissionMapperTest {
 
     private SubmissionApi expectedSubmissionApi(LocalDateTime now) {
         return new SubmissionApi(SUBMISSION_ID, CONFIRMATION_REFERENCE, new PresenterApi(EMAIL_ADDRESS),
-            new CompanyApi(COMPANY_NUMBER, COMPANY_NAME), SubmissionStatus.ACCEPTED, PAYMENT_REFERENCE,
+            new CompanyApi(COMPANY_NUMBER, COMPANY_NAME), SubmissionStatus.ACCEPTED, PAYMENT_SESSIONS,
             FEE_ON_SUBMISSION, CONFIRM_AUTHORISED, new SubmissionFormApi(BARCODE, FORM_TYPE, new FileDetailListApi(
             Collections.singletonList(
                 new FileDetailApi(FILE_ID, FILENAME, FILE_SIZE, CONVERTED_FILE_ID, FileConversionStatus.CONVERTED, null,
@@ -139,7 +142,7 @@ public class SubmissionMapperTest {
 
     private SubmissionApi expectedSubmissionApiWithRejectReasons(LocalDateTime now) {
         return new SubmissionApi(SUBMISSION_ID, CONFIRMATION_REFERENCE, new PresenterApi(EMAIL_ADDRESS),
-            new CompanyApi(COMPANY_NUMBER, COMPANY_NAME), SubmissionStatus.ACCEPTED, PAYMENT_REFERENCE,
+            new CompanyApi(COMPANY_NUMBER, COMPANY_NAME), SubmissionStatus.ACCEPTED, PAYMENT_SESSIONS,
             FEE_ON_SUBMISSION, CONFIRM_AUTHORISED, new SubmissionFormApi(BARCODE, FORM_TYPE, new FileDetailListApi(
             Collections.singletonList(
                 new FileDetailApi(FILE_ID, FILENAME, FILE_SIZE, CONVERTED_FILE_ID, FileConversionStatus.CONVERTED, null,

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.INSOLVENCY;
-import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.ROOT;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,6 +17,8 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateApi;
+import uk.gov.companieshouse.api.model.paymentsession.SessionApi;
+import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
@@ -79,7 +80,7 @@ class SubmissionValidatorTest {
         when(formRepository.findById(anyString())).thenReturn(Optional.of(formTemplate));
         when(formTemplate.getFee()).thenReturn("9.99");
         when(formTemplate.getFormCategory()).thenReturn("RP");
-        when(submission.getPaymentReference()).thenReturn("123456");
+        when(submission.getPaymentSessions()).thenReturn(new SessionListApi());
         when(submission.getConfirmationReference()).thenReturn("123 456 789");
 
         // when
@@ -335,7 +336,8 @@ class SubmissionValidatorTest {
         when(formRepository.findById(anyString())).thenReturn(Optional.of(formTemplate));
         when(formTemplate.getFee()).thenReturn(null);
         when(formTemplate.getFormType()).thenReturn("SH01");
-        when(submission.getPaymentReference()).thenReturn("123456");
+        when(submission.getPaymentSessions())
+            .thenReturn(new SessionListApi(Collections.singletonList(new SessionApi("2222222222", "oweifjaseoifj"))));
         when(submission.getConfirmationReference()).thenReturn("123 456 789");
 
         // when
@@ -343,8 +345,8 @@ class SubmissionValidatorTest {
 
         // then
         SubmissionValidationException exception = assertThrows(SubmissionValidationException.class, actual);
-        assertEquals("Payment reference is present for the non fee paying form [SH01] in submission [abc]",
-                exception.getMessage());
+        assertEquals("At least one payment session is present for the non fee paying form [SH01] in submission [abc]",
+            exception.getMessage());
     }
 
     @Test

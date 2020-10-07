@@ -9,25 +9,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import uk.gov.companieshouse.api.model.efs.submissions.PaymentReferenceApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
+import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
+import uk.gov.companieshouse.efs.api.payment.controller.PaymentController;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionIncorrectStateException;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNotFoundException;
+import uk.gov.companieshouse.logging.Logger;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentReferenceControllerTest {
+class PaymentControllerTest {
 
     @Mock
-    private PaymentReferenceApi paymentReference;
+    private SessionListApi paymentSessions;
 
-    private PaymentReferenceController paymentReferenceController;
+    private PaymentController paymentController;
 
     @Mock
     private SubmissionService service;
@@ -39,36 +44,40 @@ public class PaymentReferenceControllerTest {
     private Submission submission;
 
     @Mock
+    private Logger logger;
+
+    @Mock
     private BindingResult result;
 
     @BeforeEach
     void setUp() {
-        this.paymentReferenceController = new PaymentReferenceController(service);
+        this.paymentController = new PaymentController(service, logger);
     }
 
     @Test
-    void testSubmitPaymentReferenceReturnsId() {
+    void testSubmitPaymentSessionsReturnsId() {
         //given
-        when(service.updateSubmissionWithPaymentReference(any(), any())).thenReturn(response);
+        paymentSessions = new SessionListApi();
+        when(service.updateSubmissionWithPaymentSessions("123", paymentSessions)).thenReturn(response);
 
         //when
-        ResponseEntity<SubmissionResponseApi> actual = paymentReferenceController.submitPaymentReference("123",
-                paymentReference, result);
+        ResponseEntity<SubmissionResponseApi> actual = paymentController.submitPaymentSessions("123",
+            paymentSessions, result);
 
         //then
-        assertEquals(response, actual.getBody());
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
+        assertThat(actual.getBody(), is(equalTo(response)));
+        assertThat(actual.getStatusCode(), is(HttpStatus.OK));
     }
 
 
     @Test
-    void testSubmitPaymentReferenceReturns409Conflict() {
+    void testSubmitPaymentSessionsReturns409Conflict() {
         //given
-        when(service.updateSubmissionWithPaymentReference(any(), any())).thenThrow(new SubmissionIncorrectStateException("not OPEN"));
+        when(service.updateSubmissionWithPaymentSessions(any(), any())).thenThrow(new SubmissionIncorrectStateException("not OPEN"));
 
         //when
-        ResponseEntity<SubmissionResponseApi> actual = paymentReferenceController.submitPaymentReference("123",
-                paymentReference, result);
+        ResponseEntity<SubmissionResponseApi> actual = paymentController.submitPaymentSessions("123",
+            paymentSessions, result);
 
         //then
         assertNull(actual.getBody());
@@ -76,14 +85,14 @@ public class PaymentReferenceControllerTest {
     }
 
     @Test
-    void testSubmitPaymentReferenceReturns400BadRequest() {
+    void testSubmitPaymentSessionsReturns400BadRequest() {
         // given
         when(result.hasErrors()).thenReturn(true);
         when(result.getFieldError()).thenReturn(new FieldError("a", "payment_reference", "invalid"));
 
         // when
-        ResponseEntity<SubmissionResponseApi> actual = paymentReferenceController.submitPaymentReference("123",
-                paymentReference, result);
+        ResponseEntity<SubmissionResponseApi> actual = paymentController.submitPaymentSessions("123",
+            paymentSessions, result);
 
         // then
         assertNull(actual.getBody());
@@ -92,13 +101,13 @@ public class PaymentReferenceControllerTest {
 
 
     @Test
-    void testSubmitPaymentReferenceReturns404NotFound() {
+    void testSubmitPaymentSessionsReturns404NotFound() {
         // given
-        when(service.updateSubmissionWithPaymentReference(any(), any())).thenThrow(new SubmissionNotFoundException("not found"));
+        when(service.updateSubmissionWithPaymentSessions(any(), any())).thenThrow(new SubmissionNotFoundException("not found"));
 
         // when
-        ResponseEntity<SubmissionResponseApi> actual = paymentReferenceController.submitPaymentReference("123",
-                paymentReference, result);
+        ResponseEntity<SubmissionResponseApi> actual = paymentController.submitPaymentSessions("123",
+            paymentSessions, result);
 
         // then
         assertNull(actual.getBody());

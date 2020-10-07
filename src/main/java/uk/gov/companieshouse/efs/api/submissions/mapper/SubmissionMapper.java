@@ -3,9 +3,7 @@ package uk.gov.companieshouse.efs.api.submissions.mapper;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Component;
-
 import uk.gov.companieshouse.api.model.efs.submissions.CompanyApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileDetailApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileDetailListApi;
@@ -30,7 +28,7 @@ public class SubmissionMapper {
                 mapPresenter(submission.getPresenter()),
                 mapCompany(submission.getCompany()),
                 submission.getStatus(),
-                submission.getPaymentReference(),
+                submission.getPaymentSessions(),
                 submission.getFeeOnSubmission(),
                 submission.getConfirmAuthorised(),
                 mapForm(submission.getFormDetails()),

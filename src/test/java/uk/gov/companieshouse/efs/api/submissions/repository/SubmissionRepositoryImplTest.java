@@ -22,7 +22,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import uk.gov.companieshouse.api.model.efs.fes.FesSubmissionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
-import uk.gov.companieshouse.efs.api.paymentreports.service.PaymentReportServiceImpl;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 
@@ -192,11 +191,11 @@ public class SubmissionRepositoryImplTest {
         LocalDate today = LocalDate.now();
 
         //when
-        repository.findPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, today.minusDays(1));
+        repository.findPaidSubmissions(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES, today.minusDays(1));
 
         //then
         verify(template).find(Query.query(
-            Criteria.where(STATUS).in(PaymentReportServiceImpl.SUCCESSFUL_STATUSES).and(SUBMITTED_AT)
+            Criteria.where(STATUS).in(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES).and(SUBMITTED_AT)
                 .gt(today.minusDays(2)).lt(today).and(FEE_ON_SUBMISSION).exists(true)), Submission.class,
             SUBMISSIONS_COLLECTION);
     }

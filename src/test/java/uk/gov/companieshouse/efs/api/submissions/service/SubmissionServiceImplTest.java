@@ -25,23 +25,24 @@ import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.submissions.CompanyApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileListApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FormTypeApi;
-import uk.gov.companieshouse.api.model.efs.submissions.PaymentReferenceApi;
 import uk.gov.companieshouse.api.model.efs.submissions.PresenterApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
+import uk.gov.companieshouse.api.model.paymentsession.SessionApi;
+import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
-import uk.gov.companieshouse.efs.api.paymentreports.mapper.PaymentReportMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.CompanyMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.FileDetailsMapper;
-import uk.gov.companieshouse.efs.api.submissions.mapper.PaymentReferenceMapper;
+import uk.gov.companieshouse.efs.api.submissions.mapper.PaymentSessionMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.PresenterMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.SubmissionMapper;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
+import uk.gov.companieshouse.efs.api.submissions.model.PaymentSession;
 import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository;
@@ -53,6 +54,8 @@ import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 
 @ExtendWith(MockitoExtension.class)
 public class SubmissionServiceImplTest {
+    public static final String SESSION_ID = "2222222222";
+    public static final String SESSION_STATE = "FD_RlzcLp-xcK1YZGEbn3ZpRHGlwy7tNjn_zsjYVauoB8Ml3GkfpmbhPuPd093XM";
 
     private SubmissionService submissionService;
 
@@ -63,9 +66,7 @@ public class SubmissionServiceImplTest {
     @Mock
     private FileDetailsMapper fileDetailsMapper;
     @Mock
-    private PaymentReferenceMapper paymentReferenceMapper;
-    @Mock
-    private PaymentReportMapper paymentReconciliationMapper;
+    private PaymentSessionMapper paymentSessionMapper;
     @Mock
     private CompanyMapper companyMapper;
     @Mock
@@ -95,8 +96,8 @@ public class SubmissionServiceImplTest {
     public void setUp() {
         submissionService =
             new SubmissionServiceImpl(submissionRepository, submissionMapper, presenterMapper, companyMapper,
-                fileDetailsMapper, paymentReferenceMapper, timestampGenerator,
-                confirmationReferenceGenerator, formTemplateService, emailService, validator);
+                fileDetailsMapper, paymentSessionMapper, timestampGenerator, confirmationReferenceGenerator,
+                formTemplateService, emailService, validator);
     }
 
     @Test
@@ -296,53 +297,57 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithPaymentReference() {
+    public void testUpdateSubmissionWithPaymentSessions() {
         // given
-        PaymentReferenceApi paymentReferenceApi = Mockito.mock(PaymentReferenceApi.class);
-        String paymentReference = "123";
-        when(paymentReferenceMapper.map(paymentReferenceApi)).thenReturn(paymentReference);
+        SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE);
+        SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
+
+        when(paymentSessionMapper.map(sessionApi)).thenReturn(new PaymentSession(SESSION_ID, SESSION_STATE));
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
 
         // when
-        SubmissionResponseApi actual = submissionService.updateSubmissionWithPaymentReference(SUBMISSION_ID,
-                paymentReferenceApi);
+        SubmissionResponseApi actual = submissionService.updateSubmissionWithPaymentSessions(SUBMISSION_ID, sessionListApi);
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(paymentReferenceMapper).map(paymentReferenceApi);
+        verify(paymentSessionMapper).map(sessionApi);
         verify(submissionRepository).updateSubmission(submission);
     }
 
     @Test
     public void testUpdateSubmissionWithPaymentReferenceNotFound() {
         // given
-        PaymentReferenceApi paymentReferenceApi = Mockito.mock(PaymentReferenceApi.class);
+        SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE);
+        SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
+
         when(submissionRepository.read(anyString())).thenReturn(null);
 
         // when
-        Executable actual = () -> submissionService.updateSubmissionWithPaymentReference(SUBMISSION_ID, paymentReferenceApi);
+        Executable actual = () -> submissionService.updateSubmissionWithPaymentSessions(SUBMISSION_ID, sessionListApi);
 
         // then
         SubmissionNotFoundException ex = assertThrows(SubmissionNotFoundException.class, actual);
         assertEquals("Could not locate submission with id: [123]", ex.getMessage());
-        verifyNoInteractions(paymentReferenceMapper);
+        verifyNoInteractions(paymentSessionMapper);
     }
 
     @Test
     public void testUpdateSubmissionWithPaymentReferenceIncorrectState() {
         // given
-        PaymentReferenceApi paymentReferenceApi = Mockito.mock(PaymentReferenceApi.class);
+        SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE);
+        SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
+
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
         when(submissionRepository.read(anyString())).thenReturn(submission);
 
         // when
-        Executable actual = () -> submissionService.updateSubmissionWithPaymentReference(SUBMISSION_ID, paymentReferenceApi);
+        Executable actual = () -> submissionService.updateSubmissionWithPaymentSessions(SUBMISSION_ID, sessionListApi);
 
         // then
         SubmissionIncorrectStateException ex = assertThrows(SubmissionIncorrectStateException.class, actual);
         assertEquals("Submission status for [123] wasn't OPEN, couldn't update", ex.getMessage());
-        verifyNoInteractions(paymentReferenceMapper);
+        verifyNoInteractions(paymentSessionMapper);
     }
 
     @Test
@@ -495,21 +500,4 @@ public class SubmissionServiceImplTest {
         verify(submissionRepository).updateSubmission(submission);
     }
 
-    @Test
-    void updateSubmissionWithFeeOnSubmission() {
-        // given
-        final FormDetails details = new FormDetails("", "CC01", Collections.emptyList());
-        final FormTemplateApi template = new FormTemplateApi("CC01", "", "", "9.99", false, false);
-
-        when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
-        when(submission.getFormDetails()).thenReturn(details);
-        when(submissionRepository.read(anyString())).thenReturn(submission);
-        when(formTemplateService.getFormTemplate("CC01")).thenReturn(template);
-        // when
-        SubmissionResponseApi actual = submissionService.updateSubmissionWithFeeOnSubmission(SUBMISSION_ID);
-        // then
-        assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submission).setFeeOnSubmission("9.99");
-        verify(submissionRepository).updateSubmission(submission);
-    }
 }

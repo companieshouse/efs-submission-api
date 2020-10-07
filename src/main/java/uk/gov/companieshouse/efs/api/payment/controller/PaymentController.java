@@ -1,7 +1,8 @@
-package uk.gov.companieshouse.efs.api.submissions.controller;
+package uk.gov.companieshouse.efs.api.payment.controller;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -11,8 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.companieshouse.api.model.efs.submissions.PaymentReferenceApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
+import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionIncorrectStateException;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNotFoundException;
@@ -24,45 +25,43 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/efs-submission-api/submission/{id}/payment")
-public class PaymentReferenceController {
+@RequestMapping("/efs-submission-api/submission/{id}/payment-sessions")
+public class PaymentController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
+    private Logger logger;
 
     private SubmissionService service;
 
-    public PaymentReferenceController(SubmissionService service) {
+    @Autowired
+    public PaymentController(SubmissionService service, Logger logger) {
         this.service = service;
+        this.logger = logger;
     }
 
     /**
-     * Endpoint for payment reference.
+     * Endpoint for payment sessions update.
      *
      * @param id        submission id
-     * @param payment   payment reference
+     * @param paymentSessions   payment sessions
      * @param result    bindingResult
      * @return          ResponseEntity&lt;SubmissionResponseApi&gt;
      */
     @PutMapping
-    public ResponseEntity<SubmissionResponseApi> submitPaymentReference(@PathVariable String id,
-            @RequestBody @Valid @NotNull PaymentReferenceApi payment, BindingResult result) {
+    public ResponseEntity<SubmissionResponseApi> submitPaymentSessions(@PathVariable String id,
+            @RequestBody @Valid @NotNull SessionListApi paymentSessions, BindingResult result) {
 
         if (result.hasErrors()) {
             Map<String, Object> debug = new HashMap<>();
             debug.put("submissionId", id);
             debug.put("fieldError", Optional.ofNullable(result.getFieldError())
                 .map(FieldError::getDefaultMessage).orElse("Unable to get field error"));
-            LOGGER.errorContext(id, "Form type details are invalid", null, debug);
+            logger.errorContext(id, "Payment session details are invalid", null, debug);
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         try {
-            final SubmissionResponseApi referenceResponse = service.updateSubmissionWithPaymentReference(id, payment);
-
-            service.updateSubmissionWithFeeOnSubmission(id);
-
-            return ResponseEntity.ok(referenceResponse);
+            return ResponseEntity.ok(service.updateSubmissionWithPaymentSessions(id, paymentSessions));
         } catch (SubmissionNotFoundException ex) {
             return ResponseEntity.notFound().build();
         } catch (SubmissionIncorrectStateException ex) {
