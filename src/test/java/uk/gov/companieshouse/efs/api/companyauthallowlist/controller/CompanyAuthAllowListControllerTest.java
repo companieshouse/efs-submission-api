@@ -14,7 +14,7 @@ import uk.gov.companieshouse.efs.api.companyauthallowlist.service.CompanyAuthAll
 import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
-public class CompanyAuthAllowListControllerImplTest {
+class CompanyAuthAllowListControllerTest {
 
     private static final String USER1_EMAIL_ADDRESS = "user1@ch.gov.uk";
 

@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
@@ -23,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.api.model.paymentsession.SessionApi;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
+import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.payment.controller.PaymentController;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
 import uk.gov.companieshouse.efs.api.payment.service.PaymentTemplateService;
@@ -47,6 +47,10 @@ public class PaymentControllerImplTest {
     @Mock
     private PaymentTemplateService paymentService;
     @Mock
+    private FormTemplateService formTemplateService;
+    @Mock
+    private PaymentTemplateService paymentTemplateService;
+    @Mock
     private SubmissionService submissionService;
     @Mock
     private Logger logger;
@@ -62,7 +66,7 @@ public class PaymentControllerImplTest {
 
     @BeforeEach
     void setUp() throws MalformedURLException {
-        testController = new PaymentController(submissionService, logger);
+        testController = new PaymentController(submissionService, formTemplateService, paymentTemplateService, logger);
         paymentUrl = new URL(RESOURCE_URL);
         paymentSession = new SessionApi(PAYMENT_SESSION_ID, PAYMENT_SESSION_STATE);
         paymentSessions = new SessionListApi(Collections.singletonList(paymentSession));
