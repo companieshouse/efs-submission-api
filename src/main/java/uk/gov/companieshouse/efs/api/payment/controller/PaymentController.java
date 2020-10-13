@@ -88,6 +88,7 @@ public class PaymentController {
                     final Optional<PaymentTemplate> optionalTemplate =
                         paymentTemplateService.getTemplate(chargeTemplateId);
 
+                    optionalTemplate.ifPresent(t -> logger.debug(MessageFormat.format("template={0}", t)));
                     response = optionalTemplate
                         .map(paymentTemplate -> getPaymentTemplateResponse(id, request, paymentTemplate))
                         .orElseGet(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)::build);

@@ -74,14 +74,18 @@ public final class PaymentTemplate {
     @JsonDeserialize(builder = Item.Builder.class)
     public static class Item {
         private String amount;
+        @Field("available_payment_methods")
         @JsonProperty("available_payment_methods")
         private List<String> availablePaymentMethods;
+        @Field("class_of_payment")
         @JsonProperty("class_of_payment")
         private List<String> classOfPayment;
         private String description;
+        @Field("description_identifier")
         @JsonProperty("description_identifier")
         private String descriptionId;
         private String kind;
+        @Field("product_type")
         @JsonProperty("product_type")
         private String productType;
 
@@ -564,6 +568,7 @@ public final class PaymentTemplate {
         private String id;
         private String description;
         private String etag;
+        @JsonProperty("items")
         private List<Item> items;
         private String kind;
         private Links links;
