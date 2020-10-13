@@ -16,10 +16,8 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
-import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.mapper.CompanyMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.FileDetailsMapper;
-import uk.gov.companieshouse.efs.api.submissions.mapper.PaymentSessionMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.PresenterMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.SubmissionMapper;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
@@ -45,10 +43,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     private PresenterMapper presenterMapper;
     private CompanyMapper companyMapper;
     private FileDetailsMapper fileDetailsMapper;
-    private PaymentSessionMapper paymentSessionMapper;
     private CurrentTimestampGenerator timestampGenerator;
     private ConfirmationReferenceGeneratorService confirmationReferenceGenerator;
-    private FormTemplateService formTemplateService;
     private EmailService emailService;
     private Validator<Submission> validator;
 
@@ -56,18 +52,16 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Autowired
     public SubmissionServiceImpl(SubmissionRepository submissionRepository, SubmissionMapper submissionMapper,
         PresenterMapper presenterMapper, CompanyMapper companyMapper, FileDetailsMapper fileDetailsMapper,
-        PaymentSessionMapper paymentSessionMapper, CurrentTimestampGenerator timestampGenerator,
-        ConfirmationReferenceGeneratorService confirmationReferenceGenerator, FormTemplateService formTemplateService,
-        EmailService emailService, Validator<Submission> validator) {
+        CurrentTimestampGenerator timestampGenerator,
+        ConfirmationReferenceGeneratorService confirmationReferenceGenerator, EmailService emailService,
+        Validator<Submission> validator) {
         this.submissionRepository = submissionRepository;
         this.submissionMapper = submissionMapper;
         this.presenterMapper = presenterMapper;
         this.companyMapper = companyMapper;
         this.fileDetailsMapper = fileDetailsMapper;
-        this.paymentSessionMapper = paymentSessionMapper;
         this.timestampGenerator = timestampGenerator;
         this.confirmationReferenceGenerator = confirmationReferenceGenerator;
-        this.formTemplateService = formTemplateService;
         this.emailService = emailService;
         this.validator = validator;
     }

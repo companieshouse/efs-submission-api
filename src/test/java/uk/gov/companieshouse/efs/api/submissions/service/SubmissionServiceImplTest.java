@@ -21,7 +21,6 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.submissions.CompanyApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileListApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FormTypeApi;
@@ -53,7 +52,7 @@ import uk.gov.companieshouse.efs.api.submissions.validator.exception.SubmissionV
 import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 
 @ExtendWith(MockitoExtension.class)
-public class SubmissionServiceImplTest {
+class SubmissionServiceImplTest {
     public static final String SESSION_ID = "2222222222";
     public static final String SESSION_STATE = "FD_RlzcLp-xcK1YZGEbn3ZpRHGlwy7tNjn_zsjYVauoB8Ml3GkfpmbhPuPd093XM";
 
@@ -96,12 +95,11 @@ public class SubmissionServiceImplTest {
     public void setUp() {
         submissionService =
             new SubmissionServiceImpl(submissionRepository, submissionMapper, presenterMapper, companyMapper,
-                fileDetailsMapper, paymentSessionMapper, timestampGenerator, confirmationReferenceGenerator,
-                formTemplateService, emailService, validator);
+                fileDetailsMapper, timestampGenerator, confirmationReferenceGenerator, emailService, validator);
     }
 
     @Test
-    public void testCreateSubmission() {
+    void testCreateSubmission() {
         // given
         PresenterApi presenterApi = Mockito.mock(PresenterApi.class);
         Presenter presenter = Mockito.mock(Presenter.class);
@@ -118,7 +116,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithCompany() {
+    void testUpdateSubmissionWithCompany() {
         // given
         CompanyApi companyApi = Mockito.mock(CompanyApi.class);
         Company company = Mockito.mock(Company.class);
@@ -136,7 +134,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithCompanyNotFound() {
+    void testUpdateSubmissionWithCompanyNotFound() {
         // given
         CompanyApi companyApi = Mockito.mock(CompanyApi.class);
         when(submissionRepository.read(anyString())).thenReturn(null);
@@ -152,7 +150,7 @@ public class SubmissionServiceImplTest {
 
 
     @Test
-    public void testUpdateSubmissionWithCompanyIncorrectState() {
+    void testUpdateSubmissionWithCompanyIncorrectState() {
         // given
         CompanyApi companyApi = Mockito.mock(CompanyApi.class);
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
@@ -168,7 +166,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithForm() {
+    void testUpdateSubmissionWithForm() {
         // given
         FormTypeApi formApi = Mockito.mock(FormTypeApi.class);
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
@@ -184,7 +182,7 @@ public class SubmissionServiceImplTest {
 
 
     @Test
-    public void testUpdateSubmissionWithFormWhereFormDetailsAlreadyExist() {
+    void testUpdateSubmissionWithFormWhereFormDetailsAlreadyExist() {
         // given
         FormTypeApi formApi = Mockito.mock(FormTypeApi.class);
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
@@ -200,7 +198,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithFormNotFound() {
+    void testUpdateSubmissionWithFormNotFound() {
         // given
         FormTypeApi formApi = Mockito.mock(FormTypeApi.class);
         when(submissionRepository.read(anyString())).thenReturn(null);
@@ -214,7 +212,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithFormIncorrectState() {
+    void testUpdateSubmissionWithFormIncorrectState() {
         // given
         FormTypeApi formApi = Mockito.mock(FormTypeApi.class);
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
@@ -229,7 +227,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithFiles() {
+    void testUpdateSubmissionWithFiles() {
         // given
         FileListApi fileListApi = Mockito.mock(FileListApi.class);
         List<FileDetails> fileDetailsList = Collections.singletonList(Mockito.mock(FileDetails.class));
@@ -247,7 +245,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithFilesWhereFormDetailsAlreadyExist() {
+    void testUpdateSubmissionWithFilesWhereFormDetailsAlreadyExist() {
         // given
         FileListApi fileListApi = Mockito.mock(FileListApi.class);
         List<FileDetails> fileDetailsList = Collections.singletonList(Mockito.mock(FileDetails.class));
@@ -266,7 +264,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithFilesNotFound() {
+    void testUpdateSubmissionWithFilesNotFound() {
         // given
         FileListApi fileListApi = Mockito.mock(FileListApi.class);
         when(submissionRepository.read(anyString())).thenReturn(null);
@@ -281,7 +279,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithFilesIncorrectState() {
+    void testUpdateSubmissionWithFilesIncorrectState() {
         // given
         FileListApi fileListApi = Mockito.mock(FileListApi.class);
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
@@ -297,7 +295,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithPaymentSessions() {
+    void testUpdateSubmissionWithPaymentSessions() {
         // given
         SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE);
         SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
@@ -316,7 +314,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithPaymentReferenceNotFound() {
+    void testUpdateSubmissionWithPaymentReferenceNotFound() {
         // given
         SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE);
         SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
@@ -333,7 +331,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionWithPaymentReferenceIncorrectState() {
+    void testUpdateSubmissionWithPaymentReferenceIncorrectState() {
         // given
         SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE);
         SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
@@ -351,7 +349,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testCompleteSubmission() throws SubmissionValidationException {
+    void testCompleteSubmission() throws SubmissionValidationException {
         // given
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
@@ -371,7 +369,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testCompleteSubmissionValidationFailure() throws SubmissionValidationException {
+    void testCompleteSubmissionValidationFailure() throws SubmissionValidationException {
         // given
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
@@ -388,7 +386,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testCompleteSubmissionNotFound() {
+    void testCompleteSubmissionNotFound() {
         // given
         when(submissionRepository.read(anyString())).thenReturn(null);
 
@@ -403,7 +401,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testCompleteSubmissionIncorrectState() {
+    void testCompleteSubmissionIncorrectState() {
         // given
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
         when(submissionRepository.read(anyString())).thenReturn(submission);
@@ -419,7 +417,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionQueued() {
+    void testUpdateSubmissionQueued() {
         // given
         LocalDateTime now = LocalDateTime.now();
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
@@ -435,7 +433,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testReadSubmission() {
+    void testReadSubmission() {
         // given
         when(submissionRepository.read(SUBMISSION_ID)).thenReturn(submission);
         when(submissionMapper.map(submission)).thenReturn(submissionApi);
@@ -448,7 +446,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testReadSubmissionDoesNotMapMissingSubmission() {
+    void testReadSubmissionDoesNotMapMissingSubmission() {
         // when
         SubmissionApi actual = submissionService.readSubmission(SUBMISSION_ID);
 
@@ -459,7 +457,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionBarcode() {
+    void testUpdateSubmissionBarcode() {
         // given
         String barcode = "Y1234ABCD";
         // when
@@ -470,7 +468,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionStatus() {
+    void testUpdateSubmissionStatus() {
         // when
         SubmissionResponseApi actual = submissionService.updateSubmissionStatus(SUBMISSION_ID,
                 SubmissionStatus.ACCEPTED);
@@ -480,7 +478,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmission() {
+    void testUpdateSubmission() {
         // when
         submissionService.updateSubmission(submission);
         // then
@@ -489,7 +487,7 @@ public class SubmissionServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionConfirmAuthorised() {
+    void testUpdateSubmissionConfirmAuthorised() {
         // given
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
