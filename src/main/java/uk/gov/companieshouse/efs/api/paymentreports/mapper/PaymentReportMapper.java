@@ -9,9 +9,12 @@ import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 public class PaymentReportMapper {
     public PaymentTransaction map(final Submission submission) {
         return new PaymentTransactionBuilder().withSubmissionId(submission.getId())
-            .withCustomerRef(submission.getConfirmationReference()).withUserEmail(submission.getPresenter().getEmail())
-            .withSubmittedAt(submission.getSubmittedAt()).withAmountPaid(submission.getFeeOnSubmission())
-            .withPaymentRef(submission.getPaymentReference()).withFormType(submission.getFormDetails().getFormType())
+            .withCustomerRef(submission.getConfirmationReference())
+            .withUserEmail(submission.getPresenter().getEmail())
+            .withSubmittedAt(submission.getSubmittedAt())
+            .withAmountPaid(submission.getFeeOnSubmission())
+            .withPaymentRef(submission.getPaymentSessions().get(submission.getPaymentSessions().size()-1).getSessionId())
+            .withFormType(submission.getFormDetails().getFormType())
             .withCompanyNumber(submission.getCompany().getCompanyNumber()).build();
     }
 }

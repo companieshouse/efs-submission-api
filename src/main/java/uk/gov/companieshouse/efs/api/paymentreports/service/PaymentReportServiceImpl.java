@@ -57,9 +57,6 @@ public class PaymentReportServiceImpl implements PaymentReportService {
     @Value("${report.period.days.before.today}")
     private int reportPeriodDaysBeforeToday;
 
-    @Value("${report.filename.pattern.finance}")
-    private String financeReportPattern;
-
     @Value("${report.filename.pattern.scotland}")
     private String scotlandReportPattern;
 
@@ -106,7 +103,6 @@ public class PaymentReportServiceImpl implements PaymentReportService {
 
     @Override
     public void sendFinancePaymentReports() throws IOException {
-        createReport(financeReportPattern, findPaymentTransactions(SUCCESSFUL_STATUSES));
         createReport(failedTransactionsFinanceReportPattern, findPaymentTransactions(FAILED_STATUSES));
     }
 
