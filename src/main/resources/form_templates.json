@@ -2,7 +2,7 @@
   "_id" : "SLPCS01",
   "formName" : "SLP CS01 - Confirmation statement for a Scottish limited partnership",
   "formCategory" : "SLP",
-  "fee" : "17",
+  "fee" : "SLPCS01",
   "isAuthenticationRequired" : false,
   "isFesEnabled" : true
 }, {
@@ -72,7 +72,7 @@
   "_id" : "SQPCS01",
   "formName" : "SQP CS01 - Confirmation statement for a Scottish qualifying partnership",
   "formCategory" : "SQP",
-  "fee" : "17",
+  "fee" : "SQPCS01",
   "isAuthenticationRequired" : false,
   "isFesEnabled" : true
 }, {
