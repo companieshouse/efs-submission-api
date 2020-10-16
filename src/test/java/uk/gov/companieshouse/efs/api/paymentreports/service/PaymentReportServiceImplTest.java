@@ -28,9 +28,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
+import uk.gov.companieshouse.api.model.paymentsession.SessionApi;
+import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailModel;
 import uk.gov.companieshouse.efs.api.events.service.S3ClientService;
@@ -49,15 +52,10 @@ class PaymentReportServiceImplTest {
     private static final FormDetails FORM_SCOT_FEE = new FormDetails(null, "SQP1", null);
     private static final FormDetails FORM_NON_SCOT_FEE = new FormDetails(null, "CS01", null);
     private static final String REPORT_SCOT = "'EFS_ScottishPaymentTransactions_'yyyy-MM-dd'.csv'";
-    private static final String REPORT_PAID = "'EFS_PaymentTransactions_'yyyy-MM-dd'.csv'";
     private static final String REPORT_FAILED = "'EFS_FailedPaymentTransactions_'yyyy-MM-dd'.csv'";
     private static final List<String> SCOT_FORM_LIST = Arrays.asList("SQPCS01", "SLPCS01", "SQP1", "LP5(S)", "LP7(S)");
     private static final String BUCKET_NAME = "TEST_BUCKET";
     private static final String ENV_NAME = "TEST_ENV";
-    protected static final String SUCCESS_CSV_CONTENT =
-        "submissionId,customerRef,userEmail,submittedAt,amountPaid,paymentRef,formType,companyNumber\n"
-            + "SCOT_FEE,REF_SF,presenter@nomail.net,2020-08-31T10:10:10,10,PAY_SF,SQP1,00000000\n"
-            + "NON_SCOT_FEE,REF_NSF,presenter@nomail.net,2020-08-31T12:12:12,10,PAY_NSF,CS01,00000000\n";
     protected static final String FAILED_CSV_CONTENT =
         "submissionId,customerRef,userEmail,submittedAt,amountPaid,paymentRef,formType,companyNumber\n"
             + "SCOT_FAILED_FEE,REF_SFF,presenter@nomail.net,2020-08-31T11:11:11,10,PAY_SFF,SQP1,00000000\n"
@@ -96,7 +94,6 @@ class PaymentReportServiceImplTest {
             clock, BUCKET_NAME));
         ReflectionTestUtils.setField(spyService, "scotlandReportPattern", REPORT_SCOT);
         ReflectionTestUtils.setField(spyService, "scotlandForms", SCOT_FORM_LIST);
-        ReflectionTestUtils.setField(spyService, "financeReportPattern", REPORT_PAID);
         ReflectionTestUtils.setField(spyService, "failedTransactionsFinanceReportPattern", REPORT_FAILED);
         ReflectionTestUtils.setField(spyService, "reportPeriodDaysBeforeToday", 1);
 
@@ -106,19 +103,23 @@ class PaymentReportServiceImplTest {
 
         submissionSF = builder.withId("SCOT_FEE").withCompany(company).withFormDetails(FORM_SCOT_FEE)
             .withConfirmationReference("REF_SF").withPresenter(presenter)
-            .withSubmittedAt(REPORT_DATE.atTime(10, 10, 10)).withFeeOnSubmission("10").withPaymentReference("PAY_SF")
+            .withSubmittedAt(REPORT_DATE.atTime(10, 10, 10)).withFeeOnSubmission("10")
+            .withPaymentSessions(createPaymentSessions("PAY_SF"))
             .withStatus(SubmissionStatus.SUBMITTED).build();
         submissionSFF = builder.withId("SCOT_FAILED_FEE").withCompany(company).withFormDetails(FORM_SCOT_FEE)
             .withConfirmationReference("REF_SFF").withPresenter(presenter)
-            .withSubmittedAt(REPORT_DATE.atTime(11, 11, 11)).withFeeOnSubmission("10").withPaymentReference("PAY_SFF")
+            .withSubmittedAt(REPORT_DATE.atTime(11, 11, 11)).withFeeOnSubmission("10")
+            .withPaymentSessions(createPaymentSessions("PAY_SFF"))
             .withStatus(SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER).build();
         submissionNSF = builder.withId("NON_SCOT_FEE").withCompany(company).withFormDetails(FORM_NON_SCOT_FEE)
             .withConfirmationReference("REF_NSF").withPresenter(presenter)
-            .withSubmittedAt(REPORT_DATE.atTime(12, 12, 12)).withFeeOnSubmission("10").withPaymentReference("PAY_NSF")
+            .withSubmittedAt(REPORT_DATE.atTime(12, 12, 12)).withFeeOnSubmission("10")
+            .withPaymentSessions(createPaymentSessions("PAY_NSF"))
             .withStatus(SubmissionStatus.REJECTED).build();
         submissionNSFF = builder.withId("FAILED_FEE").withCompany(company).withFormDetails(FORM_NON_SCOT_FEE)
             .withConfirmationReference("REF_FF").withPresenter(presenter)
-            .withSubmittedAt(REPORT_DATE.atTime(13, 13, 13)).withFeeOnSubmission("10").withPaymentReference("PAY_FF")
+            .withSubmittedAt(REPORT_DATE.atTime(13, 13, 13)).withFeeOnSubmission("10")
+            .withPaymentSessions(createPaymentSessions("PAY_FF"))
             .withStatus(SubmissionStatus.REJECTED_BY_VIRUS_SCAN).build();
     }
 
@@ -156,37 +157,46 @@ class PaymentReportServiceImplTest {
     }
 
     @Test
-    void sendFinancePaymentReports() throws IOException {
-        final String successReportName = "EFS_PaymentTransactions_2020-08-31.csv";
+    void sendFinancePaymentFailureReport() throws IOException {
         final String failedReportName = "EFS_FailedPaymentTransactions_2020-08-31.csv";
-        final String successFileLink = "link.to.uploaded.success.file";
         final String failedFileLink = "link.to.uploaded.failed.file";
 
-        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES,
-            Arrays.asList(submissionSF, submissionNSF));
         expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES,
             Arrays.asList(submissionSFF, submissionNSFF));
-        expectReportUpload(successFileLink, successReportName, failedFileLink, failedReportName);
+        expectReportUpload(failedFileLink, failedReportName);
         when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
 
         spyService.sendFinancePaymentReports();
 
-        verify(emailService, times(2)).sendPaymentReportEmail(emailCaptor.capture());
+        verify(emailService).sendPaymentReportEmail(emailCaptor.capture());
 
-        final List<PaymentReportEmailModel> values = emailCaptor.getAllValues();
-
-        assertThat(values.get(0).getFileLink(), is(successFileLink));
-        assertThat(values.get(0).getFileName(), is(successReportName.replace(".csv", "")));
-        assertThat(values.get(1).getFileLink(), is(failedFileLink));
-        assertThat(values.get(1).getFileName(), is(failedReportName.replace(".csv", "")));
+        assertThat(emailCaptor.getValue().getFileLink(), is(failedFileLink));
+        assertThat(emailCaptor.getValue().getFileName(), is(failedReportName.replace(".csv", "")));
 
     }
 
-    private void expectReportUpload(final String successFileLink, final String successReportName,
-        final String failedFileLink, final String failedReportName) {
+    @Test
+    void sendFinancePaymentFailureReportWhenEmpty() throws IOException {
+        final String failedReportName = "EFS_FailedPaymentTransactions_2020-08-31.csv";
+        final String failedFileLink = "link.to.uploaded.failed.file";
+
+        expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES,
+            Collections.emptyList());
+        expectReportUpload(failedFileLink, failedReportName);
+        when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
+
+        spyService.sendFinancePaymentReports();
+
+        verify(emailService).sendPaymentReportEmail(emailCaptor.capture());
+
+        assertThat(emailCaptor.getValue().getFileLink(), is(failedFileLink));
+        assertThat(emailCaptor.getValue().getFileName(), is(failedReportName.replace(".csv", "")));
+
+    }
+
+    private void expectReportUpload(final String failedFileLink, final String failedReportName) {
 
         when(s3ClientService.getResourceId(anyString())).thenAnswer(invocation -> ENV_NAME + "/" + invocation.getArgument(0));
-        when(s3ClientService.generateFileLink(ENV_NAME + "/" + successReportName, BUCKET_NAME)).thenReturn(successFileLink);
         when(s3ClientService.generateFileLink(ENV_NAME + "/" + failedReportName, BUCKET_NAME)).thenReturn(failedFileLink);
     }
 
@@ -199,7 +209,12 @@ class PaymentReportServiceImplTest {
         return new PaymentTransactionBuilder().withFormType(submission.getFormDetails().getFormType())
             .withSubmissionId(submission.getId()).withAmountPaid(submission.getFeeOnSubmission())
             .withCompanyNumber(submission.getCompany().getCompanyNumber())
-            .withCustomerRef(submission.getConfirmationReference()).withPaymentRef(submission.getPaymentReference())
+            .withCustomerRef(submission.getConfirmationReference()).withPaymentRef(
+                submission.getPaymentSessions().stream().findFirst().map(SessionApi::getSessionId).orElse(null))
             .withSubmittedAt(submission.getSubmittedAt()).withUserEmail(submission.getPresenter().getEmail()).build();
+    }
+
+    private SessionListApi createPaymentSessions(final String sessionRef) {
+        return new SessionListApi(Collections.singletonList(new SessionApi(sessionRef, sessionRef + "-state")));
     }
 }
