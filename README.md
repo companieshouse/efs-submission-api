@@ -36,7 +36,7 @@ submission|id, dates, presenter, form & file details|this and the database will 
 category_templates|the 'groupings' for the forms|reference data manually populated from:<br>`src/main/resources/category_templates.json`|
 form_templates|the form ids, names etc.|reference data manually populated from:<br>`src/main/resources/form_templates.json`|
 company_auth_allow_list|emails of IP's who are allowed to see and submit Insolvency forms|manually populated e.g.<br> `{"emailAddress": "demo@ch.gov.uk"}`|
-payment_charges|payment templates required by payment service|reference data manually populated from:<br>`src/main/resources/payments-charges.json`|
+payment_charges|payment templates required by payment service|reference data manually populated from:<br>`src/main/resources/payments_templates.json`|
 
 Configuration
 -------------
