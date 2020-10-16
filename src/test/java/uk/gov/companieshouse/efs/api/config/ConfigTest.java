@@ -23,7 +23,6 @@ import uk.gov.companieshouse.efs.api.email.mapper.InternalEmailMapperFactory;
 import uk.gov.companieshouse.efs.api.email.mapper.InternalFailedConversionEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.InternalSubmissionEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.PaymentReportEmailMapper;
-import uk.gov.companieshouse.efs.api.paymentreports.service.OutputStreamWriterFactory;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,17 +41,11 @@ class ConfigTest {
         assertThat(testConfig.pattern(), is(nullValue()));
         assertThat(testConfig.symbolSet(), is(nullValue()));
         assertThat(testConfig.fileBucketName(), is(nullValue()));
-        assertThat(testConfig.paymentReportBucketName(), is(nullValue()));
     }
 
     @Test
     void clock() {
         assertThat(testConfig.clock(), isA(Clock.class));
-    }
-
-    @Test
-    void reportStreamWriterFactory() {
-        assertThat(testConfig.reportStreamWriterFactory(), isA(OutputStreamWriterFactory.class));
     }
 
     @Test

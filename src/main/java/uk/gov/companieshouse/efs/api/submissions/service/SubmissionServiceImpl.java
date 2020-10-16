@@ -3,24 +3,27 @@ package uk.gov.companieshouse.efs.api.submissions.service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Optional;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.submissions.CompanyApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.FileListApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FormTypeApi;
-import uk.gov.companieshouse.api.model.efs.submissions.PaymentReferenceApi;
 import uk.gov.companieshouse.api.model.efs.submissions.PresenterApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
+import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
+import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
+import uk.gov.companieshouse.efs.api.payment.service.PaymentTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.mapper.CompanyMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.FileDetailsMapper;
-import uk.gov.companieshouse.efs.api.submissions.mapper.PaymentReferenceMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.PresenterMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.SubmissionMapper;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
@@ -46,10 +49,10 @@ public class SubmissionServiceImpl implements SubmissionService {
     private PresenterMapper presenterMapper;
     private CompanyMapper companyMapper;
     private FileDetailsMapper fileDetailsMapper;
-    private PaymentReferenceMapper paymentReferenceMapper;
     private CurrentTimestampGenerator timestampGenerator;
     private ConfirmationReferenceGeneratorService confirmationReferenceGenerator;
     private FormTemplateService formTemplateService;
+    private PaymentTemplateService paymentTemplateService;
     private EmailService emailService;
     private Validator<Submission> validator;
 
@@ -57,18 +60,18 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Autowired
     public SubmissionServiceImpl(SubmissionRepository submissionRepository, SubmissionMapper submissionMapper,
         PresenterMapper presenterMapper, CompanyMapper companyMapper, FileDetailsMapper fileDetailsMapper,
-        PaymentReferenceMapper paymentReferenceMapper, CurrentTimestampGenerator timestampGenerator,
+        CurrentTimestampGenerator timestampGenerator,
         ConfirmationReferenceGeneratorService confirmationReferenceGenerator, FormTemplateService formTemplateService,
-        EmailService emailService, Validator<Submission> validator) {
+        PaymentTemplateService paymentTemplateService, EmailService emailService, Validator<Submission> validator) {
         this.submissionRepository = submissionRepository;
         this.submissionMapper = submissionMapper;
         this.presenterMapper = presenterMapper;
         this.companyMapper = companyMapper;
         this.fileDetailsMapper = fileDetailsMapper;
-        this.paymentReferenceMapper = paymentReferenceMapper;
         this.timestampGenerator = timestampGenerator;
         this.confirmationReferenceGenerator = confirmationReferenceGenerator;
         this.formTemplateService = formTemplateService;
+        this.paymentTemplateService = paymentTemplateService;
         this.emailService = emailService;
         this.validator = validator;
     }
@@ -111,11 +114,14 @@ public class SubmissionServiceImpl implements SubmissionService {
         LOGGER.debug(String.format("Attempting to update form type for submission with id: [%s]", id));
         Submission submission = this.getSubmissionForUpdate(id);
         FormDetails formDetails = submission.getFormDetails();
+        final String formType = formApi.getFormType();
         if (formDetails == null) {
-            formDetails = FormDetails.builder().withFormType(formApi.getFormType()).build();
+            formDetails = FormDetails.builder().withFormType(formType).build();
         } else {
-            formDetails.setFormType(formApi.getFormType());
+            formDetails.setFormType(formType);
         }
+        LOGGER.debug(String.format("Attempting to update fee for submission with id: [%s]", id));
+        submission.setFeeOnSubmission(getPaymentCharge(formType));
         submission.setFormDetails(formDetails);
         submissionRepository.updateSubmission(submission);
         LOGGER.debug(String.format("Successfully updated form type for submission with id: [%s]", id));
@@ -140,26 +146,14 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public SubmissionResponseApi updateSubmissionWithPaymentReference(String id,
-        PaymentReferenceApi paymentReferenceApi) {
-        LOGGER.debug(String.format("Attempting to update payment reference for submission with id: [%s]", id));
-        Submission submission = this.getSubmissionForUpdate(id);
-        submission.setPaymentReference(paymentReferenceMapper.map(paymentReferenceApi));
-        submissionRepository.updateSubmission(submission);
-        LOGGER.debug(String.format("Successfully updated payment reference for submission with id: [%s]", id));
-
-        return new SubmissionResponseApi(id);
-    }
-
-    @Override
-    public SubmissionResponseApi updateSubmissionWithFeeOnSubmission(final String id) {
-        LOGGER.debug(String.format("Attempting to update fee on submission for submission with id: [%s]", id));
+    public SubmissionResponseApi updateSubmissionWithPaymentSessions(String id,
+        SessionListApi paymentSessions) {
+        LOGGER.debug(String.format("Attempting to update payment sessions for submission with id: [%s]", id));
         Submission submission = this.getSubmissionForUpdate(id);
 
-        submission.setFeeOnSubmission(
-            formTemplateService.getFormTemplate(submission.getFormDetails().getFormType()).getFee());
+        submission.setPaymentSessions(paymentSessions);
         submissionRepository.updateSubmission(submission);
-        LOGGER.debug(String.format("Successfully updated fee on submission for submission with id: [%s]", id));
+        LOGGER.debug(String.format("Successfully updated payment sessions for submission with id: [%s]", id));
 
         return new SubmissionResponseApi(id);
     }
@@ -260,10 +254,33 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw new SubmissionNotFoundException(String.format("Could not locate submission with id: [%s]", id));
         } else if (submission.getStatus() != SubmissionStatus.OPEN) {
             LOGGER.errorContext(id, "Submission status wasn't OPEN, couldn't update", null, debug);
-            throw new SubmissionIncorrectStateException(String.format("Submission status for [%s] wasn't OPEN, couldn't update", id));
+            throw new SubmissionIncorrectStateException(
+                String.format("Submission status for [%s] wasn't OPEN, couldn't update", id));
         }
 
         return submission;
+    }
+
+    private String getPaymentCharge(final String formType) {
+        final FormTemplateApi formTemplate = formType != null ? formTemplateService.getFormTemplate(formType) : null;
+        String result = null;
+
+        if (formTemplate != null) {
+            final String paymentCharge = formTemplate.getPaymentCharge();
+
+            if (StringUtils.isNotBlank(paymentCharge)) {
+                LOGGER.debug(String.format("Payment charge for form [%s] is [%s]", formType, paymentCharge));
+
+                final Optional<PaymentTemplate> template = paymentTemplateService.getTemplate(paymentCharge);
+
+                result = template.map(t -> t.getItems().get(0).getAmount()).orElse(null);
+            }
+        }
+        if (result == null) {
+            LOGGER.debug("Payment charge for form is [N/A]");
+        }
+
+        return result;
     }
 
 }

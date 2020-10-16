@@ -1,5 +1,17 @@
 package uk.gov.companieshouse.efs.api.submissions.repository;
 
+import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.ACCEPTED;
+import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.PROCESSED_BY_EMAIL;
+import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.PROCESSING;
+import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.READY_TO_SUBMIT;
+import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.REJECTED;
+import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER;
+import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.REJECTED_BY_VIRUS_SCAN;
+import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.SENT_TO_FES;
+import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.SUBMITTED;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -30,6 +42,12 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
     private static final String SUBMISSIONS_COLLECTION = "submissions";
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
+    public static final ImmutableSet<SubmissionStatus> SUCCESSFUL_STATUSES =
+        Sets.immutableEnumSet(SUBMITTED, PROCESSING, PROCESSED_BY_EMAIL, READY_TO_SUBMIT, ACCEPTED, REJECTED,
+            SENT_TO_FES);
+
+    public static final ImmutableSet<SubmissionStatus> FAILED_STATUSES =
+        Sets.immutableEnumSet(REJECTED_BY_DOCUMENT_CONVERTER, REJECTED_BY_VIRUS_SCAN);
     public SubmissionRepositoryImpl(MongoTemplate mongoTemplate, CurrentTimestampGenerator timestampGenerator) {
         this.template = mongoTemplate;
         this.timestampGenerator = timestampGenerator;

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
+import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 
 @Document(collection = "submissions")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -31,8 +32,8 @@ public class Submission {
     private Company company;
     private Presenter presenter;
     private SubmissionStatus status;
-    @Field("payment_reference")
-    private String paymentReference;
+    @Field("payment_sessions")
+    private SessionListApi paymentSessions;
     @Field("form")
     private FormDetails formDetails;
     @Field("chips_reject_reasons")
@@ -44,7 +45,7 @@ public class Submission {
 
     public Submission(String id, String confirmationReference, LocalDateTime createdAt,
                       LocalDateTime submittedAt, LocalDateTime lastModifiedAt, Company company,
-                      Presenter presenter, SubmissionStatus status, String paymentReference,
+                      Presenter presenter, SubmissionStatus status, SessionListApi paymentSessions,
                       FormDetails formDetails, List<RejectReason> chipsRejectReasons,
                       Boolean confirmAuthorised, String feeOnSubmission) {
         this.id = id;
@@ -55,7 +56,7 @@ public class Submission {
         this.company = company;
         this.presenter = presenter;
         this.status = status;
-        this.paymentReference = paymentReference;
+        this.paymentSessions = paymentSessions;
         this.formDetails = formDetails;
         this.chipsRejectReasons = chipsRejectReasons;
         this.confirmAuthorised = confirmAuthorised;
@@ -126,12 +127,12 @@ public class Submission {
         this.status = status;
     }
 
-    public String getPaymentReference() {
-        return paymentReference;
+    public SessionListApi getPaymentSessions() {
+        return paymentSessions;
     }
 
-    public void setPaymentReference(String paymentReference) {
-        this.paymentReference = paymentReference;
+    public void setPaymentSessions(final SessionListApi paymentSessions) {
+        this.paymentSessions = new SessionListApi(paymentSessions);
     }
 
     public FormDetails getFormDetails() {
@@ -179,7 +180,7 @@ public class Submission {
         private Company company;
         private Presenter presenter;
         private SubmissionStatus status;
-        private String paymentReference;
+        private SessionListApi paymentSessions;
         private FormDetails formDetails;
         private List<RejectReason> chipsRejectReasons;
         private Boolean confirmAuthorised;
@@ -225,8 +226,8 @@ public class Submission {
             return this;
         }
 
-        public Builder withPaymentReference(String paymentReference) {
-            this.paymentReference = paymentReference;
+        public Builder withPaymentSessions(SessionListApi paymentSessions) {
+            this.paymentSessions = new SessionListApi(paymentSessions);
             return this;
         }
 
@@ -252,7 +253,7 @@ public class Submission {
 
         public Submission build() {
             return new Submission(id, confirmationReference, createdAt, submittedAt, lastModifiedAt,
-                company, presenter, status, paymentReference, formDetails, chipsRejectReasons,
+                company, presenter, status, paymentSessions, formDetails, chipsRejectReasons,
                 confirmAuthorised, feeOnSubmission);
         }
     }
@@ -271,7 +272,7 @@ public class Submission {
             .equals(getCreatedAt(), that.getCreatedAt()) && Objects.equals(getSubmittedAt(), that.getSubmittedAt())
             && Objects.equals(getLastModifiedAt(), that.getLastModifiedAt()) && Objects
             .equals(getCompany(), that.getCompany()) && Objects.equals(getPresenter(), that.getPresenter())
-            && getStatus() == that.getStatus() && Objects.equals(getPaymentReference(), that.getPaymentReference())
+            && getStatus() == that.getStatus() && Objects.equals(getPaymentSessions(), that.getPaymentSessions())
             && Objects.equals(getFormDetails(), that.getFormDetails()) && Objects
             .equals(getChipsRejectReasons(), that.getChipsRejectReasons()) && Objects
             .equals(getConfirmAuthorised(), that.getConfirmAuthorised()) && Objects
@@ -281,7 +282,7 @@ public class Submission {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getConfirmationReference(), getCreatedAt(), getSubmittedAt(), getLastModifiedAt(),
-            getCompany(), getPresenter(), getStatus(), getPaymentReference(), getFormDetails(), getChipsRejectReasons(),
+            getCompany(), getPresenter(), getStatus(), getPaymentSessions(), getFormDetails(), getChipsRejectReasons(),
             getConfirmAuthorised(), getFeeOnSubmission());
     }
 }

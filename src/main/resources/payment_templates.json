@@ -1,0 +1,44 @@
+[
+  {
+    "_id": "SLPCS01",
+    "description": "Upload form SLPCS01",
+    "etag": "50ad23b174375c0e3343f9601b6128bb92ed079e",
+    "items": [
+      {
+        "amount": "17",
+        "available_payment_methods": [
+          "credit-card"
+        ],
+        "class_of_payment": [
+          "data-maintenance"
+        ],
+        "description": "Upload a document to Companies House: SLPCS01",
+        "description_identifier": "EFS_SLPCS01",
+        "kind": "cost#cost",
+        "product_type": "efs-slpcs01"
+      }
+    ],
+    "kind": "EFS"
+  },
+  {
+    "_id": "SQPCS01",
+    "description": "Upload form SQPCS01",
+    "etag": "a6232d3cc78ff7092c39e68bedea049fcfbccc8d",
+    "items": [
+      {
+        "amount": "17",
+        "available_payment_methods": [
+          "credit-card"
+        ],
+        "class_of_payment": [
+          "data-maintenance"
+        ],
+        "description": "Upload a document to Companies House: SQPCS01",
+        "description_identifier": "EFS_SQPCS01",
+        "kind": "cost#cost",
+        "product_type": "efs-sqpcs01"
+      }
+    ],
+    "kind": "EFS"
+  }
+]
