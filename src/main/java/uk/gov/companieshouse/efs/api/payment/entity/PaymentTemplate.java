@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -37,6 +38,7 @@ public final class PaymentTemplate {
         this.links = builder.links;
         this.paymentReference = builder.paymentReference;
         this.status = builder.status;
+        this.companyNumber = builder.companyNumber;
     }
 
     /**
@@ -64,6 +66,7 @@ public final class PaymentTemplate {
         builder.links = original.getLinks();
         builder.paymentReference = original.getPaymentReference();
         builder.status = original.getStatus();
+        builder.companyNumber = original.getCompanyNumber();
         return builder;
     }
 
@@ -458,6 +461,9 @@ public final class PaymentTemplate {
     private String paymentReference;
     @Field
     private Status status;
+    @JsonProperty("company_number")
+    @Transient // not an entity field; for use by PaymentController.getPaymentDetails() response
+    private String companyNumber;
 
     public String getId() {
         return id;
@@ -528,6 +534,14 @@ public final class PaymentTemplate {
         this.status = status;
     }
 
+    public String getCompanyNumber() {
+        return companyNumber;
+    }
+
+    public void setCompanyNumber(final String companyNumber) {
+        this.companyNumber = companyNumber;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -537,28 +551,26 @@ public final class PaymentTemplate {
             return false;
         }
         final PaymentTemplate that = (PaymentTemplate) o;
-        return Objects.equals(getId(), that.getId())
-               && Objects.equals(getDescription(), that.getDescription())
-               && Objects.equals(getEtag(), that.getEtag())
-               && Objects.equals(getItems(), that.getItems())
-               && Objects.equals(getKind(), that.getKind())
-               && Objects.equals(getLinks(), that.getLinks())
-               && Objects.equals(getPaymentReference(), that.getPaymentReference())
-               && getStatus() == that.getStatus();
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getDescription(), that.getDescription())
+            && Objects.equals(getEtag(), that.getEtag()) && Objects.equals(getItems(), that.getItems()) && Objects
+            .equals(getKind(), that.getKind()) && Objects.equals(getLinks(), that.getLinks()) && Objects
+            .equals(getPaymentReference(), that.getPaymentReference()) && getStatus() == that.getStatus() && Objects
+            .equals(getCompanyNumber(), that.getCompanyNumber());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getDescription(), getEtag(), getItems(), getKind(), getLinks(),
-            getPaymentReference(), getStatus());
+        return Objects
+            .hash(getId(), getDescription(), getEtag(), getItems(), getKind(), getLinks(), getPaymentReference(),
+                getStatus(), getCompanyNumber());
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", id)
-            .append("description", description).append("etag", etag).append("items", items)
-            .append("kind", kind).append("links", links)
-            .append("paymentReference", paymentReference).append("status", status).toString();
+            .append("description", description).append("etag", etag).append("items", items).append("kind", kind)
+            .append("links", links).append("paymentReference", paymentReference).append("status", status)
+            .append("companyNumber", companyNumber).toString();
     }
 
     /**
@@ -575,6 +587,8 @@ public final class PaymentTemplate {
         @JsonProperty("payment_reference")
         private String paymentReference;
         private Status status;
+        @JsonProperty("company_number")
+        private String companyNumber;
 
         private Builder() {
         }
@@ -678,6 +692,18 @@ public final class PaymentTemplate {
          */
         public Builder withStatus(final Status val) {
             status = val;
+            return this;
+        }
+
+
+        /**
+         * set the company number on the {@code PaymentTemplate}
+         *
+         * @param val the company number
+         * @return builder with the company number set to the specified value
+         */
+        public Builder withCompanyNumber(final String val) {
+            companyNumber = val;
             return this;
         }
 

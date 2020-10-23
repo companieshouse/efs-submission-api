@@ -26,6 +26,7 @@ import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
 import uk.gov.companieshouse.efs.api.payment.service.PaymentTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.mapper.SubmissionMapper;
+import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
@@ -36,7 +37,14 @@ import uk.gov.companieshouse.logging.Logger;
 @ExtendWith(MockitoExtension.class)
 class PaymentControllerTest {
     private static final String SUB_ID = "1234567890";
+    private static final String COMPANY_NUMBER = "00000000";
     private static final String PAYMENT_REQUEST_URL = "http://localhost:9999/efs-submission-api/submission";
+    public static final String NOFORM = "NOFORM";
+    public static final String NOCHARGE = "NOCHARGE";
+    public static final String FORM = "FORM";
+    public static final String CHARGED = "CHARGED";
+    public static final String CHARGES = "CHARGES";
+    public static final String UNKNOWN = "UNKNOWN";
 
     @Mock
     private SessionListApi paymentSessions;
@@ -62,31 +70,38 @@ class PaymentControllerTest {
     @Mock
     private BindingResult result;
 
+    private Company company;
+
     @BeforeEach
     void setUp() {
-        this.paymentController = new PaymentController(service, formTemplateService, paymentTemplateService, logger );
+        this.paymentController = new PaymentController(service, formTemplateService, paymentTemplateService, logger);
+        company = new Company(COMPANY_NUMBER, "test-company");
     }
 
     @Test
     void testGetPaymentDetails() {
-        final FormDetails formDetails = new FormDetails("FORM", "CHARGED", null);
-        SubmissionApi submission = new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi("CHARGED", "charged", null,"CHARGES", false, false);
-        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId("CHARGED").build();
+
+        final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
+        final SubmissionApi submission = new SubmissionMapper()
+            .map(new Submission.Builder().withFormDetails(formDetails).withCompany(company).build());
+        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false);
+        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
-        when(formTemplateService.getFormTemplate("CHARGED")).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate("CHARGES")).thenReturn(Optional.of(paymentTemplate));
-        when(request.getRequestURL()).thenReturn(new StringBuffer(PAYMENT_REQUEST_URL).append("/").append(SUB_ID).append("/"));
+        when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
+        when(paymentTemplateService.getTemplate(CHARGES)).thenReturn(Optional.of(paymentTemplate));
+        when(request.getRequestURL())
+            .thenReturn(new StringBuffer(PAYMENT_REQUEST_URL).append("/").append(SUB_ID).append("/"));
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
 
         //then
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
-        
-            assertThat(paymentTemplate.getLinks().getSelf().toString(), is (PAYMENT_REQUEST_URL + "/" + SUB_ID));
-        assertThat(paymentTemplate.getLinks().getResource(), is (PAYMENT_REQUEST_URL));
+
+        assertThat(paymentTemplate.getLinks().getSelf().toString(), is(PAYMENT_REQUEST_URL + "/" + SUB_ID));
+        assertThat(paymentTemplate.getLinks().getResource(), is(PAYMENT_REQUEST_URL));
+        assertThat(paymentTemplate.getCompanyNumber(), is(COMPANY_NUMBER));
 
     }
 
@@ -119,8 +134,9 @@ class PaymentControllerTest {
     @Test
     void testGetPaymentDetailsWhenSubmissionFormTypeNull() {
         //given
-        final FormDetails formDetails = new FormDetails("NOFORM", null, null);
-        SubmissionApi submission = new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
+        final FormDetails formDetails = new FormDetails(NOFORM, null, null);
+        SubmissionApi submission =
+            new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
 
@@ -134,11 +150,12 @@ class PaymentControllerTest {
     @Test
     void testGetPaymentDetailsWhenSubmissionFormTypeNotFound() {
         //given
-        final FormDetails formDetails = new FormDetails("UNKNOWNFORM", "UNKNOWN", null);
-        SubmissionApi submission = new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
+        final FormDetails formDetails = new FormDetails("UNKNOWNFORM", UNKNOWN, null);
+        SubmissionApi submission =
+            new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
-        when(formTemplateService.getFormTemplate("UNKNOWN")).thenReturn(null);
+        when(formTemplateService.getFormTemplate(UNKNOWN)).thenReturn(null);
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -150,8 +167,9 @@ class PaymentControllerTest {
     @Test
     void testGetPaymentDetailsWhenSubmissionFormTypeBlank() {
         //given
-        final FormDetails formDetails = new FormDetails("NOFORM", "", null);
-        SubmissionApi submission = new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
+        final FormDetails formDetails = new FormDetails(NOFORM, "", null);
+        SubmissionApi submission =
+            new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
 
@@ -165,12 +183,13 @@ class PaymentControllerTest {
     @Test
     void testGetPaymentDetailsWhenPaymentChargeNull() {
         //given
-        final FormDetails formDetails = new FormDetails("NOFORM", "NOCHARGE", null);
-        SubmissionApi submission = new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi("NOCHARGE", "no charge", null,null, false, false);
+        final FormDetails formDetails = new FormDetails(NOFORM, NOCHARGE, null);
+        SubmissionApi submission =
+            new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
+        final FormTemplateApi formTemplate = new FormTemplateApi(NOCHARGE, "no charge", null, null, false, false);
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
-        when(formTemplateService.getFormTemplate("NOCHARGE")).thenReturn(formTemplate);
+        when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -182,12 +201,13 @@ class PaymentControllerTest {
     @Test
     void testGetPaymentDetailsWhenPaymentChargeBlank() {
         //given
-        final FormDetails formDetails = new FormDetails("NOFORM", "NOCHARGE", null);
-        SubmissionApi submission = new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi("NOCHARGE", "no charge", null,"", false, false);
+        final FormDetails formDetails = new FormDetails(NOFORM, NOCHARGE, null);
+        SubmissionApi submission =
+            new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
+        final FormTemplateApi formTemplate = new FormTemplateApi(NOCHARGE, "no charge", null, "", false, false);
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
-        when(formTemplateService.getFormTemplate("NOCHARGE")).thenReturn(formTemplate);
+        when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -199,13 +219,14 @@ class PaymentControllerTest {
     @Test
     void testGetPaymentDetailsWhenPaymentChargeNotFound() {
         //given
-        final FormDetails formDetails = new FormDetails("NOFORM", "NOCHARGE", null);
-        SubmissionApi submission = new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi("NOCHARGE", "no charge", null,"UNKNOWN", false, false);
+        final FormDetails formDetails = new FormDetails(NOFORM, NOCHARGE, null);
+        SubmissionApi submission =
+            new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
+        final FormTemplateApi formTemplate = new FormTemplateApi(NOCHARGE, "no charge", null, UNKNOWN, false, false);
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
-        when(formTemplateService.getFormTemplate("NOCHARGE")).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate("UNKNOWN")).thenReturn(Optional.empty());
+        when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
+        when(paymentTemplateService.getTemplate(UNKNOWN)).thenReturn(Optional.empty());
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -216,21 +237,64 @@ class PaymentControllerTest {
 
     @Test
     void testGetPaymentDetailsWhenRequestUrlBad() {
-        final FormDetails formDetails = new FormDetails("FORM", "CHARGED", null);
-        SubmissionApi submission = new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi("CHARGED", "charged", null,"CHARGES", false, false);
-        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId("CHARGED").build();
+        final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
+        SubmissionApi submission = new SubmissionMapper()
+            .map(new Submission.Builder().withFormDetails(formDetails).withCompany(company).build());
+        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false);
+        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
-        when(formTemplateService.getFormTemplate("CHARGED")).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate("CHARGES")).thenReturn(Optional.of(paymentTemplate));
-        when(request.getRequestURL()).thenReturn(new StringBuffer("http://localhost:9999/efs-submission-api/submission{"));
+        when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
+        when(paymentTemplateService.getTemplate(CHARGES)).thenReturn(Optional.of(paymentTemplate));
+        when(request.getRequestURL())
+            .thenReturn(new StringBuffer("http://localhost:9999/efs-submission-api/submission{"));
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
 
         //then
         assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    void testGetPaymentDetailsWhenCompanyNull() {
+        final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
+        SubmissionApi submission = new SubmissionMapper()
+            .map(new Submission.Builder().withFormDetails(formDetails).build());
+        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false);
+        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
+
+        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
+        when(paymentTemplateService.getTemplate(CHARGES)).thenReturn(Optional.of(paymentTemplate));
+
+        //when
+        final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
+
+        //then
+        assertThat(response.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
+
+    }
+
+    @Test
+    void testGetPaymentDetailsWhenCompanyNumberBlank() {
+        company.setCompanyNumber("");
+
+        final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
+        SubmissionApi submission = new SubmissionMapper()
+            .map(new Submission.Builder().withFormDetails(formDetails).withCompany(company).build());
+        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false);
+        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
+
+        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
+        when(paymentTemplateService.getTemplate(CHARGES)).thenReturn(Optional.of(paymentTemplate));
+
+        //when
+        final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
+
+        //then
+        assertThat(response.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
 
     }
 
@@ -241,8 +305,8 @@ class PaymentControllerTest {
         when(service.updateSubmissionWithPaymentSessions("123", paymentSessions)).thenReturn(response);
 
         //when
-        ResponseEntity<SubmissionResponseApi> actual = paymentController.submitPaymentSessions("123",
-            paymentSessions, result);
+        ResponseEntity<SubmissionResponseApi> actual =
+            paymentController.submitPaymentSessions("123", paymentSessions, result);
 
         //then
         assertThat(actual.getBody(), is(equalTo(response)));
@@ -253,11 +317,12 @@ class PaymentControllerTest {
     @Test
     void testSubmitPaymentSessionsReturns409Conflict() {
         //given
-        when(service.updateSubmissionWithPaymentSessions(SUB_ID, paymentSessions)).thenThrow(new SubmissionIncorrectStateException("not OPEN"));
+        when(service.updateSubmissionWithPaymentSessions(SUB_ID, paymentSessions))
+            .thenThrow(new SubmissionIncorrectStateException("not OPEN"));
 
         //when
-        ResponseEntity<SubmissionResponseApi> actual = paymentController.submitPaymentSessions(SUB_ID,
-            paymentSessions, result);
+        ResponseEntity<SubmissionResponseApi> actual =
+            paymentController.submitPaymentSessions(SUB_ID, paymentSessions, result);
 
         //then
         assertNull(actual.getBody());
@@ -271,8 +336,8 @@ class PaymentControllerTest {
         when(result.getFieldError()).thenReturn(new FieldError("a", "payment_reference", "invalid"));
 
         // when
-        ResponseEntity<SubmissionResponseApi> actual = paymentController.submitPaymentSessions("123",
-            paymentSessions, result);
+        ResponseEntity<SubmissionResponseApi> actual =
+            paymentController.submitPaymentSessions("123", paymentSessions, result);
 
         // then
         assertNull(actual.getBody());
@@ -283,11 +348,12 @@ class PaymentControllerTest {
     @Test
     void testSubmitPaymentSessionsReturns404NotFound() {
         // given
-        when(service.updateSubmissionWithPaymentSessions(SUB_ID, paymentSessions)).thenThrow(new SubmissionNotFoundException("not found"));
+        when(service.updateSubmissionWithPaymentSessions(SUB_ID, paymentSessions))
+            .thenThrow(new SubmissionNotFoundException("not found"));
 
         // when
-        ResponseEntity<SubmissionResponseApi> actual = paymentController.submitPaymentSessions(SUB_ID,
-            paymentSessions, result);
+        ResponseEntity<SubmissionResponseApi> actual =
+            paymentController.submitPaymentSessions(SUB_ID, paymentSessions, result);
 
         // then
         assertNull(actual.getBody());
