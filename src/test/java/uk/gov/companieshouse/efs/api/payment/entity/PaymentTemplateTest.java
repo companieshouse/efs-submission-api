@@ -23,6 +23,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class PaymentTemplateTest {
+    private static final String COMPANY_NUMBER = "00000000";
+
     private PaymentTemplate testDetails;
     private PaymentTemplate.Item item;
     private PaymentTemplate.Links links;
@@ -39,8 +41,11 @@ class PaymentTemplateTest {
         testDetails = PaymentTemplate.newBuilder().withId("efs-test")
             .withDescription("Upload a form to Companies house")
             .withEtag("d8a936fc59fd43ba6c66363c25684be1964ea03d").withItem(item).withKind("cost#cost")
-            .withLinks(links).withPaymentReference("Test Charge")
-            .withStatus(PaymentTemplate.Status.PENDING).build();
+            .withLinks(links)
+            .withPaymentReference("Test Charge")
+            .withStatus(PaymentTemplate.Status.PENDING)
+            .withCompanyNumber(COMPANY_NUMBER)
+            .build();
     }
 
     @Test
@@ -159,7 +164,8 @@ class PaymentTemplateTest {
                 + "links=PaymentTemplate.Links[resource=http://resource.url,"
                 + "self=http://self.url],"
                 + "paymentReference=Test Charge,"
-                + "status=pending"
+                + "status=pending,"
+                + "companyNumber=00000000"
                 + "]"));
             //@formatter:off
     }
@@ -172,7 +178,8 @@ class PaymentTemplateTest {
             containsString("id"), containsString("description"),
             containsString("etag"), containsString("items"),
             containsString("kind"), containsString("links"),
-            containsString("payment_reference")));
+            containsString("payment_reference"),
+            containsString("status"), containsString("company_number")));
         //formatter:on
     }
 

@@ -3,7 +3,7 @@
   "info": {
     "title": "Emergency Filing Service API",
     "description": "Emergency Filing Service API specification",
-    "version": "0.2.1"
+    "version": "0.2.2"
   },
   "basePath": "/efs-submissions-api",
   "schemes": [
@@ -1038,7 +1038,8 @@
         "items",
         "kind",
         "links",
-        "status"
+        "status",
+        "company_number"
       ],
       "properties": {
         "id": {
@@ -1084,6 +1085,10 @@
         },
         "status": {
           "$ref": "#/definitions/payment-status"
+        },
+        "company_number": {
+          "type": "string",
+          "example": "SL009355"
         }
       }
     },
