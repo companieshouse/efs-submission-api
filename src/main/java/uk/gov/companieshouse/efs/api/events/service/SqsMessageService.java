@@ -21,12 +21,13 @@ import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 @Service
 public class SqsMessageService implements MessageService {
 
-    private static final uk.gov.companieshouse.logging.Logger LOGGER = uk.gov.companieshouse.logging.LoggerFactory.getLogger("efs-submission-api");
+    public static final String EFS_NAMESPACE = "efs-submission-api";
+    private static final uk.gov.companieshouse.logging.Logger LOGGER = uk.gov.companieshouse.logging.LoggerFactory.getLogger(
+        EFS_NAMESPACE);
 
     private static final String SUBMISSION_KEY = "submissionId";
     private static final String FILE_KEY = "fileId";
     private static final String STRING_DATA_TYPE = "String";
-    private static final String MESSAGE_BODY = "efs-submission-api";
 
     private SqsClient client;
     private String queueUrl;
@@ -74,7 +75,7 @@ public class SqsMessageService implements MessageService {
         return submission.getFormDetails().getFileDetailsList().stream()
                 .map(file -> SendMessageBatchRequestEntry.builder()
                         .messageAttributes(getMessageAttributes(submission.getId(), file.getFileId()))
-                        .id(idGenerator.generateId()).messageBody(MESSAGE_BODY).messageGroupId(MESSAGE_BODY)
+                        .id(idGenerator.generateId()).messageBody(EFS_NAMESPACE).messageGroupId(EFS_NAMESPACE)
                         .messageDeduplicationId(idGenerator.generateId()).build());
     }
 
