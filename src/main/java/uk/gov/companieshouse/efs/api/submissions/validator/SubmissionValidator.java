@@ -10,7 +10,7 @@ import uk.gov.companieshouse.efs.api.submissions.validator.exception.SubmissionV
 import uk.gov.companieshouse.logging.Logger;
 
 @Component
-public class SubmissionValidator {
+public class SubmissionValidator extends ValidatorImpl<Submission> implements Validator<Submission> {
 
     private FormTemplateRepository formRepository;
     private PaymentTemplateRepository paymentRepository;
