@@ -39,11 +39,11 @@ import uk.gov.companieshouse.logging.Logger;
 @RequestMapping("/efs-submission-api/submission/")
 public class PaymentController {
 
-    private Logger logger;
+    private final Logger logger;
 
-    private SubmissionService service;
-    private FormTemplateService formTemplateService;
-    private PaymentTemplateService paymentTemplateService;
+    private final SubmissionService service;
+    private final FormTemplateService formTemplateService;
+    private final PaymentTemplateService paymentTemplateService;
 
     @Autowired
     public PaymentController(SubmissionService service, FormTemplateService formTemplateService,
@@ -107,23 +107,31 @@ public class PaymentController {
     private ResponseEntity<PaymentTemplate> getPaymentTemplateResponse(final String id,
         final HttpServletRequest request, final PaymentTemplate paymentTemplate) {
         final ResponseEntity<PaymentTemplate> response;
-        try {
-            URI selfUri = new URI(StringUtils.removeEnd(request.getRequestURL().toString(), "/"));
-            URI parentUri = selfUri.resolve(".");
-            URL resourceUrl = parentUri.toURL();
+        final SubmissionApi submission = service.readSubmission(id);
 
-            paymentTemplate.setLinks(
-                new PaymentTemplate.Links(StringUtils.removeEnd(resourceUrl.toString(), "/"), selfUri.toURL()));
+        if (submission.getCompany() == null || StringUtils.isBlank(submission.getCompany().getCompanyNumber())) {
+            response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } else {
+            final String companyNumber = submission.getCompany().getCompanyNumber();
+            try {
+                URI selfUri = new URI(StringUtils.removeEnd(request.getRequestURL().toString(), "/"));
+                URI parentUri = selfUri.resolve(".");
+                URL resourceUrl = parentUri.toURL();
 
-        } catch (URISyntaxException | MalformedURLException e) {
-            final String thisMethod = new Throwable().getStackTrace()[0].getMethodName();
+                paymentTemplate.setLinks(
+                    new PaymentTemplate.Links(StringUtils.removeEnd(resourceUrl.toString(), "/"), selfUri.toURL()));
+                paymentTemplate.setCompanyNumber(companyNumber);
 
-            logger.errorContext(id, thisMethod + ": " + e.getMessage(), e, null);
+            } catch (URISyntaxException | MalformedURLException e) {
+                final String thisMethod = new Throwable().getStackTrace()[0].getMethodName();
 
-            return ResponseEntity.badRequest().build();
+                logger.errorContext(id, thisMethod + ": " + e.getMessage(), e, null);
+
+                return ResponseEntity.badRequest().build();
+            }
+
+            response = ResponseEntity.ok().body(paymentTemplate);
         }
-
-        response = ResponseEntity.ok().body(paymentTemplate);
         return response;
     }
 
