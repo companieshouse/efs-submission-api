@@ -128,7 +128,7 @@ class CategoryTemplateServiceImplTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"RP,'','',RP", "CC,'','',CC", "IA1986,INS,'',INS"})
+    @CsvSource({"DUMMY,'','',OTHER", "RP,'','',RP", "CC,'','',CC", "IA1986,INS,'',INS"})
     void getTopLevelCategory(final String category, final String parent, final String grandParent,
         final String result) {
         //given
