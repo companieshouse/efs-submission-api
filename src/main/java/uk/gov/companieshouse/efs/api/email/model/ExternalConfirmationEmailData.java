@@ -3,6 +3,7 @@ package uk.gov.companieshouse.efs.api.email.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Objects;
+import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
 
@@ -18,18 +19,21 @@ public class ExternalConfirmationEmailData {
     private Company company;
     @JsonProperty("form_type")
     private String formType;
+    @JsonProperty("top_level_category")
+    private CategoryTypeConstants topLevelCategory;
     @JsonProperty("email_file_details_list")
     private List<EmailFileDetails> emailFileDetailsList;
 
     public ExternalConfirmationEmailData(String to, String subject, String confirmationReference,
                                          Presenter presenter, Company company, String formType,
-                                         List<EmailFileDetails> emailFileDetailsList) {
+                                         CategoryTypeConstants topLevelCategory, List<EmailFileDetails> emailFileDetailsList) {
         this.to = to;
         this.subject = subject;
         this.confirmationReference = confirmationReference;
         this.presenter = presenter;
         this.company = company;
         this.formType = formType;
+        this.topLevelCategory = topLevelCategory;
         this.emailFileDetailsList = emailFileDetailsList;
     }
 
@@ -81,6 +85,14 @@ public class ExternalConfirmationEmailData {
         this.formType = formType;
     }
 
+    public CategoryTypeConstants getTopLevelCategory() {
+        return topLevelCategory;
+    }
+
+    public void setTopLevelCategory(final CategoryTypeConstants topLevelCategory) {
+        this.topLevelCategory = topLevelCategory;
+    }
+
     public List<EmailFileDetails> getEmailFileDetailsList() {
         return emailFileDetailsList;
     }
@@ -104,6 +116,7 @@ public class ExternalConfirmationEmailData {
                    .equals(getPresenter(), that.getPresenter()) && Objects
                    .equals(getCompany(), that.getCompany()) && Objects
                    .equals(getFormType(), that.getFormType()) && Objects
+                   .equals(getTopLevelCategory(), that.getTopLevelCategory())  && Objects
                    .equals(getEmailFileDetailsList(), that.getEmailFileDetailsList());
     }
 
@@ -111,7 +124,7 @@ public class ExternalConfirmationEmailData {
     public int hashCode() {
         return Objects
             .hash(getTo(), getSubject(), getConfirmationReference(), getPresenter(), getCompany(),
-                getFormType(), getEmailFileDetailsList());
+                getFormType(), getTopLevelCategory(), getEmailFileDetailsList());
     }
 
     public static ExternalConfirmationEmailData.Builder builder() {
@@ -126,6 +139,7 @@ public class ExternalConfirmationEmailData {
         private Presenter presenter;
         private Company company;
         private String formType;
+        private CategoryTypeConstants topLevelCategory;
         private List<EmailFileDetails> emailFileDetailsList;
 
         public ExternalConfirmationEmailData.Builder withTo(String to) {
@@ -158,6 +172,12 @@ public class ExternalConfirmationEmailData {
             return this;
         }
 
+        public ExternalConfirmationEmailData.Builder withTopLevelCategory(
+            CategoryTypeConstants topLevelCategory) {
+            this.topLevelCategory = topLevelCategory;
+            return this;
+        }
+
         public ExternalConfirmationEmailData.Builder withEmailFileDetailsList(List<EmailFileDetails> emailFileDetailsList) {
             this.emailFileDetailsList = emailFileDetailsList;
             return this;
@@ -165,7 +185,7 @@ public class ExternalConfirmationEmailData {
 
         public ExternalConfirmationEmailData build() {
             return new ExternalConfirmationEmailData(to, subject, confirmationReference, presenter, company, formType,
-                    emailFileDetailsList);
+                    topLevelCategory, emailFileDetailsList);
         }
 
     }
