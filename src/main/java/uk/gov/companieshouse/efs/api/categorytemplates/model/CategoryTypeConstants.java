@@ -10,7 +10,8 @@ public enum CategoryTypeConstants {
     OTHER("*"),
     SCOTTISH_LIMITED_PARTNERSHIP("SLP"),
     SCOTTISH_QUALIFYING_PARTNERSHIP("SQP"),
-    SHARE_CAPITAL("SH");
+    SHARE_CAPITAL("SH"),
+    REGISTRAR_POWERS("RP");
 
     CategoryTypeConstants(final String value) {
         this.value = value;

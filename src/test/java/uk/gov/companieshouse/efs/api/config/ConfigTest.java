@@ -62,7 +62,7 @@ class ConfigTest {
     void emailMapperFactory() {
         final ExternalAcceptEmailMapper acceptEmailMapper = new ExternalAcceptEmailMapper(null, null, null);
         final ExternalConfirmationEmailMapper confirmationMapper =
-            new ExternalConfirmationEmailMapper(null, null, null);
+            new ExternalConfirmationEmailMapper(null, null, null, null, null);
         final ExternalRejectEmailMapper rejectMapper = new ExternalRejectEmailMapper(null, null, null);
         final ExternalEmailMapperFactory externalMapperFactory =
             new ExternalEmailMapperFactory(acceptEmailMapper, confirmationMapper, rejectMapper);
