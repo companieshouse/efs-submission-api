@@ -79,23 +79,19 @@ class PaymentSessionsValidatorTest {
     }
 
     @Test
-    void validateWhenFormNotFoundThenInvalid() throws SubmissionValidationException {
-        when(submission.getId()).thenReturn(SUB_ID);
+    void validateWhenFormNotFoundThenValid() throws SubmissionValidationException {
         expectSubmissionWithForm();
         when(formRepository.findById(TEST_FORM)).thenReturn(Optional.empty());
 
-        final SubmissionValidationException exception =
-            assertThrows(SubmissionValidationException.class, () -> testValidator.validate(submission));
+        testValidator.validate(submission);
 
-        assertThat(exception.getMessage(),
-            is(MessageFormat.format("Fee amount is missing or invalid for form [null] in submission [{0}]", SUB_ID)));
-        verifyNoInteractions(nextValidator);
+        verify(nextValidator).validate(submission);
     }
 
     @Test
-    void validateWhenPaymentNotFoundThenInvalid() throws SubmissionValidationException {
+    void validateWhenPaymentTemplateNotFoundThenInvalid() throws SubmissionValidationException {
         expectSubmissionWithForm();
-        expectFormDetailsWithForm();
+        expectFormDetailsWithFormHasFee(true);
         when(paymentRepository.findById(TEST_FEE)).thenReturn(Optional.empty());
         expectErrorMessageDetails();
 
@@ -103,15 +99,14 @@ class PaymentSessionsValidatorTest {
             assertThrows(SubmissionValidationException.class, () -> testValidator.validate(submission));
 
         assertThat(exception.getMessage(), is(MessageFormat
-            .format("Fee amount is missing or invalid for form [{0}] in submission [{1}]", TEST_FORM, SUB_ID)));
+            .format("Fee amount is missing for form [{0}] in submission [{1}]", TEST_FORM, SUB_ID)));
         verifyNoInteractions(nextValidator);
     }
 
     @Test
-    void validateWhenPaymentItemsEmptyThenInvalid() throws SubmissionValidationException {
-        when(submission.getId()).thenReturn(SUB_ID);
+    void validateWhenPaymentItemsEmptyAndHasPaymentSessionsThenInvalid() throws SubmissionValidationException {
         expectSubmissionWithForm();
-        expectFormDetailsWithForm();
+        expectFormDetailsWithFormHasFee(true);
         when(paymentRepository.findById(TEST_FEE)).thenReturn(Optional.of(paymentTemplate));
         expectErrorMessageDetails();
 
@@ -119,14 +114,15 @@ class PaymentSessionsValidatorTest {
             assertThrows(SubmissionValidationException.class, () -> testValidator.validate(submission));
 
         assertThat(exception.getMessage(), is(MessageFormat
-            .format("Fee amount is missing or invalid for form [{0}] in submission [{1}]", TEST_FORM, SUB_ID)));
+            .format("Fee amount is missing for form [{0}] in submission [{1}]", TEST_FORM, SUB_ID)));
         verifyNoInteractions(nextValidator);
     }
 
     @Test
     void validateWhenFeeAmountNullThenInvalid() throws SubmissionValidationException {
         expectSubmissionWithForm();
-        expectFormDetailsWithForm();
+        expectFormDetailsWithFormHasFee(true);
+        when(paymentRepository.findById(TEST_FEE)).thenReturn(Optional.of(paymentTemplate));
         expectPaymentTemplateWithSingleItem();
         expectErrorMessageDetails();
 
@@ -146,7 +142,7 @@ class PaymentSessionsValidatorTest {
     @Test
     void validateWhenFeeAmountNaNThenInvalid() throws SubmissionValidationException {
         expectSubmissionWithForm();
-        expectFormDetailsWithForm();
+        expectFormDetailsWithFormHasFee(true);
         expectPaymentTemplateWithSingleItem();
         when(paymentItem.getAmount()).thenReturn("N");
         expectErrorMessageDetails();
@@ -175,7 +171,7 @@ class PaymentSessionsValidatorTest {
     @Test
     void validateWhenFeeAmountNonZeroAndNoSessionsThenInvalid() throws SubmissionValidationException {
         expectSubmissionWithForm();
-        expectFormDetailsWithForm();
+        expectFormDetailsWithFormHasFee(true);
         expectPaymentTemplateWithSingleItem();
         when(paymentItem.getAmount()).thenReturn("1");
         expectErrorMessageDetails();
@@ -190,12 +186,12 @@ class PaymentSessionsValidatorTest {
     }
 
     @Test
-    void validateWhenFeeAmountNonZeroAndPaymentSessionsThenValid() throws SubmissionValidationException {
+    void validateWhenFeeAmountNonZeroAndHasPaymentSessionsThenValid() throws SubmissionValidationException {
         final SessionListApi sessions = new SessionListApi(Collections.singletonList(paymentSession));
 
         when(submission.getPaymentSessions()).thenReturn(sessions);
         expectSubmissionWithForm();
-        expectFormDetailsWithForm();
+        expectFormDetailsWithFormHasFee(true);
         expectPaymentTemplateWithSingleItem();
         when(paymentItem.getAmount()).thenReturn("1");
 
@@ -205,12 +201,12 @@ class PaymentSessionsValidatorTest {
     }
 
     @Test
-    void validateWhenFeeAmountZeroAndPaymentSessionsThenInvalid() throws SubmissionValidationException {
+    void validateWhenFeeAmountZeroAndHasPaymentSessionsThenInvalid() {
         final SessionListApi sessions = new SessionListApi(Collections.singletonList(paymentSession));
 
         expectSubmissionWithForm();
-        when(submission.getPaymentSessions()).thenReturn(sessions);
-        expectFormDetailsWithForm();
+        expectSubmissionWithPaymentSessions(sessions);
+        expectFormDetailsWithFormHasFee(true);
         expectPaymentTemplateWithSingleItem();
         when(paymentItem.getAmount()).thenReturn("0.00");
         expectErrorMessageDetails();
@@ -224,14 +220,19 @@ class PaymentSessionsValidatorTest {
         verifyNoInteractions(nextValidator);
     }
 
+    private void expectSubmissionWithPaymentSessions(SessionListApi sessions) {
+        when(submission.getPaymentSessions()).thenReturn(sessions);
+
+    }
+
     private void expectSubmissionWithForm() {
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn(TEST_FORM);
     }
 
-    private void expectFormDetailsWithForm() {
+    private void expectFormDetailsWithFormHasFee(final boolean hasFee) {
         when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
-        when(formTemplate.getFee()).thenReturn(TEST_FEE);
+        when(formTemplate.getFee()).thenReturn(hasFee ? TEST_FEE : null);
     }
 
     private void expectErrorMessageDetails() {

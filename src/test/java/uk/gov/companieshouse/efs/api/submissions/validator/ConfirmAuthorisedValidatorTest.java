@@ -3,6 +3,7 @@ package uk.gov.companieshouse.efs.api.submissions.validator;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
@@ -37,11 +39,16 @@ class ConfirmAuthorisedValidatorTest {
     private FormTemplate formTemplate;
     @Mock
     private FormDetails formDetails;
+    @Mock
+    private Validator<Submission> nextValidator;
 
     @Test
     void validateWhenCategoryServiceNullThenValid() throws SubmissionValidationException {
         testValidator = new ConfirmAuthorisedValidator(formRepository, null);
         testValidator.setNext(nextValidator);
+        when(submission.getFormDetails()).thenReturn(formDetails);
+        when(formDetails.getFormType()).thenReturn(TEST_FORM);
+        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
 
         testValidator.validate(submission);
 
@@ -52,24 +59,28 @@ class ConfirmAuthorisedValidatorTest {
     void validateWhenTopLevelCategoryNotInsolvencyThenValid() throws SubmissionValidationException {
         testValidator = new ConfirmAuthorisedValidator(formRepository, categoryService);
         testValidator.setNext(nextValidator);
+        when(submission.getFormDetails()).thenReturn(formDetails);
+        when(formDetails.getFormType()).thenReturn(TEST_FORM);
+        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(formTemplate.getFormCategory()).thenReturn("ANY BUT INSOLVENCY");
+        when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.OTHER);
 
         testValidator.validate(submission);
 
         verify(nextValidator).validate(submission);
     }
 
-    @Mock
-    private Validator<Submission> nextValidator;
-
     @Test
-    void validateWhenInsolvencyAndConfirmAuthorisedNullThenInvalid() {
+    void validateWhenTopLevelCategoryInsolvencyAndConfirmAuthorisedNullThenInvalid() {
         testValidator = new ConfirmAuthorisedValidator(formRepository, categoryService);
         testValidator.setNext(nextValidator);
         when(submission.getId()).thenReturn(SUB_ID);
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn(TEST_FORM);
         when(formTemplate.getFormType()).thenReturn(TEST_FORM);
+        when(formTemplate.getFormCategory()).thenReturn(CategoryTypeConstants.INSOLVENCY.getValue());
         when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.INSOLVENCY);
 
         final SubmissionValidationException exception =
             assertThrows(SubmissionValidationException.class, () -> testValidator.validate(submission));
@@ -81,9 +92,15 @@ class ConfirmAuthorisedValidatorTest {
     }
 
     @Test
-    void validateWhenConfirmAuthorisedNullThenValid() throws SubmissionValidationException {
+    void validateWhenTopLevelCategoryNotInsolvencyConfirmAuthorisedNullThenValid()
+        throws SubmissionValidationException {
         testValidator = new ConfirmAuthorisedValidator(formRepository, categoryService);
         testValidator.setNext(nextValidator);
+        when(submission.getFormDetails()).thenReturn(formDetails);
+        when(formDetails.getFormType()).thenReturn(TEST_FORM);
+        when(formTemplate.getFormCategory()).thenReturn("ANY BUT INSOLVENCY");
+        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.OTHER);
 
         testValidator.validate(submission);
 
@@ -91,10 +108,31 @@ class ConfirmAuthorisedValidatorTest {
     }
 
     @Test
-    void validateWhenConfirmAuthorisedTrueThenValid() throws SubmissionValidationException {
+    void validateWhenTopLevelCategoryNotInsolvencyConfirmAuthorisedTrueThenValid()
+        throws SubmissionValidationException {
+        testValidator = new ConfirmAuthorisedValidator(formRepository, categoryService);
+        testValidator.setNext(nextValidator);
+        when(submission.getFormDetails()).thenReturn(formDetails);
+        when(formDetails.getFormType()).thenReturn(TEST_FORM);
+        when(formTemplate.getFormCategory()).thenReturn("ANY BUT INSOLVENCY");
+        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.OTHER);
+
+        testValidator.validate(submission);
+
+        verify(nextValidator).validate(submission);
+    }
+
+    @Test
+    void validateWhenTopLevelCategoryInsolvencyConfirmAuthorisedTrueThenValid() throws SubmissionValidationException {
         when(submission.getConfirmAuthorised()).thenReturn(true);
         testValidator = new ConfirmAuthorisedValidator(formRepository, categoryService);
         testValidator.setNext(nextValidator);
+        when(submission.getFormDetails()).thenReturn(formDetails);
+        when(formDetails.getFormType()).thenReturn(TEST_FORM);
+        when(formTemplate.getFormCategory()).thenReturn("INS");
+        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.INSOLVENCY);
 
         testValidator.validate(submission);
 

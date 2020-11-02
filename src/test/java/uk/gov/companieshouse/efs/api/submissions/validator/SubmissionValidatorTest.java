@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -28,7 +27,6 @@ import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
-@Disabled("pending refactor changes")
 class SubmissionValidatorTest {
 
     private static final String SUB_ID = "0000000000";
@@ -75,6 +73,7 @@ class SubmissionValidatorTest {
         when(formRepository.findById(anyString())).thenReturn(Optional.of(formTemplate));
         when(formTemplate.getFee()).thenReturn(null);
         when(formTemplate.getFormCategory()).thenReturn("SH");
+        when(formTemplate.getFormType()).thenReturn(NON_FEE_FORM);
         when(submission.getPaymentSessions()).thenReturn(new SessionListApi());
         when(submission.getConfirmationReference()).thenReturn("123 456 789");
 

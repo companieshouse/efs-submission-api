@@ -26,42 +26,54 @@ public class PaymentSessionsValidator extends ValidatorImpl<Submission> implemen
 
         if (formRepository != null && paymentRepository != null) {
             final Optional<FormTemplate> formTemplate = formRepository.findById(input.getFormDetails().getFormType());
-            final Optional<PaymentTemplate> paymentTemplate = formTemplate.flatMap(this::mapToPaymentTemplate);
-            final Optional<PaymentTemplate.Item> firstItem =
-                paymentTemplate.flatMap(p -> p.getItems().stream().findFirst());
-            final Optional<String> amount = firstItem.map(PaymentTemplate.Item::getAmount);
+            final String formType = formTemplate.map(FormTemplate::getFormType).orElse(null);
+            final String formFee = formTemplate.map(FormTemplate::getFee).orElse(null);
 
-            if (amount.isPresent()) {
-                final Optional<BigDecimal> decimalAmount = amount.
-                    flatMap(this::getDecimalAmount);
-                final boolean requiredFee = decimalAmount.filter(d -> d.compareTo(BigDecimal.ZERO) > 0).isPresent();
+            if (formFee != null) {
+                final Optional<PaymentTemplate> paymentTemplate =
+                    formTemplate.map(FormTemplate::getFee).flatMap(paymentRepository::findById);
+                final Optional<PaymentTemplate.Item> firstItem =
+                    paymentTemplate.flatMap(p -> p.getItems().stream().findFirst());
 
-                if (requiredFee && !hasPaymentSessions) {
-                    throw new SubmissionValidationException(String.format("At least one payment session is absent for fee paying form [%s] in submission [%s]",
-                        formTemplate.map(FormTemplate::getFormType).orElse(null), input.getId()));
-                } else if (!requiredFee && hasPaymentSessions) {
-                    throw new SubmissionValidationException(String.format(
-                        "At least one payment session is present for the non fee paying form [%s] in submission [%s]",
-                        formTemplate.map(FormTemplate::getFormType).orElse(null), input.getId()));
+                if (firstItem.isPresent()) {
+                    final BigDecimal decimalAmount = getFeeAmount(input, formType, firstItem.get());
+
+                    checkPaymentSessions(input, formType, hasPaymentSessions, decimalAmount);
+                } else {
+                    throw new SubmissionValidationException(String
+                        .format("Fee amount is missing for form [%s] in submission [%s]", formType, input.getId()));
                 }
             }
         }
         super.validate(input);
+
     }
 
-    private Optional<PaymentTemplate> mapToPaymentTemplate(final FormTemplate formTemplate) {
-        return Optional.of(formTemplate).flatMap(f -> paymentRepository.findById(f.getFee()));
-    }
+    private BigDecimal getFeeAmount(final Submission input, final String formType, final PaymentTemplate.Item firstItem)
+        throws SubmissionValidationException {
+        final String amount = Optional.ofNullable(firstItem).map(PaymentTemplate.Item::getAmount).orElse("");
 
-    private Optional<BigDecimal> getDecimalAmount(final String amount) {
         try {
-            final BigDecimal feeAmount = new BigDecimal(amount);
-
-            return Optional.of(feeAmount);
+            return new BigDecimal(amount);
         } catch (NumberFormatException e) {
-            return Optional.empty();
+            throw new SubmissionValidationException(String
+                .format("Fee amount is missing or invalid for form [%s] in submission [%s]", formType, input.getId()));
         }
+    }
 
+    private void checkPaymentSessions(final Submission input, final String formType, final boolean hasPaymentSessions,
+        final BigDecimal decimalAmount) throws SubmissionValidationException {
+        final Optional<Boolean> requiredFee = Optional.of(decimalAmount).map(d -> d.compareTo(BigDecimal.ZERO) > 0);
+
+        if (requiredFee.filter(Boolean.TRUE::equals).isPresent() && !hasPaymentSessions) {
+            throw new SubmissionValidationException(String
+                .format("At least one payment session is absent for fee paying form [%s] in submission [%s]", formType,
+                    input.getId()));
+        } else if (!requiredFee.filter(Boolean.TRUE::equals).isPresent() && hasPaymentSessions) {
+            throw new SubmissionValidationException(String
+                .format("At least one payment session is present for the non fee paying form [%s] in submission [%s]",
+                    formType, input.getId()));
+        }
     }
 
 }

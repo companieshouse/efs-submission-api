@@ -22,14 +22,16 @@ public class ConfirmAuthorisedValidator extends ValidatorImpl<Submission> implem
     public void validate(final Submission input) throws SubmissionValidationException {
         final Optional<FormTemplate> template = formRepository.findById(input.getFormDetails().getFormType());
         final Optional<String> category = template.map(FormTemplate::getFormCategory);
-        final CategoryTypeConstants topLevelCategory =
-            category.map(categoryService::getTopLevelCategory).orElse(CategoryTypeConstants.OTHER);
-        if (CategoryTypeConstants.INSOLVENCY.equals(topLevelCategory) && !Boolean.TRUE
-            .equals(input.getConfirmAuthorised())) {
+        if (categoryService != null) {
+            final CategoryTypeConstants topLevelCategory =
+                category.map(categoryService::getTopLevelCategory).orElse(CategoryTypeConstants.OTHER);
+            if (CategoryTypeConstants.INSOLVENCY.equals(topLevelCategory) && !Boolean.TRUE
+                .equals(input.getConfirmAuthorised())) {
 
-            throw new SubmissionValidationException(String
-                .format("Presenter must confirm they are authorised in submission [%s] for Insolvency form [%s]",
-                    input.getId(), template.map(FormTemplate::getFormType).orElse(null)));
+                throw new SubmissionValidationException(String
+                    .format("Presenter must confirm they are authorised in submission [%s] for Insolvency form [%s]",
+                        input.getId(), template.map(FormTemplate::getFormType).orElse(null)));
+            }
         }
         super.validate(input);
     }
