@@ -868,7 +868,7 @@
   "isFesEnabled" : true
 }, {
   "_id" : "600",
-  "formName" : "600 - Appoint liquidator in voluntary winding up",
+  "formName" : "600 (England and Wales) - Appoint liquidator in voluntary winding up",
   "formCategory" : "IA1986_LIQ",
   "fee" : "",
   "isAuthenticationRequired" : true,
@@ -2639,14 +2639,14 @@
   "isFesEnabled" : true
 }, {
   "_id" : "LRESEX",
-  "formName" : "Extraordinary resolution to wind up",
+  "formName" : "Extraordinary resolution to wind up (creditors' voluntary liquidation)",
   "formCategory" : "INS_RES",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true
 }, {
   "_id" : "LRESSP",
-  "formName" : "Special resolution to wind up",
+  "formName" : "Special resolution to wind up (members' voluntary liquidation)",
   "formCategory" : "INS_RES",
   "fee" : "",
   "isAuthenticationRequired" : true,
