@@ -35,13 +35,15 @@ public class PaymentSessionsValidator extends ValidatorImpl<Submission> implemen
                 final Optional<PaymentTemplate.Item> firstItem =
                     paymentTemplate.flatMap(p -> p.getItems().stream().findFirst());
 
-                if (firstItem.isPresent()) {
-                    final BigDecimal decimalAmount = getFeeAmount(input, formType, firstItem.get());
+                if (paymentTemplate.isPresent()) {
+                    if (firstItem.isPresent()) {
+                        final BigDecimal decimalAmount = getFeeAmount(input, formType, firstItem.get());
 
-                    checkPaymentSessions(input, formType, hasPaymentSessions, decimalAmount);
-                } else {
-                    throw new SubmissionValidationException(String
-                        .format("Fee amount is missing for form [%s] in submission [%s]", formType, input.getId()));
+                        checkPaymentSessions(input, formType, hasPaymentSessions, decimalAmount);
+                    } else {
+                        throw new SubmissionValidationException(String
+                            .format("Fee amount is missing for form [%s] in submission [%s]", formType, input.getId()));
+                    }
                 }
             }
         }
