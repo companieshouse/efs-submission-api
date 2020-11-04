@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.efs.api.submissions.validator;
 
 import java.util.Optional;
-import org.springframework.util.CollectionUtils;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
@@ -19,7 +18,7 @@ public class FesAttachmentValidator extends ValidatorImpl<Submission> implements
 
         if (formRepository != null) {
             final Optional<FormTemplate> template = formRepository.findById(input.getFormDetails().getFormType());
-            final boolean hasAttachments = !CollectionUtils.isEmpty(input.getFormDetails().getFileDetailsList());
+            final boolean hasAttachments = input.getFormDetails().getFileDetailsList().size() > 1;
 
             // don't throw if !template.isPresent()
             if (template.isPresent() && template.filter(FormTemplate::isFesEnabled).isPresent() && hasAttachments) {

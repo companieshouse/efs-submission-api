@@ -64,20 +64,20 @@ class FesAttachmentValidatorTest {
     }
 
     private static Stream<Arguments> provideValidPreconditions() {
-        return Stream.of(Arguments.of(false, null, null), // test FormTemplate not found
-            Arguments.of(false, false, false), Arguments.of(false, false, true), Arguments.of(false, true, false),
-            Arguments.of(false, true, true), Arguments.of(true, false, false), Arguments.of(true, true, false));
+        return Stream.of(Arguments.of(1, null, null), // test FormTemplate not found
+            Arguments.of(1, false, false), Arguments.of(1, false, true), Arguments.of(1, true, false),
+            Arguments.of(1, true, true), Arguments.of(2, false, false), Arguments.of(2, true, false));
     }
 
     private static Stream<Arguments> provideInvalidPreconditions() {
-        return Stream.of(Arguments.of(true, false, true), Arguments.of(true, true, true));
+        return Stream.of(Arguments.of(2, false, true), Arguments.of(2, true, true));
     }
 
     @ParameterizedTest(name = "[{index}] att={0}, fee={1}, fes={2}")
     @MethodSource("provideValidPreconditions")
-    void validateWhenPreconditionsSatisfied(final boolean hasAttachments, final Boolean hasFee,
-        final Boolean fesEnabled) throws SubmissionValidationException {
-        expectPreconditions(hasAttachments, hasFee, fesEnabled);
+    void validateWhenPreconditionsSatisfied(final int fileCount, final Boolean hasFee, final Boolean fesEnabled)
+        throws SubmissionValidationException {
+        expectPreconditions(fileCount, hasFee, fesEnabled);
 
         testValidator.validate(submission);
         verify(nextValidator).validate(submission);
@@ -85,11 +85,11 @@ class FesAttachmentValidatorTest {
 
     @ParameterizedTest(name = "[{index}] att={0}, fee={1}, fes={2}")
     @MethodSource("provideInvalidPreconditions")
-    void validateWhenPreconditionsNotSatisfied(final boolean hasAttachments, final Boolean hasFee,
+    void validateWhenPreconditionsNotSatisfied(final int fileCount, final Boolean hasFee,
         final Boolean fesEnabled) {
         final String formType = BooleanUtils.isTrue(hasFee) ? FEE_FORM : NO_FEE_FORM;
 
-        expectPreconditions(hasAttachments, hasFee, fesEnabled);
+        expectPreconditions(fileCount, hasFee, fesEnabled);
         expectErrorMessageDetails(formType);
 
         final SubmissionValidationException exception =
@@ -100,10 +100,9 @@ class FesAttachmentValidatorTest {
         verifyNoInteractions(nextValidator);
     }
 
-    private void expectPreconditions(final boolean hasAttachments, final Boolean hasFee, final Boolean fesEnabled) {
+    private void expectPreconditions(final int fileCount, final Boolean hasFee, final Boolean fesEnabled) {
         when(submission.getFormDetails()).thenReturn(formDetails);
-        when(formDetails.getFileDetailsList())
-            .thenReturn(hasAttachments ? Collections.singletonList(fileDetails) : Collections.emptyList());
+        when(formDetails.getFileDetailsList()).thenReturn(Collections.nCopies(fileCount, fileDetails));
 
         final String formType = BooleanUtils.isTrue(hasFee) ? FEE_FORM : NO_FEE_FORM;
 
