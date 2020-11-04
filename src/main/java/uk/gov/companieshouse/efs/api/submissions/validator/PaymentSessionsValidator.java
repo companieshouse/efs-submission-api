@@ -2,6 +2,7 @@ package uk.gov.companieshouse.efs.api.submissions.validator;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
@@ -29,7 +30,7 @@ public class PaymentSessionsValidator extends ValidatorImpl<Submission> implemen
             final String formType = formTemplate.map(FormTemplate::getFormType).orElse(null);
             final String formFee = formTemplate.map(FormTemplate::getFee).orElse(null);
 
-            if (formFee != null) {
+            if (StringUtils.isNotBlank(formFee)) {
                 final Optional<PaymentTemplate> paymentTemplate =
                     formTemplate.map(FormTemplate::getFee).flatMap(paymentRepository::findById);
                 final Optional<PaymentTemplate.Item> firstItem =
@@ -45,6 +46,9 @@ public class PaymentSessionsValidator extends ValidatorImpl<Submission> implemen
                             .format("Fee amount is missing for form [%s] in submission [%s]", formType, input.getId()));
                     }
                 }
+            }
+            else {
+                checkPaymentSessions(input, formType, hasPaymentSessions, BigDecimal.ZERO);
             }
         }
         super.validate(input);
