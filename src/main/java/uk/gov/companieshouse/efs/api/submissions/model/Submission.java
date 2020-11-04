@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Id;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
@@ -14,10 +13,6 @@ import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 @Document(collection = "submissions")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Submission {
-
-    private static final int REDACT_LEN = 6;
-    private static final char REDACT_CHAR = '.';
-    private static final String REDACT_MASK = StringUtils.repeat(REDACT_CHAR, REDACT_LEN);
 
     @Id
     private String id;
