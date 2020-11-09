@@ -27,7 +27,16 @@ Building and Running Locally
 1. Configure project environment variables where necessary (see below).
 1. Ensure dependent Companies House services are running within the Companies House developer environment
 1. Start the service in the CHS developer environment
-1. Send a GET request using your REST client to /efs-submission-api/healthcheck. The response should be 200 OK with status=UP. 
+1. Send a GET request using your REST client to /efs-submission-api/healthcheck. The response should be 200 OK with status=UP.
+1. A database named `efs_submissions` and the following collections are required:
+
+Collection name|Description|Data
+--------------------|---------------|------|
+submission|id, dates, presenter, form & file details|this and the database will be created by the service upon starting a submission, then populated as the user enters their data|
+category_templates|the 'groupings' for the forms|reference data manually populated from:<br>`src/main/resources/category_templates.json`|
+form_templates|the form ids, names etc.|reference data manually populated from:<br>`src/main/resources/form_templates.json`|
+company_auth_allow_list|emails of IP's who are allowed to see and submit Insolvency forms|manually populated e.g.<br> `{"emailAddress": "demo@ch.gov.uk"}`|
+payment_charges|payment templates required by payment service|reference data manually populated from:<br>`src/main/resources/payments_templates.json`|
 
 Configuration
 -------------
