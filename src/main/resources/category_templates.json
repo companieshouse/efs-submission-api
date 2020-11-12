@@ -57,7 +57,7 @@
   "parent" : "IA1986"
 }, {
   "_id" : "INSEW2016",
-  "categoryName" : "Insolvency (England and Wales rules 2016)",
+  "categoryName" : "Insolvency (England and Wales Rules 2016)",
   "parent" : "INS"
 }, {
   "_id" : "INSEW2016_CVAM",
@@ -93,7 +93,7 @@
   "parent" : "INSEW2016"
 }, {
   "_id" : "INSSC2018",
-  "categoryName" : "Insolvency (Scotland rules 2018)",
+  "categoryName" : "Insolvency (Scotland Rules 2018)",
   "parent" : "INS"
 }, {
   "_id" : "INSSC2018_ADM",
