@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
@@ -49,6 +48,7 @@ import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository
 @ExtendWith(MockitoExtension.class)
 class PaymentReportServiceImplTest {
     private static final LocalDate REPORT_DATE = LocalDate.of(2020, 8, 31);
+    private static final LocalTime NOW_TIME = LocalTime.of(10, 8, 42);
     private static final FormDetails FORM_SCOT_FEE = new FormDetails(null, "SQP1", null);
     private static final FormDetails FORM_NON_SCOT_FEE = new FormDetails(null, "CS01", null);
     private static final String REPORT_SCOT = "'EFS_ScottishPaymentTransactions_'yyyy-MM-dd'.csv'";
@@ -87,7 +87,7 @@ class PaymentReportServiceImplTest {
     @BeforeEach
     void setUp() {
         final Clock clock =
-            Clock.fixed(REPORT_DATE.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC), ZoneOffset.UTC);
+            Clock.fixed(REPORT_DATE.plusDays(1).atTime(NOW_TIME).toInstant(ZoneOffset.UTC), ZoneOffset.UTC);
 
         spyService = spy(new PaymentReportServiceImpl(emailService,
             new ReportQueryServiceImpl(submissionRepository, reportMapper), outputStreamWriterFactory, s3ClientService,
@@ -195,13 +195,13 @@ class PaymentReportServiceImplTest {
     }
 
     private void expectReportUpload(final String failedFileLink, final String failedReportName) {
-
         when(s3ClientService.getResourceId(anyString())).thenAnswer(invocation -> ENV_NAME + "/" + invocation.getArgument(0));
         when(s3ClientService.generateFileLink(ENV_NAME + "/" + failedReportName, BUCKET_NAME)).thenReturn(failedFileLink);
     }
 
     private void expectFindPaidSubmissions(ImmutableSet<SubmissionStatus> statuses, List<Submission> mappedList) {
-        when(submissionRepository.findPaidSubmissions(statuses, REPORT_DATE)).thenReturn(mappedList);
+        when(submissionRepository.findPaidSubmissions(statuses, REPORT_DATE, REPORT_DATE.plusDays(1)))
+            .thenReturn(mappedList);
         mappedList.forEach(s -> when(reportMapper.map(s)).thenReturn(buildTransaction(s)));
     }
 

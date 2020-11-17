@@ -28,6 +28,15 @@ public interface SubmissionRepository {
 
     List<Submission> findDelayedSubmissions(SubmissionStatus status, LocalDateTime before);
 
-    List<Submission> findPaidSubmissions(Collection<SubmissionStatus> statuses, LocalDate submitDate);
+    /**
+     * Find paid submissions having any of the given statuses and submit date between startDate and endDate.
+     *
+     * @param statuses  the statuses to include
+     * @param startDate the report period start (inclusive)
+     * @param endDate   the report period end (exclusive)
+     * @return the collection of submissions (may be empty)
+     */
+    List<Submission> findPaidSubmissions(Collection<SubmissionStatus> statuses, LocalDate startDate,
+        final LocalDate endDate);
 
 }
