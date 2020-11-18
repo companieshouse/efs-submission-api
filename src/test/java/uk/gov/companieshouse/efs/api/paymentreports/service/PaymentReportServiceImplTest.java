@@ -47,7 +47,7 @@ import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository
 
 @ExtendWith(MockitoExtension.class)
 class PaymentReportServiceImplTest {
-    private static final LocalDate TEST_DATE = LocalDate.of(2020, 8, 31);
+    private static final LocalDate START_DATE = LocalDate.of(2020, 8, 31);
     private static final LocalTime NOW_TIME = LocalTime.of(1, 1, 1);
     private static final FormDetails FORM_SCOT_FEE = new FormDetails(null, "SQP1", null);
     private static final FormDetails FORM_NON_SCOT_FEE = new FormDetails(null, "CS01", null);
@@ -56,11 +56,6 @@ class PaymentReportServiceImplTest {
     private static final List<String> SCOT_FORM_LIST = Arrays.asList("SQPCS01", "SLPCS01", "SQP1", "LP5(S)", "LP7(S)");
     private static final String BUCKET_NAME = "TEST_BUCKET";
     private static final String ENV_NAME = "TEST_ENV";
-    protected static final String FAILED_CSV_CONTENT =
-        "submissionId,customerRef,userEmail,submittedAt,amountPaid,paymentRef,formType,companyNumber\n"
-            + "SCOT_FAILED_FEE,REF_SFF,presenter@nomail.net,2020-08-31T11:11:11,10,PAY_SFF,SQP1,00000000\n"
-            + "FAILED_FEE,REF_FF,presenter@nomail.net,2020-08-31T13:13:13,10,PAY_FF,CS01,00000000\n";
-
 
     private PaymentReportServiceImpl testService;
 
@@ -81,7 +76,6 @@ class PaymentReportServiceImplTest {
 
     private Submission submissionSF;
     private Submission submissionSFF;
-    private Submission submissionOSF;
     private Submission submissionNSFF;
 
     @BeforeEach
@@ -93,25 +87,26 @@ class PaymentReportServiceImplTest {
         final Submission.Builder builder = new Submission.Builder();
 
         submissionSF = builder.withId("SCOT_FEE").withCompany(company).withFormDetails(FORM_SCOT_FEE)
-            .withConfirmationReference("REF_SF").withPresenter(presenter)
-            .withSubmittedAt(TEST_DATE.atTime(10, 10, 10)).withFeeOnSubmission("10")
+            .withConfirmationReference("REF_SF").withPresenter(presenter).withSubmittedAt(START_DATE.atTime(10, 10, 10))
+            .withFeeOnSubmission("10")
             .withPaymentSessions(createPaymentSessions("PAY_SF"))
             .withStatus(SubmissionStatus.SUBMITTED).build();
         submissionSFF = builder.withId("SCOT_FAILED_FEE").withCompany(company).withFormDetails(FORM_SCOT_FEE)
             .withConfirmationReference("REF_SFF").withPresenter(presenter)
-            .withSubmittedAt(TEST_DATE.atTime(11, 11, 11)).withFeeOnSubmission("10")
+            .withSubmittedAt(START_DATE.atTime(11, 11, 11)).withFeeOnSubmission("10")
             .withPaymentSessions(createPaymentSessions("PAY_SFF"))
             .withStatus(SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER).build();
         submissionNSFF = builder.withId("FAILED_FEE").withCompany(company).withFormDetails(FORM_NON_SCOT_FEE)
-            .withConfirmationReference("REF_FF").withPresenter(presenter)
-            .withSubmittedAt(TEST_DATE.atTime(13, 13, 13)).withFeeOnSubmission("10")
+            .withConfirmationReference("REF_FF").withPresenter(presenter).withSubmittedAt(START_DATE.atTime(13, 13, 13))
+            .withFeeOnSubmission("10")
             .withPaymentSessions(createPaymentSessions("PAY_FF"))
             .withStatus(SubmissionStatus.REJECTED_BY_VIRUS_SCAN).build();
     }
 
     private PaymentReportServiceImpl createTestServiceSpy(final int reportPeriodDaysBeforeToday) {
-        final Clock clock =
-            Clock.fixed(TEST_DATE.plusDays(reportPeriodDaysBeforeToday).atTime(NOW_TIME).toInstant(ZoneOffset.UTC), ZoneOffset.UTC);
+        final Clock clock = Clock
+            .fixed(START_DATE.plusDays(reportPeriodDaysBeforeToday).atTime(NOW_TIME).toInstant(ZoneOffset.UTC),
+                ZoneOffset.UTC);
 
         PaymentReportServiceImpl spyService = spy(new PaymentReportServiceImpl(emailService,
             new ReportQueryServiceImpl(submissionRepository, reportMapper), outputStreamWriterFactory, s3ClientService,
@@ -127,7 +122,7 @@ class PaymentReportServiceImplTest {
     @Test
     void sendScotlandPaymentReport() throws IOException {
         expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES,
-            Collections.singletonList(submissionSF), TEST_DATE);
+            Collections.singletonList(submissionSF));
         when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
 
         final String reportName = "EFS_ScottishPaymentTransactions_2020-08-31.csv";
@@ -152,7 +147,7 @@ class PaymentReportServiceImplTest {
 
     @Test
     void sendScotlandPaymentReportWhenWriterFails() throws IOException {
-        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, Collections.emptyList(), TEST_DATE);
+        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, Collections.emptyList());
         when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenReturn(outputStreamWriter);
         doThrow(new IOException("expected failure")).when(outputStreamWriter)
             .write(any(char[].class), anyInt(), anyInt());
@@ -168,7 +163,7 @@ class PaymentReportServiceImplTest {
         final String failedFileLink = "link.to.uploaded.failed.file";
 
         expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES,
-            Arrays.asList(submissionSFF, submissionNSFF), TEST_DATE);
+            Arrays.asList(submissionSFF, submissionNSFF));
         expectReportUpload(failedFileLink, failedReportName);
         when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
 
@@ -186,8 +181,7 @@ class PaymentReportServiceImplTest {
         final String failedReportName = "EFS_FailedPaymentTransactions_2020-08-31.csv";
         final String failedFileLink = "link.to.uploaded.failed.file";
 
-        expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES,
-            Collections.emptyList(), TEST_DATE);
+        expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES, Collections.emptyList());
         expectReportUpload(failedFileLink, failedReportName);
         when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
 
@@ -205,10 +199,10 @@ class PaymentReportServiceImplTest {
         when(s3ClientService.generateFileLink(ENV_NAME + "/" + failedReportName, BUCKET_NAME)).thenReturn(failedFileLink);
     }
 
-    private void expectFindPaidSubmissions(ImmutableSet<SubmissionStatus> statuses, List<Submission> mappedList,
-        final LocalDate reportStartDate) {
+    private void expectFindPaidSubmissions(ImmutableSet<SubmissionStatus> statuses, List<Submission> mappedList) {
         // report period should be 1 day long
-        when(submissionRepository.findPaidSubmissions(statuses, reportStartDate, reportStartDate.plusDays(1)))
+        when(submissionRepository
+            .findPaidSubmissions(statuses, PaymentReportServiceImplTest.START_DATE, START_DATE.plusDays(1)))
             .thenReturn(mappedList);
         mappedList.forEach(s -> when(reportMapper.map(s)).thenReturn(buildTransaction(s)));
     }

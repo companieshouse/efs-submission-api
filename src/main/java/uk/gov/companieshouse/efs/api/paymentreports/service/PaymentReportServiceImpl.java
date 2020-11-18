@@ -108,7 +108,7 @@ public class PaymentReportServiceImpl implements PaymentReportService {
 
     private List<PaymentTransaction> findPaymentTransactions(ImmutableSet<SubmissionStatus> statuses) {
         final LocalDate startDate = LocalDate.now(clock).minusDays(reportPeriodDaysBeforeToday);
-        final LocalDate endDate = startDate.plusDays((1)); // report period should be 1 day long
+        final LocalDate endDate = startDate.plusDays(1); // report period should be 1 day long
         final List<Submission> submissions = repository.findPaidSubmissions(statuses, startDate, endDate);
 
         return submissions.stream().map(paymentReportMapper::map).collect(Collectors.toList());
