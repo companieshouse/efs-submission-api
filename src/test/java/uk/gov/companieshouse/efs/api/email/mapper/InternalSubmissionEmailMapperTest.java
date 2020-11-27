@@ -15,12 +15,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
+import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
+import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.config.InternalSubmissionEmailConfig;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.email.model.EmailFileDetails;
 import uk.gov.companieshouse.efs.api.email.model.InternalSubmissionEmailData;
 import uk.gov.companieshouse.efs.api.email.model.InternalSubmissionEmailModel;
+import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
+import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
@@ -67,9 +72,19 @@ public class InternalSubmissionEmailMapperTest {
     @Mock
     private FormCategoryToEmailAddressService emailAddressService;
 
+    @Mock
+    private CategoryTemplateService categoryTemplateService;
+
+    @Mock
+    private FormTemplateService formTemplateService;
+
+    @Mock
+    private FormTemplateApi formTemplateApi;
+
     @BeforeEach
     void setUp() {
-        this.mapper = new InternalSubmissionEmailMapper(config, idGenerator, timestampGenerator, emailAddressService);
+        this.mapper = new InternalSubmissionEmailMapper(config, idGenerator, timestampGenerator, emailAddressService,
+                categoryTemplateService, formTemplateService);
     }
 
     @Test
@@ -97,6 +112,9 @@ public class InternalSubmissionEmailMapperTest {
 
         when(submission.getPresenter()).thenReturn(presenter);
         when(emailAddressService.getEmailAddressForFormCategory(anyString())).thenReturn("internal_demo@ch.gov.uk");
+        when(formTemplateService.getFormTemplate("SH01")).thenReturn(formTemplateApi);
+        when(formTemplateApi.getFormCategory()).thenReturn("RP");
+        when(categoryTemplateService.getTopLevelCategory("SHO1")).thenReturn(CategoryTypeConstants.REGISTRAR_POWERS);
 
         // when
         EmailDocument<InternalSubmissionEmailData> actual = mapper.map(model);

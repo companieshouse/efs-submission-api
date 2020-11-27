@@ -26,6 +26,8 @@ public class FormCategoryToEmailAddressService {
 
     private String internalConstitutionEmailAddress;
     private String internalRegistryFunctionEmailAddress;
+    private String internalRegistryFunctionScotEmailAddress;
+    private String internalRegistryFunctionNiEmailAddress;
     private String internalScottishPartnershipsEmailAddress;
     private String internalInsolvencyEmailAddress;
     private String internalSharedCapitalEmailAddress;
@@ -55,6 +57,8 @@ public class FormCategoryToEmailAddressService {
         CategoryTemplateService categoryTemplateService,
         @Value("${internal.constitution.email.address}") String internalConstitutionEmailAddress,
         @Value("${internal.regfunc.email.address}") String internalRegistryFunctionEmailAddress,
+        @Value("${internal.regfunc.scot.email.address}") String internalRegistryFunctionScotEmailAddress,
+        @Value("${internal.regfunc.ni.email.address}") String internalRegistryFunctionNiEmailAddress,
         @Value("${internal.scottishpartnerships.email.address}") String internalScottishPartnershipsEmailAddress,
         @Value("${internal.insolvency.email.address}") String internalInsolvencyEmailAddress,
         @Value("${internal.sharecapital.email.address}") String internalSharedCapitalEmailAddress) {
@@ -62,6 +66,8 @@ public class FormCategoryToEmailAddressService {
         this.categoryTemplateService = categoryTemplateService;
         this.internalConstitutionEmailAddress = internalConstitutionEmailAddress;
         this.internalRegistryFunctionEmailAddress = internalRegistryFunctionEmailAddress;
+        this.internalRegistryFunctionScotEmailAddress = internalRegistryFunctionScotEmailAddress;
+        this.internalRegistryFunctionNiEmailAddress = internalRegistryFunctionNiEmailAddress;
         this.internalScottishPartnershipsEmailAddress = internalScottishPartnershipsEmailAddress;
         this.internalInsolvencyEmailAddress = internalInsolvencyEmailAddress;
         this.internalSharedCapitalEmailAddress = internalSharedCapitalEmailAddress;
@@ -78,6 +84,19 @@ public class FormCategoryToEmailAddressService {
 
     public String getEmailAddressForFormCategory(String formType) {
         return this.formTypeEmailMap.getOrDefault(formType, internalRegistryFunctionEmailAddress);
+    }
+
+    public String getEmailAddressForRegPowersFormCategory(String formType, String companyNumber) {
+
+        if (companyNumber.startsWith("SC") || companyNumber.startsWith("SL")) {
+            return this.formTypeEmailMap.getOrDefault(formType, internalRegistryFunctionScotEmailAddress);
+
+        } else if (companyNumber.startsWith("NI")) {
+            return this.formTypeEmailMap.getOrDefault(formType, internalRegistryFunctionNiEmailAddress);
+
+        } else {
+            return this.formTypeEmailMap.getOrDefault(formType, internalRegistryFunctionEmailAddress);
+        }
     }
 
 }
