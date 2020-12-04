@@ -104,9 +104,7 @@ class PaymentReportServiceImplTest {
     }
 
     private PaymentReportServiceImpl createTestServiceSpy(final int reportPeriodDaysBeforeToday) {
-        final Clock clock = Clock
-            .fixed(START_DATE.plusDays(reportPeriodDaysBeforeToday).atTime(NOW_TIME).toInstant(ZoneOffset.UTC),
-                ZoneOffset.UTC);
+        final Clock clock = getFixedClock(reportPeriodDaysBeforeToday);
 
         PaymentReportServiceImpl spyService = spy(new PaymentReportServiceImpl(emailService,
             new ReportQueryServiceImpl(submissionRepository, reportMapper), outputStreamWriterFactory, s3ClientService,
@@ -119,16 +117,22 @@ class PaymentReportServiceImplTest {
         return spyService;
     }
 
+    private Clock getFixedClock(final int daysAfterStartDate) {
+        return Clock.fixed(START_DATE.plusDays(daysAfterStartDate).atTime(NOW_TIME).toInstant(ZoneOffset.UTC),
+            ZoneOffset.UTC);
+    }
+
     @Test
     void sendScotlandPaymentReport() throws IOException {
-        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES,
+        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, START_DATE,
             Collections.singletonList(submissionSF));
         when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
 
         final String reportName = "EFS_ScottishPaymentTransactions_2020-08-31.csv";
         final String fileLink = "link.to.uploaded.file";
 
-        when(s3ClientService.getResourceId(anyString())).thenAnswer(invocation -> ENV_NAME + "/" + invocation.getArgument(0));
+        when(s3ClientService.getResourceId(anyString()))
+            .thenAnswer(invocation -> ENV_NAME + "/" + invocation.getArgument(0));
         when(s3ClientService.generateFileLink(ENV_NAME + "/" + reportName, BUCKET_NAME)).thenReturn(fileLink);
 
         testService.sendScotlandPaymentReport();
@@ -140,6 +144,30 @@ class PaymentReportServiceImplTest {
     }
 
     @Test
+    void sendConsecutiveScotlandPaymentReportsThenPeriodsNotOverlapping() throws IOException {
+        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, START_DATE,
+            Collections.singletonList(submissionSF));
+        when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
+
+        // on the first report day...
+        testService.sendScotlandPaymentReport();
+
+        verify(submissionRepository)
+            .findPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, START_DATE, START_DATE.plusDays(1));
+
+        // on the next day...
+        final Clock nextDay = getFixedClock(2);
+
+        ReflectionTestUtils.setField(testService, "clock", nextDay);
+
+        testService.sendScotlandPaymentReport();
+
+        verify(submissionRepository)
+            .findPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, START_DATE.plusDays(1),
+                START_DATE.plusDays(2));
+    }
+
+    @Test
     void sendOlderScotlandPaymentReport() throws IOException {
         testService = createTestServiceSpy(5); // NOW is 5 days *after* TEST_DATE
         sendScotlandPaymentReport();
@@ -147,7 +175,7 @@ class PaymentReportServiceImplTest {
 
     @Test
     void sendScotlandPaymentReportWhenWriterFails() throws IOException {
-        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, Collections.emptyList());
+        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, START_DATE, Collections.emptyList());
         when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenReturn(outputStreamWriter);
         doThrow(new IOException("expected failure")).when(outputStreamWriter)
             .write(any(char[].class), anyInt(), anyInt());
@@ -162,7 +190,7 @@ class PaymentReportServiceImplTest {
         final String failedReportName = "EFS_FailedPaymentTransactions_2020-08-31.csv";
         final String failedFileLink = "link.to.uploaded.failed.file";
 
-        expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES,
+        expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES, START_DATE,
             Arrays.asList(submissionSFF, submissionNSFF));
         expectReportUpload(failedFileLink, failedReportName);
         when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
@@ -181,7 +209,7 @@ class PaymentReportServiceImplTest {
         final String failedReportName = "EFS_FailedPaymentTransactions_2020-08-31.csv";
         final String failedFileLink = "link.to.uploaded.failed.file";
 
-        expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES, Collections.emptyList());
+        expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES, START_DATE, Collections.emptyList());
         expectReportUpload(failedFileLink, failedReportName);
         when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
 
@@ -195,14 +223,16 @@ class PaymentReportServiceImplTest {
     }
 
     private void expectReportUpload(final String failedFileLink, final String failedReportName) {
-        when(s3ClientService.getResourceId(anyString())).thenAnswer(invocation -> ENV_NAME + "/" + invocation.getArgument(0));
-        when(s3ClientService.generateFileLink(ENV_NAME + "/" + failedReportName, BUCKET_NAME)).thenReturn(failedFileLink);
+        when(s3ClientService.getResourceId(anyString()))
+            .thenAnswer(invocation -> ENV_NAME + "/" + invocation.getArgument(0));
+        when(s3ClientService.generateFileLink(ENV_NAME + "/" + failedReportName, BUCKET_NAME))
+            .thenReturn(failedFileLink);
     }
 
-    private void expectFindPaidSubmissions(ImmutableSet<SubmissionStatus> statuses, List<Submission> mappedList) {
+    private void expectFindPaidSubmissions(ImmutableSet<SubmissionStatus> statuses, final LocalDate startDate,
+        List<Submission> mappedList) {
         // report period should be 1 day long
-        when(submissionRepository
-            .findPaidSubmissions(statuses, PaymentReportServiceImplTest.START_DATE, START_DATE.plusDays(1)))
+        when(submissionRepository.findPaidSubmissions(statuses, startDate, startDate.plusDays(1)))
             .thenReturn(mappedList);
         mappedList.forEach(s -> when(reportMapper.map(s)).thenReturn(buildTransaction(s)));
     }
