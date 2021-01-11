@@ -121,17 +121,17 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
     }
 
     @Override
-    public List<Submission> findPaidSubmissions(final Collection<SubmissionStatus> statuses, final LocalDate submitDate) {
-        LOGGER.debug(String.format("Fetching paid submissions with statuses: [%s] and submitted on [%s]", statuses,
-            submitDate.toString()));
-        LocalDate periodEnd = submitDate.plusDays(1);
-        LocalDate periodStart = submitDate.minusDays(1);
+    public List<Submission> findPaidSubmissions(final Collection<SubmissionStatus> statuses, final LocalDate startDate,
+        final LocalDate endDate) {
+        LOGGER.debug(String
+            .format("Fetching paid submissions with statuses: [%s] and submitted between [%s] and [%s] (exclusive)",
+                statuses, startDate.toString(), endDate.toString()));
         List<Submission> submissions = template.find(Query.query(
-            Criteria.where(STATUS).in(statuses).and(SUBMITTED_AT).gt(periodStart).lt(periodEnd).and(FEE_ON_SUBMISSION)
+            Criteria.where(STATUS).in(statuses).and(SUBMITTED_AT).gte(startDate).lt(endDate).and(FEE_ON_SUBMISSION)
                 .exists(true)), Submission.class, SUBMISSIONS_COLLECTION);
         LOGGER.debug(String
-            .format("Found [%d] paid submissions with statuses: [%s] and submitted on  [%s]", submissions.size(),
-                statuses, submitDate.toString()));
+            .format("Found [%d] paid submissions with statuses: [%s] and submitted [%s] and [%s] (exclusive)",
+                submissions.size(), statuses, startDate.toString(), endDate.toString()));
         return submissions;
     }
 

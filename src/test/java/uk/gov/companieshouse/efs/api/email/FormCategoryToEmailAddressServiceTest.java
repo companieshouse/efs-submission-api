@@ -1,12 +1,14 @@
 package uk.gov.companieshouse.efs.api.email;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
@@ -151,5 +153,18 @@ class FormCategoryToEmailAddressServiceTest {
 
         //then
         assertEquals(EMAIL_RP, actual);
+    }
+
+    @Test
+    void testEmailAddressServiceReturnsExceptionIfFormInvalid() {
+        //given
+        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
+        when(formTemplate.getFormCategory()).thenReturn(null);
+
+        //when
+        Executable actual = () -> formCategoryToEmailAddressService.cacheFormTemplates();
+
+        //then
+        Exception ex = assertThrows(Exception.class, actual);
     }
 }

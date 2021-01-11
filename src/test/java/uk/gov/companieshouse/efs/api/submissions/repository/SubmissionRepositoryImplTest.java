@@ -1,10 +1,10 @@
 package uk.gov.companieshouse.efs.api.submissions.repository;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +26,7 @@ import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 
 @ExtendWith(MockitoExtension.class)
-public class SubmissionRepositoryImplTest {
+class SubmissionRepositoryImplTest {
 
     private static final String ID = "_id";
     private static final String FORM_BARCODE = "form.barcode";
@@ -35,6 +35,9 @@ public class SubmissionRepositoryImplTest {
     private static final String SUBMITTED_AT = "submitted_at";
     private static final String FEE_ON_SUBMISSION = "fee_on_submission";
     private static final String LAST_MODIFIED_AT = "last_modified_at";
+    private static final LocalDate START_DATE = LocalDate.of(2020, 8, 31);
+    private static final LocalDate END_DATE = LocalDate.of(2020, 9, 1);
+
 
     private SubmissionRepositoryImpl repository;
 
@@ -53,13 +56,13 @@ public class SubmissionRepositoryImplTest {
     private LocalDateTime localDateTime;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.localDateTime = LocalDateTime.now();
         repository = new SubmissionRepositoryImpl(template, timestampGenerator);
     }
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         // given
         Submission submission = Mockito.mock(Submission.class);
         // when
@@ -69,7 +72,7 @@ public class SubmissionRepositoryImplTest {
     }
 
     @Test
-    public void testUpdateSubmission() {
+    void testUpdateSubmission() {
         // given
         Submission submission = Mockito.mock(Submission.class);
         // when
@@ -79,7 +82,7 @@ public class SubmissionRepositoryImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionStatus() {
+    void testUpdateSubmissionStatus() {
         // given
         SubmissionStatus status = SubmissionStatus.SUBMITTED;
         when(timestampGenerator.generateTimestamp()).thenReturn(this.localDateTime);
@@ -91,7 +94,7 @@ public class SubmissionRepositoryImplTest {
     }
 
     @Test
-    public void testFindByStatus() {
+    void testFindByStatus() {
         // given
         SubmissionStatus status = SubmissionStatus.SUBMITTED;
         int maxQueueCount = 50;
@@ -115,7 +118,7 @@ public class SubmissionRepositoryImplTest {
     }
 
     @Test
-    public void testReadByBarcode() {
+    void testReadByBarcode() {
         // given
         when(submission.getId()).thenReturn("1234");
         when(template.findOne(any(), eq(Submission.class), any())).thenReturn(submission);
@@ -143,7 +146,7 @@ public class SubmissionRepositoryImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionStatusByBarcode() {
+    void testUpdateSubmissionStatusByBarcode() {
         // given
         when(timestampGenerator.generateTimestamp()).thenReturn(localDateTime);
         FesSubmissionStatus status = FesSubmissionStatus.ACCEPTED;
@@ -159,9 +162,6 @@ public class SubmissionRepositoryImplTest {
 
     @Test
     void testUpdateBarcode() {
-        //given
-        LocalDateTime now = LocalDateTime.now();
-
         //when
         repository.updateBarcode(SUBMISSION_ID, BARCODE);
 
@@ -187,16 +187,13 @@ public class SubmissionRepositoryImplTest {
 
     @Test
     void findSuccessfulPaidSubmissions() {
-        //given
-        LocalDate today = LocalDate.now();
-
         //when
-        repository.findPaidSubmissions(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES, today.minusDays(1));
+        repository.findPaidSubmissions(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES, START_DATE, END_DATE);
 
         //then
         verify(template).find(Query.query(
             Criteria.where(STATUS).in(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES).and(SUBMITTED_AT)
-                .gt(today.minusDays(2)).lt(today).and(FEE_ON_SUBMISSION).exists(true)), Submission.class,
+                .gte(START_DATE).lt(END_DATE).and(FEE_ON_SUBMISSION).exists(true)), Submission.class,
             SUBMISSIONS_COLLECTION);
     }
 }

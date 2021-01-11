@@ -17,6 +17,8 @@ import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstan
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 
 @Component
 public class FormCategoryToEmailAddressService {
@@ -32,6 +34,7 @@ public class FormCategoryToEmailAddressService {
     private String internalInsolvencyEmailAddress;
     private String internalSharedCapitalEmailAddress;
     private Map<String, String> formTypeEmailMap;
+    private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
     private class EmailSupplier {
         private EnumMap<CategoryTypeConstants, String> categories;
@@ -77,9 +80,15 @@ public class FormCategoryToEmailAddressService {
     public void cacheFormTemplates() {
         final EmailSupplier emailSupplier = new EmailSupplier();
 
-        this.formTypeEmailMap = formTemplateRepository.findAll().stream().collect(Collectors
-            .toConcurrentMap(FormTemplate::getFormType, formTemplate -> emailSupplier
-                .supplyEmail(categoryTemplateService.getTopLevelCategory(formTemplate.getFormCategory()))));
+        try {
+            this.formTypeEmailMap = formTemplateRepository.findAll().stream().collect(Collectors
+                .toConcurrentMap(FormTemplate::getFormType, formTemplate -> emailSupplier
+                    .supplyEmail(categoryTemplateService.getTopLevelCategory(formTemplate.getFormCategory()))));
+        }
+        catch (Exception ex) {
+            LOGGER.error("Invalid Form data exists in form_templates collection", ex);
+            throw ex;
+        }
     }
 
     public String getEmailAddressForFormCategory(String formType) {
