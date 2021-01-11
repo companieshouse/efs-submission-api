@@ -83,7 +83,7 @@ public class ExecutionEngine {
     }
 
     private void sendInternalEmail(final Decision decision) {
-        //TODO: should we send an email if S3 fails?
+
         Submission submission = decision.getSubmission();
         InternalSubmissionEmailModel emailModel = new InternalSubmissionEmailModel(submission,
                 createEmailFileDetailsList(submission.getFormDetails().getFileDetailsList()));
