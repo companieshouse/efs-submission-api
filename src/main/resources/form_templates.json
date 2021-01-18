@@ -224,7 +224,7 @@
   "isFesEnabled" : false
 }, {
   "_id" : "LLRPCH01",
-  "formName" : "LL RPCH01 - Correct birthdate of member of a limited liability partnership",
+  "formName" : "RP LL CH01 - Correct the date of birth of an LLP member",
   "formCategory" : "RP",
   "fee" : "",
   "isAuthenticationRequired" : false,
