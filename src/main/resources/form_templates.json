@@ -158,7 +158,8 @@
   "formCategory" : "RP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : false
+  "isFesEnabled" : false,
+  "messageTextIdList": [1]
 }, {
   "_id" : "RP02B",
   "formName" : "RP02B - Apply for rectification for a change of registered address",
