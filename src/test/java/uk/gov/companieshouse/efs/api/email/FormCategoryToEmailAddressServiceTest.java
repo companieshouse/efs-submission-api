@@ -110,6 +110,54 @@ class FormCategoryToEmailAddressServiceTest {
     }
 
     @Test
+    void testEmailAddressServiceReturnsEmailAddressForRegPowersForm() {
+        //given
+        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
+        when(formTemplate.getFormCategory()).thenReturn("RP");
+        when(formTemplate.getFormType()).thenReturn("RP02A");
+        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
+
+        //when
+        formCategoryToEmailAddressService.cacheFormTemplates();
+        String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "12345678");
+
+        //then
+        assertEquals(EMAIL_RP, actual);
+    }
+
+    @Test
+    void testEmailAddressServiceReturnsEmailAddressForScotlandRegPowersForm() {
+        //given
+        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
+        when(formTemplate.getFormCategory()).thenReturn("RP");
+        when(formTemplate.getFormType()).thenReturn("RP02A");
+        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
+
+        //when
+        formCategoryToEmailAddressService.cacheFormTemplates();
+        String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "SC123456");
+
+        //then
+        assertEquals(EMAIL_SCOT, actual);
+    }
+
+    @Test
+    void testEmailAddressServiceReturnsEmailAddressForNIRegPowersForm() {
+        //given
+        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
+        when(formTemplate.getFormCategory()).thenReturn("RP");
+        when(formTemplate.getFormType()).thenReturn("RP02A");
+        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
+
+        //when
+        formCategoryToEmailAddressService.cacheFormTemplates();
+        String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "NI123456");
+
+        //then
+        assertEquals(EMAIL_NI, actual);
+    }
+
+    @Test
     void testEmailAddressServiceReturnsEmailAddressForInsolvencyForm() {
         //given
         when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
