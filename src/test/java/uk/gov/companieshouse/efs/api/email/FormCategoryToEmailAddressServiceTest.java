@@ -21,8 +21,8 @@ class FormCategoryToEmailAddressServiceTest {
 
     protected static final String EMAIL_CC = "internal_CC_demo@ch.gov.uk";
     protected static final String EMAIL_RP = "internal_RP_demo@ch.gov.uk";
-    protected static final String EMAIL_RP_SCOT = "internal_RP_demo@ch.gov.uk";
-    protected static final String EMAIL_RP_NI = "internal_RP_demo@ch.gov.uk";
+    protected static final String EMAIL_SCOT = "internal_SCOT_demo@ch.gov.uk";
+    protected static final String EMAIL_NI = "internal_NI_demo@ch.gov.uk";
     protected static final String EMAIL_SP = "internal_SP_demo@ch.gov.uk";
     protected static final String EMAIL_INS = "internal_INS_demo@ch.gov.uk";
     protected static final String EMAIL_SH = "internal_SH_demo@ch.gov.uk";
@@ -39,7 +39,7 @@ class FormCategoryToEmailAddressServiceTest {
     void setUp() {
         this.formCategoryToEmailAddressService =
             new FormCategoryToEmailAddressService(formTemplateRepository, categoryTemplateService, EMAIL_CC, EMAIL_RP,
-                EMAIL_RP_SCOT, EMAIL_RP_NI, EMAIL_SP, EMAIL_INS, EMAIL_SH);
+                EMAIL_SCOT, EMAIL_NI, EMAIL_SP, EMAIL_INS, EMAIL_SH);
     }
 
     @Test
