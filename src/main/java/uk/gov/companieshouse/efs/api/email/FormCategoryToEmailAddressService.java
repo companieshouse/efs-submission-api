@@ -98,10 +98,10 @@ public class FormCategoryToEmailAddressService {
     public String getEmailAddressForRegPowersFormCategory(String formType, String companyNumber) {
 
         if (companyNumber.startsWith("SC") || companyNumber.startsWith("SL")) {
-            return this.formTypeEmailMap.getOrDefault(formType, internalRegistryFunctionScotEmailAddress);
+            return internalRegistryFunctionScotEmailAddress;
 
         } else if (companyNumber.startsWith("NI")) {
-            return this.formTypeEmailMap.getOrDefault(formType, internalRegistryFunctionNIEmailAddress);
+            return internalRegistryFunctionNIEmailAddress;
 
         } else {
             return this.formTypeEmailMap.getOrDefault(formType, internalRegistryFunctionEmailAddress);
