@@ -75,7 +75,7 @@ class ConfigTest {
         final InternalFailedConversionEmailMapper internalFailedConversionMapper =
             new InternalFailedConversionEmailMapper(null, null, null, null);
         final InternalSubmissionEmailMapper internalSubmissionMapper =
-            new InternalSubmissionEmailMapper(null, null, null, null);
+            new InternalSubmissionEmailMapper(null, null, null, null, null, null);
         final PaymentReportEmailMapper paymentReportMapper = new PaymentReportEmailMapper(null, null, null);
         final InternalEmailMapperFactory internalMapperFactory =
             new InternalEmailMapperFactory(delayedSubmissionBusinessMapper,

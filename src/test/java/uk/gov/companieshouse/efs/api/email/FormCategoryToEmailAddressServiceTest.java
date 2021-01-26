@@ -21,6 +21,8 @@ class FormCategoryToEmailAddressServiceTest {
 
     protected static final String EMAIL_CC = "internal_CC_demo@ch.gov.uk";
     protected static final String EMAIL_RP = "internal_RP_demo@ch.gov.uk";
+    protected static final String EMAIL_SCOT = "internal_SCOT_demo@ch.gov.uk";
+    protected static final String EMAIL_NI = "internal_NI_demo@ch.gov.uk";
     protected static final String EMAIL_SP = "internal_SP_demo@ch.gov.uk";
     protected static final String EMAIL_INS = "internal_INS_demo@ch.gov.uk";
     protected static final String EMAIL_SH = "internal_SH_demo@ch.gov.uk";
@@ -37,7 +39,7 @@ class FormCategoryToEmailAddressServiceTest {
     void setUp() {
         this.formCategoryToEmailAddressService =
             new FormCategoryToEmailAddressService(formTemplateRepository, categoryTemplateService, EMAIL_CC, EMAIL_RP,
-                EMAIL_SP, EMAIL_INS, EMAIL_SH);
+                EMAIL_SCOT, EMAIL_NI, EMAIL_SP, EMAIL_INS, EMAIL_SH);
     }
 
     @Test
@@ -105,6 +107,54 @@ class FormCategoryToEmailAddressServiceTest {
 
         //then
         assertEquals(EMAIL_RP, actual);
+    }
+
+    @Test
+    void testEmailAddressServiceReturnsEmailAddressForRegPowersForm() {
+        //given
+        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
+        when(formTemplate.getFormCategory()).thenReturn("RP");
+        when(formTemplate.getFormType()).thenReturn("RP02A");
+        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
+
+        //when
+        formCategoryToEmailAddressService.cacheFormTemplates();
+        String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "12345678");
+
+        //then
+        assertEquals(EMAIL_RP, actual);
+    }
+
+    @Test
+    void testEmailAddressServiceReturnsEmailAddressForScotlandRegPowersForm() {
+        //given
+        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
+        when(formTemplate.getFormCategory()).thenReturn("RP");
+        when(formTemplate.getFormType()).thenReturn("RP02A");
+        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
+
+        //when
+        formCategoryToEmailAddressService.cacheFormTemplates();
+        String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "SC123456");
+
+        //then
+        assertEquals(EMAIL_SCOT, actual);
+    }
+
+    @Test
+    void testEmailAddressServiceReturnsEmailAddressForNIRegPowersForm() {
+        //given
+        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
+        when(formTemplate.getFormCategory()).thenReturn("RP");
+        when(formTemplate.getFormType()).thenReturn("RP02A");
+        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
+
+        //when
+        formCategoryToEmailAddressService.cacheFormTemplates();
+        String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "NI123456");
+
+        //then
+        assertEquals(EMAIL_NI, actual);
     }
 
     @Test
