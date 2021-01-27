@@ -2,6 +2,7 @@ package uk.gov.companieshouse.efs.api.formtemplates.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 import java.util.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -44,6 +45,10 @@ public class FormTemplate {
     @Field
     private boolean isFesEnabled;
 
+    @JsonProperty("message_text_list")
+    @Field
+    private List<Integer> messageTextIdList;
+
     /**
      * Constructor which sets the submission form data.
      * @param formType the form type
@@ -52,15 +57,18 @@ public class FormTemplate {
      * @param fee the form submission fee
      * @param isAuthenticationRequired is authentication required
      * @param isFesEnabled is fes enabled
+     * @param messageTextIdList list of message textids
      */
-    public FormTemplate(String formType, String formName, String formCategory, String fee,
-                        boolean isAuthenticationRequired, boolean isFesEnabled) {
+    public FormTemplate(final String formType, final String formName, final String formCategory,
+        final String fee, final boolean isAuthenticationRequired, final boolean isFesEnabled,
+        final List<Integer> messageTextIdList) {
         this.formType = formType;
         this.formName = formName;
         this.formCategory = formCategory;
         this.fee = fee;
         this.isAuthenticationRequired = isAuthenticationRequired;
         this.isFesEnabled = isFesEnabled;
+        this.messageTextIdList = messageTextIdList;
     }
 
     public String getFormType() {
@@ -87,6 +95,14 @@ public class FormTemplate {
         return isFesEnabled;
     }
 
+    public List<Integer> getMessageTextIdList() {
+        return messageTextIdList;
+    }
+
+    public void setMessageTextIdList(final List<Integer> messageTextIdList) {
+        this.messageTextIdList = messageTextIdList;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -101,13 +117,14 @@ public class FormTemplate {
                && Objects.equals(getFormType(), that.getFormType())
                && Objects.equals(getFormName(), that.getFormName())
                && Objects.equals(getFormCategory(), that.getFormCategory())
-               && Objects.equals(getFee(), that.getFee());
+               && Objects.equals(getFee(), that.getFee())
+               && Objects.equals(getMessageTextIdList(), that.getMessageTextIdList());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getFormType(), getFormName(), getFormCategory(), getFee(),
-            isAuthenticationRequired(), isFesEnabled());
+            isAuthenticationRequired(), isFesEnabled(), getMessageTextIdList());
     }
 
     @Override
@@ -119,6 +136,7 @@ public class FormTemplate {
                 .append("fee", getFee())
                 .append("isAuthenticationRequired", isAuthenticationRequired())
                 .append("isFesEnabled", isFesEnabled())
+                .append("messageTextIdList", messageTextIdList)
                 .toString();
     }
 }

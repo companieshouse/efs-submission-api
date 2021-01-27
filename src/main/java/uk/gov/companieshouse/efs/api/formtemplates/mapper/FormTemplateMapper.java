@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateListApi;
+import uk.gov.companieshouse.api.model.efs.formtemplates.MessageTextListApi;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 
 @Component
@@ -18,7 +19,9 @@ public class FormTemplateMapper {
                         form.getFormCategory(),
                         form.getFee(),
                         form.isAuthenticationRequired(),
-                        form.isFesEnabled())).collect(Collectors.toCollection(FormTemplateListApi::new));
+                        form.isFesEnabled(),
+                        new MessageTextListApi(form.getMessageTextIdList())))
+                            .collect(Collectors.toCollection(FormTemplateListApi::new));
     }
 
     public FormTemplateApi map(FormTemplate formTemplate) {
@@ -28,6 +31,7 @@ public class FormTemplateMapper {
                         formTemplate.getFormCategory(),
                         formTemplate.getFee(),
                         formTemplate.isAuthenticationRequired(),
-                        formTemplate.isFesEnabled());
+                        formTemplate.isFesEnabled(),
+                        new MessageTextListApi(formTemplate.getMessageTextIdList()));
     }
 }

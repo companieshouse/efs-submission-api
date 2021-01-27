@@ -1,21 +1,5 @@
 package uk.gov.companieshouse.efs.api.formtemplates.service;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
-import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateListApi;
-import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
-import uk.gov.companieshouse.efs.api.formtemplates.mapper.FormTemplateMapper;
-import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -23,6 +7,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
+import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateListApi;
+import uk.gov.companieshouse.efs.api.formtemplates.mapper.FormTemplateMapper;
+import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
+import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class FormTemplateServiceImplTest {
@@ -75,9 +74,9 @@ public class FormTemplateServiceImplTest {
         //given
         String categoryId = "CC01";
         FormTemplate formTemplate = new FormTemplate("IN01", "New Incorporation", "NEWINC", "12",
-                false, false);
+                false, false, null);
         FormTemplateApi mappedForm = new FormTemplateApi("IN01", "New Incorporation", "NEWINC", "12",
-                false, false);
+                false, false, null);
 
         when(formRepository.findById(categoryId)).thenReturn(Optional.of(formTemplate));
         when(mapper.map(formTemplate)).thenReturn(mappedForm);
@@ -110,7 +109,7 @@ public class FormTemplateServiceImplTest {
         //given
         String categoryId = "CC01";
         FormTemplate mappedForm = new FormTemplate("IN01", "New Incorporation", "NEWINC", "12",
-                false, false);
+                false, false, null);
 
         List<FormTemplate> listForm = new ArrayList<>();
         listForm.add(mappedForm);

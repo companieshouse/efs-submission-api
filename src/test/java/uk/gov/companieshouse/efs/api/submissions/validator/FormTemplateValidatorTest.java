@@ -57,7 +57,7 @@ class FormTemplateValidatorTest {
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn("FORM");
         when(formRepository.findById("FORM")).thenReturn(Optional.of(
-            new FormTemplate(null, null, null, null, false, false)));
+            new FormTemplate(null, null, null, null, false, false, null)));
 
         testValidator.validate(submission);
 

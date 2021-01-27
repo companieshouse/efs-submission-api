@@ -135,7 +135,7 @@ public class DecisionEngineTest {
                 .withFormType("AD01")
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
-        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, true)));
+        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, true, null)));
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine
@@ -162,7 +162,7 @@ public class DecisionEngineTest {
                 .withFormType("AD01")
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
-        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, false)));
+        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, false, null)));
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine
