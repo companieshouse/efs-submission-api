@@ -246,49 +246,56 @@
   "formCategory" : "CC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "CC02",
   "formName" : "CC02 - Give notice of removal of restriction on company's articles",
   "formCategory" : "CC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,2]
 }, {
   "_id" : "CC04",
   "formName" : "CC04 - Notify the change of company's objects",
   "formCategory" : "CC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "CC05",
   "formName" : "CC05 - Change constitution by enactment",
   "formCategory" : "CC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "CC06",
   "formName" : "CC06 - Change constitution by order of court or other authority",
   "formCategory" : "CC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "MA",
   "formName" : "Articles",
   "formCategory" : "CC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "RESOLUTIONS",
   "formName" : "Resolution",
   "formCategory" : "CC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "MT01",
   "formName" : "MT01 - Notice that moratorium has come into force",
