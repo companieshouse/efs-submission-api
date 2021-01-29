@@ -4,154 +4,176 @@
   "formCategory" : "SLP",
   "fee" : "SLPCS01",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SLPPSC01",
   "formName" : "SLP PSC01 - Give notice of individual person with significant control of a Scottish limited partnership",
   "formCategory" : "SLP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SLPPSC02",
   "formName" : "SLP PSC02 - Give notice of relevant legal entity with significant control of a Scottish limited partnership",
   "formCategory" : "SLP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SLPPSC03",
   "formName" : "SLP PSC03 - Give notice of other registrable person with significant control of a Scottish limited partnership",
   "formCategory" : "SLP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SLPPSC04",
   "formName" : "SLP PSC04 - Give notice to change details of a person with significant control of a Scottish limited partnership",
   "formCategory" : "SLP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SLPPSC05",
   "formName" : "SLP PSC05 - Give details of relevant legal entity with significant control of a Scottish limited partnership",
   "formCategory" : "SLP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SLPPSC06",
   "formName" : "SLP PSC06 - Give notice changing details of other person with significant control of a Scottish limited partnership",
   "formCategory" : "SLP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SLPPSC07",
   "formName" : "SLP PSC07 - Give notice of ceasing to be a PSC, RLE or ORP of a Scottish limited partnership",
   "formCategory" : "SLP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SLPPSC08",
   "formName" : "SLP PSC08 - Give notice of a person of PSC statements for a Scottish limited partnership",
   "formCategory" : "SLP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SLPPSC09",
   "formName" : "SLP PSC09 - Give notice of update to PSC statements for a Scottish limited partnership",
   "formCategory" : "SLP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQPCS01",
   "formName" : "SQP CS01 - Confirmation statement for a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "SQPCS01",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQP2",
   "formName" : "SQP2 - Give notice of a change of details for a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQP3",
   "formName" : "SQP3 - Give notice of ceasing to be a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQPPSC01",
   "formName" : "SQP PSC01 - Give notice of individual person with significant control of a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQPPSC02",
   "formName" : "SQP PSC02 - Give notice of relevant legal entity with significant control of a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQPPSC03",
   "formName" : "SQP PSC03 - Give notice of other registrable person with significant control of a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQPPSC04",
   "formName" : "SQP PSC04 - Give notice to change details of a person with significant control of a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQPPSC05",
   "formName" : "SQP PSC05 - Give details of relevant legal entity with significant control of a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQPPSC06",
   "formName" : "SQP PSC06 - Give notice changing details of other person with significant control of a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQPPSC07",
   "formName" : "SQP PSC07 - Give notice of ceasing to be a PSC, RLE or ORP of a Scottish Qualifying Partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQPPSC08",
   "formName" : "SQP PSC08 - Give notice of PSC statements for a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "SQPPSC09",
   "formName" : "SQP PSC09 - Give notice of update to PSC statements for a Scottish qualifying partnership",
   "formCategory" : "SQP",
   "fee" : "",
   "isAuthenticationRequired" : false,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "RP02A",
   "formName" : "RP02A - Apply for rectification by the registrar of companies",
