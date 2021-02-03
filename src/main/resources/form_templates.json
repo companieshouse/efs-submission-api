@@ -1291,175 +1291,200 @@
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "AM02",
   "formName" : "AM02 - Notice of statement of affairs in administration",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM03",
   "formName" : "AM03 - Notice of administrator's proposals",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM04",
   "formName" : "AM04 - Notice of the extension of time to deliver administrator's proposals",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM05",
   "formName" : "AM05 - Notice of extension of time to seek approval",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "AM06",
   "formName" : "AM06 - Notice of approval of administrator's proposals",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM07",
   "formName" : "AM07 - Notice of creditor's decision on administrator's proposals",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "AM08",
   "formName" : "AM08 - Notice of revision of administrator's proposals",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM09",
   "formName" : "AM09 - Notice of result of creditor's decision",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "AM10",
   "formName" : "AM10 - Notice of administrator's progress report",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM11",
   "formName" : "AM11 - Notice of appointment of replacement or additional administrator",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "AM12",
   "formName" : "AM12 - Notice of order limiting disclosure",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM13",
   "formName" : "AM13 - Notice of rescission or amendment of order limiting disclosure",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM14",
   "formName" : "AM14 - Notice of an order to dispose of charged property",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM15",
   "formName" : "AM15 - Notice of resignation of administrator",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM16",
   "formName" : "AM16 - Notice of order removing administrator from office",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM17",
   "formName" : "AM17 - Notice of vacation of office",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "AM18",
   "formName" : "AM18 - Notice of deceased administrator",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "AM19",
   "formName" : "AM19 - Notice of the extension of period of administration",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "AM20",
   "formName" : "AM20 - Notice of automatic end of administration",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM21",
   "formName" : "AM21 - Notice of end of administration",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM22",
   "formName" : "AM22 - Notice of a move from administration to creditors' voluntary liquidation",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM23",
   "formName" : "AM23 - Notice of move from administration to dissolution",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM24",
   "formName" : "AM24 - Notice of a court order in respect of date of dissolution",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM25",
   "formName" : "AM25 - Notice of court order ending administration",
   "formCategory" : "INSEW2016_ADM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "REC1",
   "formName" : "REC1 - Notice of administrative receiver's report",
