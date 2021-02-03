@@ -5,5 +5,36 @@ custom_build(
         # If any of these files, or sub-files are modified a rebuild is triggered.
         'src/main',
         'pom.xml'
+    ],
+    ignore=[
+        '*.json'
     ]
+)
+
+local_resource(
+  name = 'efs:mongo_populate',
+  resource_deps = [
+    'mongo',
+    'mongo:populate-database'
+  ],
+  cmd = '''
+    root=$(basename "$(cd ../..|| exit; pwd)")
+    container_name="${root}_mongo_1"
+
+    json_files=(src/main/resources/*.json)
+    db="efs-submissions"
+    for file in ${json_files[@]}; do
+        collection_name=$(basename $file .json)
+        echo "Updating collection $collection_name"
+
+        $(docker exec $container_name mongo ${database} --quiet --eval "db.${collection_name}.drop()")
+        docker exec $container_name echo $(cat $file) | mongoimport --quiet --mode=upsert --jsonArray --db=${database} --collection=${collection_name} --file=/dev/stdin
+    done
+  ''',
+  deps = [
+    'src/main/resources'
+  ],
+  ignore = [
+    '!*.json'
+  ]
 )
