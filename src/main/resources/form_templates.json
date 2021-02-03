@@ -332,56 +332,64 @@
   "formCategory" : "CIGA2000",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "MT03",
   "formName" : "MT03 - Notice of early end of moratorium",
   "formCategory" : "CIGA2000",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "MT04",
   "formName" : "MT04 - Notice of end of moratorium by a monitor",
   "formCategory" : "CIGA2000",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "MT05",
   "formName" : "MT05 - Notice of end of moratorium by a court",
   "formCategory" : "CIGA2000",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "MT06",
   "formName" : "MT06 - Notice of end of moratorium following disposal of application for extension by the court or following CVA proposal taking effect or being withdrawn",
   "formCategory" : "CIGA2000",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "MT07",
   "formName" : "MT07 - Court order permitting disposal of property or goods",
   "formCategory" : "CIGA2000",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "MT08",
   "formName" : "MT08 - Notice of replacement or additional monitor following court order",
   "formCategory" : "CIGA2000",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "MT09",
   "formName" : "MT09 - Notice of monitor ceasing to act following court order",
   "formCategory" : "CIGA2000",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "1.1",
   "formName" : "1.1 - Notice of voluntary arrangement taking effect",
