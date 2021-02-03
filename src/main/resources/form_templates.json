@@ -1199,56 +1199,64 @@
   "formCategory" : "INSEW2016_CVAM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "VAM2",
   "formName" : "VAM2 - Notice of continuation of moratorium",
   "formCategory" : "INSEW2016_CVAM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "VAM3",
   "formName" : "VAM3 - Notice of decision extending or further extending moratorium",
   "formCategory" : "INSEW2016_CVAM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "VAM4",
   "formName" : "VAM4 - Notice of a court order in relation to a moratorium",
   "formCategory" : "INSEW2016_CVAM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "VAM5",
   "formName" : "VAM5 - Notice of the withdrawal of nominee's consent to act",
   "formCategory" : "INSEW2016_CVAM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "VAM6",
   "formName" : "VAM6 - Notice of the appointment of a replacement nominee",
   "formCategory" : "INSEW2016_CVAM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "VAM7",
   "formName" : "VAM7 - Notice of the end of moratorium",
   "formCategory" : "INSEW2016_CVAM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "VAMC",
   "formName" : "VAMC - Notice of a court order in respect of a voluntary arrangement or moratorium",
   "formCategory" : "INSEW2016_CVAM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "CVA1",
   "formName" : "CVA1 - Notice of voluntary arrangement taking effect",
