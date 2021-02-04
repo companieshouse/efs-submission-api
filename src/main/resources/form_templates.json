@@ -1628,7 +1628,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ13",
   "formName" : "LIQ13 - Notice of final account prior to dissolution in MVL",
