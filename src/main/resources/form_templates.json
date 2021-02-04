@@ -1604,7 +1604,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ10",
   "formName" : "LIQ10 - Notice of removal of liquidator by court in MVL and CVL",
