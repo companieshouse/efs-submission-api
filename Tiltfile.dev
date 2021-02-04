@@ -1,9 +1,3 @@
-local_resource(
-  name = 'dev:efs-submission-web-build',
-  cmd = 'mvn compile',
-  deps = ['src/main']
-)
-
 custom_build(
     '169942020521.dkr.ecr.eu-west-1.amazonaws.com/local/efs-submission-api',
     'mvn -s settings.xml compile jib:dockerBuild -Dimage=$EXPECTED_REF',
