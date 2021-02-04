@@ -1572,7 +1572,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,2]
 }, {
   "_id" : "LIQ06",
   "formName" : "LIQ06 - Notice of liquidator's resignation in MVL or CVL",
