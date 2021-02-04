@@ -2760,7 +2760,8 @@
   "formCategory" : "INSCROA",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "SH02",
   "formName" : "SH02 - Consolidate, sub-divide, redeem shares or re-convert stock into shares",
