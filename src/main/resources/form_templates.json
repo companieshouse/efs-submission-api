@@ -1549,98 +1549,112 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ02",
   "formName" : "LIQ02 - Notice of statement of affairs",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ03",
   "formName" : "LIQ03 - Notice of progress report in voluntary winding up",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ04",
   "formName" : "LIQ04 - Notice of order deferring the date of dissolution in MVL or CVL",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ05",
   "formName" : "LIQ05 - Notice of order limiting disclosure of statement of affairs in CVL",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ06",
   "formName" : "LIQ06 - Notice of liquidator's resignation in MVL or CVL",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ07",
   "formName" : "LIQ07 - Notice of removal of liquidator by creditors",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ08",
   "formName" : "LIQ08 - Notice of loss of qualification as insolvency practitioner in MVL and CVL",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ09",
   "formName" : "LIQ09 - Notice of deceased liquidator in MVL and CVL",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ10",
   "formName" : "LIQ10 - Notice of removal of liquidator by court in MVL and CVL",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ11",
   "formName" : "LIQ11 - Notice of removal of liquidator by company meeting in MVL",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ12",
   "formName" : "LIQ12 - Notice of release of former liquidator by secretary of state in MVL or CVL",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ13",
   "formName" : "LIQ13 - Notice of final account prior to dissolution in MVL",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ14",
   "formName" : "LIQ14 - Notice of final account prior to dissolution in CVL",
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "WU01",
   "formName" : "WU01 - Notice of court order in a winding up",
