@@ -1580,7 +1580,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ07",
   "formName" : "LIQ07 - Notice of removal of liquidator by creditors",
