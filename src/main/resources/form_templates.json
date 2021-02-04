@@ -1541,7 +1541,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,2]
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ02",
   "formName" : "LIQ02 - Notice of statement of affairs",
@@ -1549,7 +1549,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,2]
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ03",
   "formName" : "LIQ03 - Notice of progress report in voluntary winding up",
@@ -1557,7 +1557,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,2]
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ04",
   "formName" : "LIQ04 - Notice of order deferring the date of dissolution in MVL or CVL",
@@ -1565,7 +1565,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,2]
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ05",
   "formName" : "LIQ05 - Notice of order limiting disclosure of statement of affairs in CVL",
@@ -1573,7 +1573,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,2]
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ06",
   "formName" : "LIQ06 - Notice of liquidator's resignation in MVL or CVL",
@@ -1613,7 +1613,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,2]
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ11",
   "formName" : "LIQ11 - Notice of removal of liquidator by company meeting in MVL",
@@ -1637,7 +1637,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,2]
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "LIQ14",
   "formName" : "LIQ14 - Notice of final account prior to dissolution in CVL",
@@ -1645,7 +1645,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,2]
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "WU01",
   "formName" : "WU01 - Notice of court order in a winding up",
