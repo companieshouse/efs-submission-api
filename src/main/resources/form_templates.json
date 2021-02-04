@@ -1540,7 +1540,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,2]
 }, {
   "_id" : "LIQ02",
   "formName" : "LIQ02 - Notice of statement of affairs",
