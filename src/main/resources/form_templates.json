@@ -1564,7 +1564,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,2]
 }, {
   "_id" : "LIQ05",
   "formName" : "LIQ05 - Notice of order limiting disclosure of statement of affairs in CVL",
