@@ -7,6 +7,7 @@ import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryType
 import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.SHARE_CAPITAL;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -33,6 +34,11 @@ public class FormCategoryToEmailAddressService {
     private String internalScottishPartnershipsEmailAddress;
     private String internalInsolvencyEmailAddress;
     private String internalSharedCapitalEmailAddress;
+    @Value("${scotland.company.prefixes}")
+    private List<String> scotlandCompanyPrefixes;
+    @Value("${northernIreland.company.prefixes}")
+    private List<String> northernIrelandCompanyPrefixes;
+
     private Map<String, String> formTypeEmailMap;
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
@@ -97,10 +103,10 @@ public class FormCategoryToEmailAddressService {
 
     public String getEmailAddressForRegPowersFormCategory(String formType, String companyNumber) {
 
-        if (companyNumber.startsWith("SC") || companyNumber.startsWith("SL")) {
+        if (scotlandCompanyPrefixes.stream().anyMatch(companyNumber::startsWith)) {
             return internalScotEmailAddress;
 
-        } else if (companyNumber.startsWith("NI")) {
+        } else if (northernIrelandCompanyPrefixes.stream().anyMatch(companyNumber::startsWith)) {
             return internalNIEmailAddress;
 
         } else {
