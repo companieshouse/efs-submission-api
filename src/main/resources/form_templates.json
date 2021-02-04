@@ -1556,7 +1556,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,2]
 }, {
   "_id" : "LIQ04",
   "formName" : "LIQ04 - Notice of order deferring the date of dissolution in MVL or CVL",
