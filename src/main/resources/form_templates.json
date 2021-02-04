@@ -1588,7 +1588,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ08",
   "formName" : "LIQ08 - Notice of loss of qualification as insolvency practitioner in MVL and CVL",
