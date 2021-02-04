@@ -1612,7 +1612,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,2]
 }, {
   "_id" : "LIQ11",
   "formName" : "LIQ11 - Notice of removal of liquidator by company meeting in MVL",
