@@ -1620,7 +1620,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ12",
   "formName" : "LIQ12 - Notice of release of former liquidator by secretary of state in MVL or CVL",
