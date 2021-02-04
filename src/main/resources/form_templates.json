@@ -1596,7 +1596,8 @@
   "formCategory" : "INSEW2016_VL",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ09",
   "formName" : "LIQ09 - Notice of deceased liquidator in MVL and CVL",
