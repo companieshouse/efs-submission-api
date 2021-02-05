@@ -1661,56 +1661,64 @@
   "formCategory" : "INSEW2016_WU",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "WU02",
   "formName" : "WU02 - Notice of order of appointment of provisional liquidator",
   "formCategory" : "INSEW2016_WU",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "WU03",
   "formName" : "WU03 - Notice of termination of appointment of provisional liquidator",
   "formCategory" : "INSEW2016_WU",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "WU04",
   "formName" : "WU04 - Notice of the appointment of liquidator in a winding up by the court",
   "formCategory" : "INSEW2016_WU",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "WU07",
   "formName" : "WU07 - Notice of a progress report in a winding up by the court",
   "formCategory" : "INSEW2016_WU",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "WU13",
   "formName" : "WU13 - Notice of order of court on appeal against decision",
   "formCategory" : "INSEW2016_WU",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "WU14",
   "formName" : "WU14 - Notice of an order for removal of liquidator",
   "formCategory" : "INSEW2016_WU",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "WU15",
   "formName" : "WU15 - Notice of the final account prior to dissolution",
   "formCategory" : "INSEW2016_WU",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "COM1",
   "formName" : "COM1 - Notice of establishment of creditors' or liquidation committee",
