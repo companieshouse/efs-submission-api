@@ -4,13 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
@@ -26,6 +29,8 @@ class FormCategoryToEmailAddressServiceTest {
     protected static final String EMAIL_SP = "internal_SP_demo@ch.gov.uk";
     protected static final String EMAIL_INS = "internal_INS_demo@ch.gov.uk";
     protected static final String EMAIL_SH = "internal_SH_demo@ch.gov.uk";
+    private static final List<String> SCOTLAND_COMPANY_PREFIXES = Arrays.asList("SC","SL","SO","SG","SF");
+    private static final List<String> NORTHERN_IRELAND_COMPANY_PREFIXES = Arrays.asList("NI","NC","R");
     @Mock
     private FormTemplateRepository formTemplateRepository;
     @Mock
@@ -40,6 +45,8 @@ class FormCategoryToEmailAddressServiceTest {
         this.formCategoryToEmailAddressService =
             new FormCategoryToEmailAddressService(formTemplateRepository, categoryTemplateService, EMAIL_CC, EMAIL_RP,
                 EMAIL_SCOT, EMAIL_NI, EMAIL_SP, EMAIL_INS, EMAIL_SH);
+        ReflectionTestUtils.setField(formCategoryToEmailAddressService, "scotlandCompanyPrefixes", SCOTLAND_COMPANY_PREFIXES);
+        ReflectionTestUtils.setField(formCategoryToEmailAddressService, "northernIrelandCompanyPrefixes", NORTHERN_IRELAND_COMPANY_PREFIXES);
     }
 
     @Test
@@ -96,10 +103,7 @@ class FormCategoryToEmailAddressServiceTest {
     @Test
     void testEmailAddressServiceReturnsEmailAddressForNonConstitutionForm() {
         //given
-        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
-        when(formTemplate.getFormCategory()).thenReturn("RP");
-        when(formTemplate.getFormType()).thenReturn("RP02A");
-        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
+        setUpRegPowersCategoryAndForm();
 
         //when
         formCategoryToEmailAddressService.cacheFormTemplates();
@@ -112,10 +116,7 @@ class FormCategoryToEmailAddressServiceTest {
     @Test
     void testEmailAddressServiceReturnsEmailAddressForRegPowersForm() {
         //given
-        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
-        when(formTemplate.getFormCategory()).thenReturn("RP");
-        when(formTemplate.getFormType()).thenReturn("RP02A");
-        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
+        setUpRegPowersCategoryAndForm();
 
         //when
         formCategoryToEmailAddressService.cacheFormTemplates();
@@ -126,12 +127,9 @@ class FormCategoryToEmailAddressServiceTest {
     }
 
     @Test
-    void testEmailAddressServiceReturnsEmailAddressForScotlandRegPowersForm() {
+    void testEmailAddressServiceReturnsScotlandEmailAddressForPrefixSC() {
         //given
-        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
-        when(formTemplate.getFormCategory()).thenReturn("RP");
-        when(formTemplate.getFormType()).thenReturn("RP02A");
-        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
+        setUpRegPowersCategoryAndForm();
 
         //when
         formCategoryToEmailAddressService.cacheFormTemplates();
@@ -142,16 +140,39 @@ class FormCategoryToEmailAddressServiceTest {
     }
 
     @Test
-    void testEmailAddressServiceReturnsEmailAddressForNIRegPowersForm() {
+    void testEmailAddressServiceReturnsScotlandEmailAddressForPrefixSL() {
         //given
-        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
-        when(formTemplate.getFormCategory()).thenReturn("RP");
-        when(formTemplate.getFormType()).thenReturn("RP02A");
-        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
+        setUpRegPowersCategoryAndForm();
+
+        //when
+        formCategoryToEmailAddressService.cacheFormTemplates();
+        String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "SL123456");
+
+        //then
+        assertEquals(EMAIL_SCOT, actual);
+    }
+
+    @Test
+    void testEmailAddressServiceReturnsNorthernIrelandEmailAddressForPrefixNI() {
+        //given
+        setUpRegPowersCategoryAndForm();
 
         //when
         formCategoryToEmailAddressService.cacheFormTemplates();
         String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "NI123456");
+
+        //then
+        assertEquals(EMAIL_NI, actual);
+    }
+
+    @Test
+    void testEmailAddressServiceReturnsNorthernIrelandEmailAddressForPrefixR() {
+        //given
+        setUpRegPowersCategoryAndForm();
+
+        //when
+        formCategoryToEmailAddressService.cacheFormTemplates();
+        String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "R123456");
 
         //then
         assertEquals(EMAIL_NI, actual);
@@ -214,5 +235,12 @@ class FormCategoryToEmailAddressServiceTest {
 
         //then
         Exception ex = assertThrows(Exception.class, actual);
+    }
+
+    private void setUpRegPowersCategoryAndForm() {
+        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
+        when(formTemplate.getFormCategory()).thenReturn("RP");
+        when(formTemplate.getFormType()).thenReturn("RP02A");
+        when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.OTHER);
     }
 }
