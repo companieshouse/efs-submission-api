@@ -1202,7 +1202,8 @@
   "formCategory" : "IA1986_NOD",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "VAM1",
   "formName" : "VAM1 - Notice of the commencement of moratorium",
