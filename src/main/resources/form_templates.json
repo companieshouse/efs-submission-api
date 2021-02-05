@@ -1272,7 +1272,8 @@
   "formCategory" : "INSEW2016_CVA",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "CVA2",
   "formName" : "CVA2 - Notice of order of revocation or suspension of voluntary arrangement",
