@@ -1280,7 +1280,8 @@
   "formCategory" : "INSEW2016_CVA",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1, 4]
 }, {
   "_id" : "CVA3",
   "formName" : "CVA3 - Notice of supervisor's progress report in voluntary arrangement",
