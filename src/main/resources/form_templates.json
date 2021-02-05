@@ -1296,7 +1296,8 @@
   "formCategory" : "INSEW2016_CVA",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM01",
   "formName" : "AM01 - Notice of administrator's appointment",
