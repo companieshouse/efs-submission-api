@@ -1500,49 +1500,56 @@
   "formCategory" : "INSEW2016_REC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "REC2",
   "formName" : "REC2 - Notice of summary of receipts and payments",
   "formCategory" : "INSEW2016_REC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "REC3",
   "formName" : "REC3 - Notice of order of disposal of charged property",
   "formCategory" : "INSEW2016_REC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "REC4",
   "formName" : "REC4 - Notice of statement of affairs in administrative receivership",
   "formCategory" : "INSEW2016_REC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "REC5",
   "formName" : "REC5 - Notice of deceased administrative receiver",
   "formCategory" : "INSEW2016_REC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "RM01",
   "formName" : "RM01 - Notice of appointment of receiver or manager",
   "formCategory" : "INSEW2016_REC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "RM02",
   "formName" : "RM02 - Notice of ceasing to act as receiver or manager",
   "formCategory" : "INSEW2016_REC",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "LIQ01",
   "formName" : "LIQ01 - Notice of statutory declaration of solvency",
