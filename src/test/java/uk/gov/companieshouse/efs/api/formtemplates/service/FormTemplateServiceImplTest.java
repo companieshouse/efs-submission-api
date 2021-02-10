@@ -24,7 +24,7 @@ import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class FormTemplateServiceImplTest {
+class FormTemplateServiceImplTest {
     @Mock
     private FormTemplateRepository formRepository;
 

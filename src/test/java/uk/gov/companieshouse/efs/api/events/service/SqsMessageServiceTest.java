@@ -28,7 +28,7 @@ import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 
 @ExtendWith(MockitoExtension.class)
-public class SqsMessageServiceTest {
+class SqsMessageServiceTest {
 
     private SqsMessageService messageService;
 

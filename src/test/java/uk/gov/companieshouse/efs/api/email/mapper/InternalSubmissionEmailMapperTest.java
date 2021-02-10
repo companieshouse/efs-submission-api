@@ -35,7 +35,7 @@ import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
 @ExtendWith(MockitoExtension.class)
-public class InternalSubmissionEmailMapperTest {
+class InternalSubmissionEmailMapperTest {
 
     private InternalSubmissionEmailMapper mapper;
 
@@ -88,7 +88,7 @@ public class InternalSubmissionEmailMapperTest {
     }
 
     @Test
-    public void mapSubmissionDataToConfirmationEmailModel() {
+    void mapSubmissionDataToConfirmationEmailModel() {
         // given
         LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 
@@ -145,7 +145,7 @@ public class InternalSubmissionEmailMapperTest {
     }
 
     @Test
-    public void mapSubmissionDataToConfirmationEmailModelRegPowers() {
+    void mapSubmissionDataToConfirmationEmailModelRegPowers() {
         // given
         LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 
@@ -204,7 +204,7 @@ public class InternalSubmissionEmailMapperTest {
     }
 
     @Test
-    public void mapSubmissionDataToConfirmationEmailModelRegPowersScot() {
+    void mapSubmissionDataToConfirmationEmailModelRegPowersScot() {
         // given
         LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 

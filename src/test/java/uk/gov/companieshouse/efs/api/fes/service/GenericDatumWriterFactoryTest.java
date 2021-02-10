@@ -9,7 +9,7 @@ import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GenericDatumWriterFactoryTest {
+class GenericDatumWriterFactoryTest {
     private GenericDatumWriterFactory factory;
 
     @Mock

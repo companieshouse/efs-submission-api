@@ -21,7 +21,7 @@ import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionInc
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
-public class ConfirmAuthorisedControllerTest {
+class ConfirmAuthorisedControllerTest {
 
     private ConfirmAuthorisedController confirmAuthorisedController;
     @Mock

@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ImageDaoTest {
+class ImageDaoTest {
 
     private static final long IMAGE_ID = 1L;
     private ImageDao imageDao;

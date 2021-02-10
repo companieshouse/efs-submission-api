@@ -60,7 +60,7 @@ import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailServiceImplTest {
+class EmailServiceImplTest {
 
     private EmailServiceImpl emailService;
 
@@ -306,7 +306,7 @@ public class EmailServiceImplTest {
     }
 
     @Test
-    public void testSendExternalConfirmation() throws ExecutionException, InterruptedException {
+    void testSendExternalConfirmation() throws ExecutionException, InterruptedException {
         //given
         LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
         when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);

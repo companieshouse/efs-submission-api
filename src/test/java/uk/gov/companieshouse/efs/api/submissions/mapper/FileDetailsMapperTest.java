@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class FileDetailsMapperTest {
+class FileDetailsMapperTest {
 
     private static final String FILE_ID = "1234";
     private static final String FILE_NAME = "HELLO.pdf";

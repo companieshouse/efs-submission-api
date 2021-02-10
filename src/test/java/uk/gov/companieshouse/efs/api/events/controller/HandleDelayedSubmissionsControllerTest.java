@@ -12,7 +12,7 @@ import uk.gov.companieshouse.efs.api.events.service.EventService;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class HandleDelayedSubmissionsControllerTest {
+class HandleDelayedSubmissionsControllerTest {
 
     private HandleDelayedSubmissionsController controller;
 

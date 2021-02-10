@@ -20,7 +20,7 @@ import uk.gov.companieshouse.logging.util.LogContext;
 import uk.gov.companieshouse.logging.util.LogContextProperties;
 
 @ExtendWith(SpringExtension.class)
-public class LoggingInterceptorTest {
+class LoggingInterceptorTest {
     private LoggingInterceptor interceptor;
 
     @Mock
@@ -47,7 +47,7 @@ public class LoggingInterceptorTest {
     }
 
     @Test
-    public void preHandle() {
+    void preHandle() {
         // when
         interceptor.preHandle(request, response, handler);
         // then
@@ -55,7 +55,7 @@ public class LoggingInterceptorTest {
     }
 
     @Test
-    public void postHandle() {
+    void postHandle() {
         // when
         interceptor.postHandle(request, response, handler, modelAndView);
         // then

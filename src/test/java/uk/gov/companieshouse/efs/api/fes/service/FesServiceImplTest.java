@@ -32,7 +32,7 @@ import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionInc
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
-public class FesServiceImplTest {
+class FesServiceImplTest {
 
     private FesService fesService;
 
@@ -62,7 +62,7 @@ public class FesServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionStatusByBarcodeEmailAcceptedSuccess(){
+    void testUpdateSubmissionStatusByBarcodeEmailAcceptedSuccess(){
         //given
         when(repository.readByBarcode(BARCODE)).thenReturn(submission);
         when(submission.getStatus()).thenReturn(SubmissionStatus.SENT_TO_FES);
@@ -77,7 +77,7 @@ public class FesServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionStatusByBarcodeRejectedSuccess(){
+    void testUpdateSubmissionStatusByBarcodeRejectedSuccess(){
         //given
         when(chipsService.getRejectReasons(any())).thenReturn(Collections.singletonList("test Reasons"));
         when(repository.readByBarcode(BARCODE)).thenReturn(submission);
@@ -95,7 +95,7 @@ public class FesServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionStatusByBarcodeRejectedEmailException(){
+    void testUpdateSubmissionStatusByBarcodeRejectedEmailException(){
         //given
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getBarcode()).thenReturn("123");
@@ -115,7 +115,7 @@ public class FesServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionStatusByBarcodeRejectedChipsException(){
+    void testUpdateSubmissionStatusByBarcodeRejectedChipsException(){
         //given
         when(repository.readByBarcode(BARCODE)).thenReturn(submission);
         when(submission.getStatus()).thenReturn(SubmissionStatus.SENT_TO_FES);
@@ -131,7 +131,7 @@ public class FesServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionStatusByBarcodeInvalidSubmissionState(){
+    void testUpdateSubmissionStatusByBarcodeInvalidSubmissionState(){
         //given
         when(repository.readByBarcode(BARCODE)).thenReturn(submission);
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
@@ -149,7 +149,7 @@ public class FesServiceImplTest {
     }
 
     @Test
-    public void testUpdateSubmissionStatusByBarcodeNullSubmissionState(){
+    void testUpdateSubmissionStatusByBarcodeNullSubmissionState(){
         //given
         when(repository.readByBarcode(BARCODE)).thenReturn(null);
 

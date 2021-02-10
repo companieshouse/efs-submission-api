@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.efs.api.events.service.EventService;
 
 @ExtendWith(MockitoExtension.class)
-public class SubmitToFesControllerTest {
+class SubmitToFesControllerTest {
 
     private SubmitToFesController controller;
 

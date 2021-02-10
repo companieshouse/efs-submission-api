@@ -35,7 +35,7 @@ import static org.mockserver.model.HttpResponse.response;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class SubmissionPollingControllerITest extends BaseIntegrationTest {
+class SubmissionPollingControllerITest extends BaseIntegrationTest {
 
     private static final String SUBMISSION_ID = "1234abcd5678defa9012bcde";
     private static final String SUBMISSION_COLLECTION_NAME = "submissions";

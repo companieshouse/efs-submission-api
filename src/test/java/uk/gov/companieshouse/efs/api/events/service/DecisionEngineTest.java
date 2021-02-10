@@ -35,7 +35,7 @@ import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
 import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 
 @ExtendWith(MockitoExtension.class)
-public class DecisionEngineTest {
+class DecisionEngineTest {
 
     private DecisionEngine decisionEngine;
 

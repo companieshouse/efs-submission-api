@@ -26,7 +26,7 @@ import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
 @ExtendWith(MockitoExtension.class)
-public class ExternalRejectEmailMapperTest {
+class ExternalRejectEmailMapperTest {
 
     private ExternalRejectEmailMapper rejectEmailMapper;
 

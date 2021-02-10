@@ -19,7 +19,7 @@ import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
-public class FormTemplateTemplateControllerTest {
+class FormTemplateTemplateControllerTest {
 
     @Mock
     private FormTemplateService service;

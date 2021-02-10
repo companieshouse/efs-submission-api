@@ -34,7 +34,7 @@ import uk.gov.companieshouse.efs.api.events.service.model.FormModel;
 import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 
 @ExtendWith(MockitoExtension.class)
-public class FesLoaderServiceImplTest {
+class FesLoaderServiceImplTest {
 
     private static final String FORM_TYPE = "SH04";
 

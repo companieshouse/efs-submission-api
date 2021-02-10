@@ -7,7 +7,7 @@ import uk.gov.companieshouse.efs.api.submissions.model.Company;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CompanyMapperTest {
+class CompanyMapperTest {
 
     private CompanyMapper mapper;
 

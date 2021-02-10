@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PresenterMapperTest {
+class PresenterMapperTest {
 
     private static final String PRESENTER_EMAIL = "demo@ch.gov.uk";
 

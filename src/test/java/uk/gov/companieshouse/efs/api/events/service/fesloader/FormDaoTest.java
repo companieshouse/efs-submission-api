@@ -16,7 +16,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class FormDaoTest {
+class FormDaoTest {
 
     private static final String BARCODE = "Y1234XYZ";
     private static final String COMPANY_NUMBER = "12345678";

@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import uk.gov.companieshouse.efs.api.events.service.exception.TiffDownloadException;
 
 @ExtendWith(MockitoExtension.class)
-public class TiffDownloadServiceImplTest {
+class TiffDownloadServiceImplTest {
 
     private TiffDownloadService service;
 
@@ -47,7 +47,7 @@ public class TiffDownloadServiceImplTest {
     }
 
     @Test
-    public void downloadTiffFileSuccessTest() {
+    void downloadTiffFileSuccessTest() {
         //given
         String fileId = "87878787";
 
@@ -66,7 +66,7 @@ public class TiffDownloadServiceImplTest {
     }
 
     @Test
-    public void downloadTiffFileThrowAwsExceptionTest(){
+    void downloadTiffFileThrowAwsExceptionTest(){
         //given
         String fileId = "87878787";
         when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(NoSuchKeyException.class);
@@ -80,7 +80,7 @@ public class TiffDownloadServiceImplTest {
     }
 
     @Test
-    public void testTiffDownloadServiceThrowsTiffDownloadExceptionIfIOExceptionThrown() throws IOException {
+    void testTiffDownloadServiceThrowsTiffDownloadExceptionIfIOExceptionThrown() throws IOException {
         //given
         when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(responseInputStream);
         when(responseInputStream.read(any())).thenThrow(IOException.class);

@@ -26,7 +26,7 @@ class CategoryTemplateTest {
     }
 
     @Test
-    public void categoryTemplate() {
+    void categoryTemplate() {
 
         assertThat(testCategoryTemplate.getCategoryType(), is("CC01"));
         assertThat(testCategoryTemplate.getCategoryName(), is("Category01"));

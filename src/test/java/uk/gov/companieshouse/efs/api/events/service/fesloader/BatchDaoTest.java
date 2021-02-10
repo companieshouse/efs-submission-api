@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class BatchDaoTest {
+class BatchDaoTest {
     private static final long BATCH_ID = 1L;
     private static final long BATCH_NAME_ID = 2L;
     private static final String BATCH_NAME = "EFS_200512_0001";

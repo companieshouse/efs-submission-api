@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class FesControllerITest extends BaseIntegrationTest {
+class FesControllerITest extends BaseIntegrationTest {
 
     private static final String SUBMISSION_ID = "1234abcd5678defa9012bcde";
     private static final String SUBMISSION_COLLECTION_NAME = "submissions";

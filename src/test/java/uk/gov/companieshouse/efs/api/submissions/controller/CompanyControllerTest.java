@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CompanyControllerTest {
+class CompanyControllerTest {
 
 	@Mock
 	private SubmissionResponseApi response;
@@ -51,7 +51,7 @@ public class CompanyControllerTest {
 	}
 
 	@Test
-	public void testSubmitCompanyReturnsId() {
+	void testSubmitCompanyReturnsId() {
 		//given
 		when(service.updateSubmissionWithCompany(any(), any())).thenReturn(response);
 
@@ -64,7 +64,7 @@ public class CompanyControllerTest {
 	}
 
 	@Test
-	public void testSubmitCompanyReturns404NotFound() {
+	void testSubmitCompanyReturns404NotFound() {
 		//given
 		when(service.updateSubmissionWithCompany(any(), any())).thenThrow(new SubmissionNotFoundException("not found"));
 
@@ -77,7 +77,7 @@ public class CompanyControllerTest {
 	}
 
 	@Test
-	public void testSubmitCompanyReturns409Conflict() {
+	void testSubmitCompanyReturns409Conflict() {
 		//given
 		when(service.updateSubmissionWithCompany(any(), any())).thenThrow(new SubmissionIncorrectStateException("not OPEN"));
 
@@ -90,7 +90,7 @@ public class CompanyControllerTest {
 	}
 
     @Test
-    public void testSubmitCompanyReturns400BadRequest() {
+    void testSubmitCompanyReturns400BadRequest() {
         // given
         when(result.hasErrors()).thenReturn(true);
         when(result.getAllErrors()).thenReturn(Arrays.asList(new FieldError("a", "company.name", "invalid"),

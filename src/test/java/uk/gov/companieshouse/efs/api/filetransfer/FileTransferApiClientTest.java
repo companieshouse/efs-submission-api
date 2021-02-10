@@ -26,7 +26,7 @@ import uk.gov.companieshouse.efs.api.filetransfer.model.FileTransferApiClientDet
 import uk.gov.companieshouse.efs.api.filetransfer.model.FileTransferDetails;
 
 @ExtendWith(MockitoExtension.class)
-public class FileTransferApiClientTest {
+class FileTransferApiClientTest {
 
     private FileTransferApiClient fileTransferApiClient;
 

@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.efs.api.events.service.EventService;
 
 @ExtendWith(MockitoExtension.class)
-public class SubmissionPollingControllerTest {
+class SubmissionPollingControllerTest {
 
     private SubmissionPollingController controller;
 

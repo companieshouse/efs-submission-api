@@ -24,7 +24,7 @@ import uk.gov.companieshouse.efs.api.events.service.model.BarcodeRequest;
 import uk.gov.companieshouse.efs.api.events.service.model.BarcodeResponse;
 
 @ExtendWith(MockitoExtension.class)
-public class BarcodeGeneratorServiceImplTest {
+class BarcodeGeneratorServiceImplTest {
 
     private static final String BARCODE_GENERATOR_SERVICE_URL = "http://localhost:4422/";
     private static final String FIXED_BARCODE = "Y002HWHC";
