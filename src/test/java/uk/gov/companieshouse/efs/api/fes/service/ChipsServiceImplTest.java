@@ -20,7 +20,7 @@ import uk.gov.companieshouse.efs.api.fes.repository.ChipsDao;
 import uk.gov.companieshouse.efs.api.fes.service.exception.ChipsServiceException;
 
 @ExtendWith(MockitoExtension.class)
-public class ChipsServiceImplTest {
+class ChipsServiceImplTest {
 
     private ChipsServiceImpl chipsService;
 

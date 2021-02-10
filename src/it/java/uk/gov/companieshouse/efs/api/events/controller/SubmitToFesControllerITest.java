@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Disabled("Oracle container image unavailable")
-public class SubmitToFesControllerITest extends BaseIntegrationTest {
+class SubmitToFesControllerITest extends BaseIntegrationTest {
 
     private static final String SUBMISSION_ID = "1234abcd5678defa9012bcde";
     private static final String CONVERTED_TIFF_OBJECT_KEY = "converted-tiffs/eeeeeeee-dddd-cccc-bbbb-aaaaaaaaaaaa";

@@ -26,13 +26,13 @@ class CompanyAuthAllowListEntryTest {
     }
 
     @Test
-    public void companyAuthAllowListEntity() {
+    void companyAuthAllowListEntity() {
 
         assertThat(testCompanyAuthAllowListEntry.getEmailAddress(), is("test@email.co.uk"));
     }
 
     @Test
-    public void setEmailAddress() {
+    void setEmailAddress() {
 
         testCompanyAuthAllowListEntry.setEmailAddress("test@email.co.uk");
         assertThat(testCompanyAuthAllowListEntry.getEmailAddress(), is("test@email.co.uk"));

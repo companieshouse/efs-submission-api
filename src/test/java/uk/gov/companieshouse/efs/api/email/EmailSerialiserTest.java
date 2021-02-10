@@ -32,7 +32,7 @@ import uk.gov.companieshouse.efs.api.fes.service.GenericDatumWriterFactory;
 import uk.gov.companieshouse.efs.api.fes.service.GenericRecordFactory;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailSerialiserTest {
+class EmailSerialiserTest {
 
     private EmailSerialiser serialiser;
 
@@ -69,7 +69,7 @@ public class EmailSerialiserTest {
     }
 
     @Test
-    public void ExternalEmailSerialiserSuccessTest() throws IOException {
+    void ExternalEmailSerialiserSuccessTest() throws IOException {
         //given
         when(encoderFactory.binaryEncoder(any(), any())).thenReturn(binaryEncoder);
         when(genericRecordFactory.getGenericRecord(schema)).thenReturn(genericRecord);
@@ -89,7 +89,7 @@ public class EmailSerialiserTest {
     }
 
     @Test
-    public void ExternalEmailSerialiserJsonProcessingExceptionTest() throws IOException {
+    void ExternalEmailSerialiserJsonProcessingExceptionTest() throws IOException {
         //given
         when(encoderFactory.binaryEncoder(any(), any())).thenReturn(binaryEncoder);
         when(genericRecordFactory.getGenericRecord(schema)).thenReturn(genericRecord);

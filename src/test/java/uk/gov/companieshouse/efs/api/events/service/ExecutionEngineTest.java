@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ExecutionEngineTest {
+class ExecutionEngineTest {
 
     private static final String BUCKET_NAME = "TEST_BUCKET";
 

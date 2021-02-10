@@ -24,7 +24,7 @@ import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionInc
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
-public class DocumentConvertedControllerTest {
+class DocumentConvertedControllerTest {
 
     private static final int NUMBER_OF_PAGES = 100;
 

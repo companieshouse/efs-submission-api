@@ -12,7 +12,7 @@ import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateListApi;
 import uk.gov.companieshouse.api.model.efs.formtemplates.MessageTextListApi;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 
-public class FormTemplateMapperTest {
+class FormTemplateMapperTest {
     private FormTemplateMapper mapper;
 
     @BeforeEach

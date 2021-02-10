@@ -24,7 +24,7 @@ import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNot
 import java.util.Arrays;
 
 @ExtendWith(MockitoExtension.class)
-public class FileControllerTest {
+class FileControllerTest {
 
     @Mock
     private FileListApi files;

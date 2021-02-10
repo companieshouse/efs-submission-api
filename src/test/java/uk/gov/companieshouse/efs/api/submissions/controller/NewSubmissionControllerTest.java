@@ -18,7 +18,7 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
 
 @ExtendWith(MockitoExtension.class)
-public class NewSubmissionControllerTest {
+class NewSubmissionControllerTest {
 
     @Mock
     private SubmissionResponseApi response;
@@ -40,7 +40,7 @@ public class NewSubmissionControllerTest {
     }
 
     @Test
-    public void testNewSubmissionReturnsId() {
+    void testNewSubmissionReturnsId() {
         //given
         when(submissionService.createSubmission(presenter)).thenReturn(response);
 

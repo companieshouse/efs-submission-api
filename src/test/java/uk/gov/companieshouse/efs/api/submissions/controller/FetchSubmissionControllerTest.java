@@ -17,7 +17,7 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionApi;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
 
 @ExtendWith(MockitoExtension.class)
-public class FetchSubmissionControllerTest {
+class FetchSubmissionControllerTest {
 
     private FetchSubmissionController fetchSubmissionController;
 

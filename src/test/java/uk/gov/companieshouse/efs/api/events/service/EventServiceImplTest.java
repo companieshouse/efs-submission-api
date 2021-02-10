@@ -61,7 +61,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class EventServiceImplTest {
+class EventServiceImplTest {
 
     private static final int NUMBER_OF_PAGES = 100;
     private static final String SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT = "dd MMMM yyyy";
@@ -466,7 +466,7 @@ public class EventServiceImplTest {
 
 
     @Test
-    public void testGetBarcodeException() {
+    void testGetBarcodeException() {
         //given
         LocalDateTime now = LocalDateTime.now();
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
@@ -481,7 +481,7 @@ public class EventServiceImplTest {
     }
 
     @Test
-    public void testTiffDownloadException() {
+    void testTiffDownloadException() {
         //given
         LocalDateTime now = LocalDateTime.now();
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
@@ -502,7 +502,7 @@ public class EventServiceImplTest {
     }
 
     @Test
-    public void testHandlesFesLoaderExecption() {
+    void testHandlesFesLoaderExecption() {
         //given
         LocalDateTime now = LocalDateTime.now();
         String convertedFileId = "1234";
@@ -533,7 +533,7 @@ public class EventServiceImplTest {
     }
 
     @Test
-    public void testHandlesInvalidTiffException() {
+    void testHandlesInvalidTiffException() {
         // given
         String convertedFileId = "1234";
         when(submission.getId()).thenReturn("1234abcd");
@@ -559,7 +559,7 @@ public class EventServiceImplTest {
     }
 
     @Test
-    public void testHandlesMultipleSubmissionsWhenOneFailsWithBarcodeException() {
+    void testHandlesMultipleSubmissionsWhenOneFailsWithBarcodeException() {
         // given
         LocalDateTime now = LocalDateTime.now();
         String convertedFileId = "1234";

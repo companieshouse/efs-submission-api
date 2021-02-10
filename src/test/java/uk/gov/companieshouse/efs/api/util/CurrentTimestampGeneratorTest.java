@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CurrentTimestampGeneratorTest {
+class CurrentTimestampGeneratorTest {
 
     private CurrentTimestampGenerator timestampGenerator;
 

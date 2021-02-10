@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class EnvelopeDaoTest {
+class EnvelopeDaoTest {
 
     private static final long ENVELOPE_ID = 1L;
     private static final long BATCH_ID = 2L;

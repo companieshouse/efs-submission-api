@@ -10,7 +10,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GenericRecordFactoryTest {
+class GenericRecordFactoryTest {
 
     private GenericRecordFactory genericRecordFactory;
 

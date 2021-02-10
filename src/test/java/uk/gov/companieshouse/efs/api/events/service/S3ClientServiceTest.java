@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class S3ClientServiceTest {
+class S3ClientServiceTest {
 
     private static final String BUCKET_NAME = "TEST_BUCKET";
 
