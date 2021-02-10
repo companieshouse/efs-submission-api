@@ -1717,28 +1717,32 @@
   "formCategory" : "INSEW2016_COM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "COM2",
   "formName" : "COM2 - Notice of change of membership of a creditors' or liquidation committee",
   "formCategory" : "INSEW2016_COM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "COM3",
   "formName" : "COM3 - Notice of continuation of creditors' committee",
   "formCategory" : "INSEW2016_COM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "COM4",
   "formName" : "COM4 - Notice of cessation of liquidation committee",
   "formCategory" : "INSEW2016_COM",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1]
 }, {
   "_id" : "NOCP",
   "formName" : "NOCP - Give notice of a court order under section 176A (5) ",
