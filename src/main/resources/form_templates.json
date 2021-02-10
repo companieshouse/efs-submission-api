@@ -1745,7 +1745,8 @@
   "formCategory" : "INSEW2016_EXP",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM01(Scot)",
   "formName" : "AM01 (Scot) - Notice of administrator's appointment",
