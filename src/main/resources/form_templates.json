@@ -1272,28 +1272,32 @@
   "formCategory" : "INSEW2016_CVA",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "CVA2",
   "formName" : "CVA2 - Notice of order of revocation or suspension of voluntary arrangement",
   "formCategory" : "INSEW2016_CVA",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1, 4]
 }, {
   "_id" : "CVA3",
   "formName" : "CVA3 - Notice of supervisor's progress report in voluntary arrangement",
   "formCategory" : "INSEW2016_CVA",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "CVA4",
   "formName" : "CVA4 - Notice of termination or full implementation of voluntary arrangement",
   "formCategory" : "INSEW2016_CVA",
   "fee" : "",
   "isAuthenticationRequired" : true,
-  "isFesEnabled" : true
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
 }, {
   "_id" : "AM01",
   "formName" : "AM01 - Notice of administrator's appointment",
