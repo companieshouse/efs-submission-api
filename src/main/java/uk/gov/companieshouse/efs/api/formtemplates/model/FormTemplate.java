@@ -45,6 +45,10 @@ public class FormTemplate {
     @Field
     private boolean isFesEnabled;
 
+    @JsonProperty("requires_company")
+    @Field
+    private boolean isCompanyRequired;
+
     @JsonProperty("message_text_list")
     @Field
     private List<Integer> messageTextIdList;
@@ -57,17 +61,19 @@ public class FormTemplate {
      * @param fee the form submission fee
      * @param isAuthenticationRequired is authentication required
      * @param isFesEnabled is fes enabled
+     * @param isCompanyRequired is company required
      * @param messageTextIdList list of message textids
      */
     public FormTemplate(final String formType, final String formName, final String formCategory,
         final String fee, final boolean isAuthenticationRequired, final boolean isFesEnabled,
-        final List<Integer> messageTextIdList) {
+        final boolean isCompanyRequired, final List<Integer> messageTextIdList) {
         this.formType = formType;
         this.formName = formName;
         this.formCategory = formCategory;
         this.fee = fee;
         this.isAuthenticationRequired = isAuthenticationRequired;
         this.isFesEnabled = isFesEnabled;
+        this.isCompanyRequired = isCompanyRequired;
         this.messageTextIdList = messageTextIdList;
     }
 
@@ -95,6 +101,10 @@ public class FormTemplate {
         return isFesEnabled;
     }
 
+    public boolean isCompanyRequired() {
+        return isCompanyRequired;
+    }
+
     public List<Integer> getMessageTextIdList() {
         return messageTextIdList;
     }
@@ -114,6 +124,7 @@ public class FormTemplate {
         final FormTemplate that = (FormTemplate) o;
         return isAuthenticationRequired() == that.isAuthenticationRequired()
                && isFesEnabled() == that.isFesEnabled()
+               && isCompanyRequired == that.isCompanyRequired()
                && Objects.equals(getFormType(), that.getFormType())
                && Objects.equals(getFormName(), that.getFormName())
                && Objects.equals(getFormCategory(), that.getFormCategory())
@@ -124,7 +135,7 @@ public class FormTemplate {
     @Override
     public int hashCode() {
         return Objects.hash(getFormType(), getFormName(), getFormCategory(), getFee(),
-            isAuthenticationRequired(), isFesEnabled(), getMessageTextIdList());
+            isAuthenticationRequired(), isFesEnabled(), isCompanyRequired(), getMessageTextIdList());
     }
 
     @Override
@@ -136,6 +147,7 @@ public class FormTemplate {
                 .append("fee", getFee())
                 .append("isAuthenticationRequired", isAuthenticationRequired())
                 .append("isFesEnabled", isFesEnabled())
+                .append("isCompanyRequired", isCompanyRequired())
                 .append("messageTextIdList", messageTextIdList)
                 .toString();
     }

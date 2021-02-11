@@ -20,6 +20,7 @@ public class FormTemplateMapper {
                         form.getFee(),
                         form.isAuthenticationRequired(),
                         form.isFesEnabled(),
+                        form.isCompanyRequired(),
                         new MessageTextListApi(form.getMessageTextIdList())))
                             .collect(Collectors.toCollection(FormTemplateListApi::new));
     }
@@ -32,6 +33,7 @@ public class FormTemplateMapper {
                         formTemplate.getFee(),
                         formTemplate.isAuthenticationRequired(),
                         formTemplate.isFesEnabled(),
+                        formTemplate.isCompanyRequired(),
                         new MessageTextListApi(formTemplate.getMessageTextIdList()));
     }
 }

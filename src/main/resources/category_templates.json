@@ -163,4 +163,9 @@
   "_id" : "INSCROA",
   "categoryName" : "Change a company’s registered office address",
   "parent" : "INS"
+}, {
+  "_id" : "REG",
+  "categoryName" : "Registrations",
+  "categoryHint": "SQP, LP5(s), LP7(s)",
+  "parent" : ""
 } ]

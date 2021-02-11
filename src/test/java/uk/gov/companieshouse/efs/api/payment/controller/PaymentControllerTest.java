@@ -84,7 +84,7 @@ class PaymentControllerTest {
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         final SubmissionApi submission = new SubmissionMapper()
             .map(new Submission.Builder().withFormDetails(formDetails).withCompany(company).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, null);
+        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, false, null);
         final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
@@ -186,7 +186,7 @@ class PaymentControllerTest {
         final FormDetails formDetails = new FormDetails(NOFORM, NOCHARGE, null);
         SubmissionApi submission =
             new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi(NOCHARGE, "no charge", null, null, false, false, null);
+        final FormTemplateApi formTemplate = new FormTemplateApi(NOCHARGE, "no charge", null, null, false, false, true, null);
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
@@ -204,7 +204,7 @@ class PaymentControllerTest {
         final FormDetails formDetails = new FormDetails(NOFORM, NOCHARGE, null);
         SubmissionApi submission =
             new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi(NOCHARGE, "no charge", null, "", false, false, null);
+        final FormTemplateApi formTemplate = new FormTemplateApi(NOCHARGE, "no charge", null, "", false, false, true, null);
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
@@ -222,7 +222,7 @@ class PaymentControllerTest {
         final FormDetails formDetails = new FormDetails(NOFORM, NOCHARGE, null);
         SubmissionApi submission =
             new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi(NOCHARGE, "no charge", null, UNKNOWN, false, false, null);
+        final FormTemplateApi formTemplate = new FormTemplateApi(NOCHARGE, "no charge", null, UNKNOWN, false, false, true, null);
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
@@ -240,7 +240,7 @@ class PaymentControllerTest {
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         SubmissionApi submission = new SubmissionMapper()
             .map(new Submission.Builder().withFormDetails(formDetails).withCompany(company).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, null);
+        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, true, null);
         final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
@@ -261,7 +261,7 @@ class PaymentControllerTest {
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         SubmissionApi submission = new SubmissionMapper()
             .map(new Submission.Builder().withFormDetails(formDetails).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, null);
+        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, true, null);
         final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
@@ -283,7 +283,7 @@ class PaymentControllerTest {
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         SubmissionApi submission = new SubmissionMapper()
             .map(new Submission.Builder().withFormDetails(formDetails).withCompany(company).build());
-        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, null);
+        final FormTemplateApi formTemplate = new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, true, null);
         final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
