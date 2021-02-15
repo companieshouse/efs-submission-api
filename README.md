@@ -21,8 +21,30 @@ You will also need a REST client (e.g. Postman or cURL) if you want to interact 
 
 Certain endpoints (e.g. POST /efs-submission-api/events/submit-files-to-fes) will not work correctly unless the relevant environment variables are configured. 
 
-Building and Running Locally
-----------------------------
+## Building the docker image 
+
+    mvn -s settings.xml compile jib:dockerBuild -Dimage=169942020521.dkr.ecr.eu-west-1.amazonaws.com/local/efs-submission-api
+
+## Running Locally using Docker
+
+1. Clone [Docker CHS Development](https://github.com/companieshouse/docker-chs-development) and follow the steps in the README.
+
+1. Enable the `platform` module
+
+1. Enable the `efs` module
+
+1. Run `tilt up` and wait for all services to start
+
+The database is populated with potentially old data. If you need the most up to date categories, forms, or payment templates; follow step 6 of the vagrant setup. 
+
+### To make local changes
+
+Development mode is available for this service in [Docker CHS Development](https://github.com/companieshouse/docker-chs-development).
+
+    ./bin/chs-dev development enable efs-submission-api
+
+## Building and Running Locally using Vagrant
+
 1. From the command line, in the same folder as the Makefile run `make clean build`
 1. Configure project environment variables where necessary (see below).
 1. Ensure dependent Companies House services are running within the Companies House developer environment
