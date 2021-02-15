@@ -105,3 +105,5 @@ INTERNAL_SCOTTISH_PARTNERSHIPS_EMAIL_ADDRESS|The email address that will be used
 Development mode is available for this service in [Docker CHS Development](https://github.com/companieshouse/docker-chs-development).
 
     ./bin/chs-dev development enable efs-submission-api
+
+This will clone the efs-submission-api into the repositories folder inside of docker-chs-dev folder. Any changes to the code, or resources will automatically trigger a rebuild and reluanch.
