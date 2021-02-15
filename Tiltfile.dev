@@ -40,7 +40,7 @@ local_resource(
     container_name="${root}_mongo_1"
 
     json_files=(src/main/resources/*.json)
-    db="efs-submissions"
+    db="efs_submissions"
     for file in ${json_files[@]}; do
         collection_name=$(basename $file .json)
         echo "Updating collection $collection_name"
