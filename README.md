@@ -21,29 +21,7 @@ You will also need a REST client (e.g. Postman or cURL) if you want to interact 
 
 Certain endpoints (e.g. POST /efs-submission-api/events/submit-files-to-fes) will not work correctly unless the relevant environment variables are configured. 
 
-## Building the docker image 
-
-    mvn -s settings.xml compile jib:dockerBuild -Dimage=169942020521.dkr.ecr.eu-west-1.amazonaws.com/local/efs-submission-api
-
-## Running Locally using Docker
-
-1. Clone [Docker CHS Development](https://github.com/companieshouse/docker-chs-development) and follow the steps in the README.
-
-1. Enable the `platform` module
-
-1. Enable the `efs` module
-
-1. Run `tilt up` and wait for all services to start
-
-**note**: The database is populated with potentially old data. If you need the most up to date categories, forms, or payment templates; follow step 6 of the vagrant setup, or enable development mode. 
-
-### To make local changes
-
-Development mode is available for this service in [Docker CHS Development](https://github.com/companieshouse/docker-chs-development).
-
-    ./bin/chs-dev development enable efs-submission-api
-
-## Building and Running Locally using Vagrant
+## Building and Running Locally
 
 1. From the command line, in the same folder as the Makefile run `make clean build`
 1. Configure project environment variables where necessary (see below).
@@ -105,3 +83,25 @@ CHIPS_JDBC_USERNAME|The username that will be used to connect to CHIPS|username|
 CHIPS_JDBC_PASSWORD|The password that will be used to connect to CHIPS|password|FES
 FILE_LINK_EXPIRY_IN_DAYS|The number of days after which email links to uploaded PDF files will expire|7|email
 INTERNAL_SCOTTISH_PARTNERSHIPS_EMAIL_ADDRESS|The email address that will be used for Scottish Partnership forms|test_user@testing.com|always
+
+## Building the docker image 
+
+    mvn -s settings.xml compile jib:dockerBuild -Dimage=169942020521.dkr.ecr.eu-west-1.amazonaws.com/local/efs-submission-api
+
+## Running Locally using Docker
+
+1. Clone [Docker CHS Development](https://github.com/companieshouse/docker-chs-development) and follow the steps in the README.
+
+1. Enable the `platform` module
+
+1. Enable the `efs` module
+
+1. Run `tilt up` and wait for all services to start
+
+**note**: The database is populated with potentially old data. If you need the most up to date categories, forms, or payment templates; follow step 6 of the local setup, or simply enable development mode. 
+
+### To make local changes
+
+Development mode is available for this service in [Docker CHS Development](https://github.com/companieshouse/docker-chs-development).
+
+    ./bin/chs-dev development enable efs-submission-api
