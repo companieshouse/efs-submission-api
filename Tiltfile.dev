@@ -45,8 +45,8 @@ local_resource(
         collection_name=$(basename $file .json)
         echo "Updating collection $collection_name"
 
-        $(docker exec $container_name mongo ${database} --quiet --eval "db.${collection_name}.drop()")
-        docker exec $container_name echo $(cat $file) | mongoimport --quiet --mode=upsert --jsonArray --db=${database} --collection=${collection_name} --file=/dev/stdin
+        $(docker exec $container_name mongo ${db} --eval "db.${collection_name}.drop()")
+        docker exec $container_name echo $(cat $file) | mongoimport --mode=upsert --jsonArray --db=${db} --collection=${collection_name} --file=/dev/stdin
     done
   ''',
   deps = [
