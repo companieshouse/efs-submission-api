@@ -35,7 +35,7 @@ Certain endpoints (e.g. POST /efs-submission-api/events/submit-files-to-fes) wil
 
 1. Run `tilt up` and wait for all services to start
 
-The database is populated with potentially old data. If you need the most up to date categories, forms, or payment templates; follow step 6 of the vagrant setup. 
+**note**: The database is populated with potentially old data. If you need the most up to date categories, forms, or payment templates; follow step 6 of the vagrant setup, or enable development mode. 
 
 ### To make local changes
 
