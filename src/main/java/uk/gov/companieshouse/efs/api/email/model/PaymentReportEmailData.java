@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.efs.api.email.model;
 
 import java.util.Objects;
-import org.apache.commons.lang3.builder.RecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class PaymentReportEmailData {
 
@@ -82,7 +82,7 @@ public class PaymentReportEmailData {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, RecursiveToStringStyle.SHORT_PREFIX_STYLE).append("to", to)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("to", to)
                 .append("subject", subject).append("fileLink", fileLink).append("fileName", fileName)
                 .append("hasNoPaymentTransactions", hasNoPaymentTransactions).toString();
     }
