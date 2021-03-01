@@ -60,6 +60,7 @@ public class ExternalConfirmationEmailMapper {
                 .withFormType(model.getSubmission().getFormDetails().getFormType())
                 .withTopLevelCategory(getTopLevelCategoryForFormType(model))
                 .withEmailFileDetailsList(createEmailFileDetailsList(model.getSubmission().getFormDetails().getFileDetailsList()))
+                .withFeeOnSubmission(model.getSubmission().getFeeOnSubmission())
                 .build();
     }
 
