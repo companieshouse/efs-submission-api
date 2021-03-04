@@ -96,8 +96,6 @@ INTERNAL_SCOTTISH_PARTNERSHIPS_EMAIL_ADDRESS|The email address that will be used
 
 1. Run `tilt up` and wait for all services to start
 
-**note**: The database is populated with potentially old data. If you need the most up to date categories, forms, or payment templates; follow step 6 of the local setup, or simply enable development mode. 
-
 ### To make local changes
 
 Development mode is available for this service in [Docker CHS Development](https://github.com/companieshouse/docker-chs-development).
