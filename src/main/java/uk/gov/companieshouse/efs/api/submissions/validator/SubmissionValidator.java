@@ -37,7 +37,6 @@ public class SubmissionValidator extends ValidatorImpl<Submission> implements Va
             .setNext(new ConfirmAuthorisedValidator(formRepository, categoryTemplateService))
             .setNext(new FileDetailsValidator())
             .setNext(new PaymentSessionsValidator(formRepository, paymentRepository))
-            .setNext(new FesAttachmentValidator(formRepository))
             .setNext(new PresenterValidator())
             .setNext(new CompanyDetailsValidator())
             .setNext(new ConfirmationReferenceValidator());
