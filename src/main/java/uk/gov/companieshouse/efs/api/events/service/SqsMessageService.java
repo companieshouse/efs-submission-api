@@ -15,6 +15,7 @@ import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
 import uk.gov.companieshouse.efs.api.events.service.model.Decision;
+import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 
@@ -72,11 +73,16 @@ public class SqsMessageService implements MessageService {
     }
 
     private Stream<SendMessageBatchRequestEntry> getMessageBatchRequestEntries(Submission submission) {
-        return submission.getFormDetails().getFileDetailsList().stream()
-                .map(file -> SendMessageBatchRequestEntry.builder()
-                        .messageAttributes(getMessageAttributes(submission.getId(), file.getFileId()))
-                        .id(idGenerator.generateId()).messageBody(EFS_NAMESPACE).messageGroupId(EFS_NAMESPACE)
-                        .messageDeduplicationId(idGenerator.generateId()).build());
+        final String fileId = submission.getFormDetails()
+                .getFileDetailsList()
+                .stream()
+                .map(FileDetails::getFileId)
+                .collect(Collectors.joining("|"));
+
+        return Stream.of(SendMessageBatchRequestEntry.builder()
+                .messageAttributes(getMessageAttributes(submission.getId(), fileId))
+                .id(idGenerator.generateId()).messageBody(EFS_NAMESPACE).messageGroupId(EFS_NAMESPACE)
+                .messageDeduplicationId(idGenerator.generateId()).build());
     }
 
     private Map<String, MessageAttributeValue> getMessageAttributes(String submissionId, String fileId) {

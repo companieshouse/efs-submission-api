@@ -10,13 +10,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
@@ -44,45 +42,34 @@ class SqsMessageServiceTest {
     }
 
     @Test
-    void testSqsMessageServiceSendsOneMessagePerAttachedSubmissionFile() {
+    void testSqsMessageServiceSendsOneMessagePerSubmission() {
         //given
         Submission submissionSingleFile = Submission.builder()
                 .withId("abc123")
-                .withFormDetails(
-                        new FormDetails(
-                                null,
-                                null,
-                                Collections.singletonList(
-                                        new FileDetails("1234-5678-9012-3456", "out.txt", 5L, null, null, null, null)
-                                )
-                        )
-                ).build();
+                .withFormDetails(new FormDetails(null, null, Collections.singletonList(
+                        new FileDetails("1234-5678-9012-3456", "out.txt", 5L, null, null, null,
+                                null))))
+                .build();
         Submission submissionMultiFile = Submission.builder()
                 .withId("abc124")
-                .withFormDetails(
-                        new FormDetails(
-                                null,
-                                null,
-                                Arrays.asList(
-                                        new FileDetails("1234-5678-9012-3457", "1.txt", 5L, null, null, null, null),
-                                        new FileDetails("1234-5678-9012-3458", "2.txt", 6L, null, null, null, null)
-                                )
-                        )
-                ).build();
+                .withFormDetails(new FormDetails(null, null, Arrays.asList(
+                        new FileDetails("1234-5678-9012-3457", "1.txt", 5L, null, null, null, null),
+                        new FileDetails("1234-5678-9012-3458", "2.txt", 6L, null, null, null,
+                                null))))
+                .build();
         Decision decisionSingleFile = mock(Decision.class);
         Decision decisionMultiFile = mock(Decision.class);
         when(decisionSingleFile.getSubmission()).thenReturn(submissionSingleFile);
         when(decisionMultiFile.getSubmission()).thenReturn(submissionMultiFile);
         List<Decision> completedSubmissions = Arrays.asList(decisionSingleFile, decisionMultiFile);
-        when(idGenerator.generateId()).thenReturn("id1", "deduplicationId1", "id2", "deduplicationId2", "id3",
-                "deduplicationId3");
+        when(idGenerator.generateId()).thenReturn("id1", "deduplicationId1", "id2",
+                "deduplicationId2", "id3", "deduplicationId3");
 
         //when
         messageService.queueMessages(completedSubmissions);
 
         //then
-        verify(client).sendMessageBatch(expectedSendMessageBatchRequestPart1());
-        verify(client).sendMessageBatch(expectedSendMessageBatchRequestPart2());
+        verify(client).sendMessageBatch(expectedSendMessageBatchRequestCombined());
     }
 
     @Test
@@ -97,7 +84,7 @@ class SqsMessageServiceTest {
         verifyNoInteractions(client);
     }
 
-    private SendMessageBatchRequest expectedSendMessageBatchRequestPart1() {
+    private SendMessageBatchRequest expectedSendMessageBatchRequestCombined() {
         return SendMessageBatchRequest.builder()
                 .queueUrl("queue")
                 .entries(SendMessageBatchRequestEntry.builder()
@@ -109,22 +96,9 @@ class SqsMessageServiceTest {
                         .build(), SendMessageBatchRequestEntry.builder()
                         .id("id2")
                         .messageBody("efs-submission-api")
-                        .messageAttributes(expectedEntries("abc124", "1234-5678-9012-3457"))
+                        .messageAttributes(expectedEntries("abc124", "1234-5678-9012-3457|1234-5678-9012-3458"))
                         .messageGroupId("efs-submission-api")
                         .messageDeduplicationId("deduplicationId2")
-                        .build())
-                .build();
-    }
-
-    private SendMessageBatchRequest expectedSendMessageBatchRequestPart2() {
-        return SendMessageBatchRequest.builder()
-                .queueUrl("queue")
-                .entries(SendMessageBatchRequestEntry.builder()
-                        .id("id3")
-                        .messageBody("efs-submission-api")
-                        .messageAttributes(expectedEntries("abc124", "1234-5678-9012-3458"))
-                        .messageGroupId("efs-submission-api")
-                        .messageDeduplicationId("deduplicationId3")
                         .build())
                 .build();
     }
