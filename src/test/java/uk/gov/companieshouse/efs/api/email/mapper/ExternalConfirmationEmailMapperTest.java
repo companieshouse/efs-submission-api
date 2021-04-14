@@ -97,7 +97,7 @@ class ExternalConfirmationEmailMapperTest {
         when(submission.getPresenter()).thenReturn(presenter);
 
         when(submission.getConfirmationReference()).thenReturn("abcd3434343efsfg");
-
+        when(submission.getFeeOnSubmission()).thenReturn("17");
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
 
         when(externalConfirmationEmailModel.getSubmission()).thenReturn(submission);
@@ -132,6 +132,7 @@ class ExternalConfirmationEmailMapperTest {
                                 .withConfirmationReference("abcd3434343efsfg")
                                 .withEmailFileDetailsList(Collections.singletonList(new EmailFileDetails(fileDetails, null)))
                                 .withPresenter(presenter)
+                                .withFeeOnSubmission("17")
                                 .build())
                 .build();
     }

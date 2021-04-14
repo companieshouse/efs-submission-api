@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.efs.api.email.model;
 
 import java.util.Objects;
-import org.apache.commons.lang3.builder.RecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class EmailDocument<T> {
     private String appId;
@@ -85,7 +85,7 @@ public class EmailDocument<T> {
 
     @Override
     public String toString() {
-        return new ReflectionToStringBuilder(this, RecursiveToStringStyle.SHORT_PREFIX_STYLE).toString();
+        return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
     }
 
     public static class EmailDocumentBuilder<T> {

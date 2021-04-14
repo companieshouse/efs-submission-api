@@ -23,10 +23,13 @@ public class ExternalConfirmationEmailData {
     private CategoryTypeConstants topLevelCategory;
     @JsonProperty("email_file_details_list")
     private List<EmailFileDetails> emailFileDetailsList;
+    @JsonProperty("fee_on_submission")
+    private String feeOnSubmission;
 
     public ExternalConfirmationEmailData(String to, String subject, String confirmationReference,
                                          Presenter presenter, Company company, String formType,
-                                         CategoryTypeConstants topLevelCategory, List<EmailFileDetails> emailFileDetailsList) {
+                                         CategoryTypeConstants topLevelCategory, List<EmailFileDetails> emailFileDetailsList,
+                                         String feeOnSubmission) {
         this.to = to;
         this.subject = subject;
         this.confirmationReference = confirmationReference;
@@ -35,6 +38,7 @@ public class ExternalConfirmationEmailData {
         this.formType = formType;
         this.topLevelCategory = topLevelCategory;
         this.emailFileDetailsList = emailFileDetailsList;
+        this.feeOnSubmission = feeOnSubmission;
     }
 
     public String getTo() {
@@ -101,6 +105,14 @@ public class ExternalConfirmationEmailData {
         this.emailFileDetailsList = emailFileDetailsList;
     }
 
+    public String getFeeOnSubmission() {
+        return feeOnSubmission;
+    }
+
+    public void setFeeOnSubmission(final String feeOnSubmission) {
+        this.feeOnSubmission = feeOnSubmission;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -117,14 +129,15 @@ public class ExternalConfirmationEmailData {
                    .equals(getCompany(), that.getCompany()) && Objects
                    .equals(getFormType(), that.getFormType()) && Objects
                    .equals(getTopLevelCategory(), that.getTopLevelCategory())  && Objects
-                   .equals(getEmailFileDetailsList(), that.getEmailFileDetailsList());
+                   .equals(getEmailFileDetailsList(), that.getEmailFileDetailsList()) && Objects
+                   .equals(getFeeOnSubmission(), that.getFeeOnSubmission());
     }
 
     @Override
     public int hashCode() {
         return Objects
             .hash(getTo(), getSubject(), getConfirmationReference(), getPresenter(), getCompany(),
-                getFormType(), getTopLevelCategory(), getEmailFileDetailsList());
+                getFormType(), getTopLevelCategory(), getEmailFileDetailsList(), getFeeOnSubmission());
     }
 
     public static ExternalConfirmationEmailData.Builder builder() {
@@ -141,6 +154,7 @@ public class ExternalConfirmationEmailData {
         private String formType;
         private CategoryTypeConstants topLevelCategory;
         private List<EmailFileDetails> emailFileDetailsList;
+        private String feeOnSubmission;
 
         public ExternalConfirmationEmailData.Builder withTo(String to) {
             this.to = to;
@@ -183,9 +197,14 @@ public class ExternalConfirmationEmailData {
             return this;
         }
 
+        public ExternalConfirmationEmailData.Builder withFeeOnSubmission(String feeOnSubmission) {
+            this.feeOnSubmission = feeOnSubmission;
+            return this;
+        }
+
         public ExternalConfirmationEmailData build() {
             return new ExternalConfirmationEmailData(to, subject, confirmationReference, presenter, company, formType,
-                    topLevelCategory, emailFileDetailsList);
+                    topLevelCategory, emailFileDetailsList, feeOnSubmission);
         }
 
     }
