@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Objects;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -140,15 +140,6 @@ public class FormTemplate {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("formType", getFormType())
-                .append("formName", getFormName())
-                .append("formCategory", getFormCategory())
-                .append("fee", getFee())
-                .append("isAuthenticationRequired", isAuthenticationRequired())
-                .append("isFesEnabled", isFesEnabled())
-                .append("isCompanyRequired", isCompanyRequired())
-                .append("messageTextIdList", messageTextIdList)
-                .toString();
+        return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
     }
 }

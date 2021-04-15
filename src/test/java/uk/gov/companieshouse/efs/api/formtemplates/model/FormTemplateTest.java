@@ -1,12 +1,12 @@
 package uk.gov.companieshouse.efs.api.formtemplates.model;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,12 +41,14 @@ class FormTemplateTest {
 
     @Test
     void toStringTest() {
-        assertThat(testFormTemplate.toString(), Matchers.is(
-                //@formatter:off
-                "FormTemplate[formType=CC01,formName=Form01,formCategory=CC,fee=100," +
-                        "isAuthenticationRequired=false,isFesEnabled=false,messageTextIdList=<null>]"
-                //@formatter:on
-        ));
+        assertThat(testFormTemplate.toString(), containsString("FormTemplate["));
+        assertThat(testFormTemplate.toString(), containsString("formType=CC01"));
+        assertThat(testFormTemplate.toString(), containsString("formName=Form01"));
+        assertThat(testFormTemplate.toString(), containsString("formCategory=CC"));
+        assertThat(testFormTemplate.toString(), containsString("fee=100"));
+        assertThat(testFormTemplate.toString(), containsString("isAuthenticationRequired=false"));
+        assertThat(testFormTemplate.toString(), containsString("isFesEnabled=false"));
+        assertThat(testFormTemplate.toString(), containsString("messageTextIdList=<null>"));
     }
 
 }
