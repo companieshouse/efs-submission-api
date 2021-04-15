@@ -23,7 +23,7 @@ public class BatchDao {
 
     public long getBatchNameId(String batchNamePrefix) {
         return jdbc.queryForObject("SELECT fes_common_pkg.F_GETNEXTREFID(?, ?) from DUAL",
-                new Object[] { batchNamePrefix, 16 }, Long.class);
+                Long.class, batchNamePrefix, 16);
     }
 
     /**

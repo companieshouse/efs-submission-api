@@ -2,16 +2,14 @@ package uk.gov.companieshouse.efs.api.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
+import org.springframework.web.servlet.HandlerInterceptor;
 import uk.gov.companieshouse.logging.Logger;
 
 /**
  * Checks each request to the service to verify that the user is authorised to use the service.
  */
-public class UserAuthenticationInterceptor extends HandlerInterceptorAdapter {
+public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
     private Logger logger;
     public static final int USER_EMAIL_INDEX = 0;

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import uk.gov.companieshouse.api.error.ApiError;
 
 /**
  * Set of APIErrors.

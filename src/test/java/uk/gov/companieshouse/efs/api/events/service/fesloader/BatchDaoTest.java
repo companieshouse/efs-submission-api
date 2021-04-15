@@ -49,7 +49,7 @@ class BatchDaoTest {
     @Test
     void testBatchDaoObtainsNextBatchNameIdFromSequence() {
         //given
-        when(this.template.queryForObject(anyString(), any(), eq(Long.class))).thenReturn(BATCH_NAME_ID);
+        when(this.template.queryForObject(anyString(), eq(Long.class), any())).thenReturn(BATCH_NAME_ID);
 
         //when
         long actual = this.batchDao.getBatchNameId("EFS_200511");
