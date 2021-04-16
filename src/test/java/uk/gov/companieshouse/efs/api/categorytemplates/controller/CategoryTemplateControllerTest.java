@@ -1,5 +1,10 @@
 package uk.gov.companieshouse.efs.api.categorytemplates.controller;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.when;
+
+import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,13 +16,6 @@ import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateApi
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateListApi;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryTemplateControllerTest {
@@ -38,22 +36,22 @@ class CategoryTemplateControllerTest {
     }
 
     @Test
-    void testGetAllFormsReturnsArrayOfForms() {
+    void testGetAllFormsReturnsList() {
 
         //given
         CategoryTemplateListApi expected = new CategoryTemplateListApi();
         when(service.getCategoryTemplates()).thenReturn(expected);
 
         //when
-        ResponseEntity<CategoryTemplateListApi> actual = controller.getCategoryTemplates(null, request);
+        ResponseEntity<CategoryTemplateListApi> actual = controller.getCategoryTemplates(null, null, request);
 
         //then
-        assertEquals(expected, actual.getBody());
-        assertEquals(HttpStatus.OK,  actual.getStatusCode());
+        assertThat(actual.getBody(), is(expected));
+        assertThat(actual.getStatusCode(), is(HttpStatus.OK));
     }
 
     @Test
-    void testGetCategoriesByCategoryReturnsArrayOfForms() {
+    void testGetCategoriesByCategoryReturnsList() {
 
         //given
         CategoryTemplateListApi expected = new CategoryTemplateListApi();
@@ -61,11 +59,43 @@ class CategoryTemplateControllerTest {
         when(service.getCategoryTemplatesByCategory(categoryId)).thenReturn(expected);
 
         //when
-        ResponseEntity<CategoryTemplateListApi> actual = controller.getCategoryTemplates(categoryId, request);
+        ResponseEntity<CategoryTemplateListApi> actual = controller.getCategoryTemplates(null, categoryId, request);
 
         //then
-        assertEquals(expected, actual.getBody());
-        assertEquals(HttpStatus.OK,  actual.getStatusCode());
+        assertThat(actual.getBody(), is(expected));
+        assertThat(actual.getStatusCode(), is(HttpStatus.OK));
+    }
+
+    @Test
+    void testGetCategoryTemplatesByFamilyReturnsList() {
+
+        //given
+        CategoryTemplateListApi expected = new CategoryTemplateListApi();
+        final String id = "family";
+        when(service.getCategoryTemplatesByFamily(id)).thenReturn(expected);
+
+        //when
+        ResponseEntity<CategoryTemplateListApi> actual =
+            controller.getCategoryTemplates(id, null, request);
+
+        //then
+        assertThat(actual.getBody(), is(expected));
+        assertThat(actual.getStatusCode(), is(HttpStatus.OK));
+    }
+
+    @Test
+    void testGetFamilyCategoryTemplatesExceptionThrown() {
+
+        //given
+        final String id = "family";
+        when(service.getCategoryTemplatesByFamily(id)).thenThrow(new RuntimeException("Test exception scenario"));
+
+        //when
+        final ResponseEntity<CategoryTemplateListApi> actual =
+            controller.getCategoryTemplates(id, null, request);
+
+        //then
+        assertThat(actual.getStatusCodeValue(), is(500));
     }
 
     @Test
@@ -76,7 +106,7 @@ class CategoryTemplateControllerTest {
         when(service.getCategoryTemplatesByCategory(categoryId)).thenThrow(new RuntimeException("Test exception scenario"));
 
         //when
-        final ResponseEntity<CategoryTemplateListApi> actual = controller.getCategoryTemplates(categoryId, request);
+        final ResponseEntity<CategoryTemplateListApi> actual = controller.getCategoryTemplates(null, categoryId, request);
 
         //then
         assertThat(actual.getStatusCodeValue(), is(500));
@@ -94,8 +124,8 @@ class CategoryTemplateControllerTest {
         ResponseEntity<CategoryTemplateApi> actual = controller.getCategoryTemplate(categoryId, request);
 
         //then
-        assertEquals(expected, actual.getBody());
-        assertEquals(HttpStatus.OK,  actual.getStatusCode());
+        assertThat(actual.getBody(), is(expected));
+        assertThat(actual.getStatusCode(), is(HttpStatus.OK));
     }
 
     @Test

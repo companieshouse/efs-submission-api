@@ -19,6 +19,15 @@ public interface CategoryTemplateService {
     }
 
     /**
+     * Retrieve all submission form categories belonging to a category family.
+     *
+     * @return list of category templates
+     */
+    default CategoryTemplateListApi getCategoryTemplatesByFamily(String family) {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    /**
      * Retrieve a submission form category.
      *
      * @param id form category id

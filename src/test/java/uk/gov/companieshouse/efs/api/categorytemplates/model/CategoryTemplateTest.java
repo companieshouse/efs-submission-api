@@ -1,17 +1,17 @@
 package uk.gov.companieshouse.efs.api.categorytemplates.model;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 
 @ExtendWith(SpringExtension.class)
@@ -21,7 +21,7 @@ class CategoryTemplateTest {
 
     @BeforeEach
     void setUp() {
-        testCategoryTemplate = new CategoryTemplate("CC01", "Category01", "", "");
+        testCategoryTemplate = new CategoryTemplate("CC01", "FILE", "Category01", "parent", "hint");
         JacksonTester.initFields(this, new ObjectMapper());
     }
 
@@ -29,9 +29,10 @@ class CategoryTemplateTest {
     void categoryTemplate() {
 
         assertThat(testCategoryTemplate.getCategoryType(), is("CC01"));
+        assertThat(testCategoryTemplate.getCategoryFamily(), is("FILE"));
         assertThat(testCategoryTemplate.getCategoryName(), is("Category01"));
-        assertThat(testCategoryTemplate.getParent(), is(""));
-        assertThat(testCategoryTemplate.getCategoryHint(), is(""));
+        assertThat(testCategoryTemplate.getParent(), is("parent"));
+        assertThat(testCategoryTemplate.getCategoryHint(), is("hint"));
     }
 
     @Test
@@ -42,10 +43,9 @@ class CategoryTemplateTest {
 
     @Test
     void toStringTest() {
-        assertThat(testCategoryTemplate.toString(), Matchers.is(
-                //@formatter:off
-                "CategoryTemplate[categoryType=CC01,categoryName=Category01,parent=,categoryHint=]"
-                //@formatter:on
-        ));
+        assertThat(testCategoryTemplate.toString(), containsString("categoryType=CC01"));
+        assertThat(testCategoryTemplate.toString(), containsString("categoryFamily=FILE"));
+        assertThat(testCategoryTemplate.toString(), containsString("parent=parent"));
+        assertThat(testCategoryTemplate.toString(), containsString("categoryHint=hint"));
     }
 }

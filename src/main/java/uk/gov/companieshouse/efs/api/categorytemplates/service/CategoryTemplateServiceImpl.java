@@ -43,6 +43,12 @@ public class CategoryTemplateServiceImpl implements CategoryTemplateService {
     }
 
     @Override
+    public CategoryTemplateListApi getCategoryTemplatesByFamily(final String familyId) {
+        List<CategoryTemplate> byFamily = repository.findByCategoryFamily(familyId);
+        return mapper.map(byFamily);
+    }
+
+    @Override
     public CategoryTemplateApi getCategoryTemplate(String id) {
         CategoryTemplate categoryTemplate = repository.findById(id).orElse(null);
         return categoryTemplate == null ? null : mapper.map(categoryTemplate);

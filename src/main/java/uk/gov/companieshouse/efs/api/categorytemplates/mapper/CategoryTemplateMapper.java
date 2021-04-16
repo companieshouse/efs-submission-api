@@ -22,6 +22,7 @@ public class CategoryTemplateMapper {
         return categoryTemplates.stream()
                 .map(form -> new CategoryTemplateApi(
                         form.getCategoryType(),
+                        form.getCategoryFamily(),
                         form.getCategoryName(),
                         form.getParent(),
                         form.getCategoryHint())).collect(Collectors.toCollection(CategoryTemplateListApi::new));
@@ -36,6 +37,7 @@ public class CategoryTemplateMapper {
     public CategoryTemplateApi map(CategoryTemplate categoryTemplate) {
         return new CategoryTemplateApi(
                 categoryTemplate.getCategoryType(),
+                categoryTemplate.getCategoryFamily(),
                 categoryTemplate.getCategoryName(),
                 categoryTemplate.getParent(),
                 categoryTemplate.getCategoryHint());

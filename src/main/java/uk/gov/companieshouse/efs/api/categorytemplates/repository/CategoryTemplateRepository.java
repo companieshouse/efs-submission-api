@@ -10,6 +10,13 @@ import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTemplate;
 public interface CategoryTemplateRepository extends MongoRepository<CategoryTemplate, String> {
 
     /**
+     * Finds all form categories by category family.
+     *
+     * @return List&lt;CategoryTemplate&gt;
+     */
+    List<CategoryTemplate> findByCategoryFamily(String family);
+    
+    /**
      * Finds all form categories by parent category.
      *
      * @return List&lt;CategoryTemplate&gt;

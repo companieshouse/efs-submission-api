@@ -43,6 +43,15 @@ class CategoryTemplateServiceTest {
 
         assertThat(thrown.getMessage(), is("not implemented"));
     }
+
+    @Test
+    void getCategoryTemplatesByFamily() {
+        UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,
+                () -> testService.getCategoryTemplatesByFamily("FILE"));
+
+        assertThat(thrown.getMessage(), is("not implemented"));
+    }
+
     @Test
     void getTopLevelCategory() {
         UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,

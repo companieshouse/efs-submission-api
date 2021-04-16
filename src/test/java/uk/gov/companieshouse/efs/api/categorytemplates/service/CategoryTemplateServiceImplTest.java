@@ -79,8 +79,10 @@ class CategoryTemplateServiceImplTest {
 
         //given
         String categoryId = "CC01";
-        CategoryTemplate category = new CategoryTemplate(categoryId, "CatCat", null, null);
-        CategoryTemplateApi mappedCategory = new CategoryTemplateApi(categoryId, "CatCat", null, null);
+        CategoryTemplate category =
+            new CategoryTemplate(categoryId, "family", "CatCat", null, null);
+        CategoryTemplateApi mappedCategory =
+            new CategoryTemplateApi(categoryId, "family", "CatCat", null, null);
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
         when(mapper.map(category)).thenReturn(mappedCategory);
@@ -112,7 +114,8 @@ class CategoryTemplateServiceImplTest {
 
         //given
         String categoryId = "CC01";
-        CategoryTemplate mappedCategory = new CategoryTemplate(categoryId, "CatCat", null, null);
+        CategoryTemplate mappedCategory =
+            new CategoryTemplate(categoryId, "family", "CatCat", null, null);
 
         List<CategoryTemplate> listCategory = new ArrayList<>();
         listCategory.add(mappedCategory);
@@ -122,6 +125,27 @@ class CategoryTemplateServiceImplTest {
 
         //when
         CategoryTemplateListApi actual = service.getCategoryTemplatesByCategory(categoryId);
+
+        //then
+        assertThat(actual, is(equalTo(categoryList)));
+    }
+
+    @Test
+    void testFetchEntityAndMapToCategoryTemplateListApiObjectByFamily() {
+
+        //given
+        String familyId = "family";
+        CategoryTemplate mappedCategory =
+            new CategoryTemplate("categoryId", familyId, "CatCat", null, null);
+
+        List<CategoryTemplate> listCategory = new ArrayList<>();
+        listCategory.add(mappedCategory);
+
+        when(categoryRepository.findByCategoryFamily(familyId)).thenReturn(listCategory);
+        when(mapper.map(anyList())).thenReturn(categoryList);
+
+        //when
+        CategoryTemplateListApi actual = service.getCategoryTemplatesByFamily(familyId);
 
         //then
         assertThat(actual, is(equalTo(categoryList)));

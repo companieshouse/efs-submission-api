@@ -1,15 +1,14 @@
 package uk.gov.companieshouse.efs.api.categorytemplates.mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateApi;
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateListApi;
 import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTemplate;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CategoryTemplateMapperTest {
 
@@ -45,16 +44,18 @@ class CategoryTemplateMapperTest {
     }
 
     private CategoryTemplate getCategory() {
-        return new CategoryTemplate("MA", "New Incorporation", "", "");
+        return new CategoryTemplate("MA", "INC", "New Incorporation", "", "");
     }
 
     private CategoryTemplateListApi expectedList() {
-        CategoryTemplateApi element = new CategoryTemplateApi("MA", "New Incorporation", "", "");
+        CategoryTemplateApi element =
+            new CategoryTemplateApi("MA", "INC", "New Incorporation", "", "");
         return new CategoryTemplateListApi(Collections.singletonList(element));
     }
 
     private CategoryTemplateApi expectedSingle() {
-        CategoryTemplateApi element = new CategoryTemplateApi("MA", "New Incorporation", "", "");
+        CategoryTemplateApi element =
+            new CategoryTemplateApi("MA", "INC", "New Incorporation", "", "");
         return new CategoryTemplateApi(element);
     }
 }

@@ -1,29 +1,35 @@
 [ {
   "_id" : "INS",
+  "categoryFamily": "FILE",
   "categoryName" : "Insolvency",
   "parent" : ""
 }, {
   "_id": "SH",
+  "categoryFamily": "FILE",
   "categoryName": "Share capital",
   "categoryHint": "SH forms",
   "parent": ""
 }, {
   "_id" : "RP",
+  "categoryFamily": "FILE",
   "categoryName" : "Registrar's powers",
   "categoryHint" : "RP forms",
   "parent" : ""
 }, {
   "_id" : "CC",
+  "categoryFamily": "FILE",
   "categoryName" : "Change of constitution",
   "categoryHint" : "CC forms, articles and resolutions",
   "parent" : ""
 }, {
   "_id" : "SLP",
+  "categoryFamily": "FILE",
   "categoryName" : "Scottish limited partnership",
   "categoryHint" : "SLP forms",
   "parent" : ""
 }, {
   "_id" : "SQP",
+  "categoryFamily": "FILE",
   "categoryName" : "Scottish qualifying partnership",
   "categoryHint" : "SQP forms",
   "parent" : ""
@@ -164,8 +170,15 @@
   "categoryName" : "Change a company’s registered office address",
   "parent" : "INS"
 }, {
-  "_id" : "REG",
-  "categoryName" : "Registrations",
-  "categoryHint": "SQP, LP5(s), LP7(s)",
-  "parent" : ""
+  "_id": "INC_SLP",
+  "categoryFamily": "INC",
+  "categoryName": "Registration of a Scottish limited partnership",
+  "categoryHint": "LP5(s) and LP7(s) forms",
+  "parent": ""
+}, {
+  "_id": "INC_SQP",
+  "categoryFamily": "INC",
+  "categoryName": "Registration of a Scottish qualifying partnership",
+  "categoryHint": "SQP1 form",
+  "parent": ""
 } ]

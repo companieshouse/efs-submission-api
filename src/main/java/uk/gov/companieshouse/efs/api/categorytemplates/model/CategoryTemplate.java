@@ -3,7 +3,7 @@ package uk.gov.companieshouse.efs.api.categorytemplates.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,6 +24,10 @@ public class CategoryTemplate {
     @Id
     private String categoryType;
 
+    @JsonProperty("category_family")
+    @Field
+    private String categoryFamily;
+
     @JsonProperty("category_name")
     @Field
     private String categoryName;
@@ -39,12 +43,15 @@ public class CategoryTemplate {
     /**
      * Constructor which sets the submission form category data.
      * @param categoryType the category type
+     * @param categoryFamily the category family
      * @param categoryName the category name
      * @param parent used when the category has a parent category
      * @param categoryHint the category hint
      */
-    public CategoryTemplate(String categoryType, String categoryName, String parent, String categoryHint) {
+    public CategoryTemplate(String categoryType, String categoryFamily, String categoryName,
+        String parent, String categoryHint) {
         this.categoryType = categoryType;
+        this.categoryFamily = categoryFamily;
         this.categoryName = categoryName;
         this.parent = parent;
         this.categoryHint = categoryHint;
@@ -52,6 +59,10 @@ public class CategoryTemplate {
 
     public String getCategoryType() {
         return categoryType;
+    }
+
+    public String getCategoryFamily() {
+        return categoryFamily;
     }
 
     public String getCategoryName() {
@@ -75,24 +86,20 @@ public class CategoryTemplate {
             return false;
         }
         final CategoryTemplate that = (CategoryTemplate) o;
-        return Objects.equals(getCategoryType(), that.getCategoryType()) && Objects
-            .equals(getCategoryName(), that.getCategoryName()) && Objects
-                   .equals(getParent(), that.getParent()) && Objects
-                   .equals(getCategoryHint(), that.getCategoryHint());
+        return Objects.equals(getCategoryType(), that.getCategoryType()) && Objects.equals(
+            getCategoryFamily(), that.getCategoryFamily()) && Objects.equals(getCategoryName(),
+            that.getCategoryName()) && Objects.equals(getParent(), that.getParent())
+            && Objects.equals(getCategoryHint(), that.getCategoryHint());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCategoryType(), getCategoryName(), getParent(), getCategoryHint());
+        return Objects.hash(getCategoryType(), getCategoryFamily(), getCategoryName(), getParent(),
+            getCategoryHint());
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("categoryType", getCategoryType())
-                .append("categoryName", getCategoryName())
-                .append("parent", getParent())
-                .append("categoryHint", getCategoryHint())
-                .toString();
+        return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
     }
 }

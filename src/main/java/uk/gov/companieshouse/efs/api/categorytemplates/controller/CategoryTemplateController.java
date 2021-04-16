@@ -40,29 +40,41 @@ public class CategoryTemplateController {
     }
 
     /**
-     * Returns a responseEntity which contains a list of category types belonging to an optional parent form
-     * category, or all categories if omitted.
+     * Returns a responseEntity which contains a list of category types belonging to an optional 
+     * family or an optional parent form category, or all categories if omitted.
      * Will return a status of not found if the list is not found.
      *
      * @return responseEntity
      */
     @GetMapping(value = "/category-templates")
     public ResponseEntity<CategoryTemplateListApi> getCategoryTemplates(
-        @RequestParam(value = "parent", required = false) String categoryId, final HttpServletRequest request) {
+        @RequestParam(value = "family", required = false) String familyId,
+        @RequestParam(value = "parent", required = false) String categoryId,
+        final HttpServletRequest request) {
+        ResponseEntity<CategoryTemplateListApi> result;
 
         try {
-            return categoryId == null
-                ? ResponseEntity.ok(categoryService.getCategoryTemplates())
-                : ResponseEntity.ok(categoryService.getCategoryTemplatesByCategory(categoryId));
+                if (familyId != null) {
+                    result =
+                        ResponseEntity.ok(categoryService.getCategoryTemplatesByFamily(familyId));
+                } else if (categoryId != null) {
+                    result = ResponseEntity.ok(
+                        categoryService.getCategoryTemplatesByCategory(categoryId));
+                } else {
+                    result = ResponseEntity.ok(categoryService.getCategoryTemplates());
+                }
+            } catch (Exception ex) {
+                Map<String, Object> debug = new HashMap<>();
+    
+                debug.put("familyId", familyId);
+                debug.put("categoryId", categoryId);
+                logger.error("Failed to get category template", ex, debug);
+            result = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
         }
-        catch (Exception ex) {
-            Map<String, Object> debug = new HashMap<>();
-
-            debug.put("categoryId", categoryId);
-            logger.error("Failed to get category template", ex, debug);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return result;
     }
+    
 
     /**
      * Returns a responseEntity which contains a category template.
