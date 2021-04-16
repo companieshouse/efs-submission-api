@@ -71,18 +71,18 @@ class FormTemplateMapperTest {
 
     private FormTemplate getForm(final List<Integer> messageTextIdList) {
         return new FormTemplate("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, true, messageTextIdList);
+                false, false, messageTextIdList);
     }
 
     private FormTemplateListApi expectedList(final List<Integer> messageTextIdList) {
         FormTemplateApi element = new FormTemplateApi("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, true, new MessageTextListApi(messageTextIdList));
+                false, false, new MessageTextListApi(messageTextIdList));
         return new FormTemplateListApi(Collections.singletonList(element));
     }
 
     private FormTemplateApi expectedSingle(final List<Integer> messageTextIdList) {
         FormTemplateApi element = new FormTemplateApi("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, true, new MessageTextListApi(messageTextIdList));
+                false, false, new MessageTextListApi(messageTextIdList));
         return new FormTemplateApi(element);
     }
 }

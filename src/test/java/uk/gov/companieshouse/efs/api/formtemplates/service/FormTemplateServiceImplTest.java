@@ -74,9 +74,9 @@ class FormTemplateServiceImplTest {
         //given
         String categoryId = "CC01";
         FormTemplate formTemplate = new FormTemplate("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, true, null);
+                false, false, null);
         FormTemplateApi mappedForm = new FormTemplateApi("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, true,null);
+                false, false, null);
 
         when(formRepository.findById(categoryId)).thenReturn(Optional.of(formTemplate));
         when(mapper.map(formTemplate)).thenReturn(mappedForm);
@@ -109,7 +109,7 @@ class FormTemplateServiceImplTest {
         //given
         String categoryId = "CC01";
         FormTemplate mappedForm = new FormTemplate("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, true, null);
+                false, false, null);
 
         List<FormTemplate> listForm = new ArrayList<>();
         listForm.add(mappedForm);

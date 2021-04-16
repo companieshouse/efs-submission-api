@@ -20,7 +20,7 @@ class FormTemplateTest {
 
     @BeforeEach
     void setUp() {
-        testFormTemplate = new FormTemplate("CC01", "Form01", "CC", "100", false, false, true, null);
+        testFormTemplate = new FormTemplate("CC01", "Form01", "CC", "100", false, false, null);
         JacksonTester.initFields(this, new ObjectMapper());
     }
 
