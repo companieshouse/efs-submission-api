@@ -962,7 +962,7 @@
         "status": {
           "$ref": "#/definitions/payment-provisional-status"
         },
-        "payment-reference": {
+        "payment_reference": {
           "$ref": "#/definitions/payment-sessionId"
         },
         "paid_at": {
