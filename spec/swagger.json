@@ -3,7 +3,7 @@
   "info": {
     "title": "Emergency Filing Service API",
     "description": "Emergency Filing Service API specification",
-    "version": "0.2.2"
+    "version": "0.2.3"
   },
   "basePath": "/efs-submissions-api",
   "schemes": [
@@ -110,10 +110,10 @@
       "format": "email",
       "x-example": "demo@ch.gov.uk"
     },
-    "payment-status": {
+    "payment-provisional-status": {
       "name": "status",
       "in": "query",
-      "description": "Payment session status/outcome",
+      "description": "Payment session provisional status",
       "required": true,
       "type": "string",
       "enum": [
@@ -368,6 +368,38 @@
             "schema": {
               "$ref": "#/definitions/cost"
             }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorised"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update submission with payment session final outcome",
+        "x-operationName": "patchPaymentOutcome",
+        "tags": [
+          "payment"
+        ],
+        "parameters": [
+          {
+            "name": "session-outcome",
+            "in": "body",
+            "description": "Details payment session outcome",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/session-outcome"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "$ref": "#/responses/BadRequest"
@@ -915,6 +947,31 @@
     }
   },
   "definitions": {
+    "payment-sessionId": {
+      "title": "Payment service session ID/reference",
+      "type": "string",
+      "minLength": 15,
+      "maxLength": 15,
+      "pattern": "[0-9a-zA-Z]{15}",
+      "example": "yMxgdNVSdwyk7sN"
+    },
+    "session-outcome": {
+      "title": "Final outcome of payment session",
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/payment-provisional-status"
+        },
+        "payment-reference": {
+          "$ref": "#/definitions/payment-sessionId"
+        },
+        "paid_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "paid-at timestamp"
+        }
+      }
+    },
     "submissionResponse": {
       "title": "Submission response",
       "description": "Submission response",
@@ -1084,7 +1141,7 @@
           }
         },
         "status": {
-          "$ref": "#/definitions/payment-status"
+          "$ref": "#/definitions/payment-provisional-status"
         },
         "company_number": {
           "type": "string",
@@ -1092,7 +1149,7 @@
         }
       }
     },
-    "payment-status": {
+    "payment-provisional-status": {
       "description": "Payment session status/outcome",
       "title": "Payment session status",
       "type": "string",
@@ -1103,13 +1160,24 @@
       ],
       "x-example": "Paid"
     },
+    "payment-outcome-status": {
+      "description": "Payment session status/outcome",
+      "title": "Payment session outcome",
+      "type": "string",
+      "enum": [
+        "Paid",
+        "Cancelled",
+        "Failed"
+      ],
+      "x-example": "Paid"
+    },
     "payment-session": {
       "description": "Payment session details",
       "title": "Payment Session details",
       "type": "object",
       "required": [
         "sessionId",
-        "sessionState"
+        "sessionState" 
       ],
       "properties": {
         "sessionId": {
