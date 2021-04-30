@@ -92,8 +92,9 @@ class SubmissionValidatorTest {
         when(formTemplate.getFee()).thenReturn("TEST_FEE");
         when(paymentRepository.findById("TEST_FEE")).thenReturn(Optional.of(paymentTemplate));
         when(paymentTemplate.getItems()).thenReturn(Collections.singletonList(TEST_ITEM));
-        when(submission.getPaymentSessions()).thenReturn(new SessionListApi(Collections.singletonList(
-            new SessionApi("woeirsodiflsj", "E_lLgj6SI8cWoEXVtGMsuB81DoEcOiWPPgSJTz4OQ0gVo0y6d_NDFP7waRQfdU1z"))));
+        when(submission.getPaymentSessions()).thenReturn(new SessionListApi(
+            Collections.singletonList(new SessionApi("woeirsodiflsj",
+                "E_lLgj6SI8cWoEXVtGMsuB81DoEcOiWPPgSJTz4OQ0gVo0y6d_NDFP7waRQfdU1z", "paid"))));
         when(submission.getConfirmationReference()).thenReturn("123 456 789");
 
         // then

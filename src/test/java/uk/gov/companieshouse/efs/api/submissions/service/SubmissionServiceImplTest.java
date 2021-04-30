@@ -416,7 +416,8 @@ class SubmissionServiceImplTest {
     @Test
     void testUpdateSubmissionWithPaymentSessions() {
         // given
-        SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE);
+        SessionApi sessionApi =
+            new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
         SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
 
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
@@ -433,7 +434,7 @@ class SubmissionServiceImplTest {
     @Test
     void testUpdateSubmissionWithPaymentReferenceNotFound() {
         // given
-        SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE);
+        SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
         SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
 
         when(submissionRepository.read(anyString())).thenReturn(null);
@@ -449,7 +450,7 @@ class SubmissionServiceImplTest {
     @Test
     void testUpdateSubmissionWithPaymentReferenceIncorrectState() {
         // given
-        SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE);
+        SessionApi sessionApi = new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
         SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
 
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
@@ -463,6 +464,8 @@ class SubmissionServiceImplTest {
         assertEquals("Submission status for [123] wasn't OPEN, couldn't update", ex.getMessage());
     }
 
+    // TODO: Add tests for payment session status
+    
     @Test
     void testCompleteSubmission() throws SubmissionValidationException {
         // given

@@ -247,6 +247,7 @@ class PaymentReportServiceImplTest {
     }
 
     private SessionListApi createPaymentSessions(final String sessionRef) {
-        return new SessionListApi(Collections.singletonList(new SessionApi(sessionRef, sessionRef + "-state")));
+        return new SessionListApi(Collections.singletonList(
+            new SessionApi(sessionRef, sessionRef + "-state", sessionRef + "-status")));
     }
 }

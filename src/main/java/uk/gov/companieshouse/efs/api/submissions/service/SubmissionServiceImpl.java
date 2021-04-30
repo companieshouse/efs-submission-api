@@ -177,8 +177,23 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw ve;
         }
 
+        // TODO: 
+        // Assumes there is PATCH request handling (controller) that does this:
+        //  1. update corresponding payment session status to "paid"/"failed"
+        //  2. update submission status to SUBMITTED/PAYMENT_FAILED respectively
+        //  3. if PAYMENT_FAILED, send payment user email
+        
         emailService.sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
 
+        // TODO:
+        //  1. if fee_on_submission exists
+        //      if submission.status == OPEN
+        //          (submission.status => PAYMENT_REQUIRED)
+        //      else
+        //          (don't update submission.status)
+        //     else
+        //          (submission.status => SUBMITTED)
+        // instead of next 2 lines...
         submission.setSubmittedAt(timestampGenerator.generateTimestamp());
         submission.setStatus(SubmissionStatus.SUBMITTED);
         updateSubmission(submission);

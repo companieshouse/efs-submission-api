@@ -21,6 +21,7 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionFormApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.api.model.paymentsession.SessionApi;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
+import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
@@ -36,7 +37,8 @@ class SubmissionMapperTest {
     private static final String EMAIL_ADDRESS = "demo@ch.gov.uk";
     private static final String COMPANY_NUMBER = "12345678";
     private static final String COMPANY_NAME = "ACME";
-    private static final SessionApi PAYMENT_SESSION = new SessionApi("7777777777", "random-state");
+    private static final SessionApi PAYMENT_SESSION = new SessionApi("7777777777", "random-state",
+        PaymentTemplate.Status.PENDING.toString());
     private static final String FEE_ON_SUBMISSION = "17";
     private static final Boolean CONFIRM_AUTHORISED = true;
     private static final String BARCODE = "Y9999999";
