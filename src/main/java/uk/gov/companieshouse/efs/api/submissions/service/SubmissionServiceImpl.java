@@ -182,25 +182,33 @@ public class SubmissionServiceImpl implements SubmissionService {
         //  1. update corresponding payment session status to "paid"/"failed"
         //  2. update submission status to SUBMITTED/PAYMENT_FAILED respectively
         //  3. if PAYMENT_FAILED, send payment user email
-        
+
         emailService.sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
 
-        // TODO:
-        //  1. if fee_on_submission exists
+        calculateSubmissionStatus(submission);
+        updateSubmission(submission);
+
+        LOGGER.debug(String.format("Successfully completed submission for id: [%s]", id));
+
+        return new SubmissionResponseApi(id);
+    }
+
+    private void calculateSubmissionStatus(final Submission submission) {
+        //  if fee_on_submission exists
         //      if submission.status == OPEN
         //          (submission.status => PAYMENT_REQUIRED)
         //      else
         //          (don't update submission.status)
         //     else
         //          (submission.status => SUBMITTED)
-        // instead of next 2 lines...
-        submission.setSubmittedAt(timestampGenerator.generateTimestamp());
-        submission.setStatus(SubmissionStatus.SUBMITTED);
-        updateSubmission(submission);
-
-        LOGGER.debug(String.format("Successfully completed submission for id: [%s]", id));
-
-        return new SubmissionResponseApi(id);
+        if (submission.getFeeOnSubmission() != null) {
+            if (submission.getStatus() == SubmissionStatus.OPEN) {
+                submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
+            }
+        } else {
+            submission.setStatus(SubmissionStatus.SUBMITTED);
+            submission.setSubmittedAt(timestampGenerator.generateTimestamp());
+        }
     }
 
     @Override
@@ -209,9 +217,11 @@ public class SubmissionServiceImpl implements SubmissionService {
         LocalDateTime timestamp = timestampGenerator.generateTimestamp();
         submission.setLastModifiedAt(timestamp);
         submission.getFormDetails()
-                .getFileDetailsList()
-                .forEach(fileDetails -> this.handleFile(fileDetails, timestamp));
-        LOGGER.debug(String.format("Attempting to update submission status to PROCESSING for submission with id: [%s]", submission.getId()));
+            .getFileDetailsList()
+            .forEach(fileDetails -> this.handleFile(fileDetails, timestamp));
+        LOGGER.debug(String.format(
+            "Attempting to update submission status to PROCESSING for submission with id: [%s]",
+            submission.getId()));
         submissionRepository.updateSubmission(submission);
         LOGGER.debug(String.format("Updated submission status to PROCESSING for submission with id: [%s]", submission.getId()));
         return new SubmissionResponseApi(submission.getId());
