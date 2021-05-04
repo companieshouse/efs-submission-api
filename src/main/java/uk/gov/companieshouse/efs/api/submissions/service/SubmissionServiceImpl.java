@@ -202,9 +202,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         //     else
         //          (submission.status => SUBMITTED)
         if (submission.getFeeOnSubmission() != null) {
-            if (submission.getStatus() == SubmissionStatus.OPEN) {
                 submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
-            }
         } else {
             submission.setStatus(SubmissionStatus.SUBMITTED);
             submission.setSubmittedAt(timestampGenerator.generateTimestamp());

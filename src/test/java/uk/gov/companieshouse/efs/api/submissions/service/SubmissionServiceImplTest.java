@@ -13,6 +13,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -464,10 +465,8 @@ class SubmissionServiceImplTest {
         assertEquals("Submission status for [123] wasn't OPEN, couldn't update", ex.getMessage());
     }
 
-    // TODO: Add tests for payment session status
-    
     @Test
-    void testCompleteSubmission() throws SubmissionValidationException {
+    void testCompleteSubmissionWhenNoFee() throws SubmissionValidationException {
         // given
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
@@ -484,6 +483,27 @@ class SubmissionServiceImplTest {
         verify(submission).setLastModifiedAt(now);
         verify(validator).validate(submission);
         verify(emailService).sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
+    }
+
+    @Test
+    void testCompleteSubmissionWhenFee() throws SubmissionValidationException {
+        // given
+        when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
+        when(submission.getFeeOnSubmission()).thenReturn("1");
+        when(submissionRepository.read(anyString())).thenReturn(submission);
+        LocalDateTime now = LocalDateTime.now();
+        when(timestampGenerator.generateTimestamp()).thenReturn(now);
+        // when
+        SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
+
+        // then
+        assertEquals(SUBMISSION_ID, actual.getId());
+        verify(submission).setStatus(SubmissionStatus.PAYMENT_REQUIRED);
+        verify(timestampGenerator).generateTimestamp();
+        verify(submissionRepository).updateSubmission(submission);
+        verify(validator).validate(submission);
+        verify(emailService).sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
+        verify(submission).setLastModifiedAt(now);
     }
 
     @Test
