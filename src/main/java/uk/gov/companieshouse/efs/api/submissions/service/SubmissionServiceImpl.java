@@ -1,9 +1,13 @@
 package uk.gov.companieshouse.efs.api.submissions.service;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +20,12 @@ import uk.gov.companieshouse.api.model.efs.submissions.PresenterApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
+import uk.gov.companieshouse.api.model.paymentsession.SessionApi;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
+import uk.gov.companieshouse.efs.api.payment.PaymentClose;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
 import uk.gov.companieshouse.efs.api.payment.service.PaymentTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.mapper.CompanyMapper;
@@ -55,14 +61,18 @@ public class SubmissionServiceImpl implements SubmissionService {
     private PaymentTemplateService paymentTemplateService;
     private EmailService emailService;
     private Validator<Submission> validator;
-
+    public static final ImmutableSet<SubmissionStatus> UPDATABLE_STATUSES =
+        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED,
+            SubmissionStatus.PAYMENT_FAILED);
 
     @Autowired
-    public SubmissionServiceImpl(SubmissionRepository submissionRepository, SubmissionMapper submissionMapper,
-        PresenterMapper presenterMapper, CompanyMapper companyMapper, FileDetailsMapper fileDetailsMapper,
+    public SubmissionServiceImpl(SubmissionRepository submissionRepository,
+        SubmissionMapper submissionMapper, PresenterMapper presenterMapper,
+        CompanyMapper companyMapper, FileDetailsMapper fileDetailsMapper,
         CurrentTimestampGenerator timestampGenerator,
-        ConfirmationReferenceGeneratorService confirmationReferenceGenerator, FormTemplateService formTemplateService,
-        PaymentTemplateService paymentTemplateService, EmailService emailService, Validator<Submission> validator) {
+        ConfirmationReferenceGeneratorService confirmationReferenceGenerator,
+        FormTemplateService formTemplateService, PaymentTemplateService paymentTemplateService,
+        EmailService emailService, Validator<Submission> validator) {
         this.submissionRepository = submissionRepository;
         this.submissionMapper = submissionMapper;
         this.presenterMapper = presenterMapper;
@@ -159,7 +169,69 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public SubmissionResponseApi completeSubmission(String id) throws SubmissionValidationException {
+    public SubmissionResponseApi updateSubmissionWithPaymentOutcome(final String id,
+        final PaymentClose paymentClose) {
+        final Submission submission = submissionRepository.read(id);
+
+        if (submission == null) {
+            final Map<String, Object> debug = getDebugMap(id);
+
+            LOGGER.errorContext(id, "Could not locate submission", null, debug);
+            throw new SubmissionNotFoundException(
+                String.format("Could not locate submission with id: [%s]", id));
+        }
+        if (submission.getStatus() == SubmissionStatus.SUBMITTED) {
+            LOGGER.debug(
+                String.format("Ignoring payment outcome for completed Submission with id: [%s]",
+                    id));
+
+            return new SubmissionResponseApi(id);
+        } else if (submission.getStatus() != SubmissionStatus.PAYMENT_REQUIRED) {
+            throw new SubmissionIncorrectStateException(
+                String.format("Incorrect status %s for Submission with id: [%s]",
+                    submission.getStatus(), id));
+        } else {
+            setPaymentSessionStatus(submission, paymentClose);
+
+            LOGGER.debug(String.format(
+                "Attempting to update payment session outcome for submission with id: [%s]", id));
+            submissionRepository.updateSubmission(submission);
+            LOGGER.debug(String.format(
+                "Successfully updated payment session outcome for submission with id: [%s]", id));
+            processPaymentOutcome(submission, paymentClose);
+
+            return updateSubmissionStatus(id,
+                submission.getStatus());  // also updates last_modified_at
+        }
+    }
+
+    private void setPaymentSessionStatus(final Submission submission,
+        final PaymentClose paymentClose) {
+        final Optional<SessionApi> matchedSession =
+            Optional.ofNullable(submission.getPaymentSessions())
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .filter(
+                    s -> StringUtils.equals(s.getSessionId(), paymentClose.getPaymentReference()))
+                .findFirst();
+        matchedSession.orElseThrow(
+            () -> new SubmissionIncorrectStateException("payment reference not matched"))
+            .setSessionStatus(paymentClose.getStatus());
+    }
+
+    private void processPaymentOutcome(final Submission submission,
+        final PaymentClose paymentClose) {
+        if (paymentClose.isPaid()) {
+            submission.setStatus(SubmissionStatus.SUBMITTED);
+            submission.setSubmittedAt(timestampGenerator.generateTimestamp());
+        } else {
+            submission.setStatus(SubmissionStatus.PAYMENT_FAILED);
+        }
+    }
+
+    @Override
+    public SubmissionResponseApi completeSubmission(String id)
+        throws SubmissionValidationException {
 
         LOGGER.debug(String.format("Attempting to complete submission for id: [%s]", id));
 
@@ -170,39 +242,35 @@ public class SubmissionServiceImpl implements SubmissionService {
             validator.validate(submission);
         } catch (SubmissionValidationException ve) {
             LOGGER.info(ve.getMessage());
-            Map<String, Object> debug = new HashMap<>();
-            debug.put("submissionId", id);
+
+            final Map<String, Object> debug = getDebugMap(id);
+
             debug.put("exceptionMessage", ve.getMessage());
             LOGGER.errorContext(id, "Submission invalid ", null, debug);
             throw ve;
         }
 
-        // TODO: 
-        // Assumes there is PATCH request handling (controller) that does this:
-        //  1. update corresponding payment session status to "paid"/"failed"
-        //  2. update submission status to SUBMITTED/PAYMENT_FAILED respectively
-        //  3. if PAYMENT_FAILED, send payment user email
-
-        emailService.sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
-
-        calculateSubmissionStatus(submission);
+        progressSubmissionStatus(submission);
         updateSubmission(submission);
-
         LOGGER.debug(String.format("Successfully completed submission for id: [%s]", id));
+
+        if (submission.getStatus() == SubmissionStatus.SUBMITTED) { // no payment required
+            emailService.sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
+        }
 
         return new SubmissionResponseApi(id);
     }
 
-    private void calculateSubmissionStatus(final Submission submission) {
-        //  if fee_on_submission exists
-        //      if submission.status == OPEN
-        //          (submission.status => PAYMENT_REQUIRED)
-        //      else
-        //          (don't update submission.status)
-        //     else
-        //          (submission.status => SUBMITTED)
+    private void progressSubmissionStatus(final Submission submission) {
         if (submission.getFeeOnSubmission() != null) {
+            if (submission.getStatus() == SubmissionStatus.OPEN) {
+                LOGGER.debug(
+                    String.format("Fee required, update status to PAYMENT_REQUIRED for id: [%s]",
+                        submission.getId()));
                 submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
+            }
+            // else
+            //     don't update submission.status
         } else {
             submission.setStatus(SubmissionStatus.SUBMITTED);
             submission.setSubmittedAt(timestampGenerator.generateTimestamp());
@@ -270,15 +338,18 @@ public class SubmissionServiceImpl implements SubmissionService {
         Submission submission = submissionRepository.read(id);
 
         // check if submission exists and has the correct status
-        Map<String, Object> debug = new HashMap<>();
-        debug.put("submissionId", id);
+        final Map<String, Object> debugMap = getDebugMap(id);
+
         if (submission == null) {
-            LOGGER.errorContext(id, "Could not locate submission", null, debug);
-            throw new SubmissionNotFoundException(String.format("Could not locate submission with id: [%s]", id));
-        } else if (submission.getStatus() != SubmissionStatus.OPEN) {
-            LOGGER.errorContext(id, "Submission status wasn't OPEN, couldn't update", null, debug);
+            LOGGER.errorContext(id, "Could not locate submission", null, debugMap);
+            throw new SubmissionNotFoundException(
+                String.format("Could not locate submission with id: [%s]", id));
+        } else if (!UPDATABLE_STATUSES.contains(submission.getStatus())) {
+            LOGGER.errorContext(id, String.format("Submission status wasn't in %s, couldn't update",
+                UPDATABLE_STATUSES), null, debugMap);
             throw new SubmissionIncorrectStateException(
-                String.format("Submission status for [%s] wasn't OPEN, couldn't update", id));
+                String.format("Submission status for [%s] wasn't in %s, couldn't update", id,
+                    UPDATABLE_STATUSES));
         }
 
         return submission;
@@ -306,4 +377,12 @@ public class SubmissionServiceImpl implements SubmissionService {
         return result;
     }
 
+
+    private Map<String, Object> getDebugMap(final String id) {
+        final Map<String, Object> debug = new HashMap<>();
+
+        debug.put("submissionId", id);
+
+        return debug;
+    }
 }
