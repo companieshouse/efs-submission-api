@@ -1,18 +1,20 @@
 {
-	"type": "Service",
-	"name": "efs-submission-api",
-	"description": "Service that handles emergency filing submissions and processes them by email or through FES depending on form type",
-	"owned_by": "Thundercats",
-	"calls_via": "Eric",
-	"git_repo": "https://github.com/companieshouse/efs-submission-api",
-	"specification": "",
-	"public": "false",
-	"users": "internal - API",
-	"language": "Java",
-	"integration_outgoing": [
-		"file-transfer-api,CALLS_LAMBDA",
-		"efs_submissions,GETS_DATA_FROM",
-		"FES-db,SENDS_DATA_TO",
-		"chs-notification-api,INTEGRATES_WITH"
-	]
+  "type": "Service",
+  "name": "efs-submission-api",
+  "description": "Service that handles upload a document submissions and processes them by email or through FES depending on form type",
+  "owned_by": "Thundercats",
+  "calls_via": "Eric",
+  "documentation": "https://companieshouse.atlassian.net/wiki/spaces/S5/pages/2324627570/Support+Documentation+-+Upload+a+Document+Service",
+  "git_repo": "https://github.com/companieshouse/efs-submission-api",
+  "specification": "",
+  "public": "false",
+  "users": "internal - API",
+  "code_analysis_link": "http://code-analysis.platform.aws.chdev.org:9000/dashboard?id=uk.gov.companieshouse%3Aefs-submission-api",
+  "language": "Java",
+  "integration_outgoing": [
+    "file-transfer-api,CALLS_LAMBDA",
+    "efs_submissions,GETS_DATA_FROM",
+    "FES-db,SENDS_DATA_TO",
+    "chs-notification-api,INTEGRATES_WITH"
+  ]
 }
