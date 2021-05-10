@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.efs.api.payment.controller;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,6 +46,9 @@ import uk.gov.companieshouse.logging.Logger;
 @RestController
 @RequestMapping("/efs-submission-api/submission/")
 public class PaymentController {
+    private static final ImmutableSet<SubmissionStatus> VALID_STATUSES =
+        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED,
+            SubmissionStatus.PAYMENT_RECEIVED, SubmissionStatus.PAYMENT_FAILED);
 
     private final Logger logger;
 
@@ -126,9 +131,18 @@ public class PaymentController {
      * @return the payment template details
      */
     @PatchMapping(value = "{id}/payment", produces = {"application/json"})
-    public ResponseEntity<SubmissionResponseApi> closePaymentSession(
+    public ResponseEntity<SubmissionResponseApi> patchPaymentSession(
         @PathVariable("id") final String id, @RequestBody PaymentClose paymentClose,
         final HttpServletRequest request) {
+
+        final Map<String, Object> debug = new HashMap<>();
+
+        debug.put("submissionId", id);
+        debug.put("paymentClose.paymentReference", paymentClose.getPaymentReference());
+        debug.put("paymentClose.paidAt", paymentClose.getPaidAt());
+        debug.put("paymentClose.status", paymentClose.getStatus());
+        logger.debug("PATCH payment", debug);
+        
         logger.debug(MessageFormat.format("Fetching submission with id: {0}", id));
 
         final SubmissionApi submission = service.readSubmission(id);
@@ -136,25 +150,23 @@ public class PaymentController {
             .build();
 
         if (submission == null) {
-            response = ResponseEntity.notFound()
-                .build();
-        } else if (submission.getStatus() != SubmissionStatus.PAYMENT_REQUIRED) {
-            response = ResponseEntity.status(HttpStatus.CONFLICT)
-                .build();
+            response = ResponseEntity.notFound().build();
+        } else if (!VALID_STATUSES.contains(submission.getStatus())) {
+            response = ResponseEntity.status(HttpStatus.CONFLICT).build();
         } else {
+            final SubmissionStatus oldStatus = submission.getStatus();
+
             try {
                 submissionService.updateSubmissionWithPaymentOutcome(id, paymentClose);
+                if (oldStatus == SubmissionStatus.PAYMENT_REQUIRED && paymentClose.isPaid()) {
+                    emailService.sendExternalConfirmation(
+                        new ExternalConfirmationEmailModel(submissionApiMapper.map(submission)));
+
+                } else {
+                    // send payment failed email - See BI-7733
+                }
             } catch (SubmissionIncorrectStateException e) {
-                response = ResponseEntity.badRequest()
-                    .build();
-            }
-            if (paymentClose.isPaid()) {
-
-                emailService.sendExternalConfirmation(
-                    new ExternalConfirmationEmailModel(submissionApiMapper.map(submission)));
-
-            } else {
-                // send payment failed email - See BI-7733
+                response = ResponseEntity.badRequest().build();
             }
         }
 

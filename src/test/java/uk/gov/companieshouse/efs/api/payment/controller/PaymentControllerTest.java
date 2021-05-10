@@ -5,7 +5,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -381,7 +383,7 @@ class PaymentControllerTest {
     void closePaymentSessionReturns404NotFound() {
         // when
         ResponseEntity<SubmissionResponseApi> actual =
-            paymentController.closePaymentSession(SUB_ID, paymentClose, request);
+            paymentController.patchPaymentSession(SUB_ID, paymentClose, request);
 
         // then
         assertNull(actual.getBody());
@@ -398,11 +400,11 @@ class PaymentControllerTest {
                 .build());
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
-        submission.setStatus(SubmissionStatus.OPEN); // status != PAYMENT_REQUIRED
+        submission.setStatus(SubmissionStatus.SUBMITTED); // invalid status
 
         // when
         ResponseEntity<SubmissionResponseApi> actual =
-            paymentController.closePaymentSession(SUB_ID, paymentClose, request);
+            paymentController.patchPaymentSession(SUB_ID, paymentClose, request);
 
         // then
         assertNull(actual.getBody());
@@ -426,7 +428,7 @@ class PaymentControllerTest {
 
         // when
         ResponseEntity<SubmissionResponseApi> actual =
-            paymentController.closePaymentSession(SUB_ID, paymentClose, request);
+            paymentController.patchPaymentSession(SUB_ID, paymentClose, request);
 
         // then
         assertNull(actual.getBody());
@@ -434,11 +436,85 @@ class PaymentControllerTest {
     }
     
     @Test
-    void closePaymentSessionReturns204NoContentWhenPaid() {
+    void closePaymentSessionReturns204NoContentWhenPaidBeforeCompletion() {
         // given
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         final Submission submission = new Submission.Builder().withFormDetails(formDetails)
             .withCompany(company)
+            .withStatus(SubmissionStatus.OPEN)
+            .build();
+        final SubmissionApi submissionApi = new SubmissionMapper().map(submission);
+        final SubmissionResponseApi submissionResponse = new SubmissionResponseApi(SUB_ID);
+
+        when(service.readSubmission(SUB_ID)).thenReturn(submissionApi);
+        when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(submissionResponse);
+
+        // when
+        ResponseEntity<SubmissionResponseApi> actual =
+            paymentController.patchPaymentSession(SUB_ID, paymentClose, request);
+
+        // then
+        verifyNoInteractions(emailService);
+        assertNull(actual.getBody());
+        assertEquals(HttpStatus.NO_CONTENT, actual.getStatusCode());
+    }
+
+    @Test
+    void closePaymentSessionReturns204NoContentWhenFailedAfterCompletion() {
+        // given
+        final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
+        final Submission submission = new Submission.Builder().withFormDetails(formDetails)
+            .withCompany(company)
+            .withStatus(SubmissionStatus.PAYMENT_REQUIRED)
+            .build();
+        final SubmissionApi submissionApi = new SubmissionMapper().map(submission);
+        final SubmissionResponseApi submissionResponse = new SubmissionResponseApi(SUB_ID);
+
+        when(service.readSubmission(SUB_ID)).thenReturn(submissionApi);
+        when(paymentClose.isPaid()).thenReturn(false);
+        when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(submissionResponse);
+
+        // when
+        ResponseEntity<SubmissionResponseApi> actual =
+            paymentController.patchPaymentSession(SUB_ID, paymentClose, request);
+
+        // then
+        verify(emailService, never()).sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
+        assertNull(actual.getBody());
+        assertEquals(HttpStatus.NO_CONTENT, actual.getStatusCode());
+    }
+
+    @Test
+    void closePaymentSessionReturns204NoContentWhenFailedBeforeCompletion() {
+        // given
+        final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
+        final Submission submission = new Submission.Builder().withFormDetails(formDetails)
+            .withCompany(company)
+            .withStatus(SubmissionStatus.OPEN)
+            .build();
+        final SubmissionApi submissionApi = new SubmissionMapper().map(submission);
+        final SubmissionResponseApi submissionResponse = new SubmissionResponseApi(SUB_ID);
+
+        when(service.readSubmission(SUB_ID)).thenReturn(submissionApi);
+        when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(submissionResponse);
+
+        // when
+        ResponseEntity<SubmissionResponseApi> actual =
+            paymentController.patchPaymentSession(SUB_ID, paymentClose, request);
+
+        // then
+        verifyNoInteractions(emailService);
+        assertNull(actual.getBody());
+        assertEquals(HttpStatus.NO_CONTENT, actual.getStatusCode());
+    }
+
+    @Test
+    void closePaymentSessionReturns204NoContentWhenPaidAfterCompletion() {
+        // given
+        final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
+        final Submission submission = new Submission.Builder().withFormDetails(formDetails)
+            .withCompany(company)
+            .withStatus(SubmissionStatus.PAYMENT_REQUIRED)
             .build();
         final SubmissionApi submissionApi = new SubmissionMapper().map(submission);
         final SubmissionResponseApi submissionResponse = new SubmissionResponseApi(SUB_ID);
@@ -447,12 +523,10 @@ class PaymentControllerTest {
         when(paymentClose.isPaid()).thenReturn(true);
         when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(submissionResponse);
         when(submissionApiMapper.map(submissionApi)).thenReturn(submission);
-        submissionApi.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
-        // submission has no matching payment session details
 
         // when
         ResponseEntity<SubmissionResponseApi> actual =
-            paymentController.closePaymentSession(SUB_ID, paymentClose, request);
+            paymentController.patchPaymentSession(SUB_ID, paymentClose, request);
 
         // then
         verify(emailService).sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));

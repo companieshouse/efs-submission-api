@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
@@ -63,7 +63,10 @@ public class SubmissionServiceImpl implements SubmissionService {
     private Validator<Submission> validator;
     public static final ImmutableSet<SubmissionStatus> UPDATABLE_STATUSES =
         Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED,
-            SubmissionStatus.PAYMENT_FAILED);
+            SubmissionStatus.PAYMENT_RECEIVED, SubmissionStatus.PAYMENT_FAILED);
+    public static final ImmutableSet<SubmissionStatus> COMPLETABLE_STATUSES =
+        Sets.union(UPDATABLE_STATUSES, Sets.immutableEnumSet(SubmissionStatus.SUBMITTED))
+            .immutableCopy();
 
     @Autowired
     public SubmissionServiceImpl(SubmissionRepository submissionRepository,
@@ -112,7 +115,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionResponseApi updateSubmissionWithCompany(String id, CompanyApi companyApi) {
         LOGGER.debug(String.format("Attempting to update company details for submission with id: [%s]", id));
-        Submission submission = this.getSubmissionForUpdate(id);
+        Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
         submission.setCompany(companyMapper.map(companyApi));
         submissionRepository.updateSubmission(submission);
         LOGGER.debug(String.format("Successfully updated company details for submission with id: [%s]", id));
@@ -122,7 +125,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionResponseApi updateSubmissionWithForm(String id, FormTypeApi formApi) {
         LOGGER.debug(String.format("Attempting to update form type for submission with id: [%s]", id));
-        Submission submission = this.getSubmissionForUpdate(id);
+        Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
         FormDetails formDetails = submission.getFormDetails();
         final String formType = formApi.getFormType();
         if (formDetails == null) {
@@ -141,7 +144,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionResponseApi updateSubmissionWithFileDetails(String id, FileListApi fileListApi) {
         LOGGER.debug(String.format("Attempting to update file details for submission with id: [%s]", id));
-        Submission submission = this.getSubmissionForUpdate(id);
+        Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
         FormDetails formDetails = submission.getFormDetails();
         if (formDetails == null) {
             formDetails = FormDetails.builder().withFileDetailsList(fileDetailsMapper.map(fileListApi)).build();
@@ -158,12 +161,22 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionResponseApi updateSubmissionWithPaymentSessions(String id,
         SessionListApi paymentSessions) {
-        LOGGER.debug(String.format("Attempting to update payment sessions for submission with id: [%s]", id));
-        Submission submission = this.getSubmissionForUpdate(id);
+        LOGGER.debug(
+            String.format("Attempting to update payment sessions for submission with id: [%s]",
+                id));
+        Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
 
         submission.setPaymentSessions(paymentSessions);
-        submissionRepository.updateSubmission(submission);
-        LOGGER.debug(String.format("Successfully updated payment sessions for submission with id: [%s]", id));
+        if (anySessionWithStatus(paymentSessions, PaymentTemplate.Status.PENDING)) {
+            LOGGER.debug(String.format(
+                "Found pending payment session: updating Status to PAYMENT_REQUIRED for "
+                    + "submission with id: [%s]", id));
+            submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
+            submissionRepository.updateSubmission(submission);
+            LOGGER.debug(
+                String.format("Successfully updated payment sessions for submission with id: [%s]",
+                    id));
+        }
 
         return new SubmissionResponseApi(id);
     }
@@ -171,42 +184,42 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionResponseApi updateSubmissionWithPaymentOutcome(final String id,
         final PaymentClose paymentClose) {
-        final Submission submission = submissionRepository.read(id);
+        final Submission submission = getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
+        SubmissionStatus resultStatus;
 
-        if (submission == null) {
-            final Map<String, Object> debug = getDebugMap(id);
-
-            LOGGER.errorContext(id, "Could not locate submission", null, debug);
-            throw new SubmissionNotFoundException(
-                String.format("Could not locate submission with id: [%s]", id));
+        setPaymentSessionStatus(submission, paymentClose);
+        switch (submission.getStatus()) {
+            case OPEN:
+                resultStatus = paymentClose.isFailed()
+                    ? SubmissionStatus.PAYMENT_FAILED
+                    : SubmissionStatus.PAYMENT_RECEIVED;
+                break;
+            case PAYMENT_REQUIRED:
+                resultStatus = paymentClose.isFailed()
+                    ? SubmissionStatus.PAYMENT_FAILED
+                    : SubmissionStatus.SUBMITTED;
+                break;
+            default:
+                return new SubmissionResponseApi(id);
         }
-        if (submission.getStatus() == SubmissionStatus.SUBMITTED) {
-            LOGGER.debug(
-                String.format("Ignoring payment outcome for completed Submission with id: [%s]",
-                    id));
-
-            return new SubmissionResponseApi(id);
-        } else if (submission.getStatus() != SubmissionStatus.PAYMENT_REQUIRED) {
-            throw new SubmissionIncorrectStateException(
-                String.format("Incorrect status %s for Submission with id: [%s]",
-                    submission.getStatus(), id));
-        } else {
-            setPaymentSessionStatus(submission, paymentClose);
-
-            LOGGER.debug(String.format(
-                "Attempting to update payment session outcome for submission with id: [%s]", id));
-            submissionRepository.updateSubmission(submission);
-            LOGGER.debug(String.format(
-                "Successfully updated payment session outcome for submission with id: [%s]", id));
-            processPaymentOutcome(submission, paymentClose);
-
-            return updateSubmissionStatus(id,
-                submission.getStatus());  // also updates last_modified_at
+        if (resultStatus == SubmissionStatus.SUBMITTED) {
+            submission.setSubmittedAt(timestampGenerator.generateTimestamp());
         }
+        submission.setStatus(resultStatus);
+        submission.setLastModifiedAt(timestampGenerator.generateTimestamp());
+        LOGGER.debug(String.format("Updated submission status to %s for submission with id: [%s]",
+            resultStatus, submission.getId()));
+        submissionRepository.updateSubmission(submission);
+
+        return new SubmissionResponseApi(id);
     }
 
     private void setPaymentSessionStatus(final Submission submission,
         final PaymentClose paymentClose) {
+        LOGGER.debug(String.format(
+            "Attempting to update payment session outcome for submission with id: [%s]",
+            submission.getId()));
+
         final Optional<SessionApi> matchedSession =
             Optional.ofNullable(submission.getPaymentSessions())
                 .map(Collection::stream)
@@ -219,23 +232,13 @@ public class SubmissionServiceImpl implements SubmissionService {
             .setSessionStatus(paymentClose.getStatus());
     }
 
-    private void processPaymentOutcome(final Submission submission,
-        final PaymentClose paymentClose) {
-        if (paymentClose.isPaid()) {
-            submission.setStatus(SubmissionStatus.SUBMITTED);
-            submission.setSubmittedAt(timestampGenerator.generateTimestamp());
-        } else {
-            submission.setStatus(SubmissionStatus.PAYMENT_FAILED);
-        }
-    }
-
     @Override
     public SubmissionResponseApi completeSubmission(String id)
         throws SubmissionValidationException {
 
         LOGGER.debug(String.format("Attempting to complete submission for id: [%s]", id));
 
-        Submission submission = this.getSubmissionForUpdate(id);
+        Submission submission = this.getSubmissionWithCheckedStatus(id, COMPLETABLE_STATUSES);
 
         // check submission mandatory fields (validator)
         try {
@@ -254,7 +257,8 @@ public class SubmissionServiceImpl implements SubmissionService {
         updateSubmission(submission);
         LOGGER.debug(String.format("Successfully completed submission for id: [%s]", id));
 
-        if (submission.getStatus() == SubmissionStatus.SUBMITTED) { // no payment required
+        if (submission.getFeeOnSubmission() == null
+            || submission.getStatus() == SubmissionStatus.SUBMITTED) {
             emailService.sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
         }
 
@@ -262,19 +266,39 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     private void progressSubmissionStatus(final Submission submission) {
-        if (submission.getFeeOnSubmission() != null) {
-            if (submission.getStatus() == SubmissionStatus.OPEN) {
-                LOGGER.debug(
-                    String.format("Fee required, update status to PAYMENT_REQUIRED for id: [%s]",
-                        submission.getId()));
-                submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
-            }
-            // else
-            //     don't update submission.status
-        } else {
-            submission.setStatus(SubmissionStatus.SUBMITTED);
-            submission.setSubmittedAt(timestampGenerator.generateTimestamp());
+        final SessionListApi paymentSessions = submission.getPaymentSessions();
+
+        switch (submission.getStatus()) {
+            case OPEN:
+                if (submission.getFeeOnSubmission() == null || anySessionWithStatus(paymentSessions,
+                    PaymentTemplate.Status.PAID)) {
+                    setAsSubmitted(submission);
+                } else if (anySessionWithStatus(paymentSessions, PaymentTemplate.Status.PENDING)) {
+                    submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
+                }
+                break;
+            case PAYMENT_RECEIVED:
+                if (anySessionWithStatus(paymentSessions, PaymentTemplate.Status.PAID)) {
+                    setAsSubmitted(submission);
+                }
+                break;
+            default:
+                // intentionally empty
+                break;
         }
+    }
+
+    private void setAsSubmitted(final Submission submission) {
+        submission.setStatus(SubmissionStatus.SUBMITTED);
+        submission.setSubmittedAt(timestampGenerator.generateTimestamp());
+    }
+
+    private boolean anySessionWithStatus(final SessionListApi paymentSessions,
+        final PaymentTemplate.Status status) {
+        return Optional.ofNullable(paymentSessions)
+            .orElseGet(SessionListApi::new)
+            .stream()
+            .anyMatch(s -> StringUtils.equals(status.toString(), s.getSessionStatus()));
     }
 
     @Override
@@ -317,7 +341,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionResponseApi updateSubmissionConfirmAuthorised(final String id, final Boolean confirmAuthorised) {
         LOGGER.debug(String.format("Attempting to update authorised for submission with id: [%s]", id));
-        Submission submission = this.getSubmissionForUpdate(id);
+        Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
         submission.setConfirmAuthorised(confirmAuthorised);
         submissionRepository.updateSubmission(submission);
         LOGGER.debug(String.format("Successfully updated confirm authorised for submission with id: [%s]", id));
@@ -326,14 +350,16 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Override
     public void updateSubmission(Submission submission) {
-        LOGGER.debug(String.format("Attempting to update submission with id: [%s]", submission.getId()));
+        LOGGER.debug(
+            String.format("Attempting to update submission with id: [%s]", submission.getId()));
         submission.setLastModifiedAt(timestampGenerator.generateTimestamp());
         submissionRepository.updateSubmission(submission);
         LOGGER.debug(String.format("Updated submission with id: [%s]", submission.getId()));
     }
 
 
-    private Submission getSubmissionForUpdate(String id) {
+    private Submission getSubmissionWithCheckedStatus(String id,
+        final ImmutableSet<SubmissionStatus> acceptableStatusSet) {
 
         Submission submission = submissionRepository.read(id);
 
@@ -344,12 +370,12 @@ public class SubmissionServiceImpl implements SubmissionService {
             LOGGER.errorContext(id, "Could not locate submission", null, debugMap);
             throw new SubmissionNotFoundException(
                 String.format("Could not locate submission with id: [%s]", id));
-        } else if (!UPDATABLE_STATUSES.contains(submission.getStatus())) {
+        } else if (!acceptableStatusSet.contains(submission.getStatus())) {
             LOGGER.errorContext(id, String.format("Submission status wasn't in %s, couldn't update",
-                UPDATABLE_STATUSES), null, debugMap);
+                acceptableStatusSet), null, debugMap);
             throw new SubmissionIncorrectStateException(
                 String.format("Submission status for [%s] wasn't in %s, couldn't update", id,
-                    UPDATABLE_STATUSES));
+                    acceptableStatusSet));
         }
 
         return submission;
