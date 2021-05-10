@@ -6,7 +6,7 @@
   "calls_via": "Eric",
   "documentation": "https://companieshouse.atlassian.net/wiki/spaces/S5/pages/2324627570/Support+Documentation+-+Upload+a+Document+Service",
   "git_repo": "https://github.com/companieshouse/efs-submission-api",
-  "specification": "",
+  "specification": "https://github.com/companieshouse/efs-submission-api/blob/master/spec/swagger.json",
   "public": "false",
   "users": "internal - API",
   "code_analysis_link": "http://code-analysis.platform.aws.chdev.org:9000/dashboard?id=uk.gov.companieshouse%3Aefs-submission-api",
