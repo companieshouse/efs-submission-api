@@ -10,6 +10,7 @@
   "public": "false",
   "users": "internal - API",
   "code_analysis_link": "http://code-analysis.platform.aws.chdev.org:9000/dashboard?id=uk.gov.companieshouse%3Aefs-submission-api",
+  "test_automation_repo": "https://github.com/companieshouse/taf-api-karate",
   "language": "Java",
   "integration_outgoing": [
     "file-transfer-api,CALLS_LAMBDA",
