@@ -49,6 +49,8 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 public class SubmissionServiceImpl implements SubmissionService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
+    public static final String SUBMISSION_STATUS_MSG =
+        "Updated submission status to %s for submission with id: [%s]";
 
     private SubmissionRepository submissionRepository;
     private SubmissionMapper submissionMapper;
@@ -167,16 +169,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
 
         submission.setPaymentSessions(paymentSessions);
-        if (anySessionWithStatus(paymentSessions, PaymentTemplate.Status.PENDING)) {
-            LOGGER.debug(String.format(
-                "Found pending payment session: updating Status to PAYMENT_REQUIRED for "
-                    + "submission with id: [%s]", id));
-            submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
-            submissionRepository.updateSubmission(submission);
-            LOGGER.debug(
-                String.format("Successfully updated payment sessions for submission with id: [%s]",
-                    id));
-        }
+        submissionRepository.updateSubmission(submission);
 
         return new SubmissionResponseApi(id);
     }
@@ -188,6 +181,8 @@ public class SubmissionServiceImpl implements SubmissionService {
         SubmissionStatus resultStatus;
 
         setPaymentSessionStatus(submission, paymentClose);
+        LOGGER.debug(String.format("Updating submission status %s for submission with id: [%s]",
+            submission.getStatus(), submission.getId()));
         switch (submission.getStatus()) {
             case OPEN:
                 resultStatus = paymentClose.isFailed()
@@ -207,8 +202,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         }
         submission.setStatus(resultStatus);
         submission.setLastModifiedAt(timestampGenerator.generateTimestamp());
-        LOGGER.debug(String.format("Updated submission status to %s for submission with id: [%s]",
-            resultStatus, submission.getId()));
+        LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, resultStatus, submission.getId()));
         submissionRepository.updateSubmission(submission);
 
         return new SubmissionResponseApi(id);
@@ -268,6 +262,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     private void progressSubmissionStatus(final Submission submission) {
         final SessionListApi paymentSessions = submission.getPaymentSessions();
 
+        LOGGER.debug(String.format("Updating submission status %s for submission with id: [%s]",
+            submission.getStatus(), submission.getId()));
         switch (submission.getStatus()) {
             case OPEN:
                 if (submission.getFeeOnSubmission() == null || anySessionWithStatus(paymentSessions,
@@ -275,6 +271,8 @@ public class SubmissionServiceImpl implements SubmissionService {
                     setAsSubmitted(submission);
                 } else if (anySessionWithStatus(paymentSessions, PaymentTemplate.Status.PENDING)) {
                     submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
+                    LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, submission.getStatus(),
+                        submission.getId()));
                 }
                 break;
             case PAYMENT_RECEIVED:
@@ -291,6 +289,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     private void setAsSubmitted(final Submission submission) {
         submission.setStatus(SubmissionStatus.SUBMITTED);
         submission.setSubmittedAt(timestampGenerator.generateTimestamp());
+        LOGGER.debug(
+            String.format(SUBMISSION_STATUS_MSG, submission.getStatus(), submission.getId()));
     }
 
     private boolean anySessionWithStatus(final SessionListApi paymentSessions,
