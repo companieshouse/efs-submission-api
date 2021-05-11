@@ -69,9 +69,6 @@ class SubmissionServiceImplTest {
     public static final String EXPECTED_UPDATE_ERROR_MSG =
         "Submission status for [123] wasn't in [OPEN, PAYMENT_REQUIRED, PAYMENT_RECEIVED, "
             + "PAYMENT_FAILED], " + "couldn't update";
-    public static final String EXPECTED_COMPLETE_ERROR_MSG =
-        "Submission status for [123] wasn't in [OPEN, PAYMENT_REQUIRED, PAYMENT_RECEIVED, "
-            + "PAYMENT_FAILED, SUBMITTED], " + "couldn't update";
 
     private SubmissionService submissionService;
 
@@ -441,7 +438,6 @@ class SubmissionServiceImplTest {
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
         verify(submission).setPaymentSessions(sessionListApi);
-        verify(submission).setStatus(SubmissionStatus.PAYMENT_REQUIRED);
         verify(submissionRepository).updateSubmission(submission);
     }
 
@@ -463,7 +459,7 @@ class SubmissionServiceImplTest {
         assertEquals(SUBMISSION_ID, actual.getId());
         verify(submission).setPaymentSessions(sessionListApi);
         verify(submission, never()).setStatus(any(SubmissionStatus.class));
-        verify(submissionRepository, never()).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(submission);
     }
 
     @Test
@@ -656,7 +652,6 @@ class SubmissionServiceImplTest {
         // given
         SessionApi sessionApi =
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PAID.toString());
-        SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
 
         expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_RECEIVED, sessionApi);
         when(submission.getFeeOnSubmission()).thenReturn("1");
@@ -747,7 +742,7 @@ class SubmissionServiceImplTest {
     @Test
     void testCompleteSubmissionIncorrectState() {
         // given
-        when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
+        when(submission.getStatus()).thenReturn(SubmissionStatus.SUBMITTED);
         when(submissionRepository.read(anyString())).thenReturn(submission);
 
         // when
@@ -755,7 +750,7 @@ class SubmissionServiceImplTest {
 
         // then
         SubmissionIncorrectStateException ex = assertThrows(SubmissionIncorrectStateException.class, actual);
-        assertEquals(EXPECTED_COMPLETE_ERROR_MSG, ex.getMessage());
+        assertEquals(EXPECTED_UPDATE_ERROR_MSG, ex.getMessage());
         verifyNoInteractions(validator);
         verifyNoInteractions(emailService);
     }
@@ -998,9 +993,6 @@ class SubmissionServiceImplTest {
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
 
         expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_REQUIRED, sessionApi);
-        when(submission.getStatus()).thenReturn(SubmissionStatus.PAYMENT_REQUIRED)
-            .thenReturn(SubmissionStatus.PAYMENT_REQUIRED)
-            .thenReturn(SubmissionStatus.PAYMENT_FAILED);
         when(submissionRepository.read(anyString())).thenReturn(submission);
 
         // when

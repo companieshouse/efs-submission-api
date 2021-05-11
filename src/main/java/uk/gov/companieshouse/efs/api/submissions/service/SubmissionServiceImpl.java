@@ -66,9 +66,6 @@ public class SubmissionServiceImpl implements SubmissionService {
     public static final ImmutableSet<SubmissionStatus> UPDATABLE_STATUSES =
         Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED,
             SubmissionStatus.PAYMENT_RECEIVED, SubmissionStatus.PAYMENT_FAILED);
-    public static final ImmutableSet<SubmissionStatus> COMPLETABLE_STATUSES =
-        Sets.union(UPDATABLE_STATUSES, Sets.immutableEnumSet(SubmissionStatus.SUBMITTED))
-            .immutableCopy();
 
     @Autowired
     public SubmissionServiceImpl(SubmissionRepository submissionRepository,
@@ -178,12 +175,13 @@ public class SubmissionServiceImpl implements SubmissionService {
     public SubmissionResponseApi updateSubmissionWithPaymentOutcome(final String id,
         final PaymentClose paymentClose) {
         final Submission submission = getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
+        final SubmissionStatus status = submission.getStatus();
         SubmissionStatus resultStatus;
 
         setPaymentSessionStatus(submission, paymentClose);
         LOGGER.debug(String.format("Updating submission status %s for submission with id: [%s]",
-            submission.getStatus(), submission.getId()));
-        switch (submission.getStatus()) {
+            status, submission.getId()));
+        switch (status) {
             case OPEN:
                 resultStatus = paymentClose.isFailed()
                     ? SubmissionStatus.PAYMENT_FAILED
@@ -232,7 +230,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         LOGGER.debug(String.format("Attempting to complete submission for id: [%s]", id));
 
-        Submission submission = this.getSubmissionWithCheckedStatus(id, COMPLETABLE_STATUSES);
+        Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
 
         // check submission mandatory fields (validator)
         try {
@@ -261,17 +259,18 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     private void progressSubmissionStatus(final Submission submission) {
         final SessionListApi paymentSessions = submission.getPaymentSessions();
+        final SubmissionStatus status = submission.getStatus();
 
         LOGGER.debug(String.format("Updating submission status %s for submission with id: [%s]",
-            submission.getStatus(), submission.getId()));
-        switch (submission.getStatus()) {
+            status, submission.getId()));
+        switch (status) {
             case OPEN:
                 if (submission.getFeeOnSubmission() == null || anySessionWithStatus(paymentSessions,
                     PaymentTemplate.Status.PAID)) {
                     setAsSubmitted(submission);
                 } else if (anySessionWithStatus(paymentSessions, PaymentTemplate.Status.PENDING)) {
                     submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
-                    LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, submission.getStatus(),
+                    LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, status,
                         submission.getId()));
                 }
                 break;
@@ -290,7 +289,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         submission.setStatus(SubmissionStatus.SUBMITTED);
         submission.setSubmittedAt(timestampGenerator.generateTimestamp());
         LOGGER.debug(
-            String.format(SUBMISSION_STATUS_MSG, submission.getStatus(), submission.getId()));
+            String.format(SUBMISSION_STATUS_MSG, SubmissionStatus.SUBMITTED, submission.getId()));
     }
 
     private boolean anySessionWithStatus(final SessionListApi paymentSessions,
