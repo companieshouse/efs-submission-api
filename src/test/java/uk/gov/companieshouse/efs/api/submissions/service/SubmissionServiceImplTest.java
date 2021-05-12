@@ -37,7 +37,7 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.api.model.paymentsession.SessionApi;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.email.EmailService;
-import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
+import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.payment.PaymentClose;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
@@ -68,7 +68,7 @@ class SubmissionServiceImplTest {
     private static final String STATUS_FAILED = PaymentClose.Status.FAILED.toString();
     public static final String EXPECTED_UPDATE_ERROR_MSG =
         "Submission status for [123] wasn't in [OPEN, PAYMENT_REQUIRED, PAYMENT_RECEIVED, "
-            + "PAYMENT_FAILED], " + "couldn't update";
+            + "PAYMENT_FAILED], couldn't update";
 
     private SubmissionService submissionService;
 
@@ -522,7 +522,8 @@ class SubmissionServiceImplTest {
         verify(submission).setSubmittedAt(now.minusSeconds(1L));
         verify(submission).setLastModifiedAt(now);
         verify(validator).validate(submission);
-        verify(emailService).sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
+        verify(emailService).sendExternalConfirmation(
+            new ExternalNotificationEmailModel(submission));
     }
 
     @Test
@@ -584,7 +585,7 @@ class SubmissionServiceImplTest {
         verify(validator).validate(submission);
         verify(submission).setLastModifiedAt(now);
         verify(emailService).sendExternalConfirmation(
-            new ExternalConfirmationEmailModel(submission));
+            new ExternalNotificationEmailModel(submission));
     }
 
     @Test
@@ -679,7 +680,7 @@ class SubmissionServiceImplTest {
         verify(submission).setLastModifiedAt(now);
         verify(validator).validate(submission);
         verify(emailService).sendExternalConfirmation(
-            new ExternalConfirmationEmailModel(submission));
+            new ExternalNotificationEmailModel(submission));
     }
 
     @Test
@@ -704,7 +705,8 @@ class SubmissionServiceImplTest {
         verify(submissionRepository).updateSubmission(submission);
         verify(submission).setLastModifiedAt(now);
         verify(validator).validate(submission);
-        verifyNoInteractions(emailService); // TODO: expect to send failure email for BI-7733
+        verify(emailService).sendExternalPaymentFailedNotification(
+            new ExternalNotificationEmailModel(submission));
     }
 
     @Test
@@ -875,8 +877,8 @@ class SubmissionServiceImplTest {
         assertEquals(SUBMISSION_ID, actual.getId());
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(),
             is(STATUS_FAILED));
-        verifyNoMoreInteractions(submission,
-            emailService); // TODO: expect to send failure email for BI-7733
+        verifyNoMoreInteractions(submission, emailService);
+
     }
 
     @Test
@@ -904,6 +906,7 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator).generateTimestamp();
         verify(submission).setLastModifiedAt(now);
         verifyNoMoreInteractions(submission, emailService);
+
     }
 
     @Test
@@ -930,8 +933,7 @@ class SubmissionServiceImplTest {
         verify(submission).setStatus(SubmissionStatus.PAYMENT_FAILED);
         verify(timestampGenerator).generateTimestamp();
         verify(submission).setLastModifiedAt(now);
-        verifyNoMoreInteractions(submission,
-            emailService); // TODO: expect to send failure email for BI-7733
+        verifyNoMoreInteractions(submission, emailService);
     }
 
     @Test
@@ -953,6 +955,7 @@ class SubmissionServiceImplTest {
                     paymentClose));
 
         assertThat(exception.getMessage(), is("payment reference not matched"));
+        verifyNoInteractions(emailService);
     }
 
     @Test

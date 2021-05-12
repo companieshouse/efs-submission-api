@@ -1,17 +1,24 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ExternalEmailMapperFactory {
     private final ExternalAcceptEmailMapper acceptEmailMapper;
-    private final ExternalConfirmationEmailMapper confirmationMapper;
+    private final ExternalNotificationEmailMapper confirmationMapper;
+    private final ExternalNotificationEmailMapper paymentFailedMapper;
     private final ExternalRejectEmailMapper rejectMapper;
 
     public ExternalEmailMapperFactory(final ExternalAcceptEmailMapper acceptEmailMapper,
-        final ExternalConfirmationEmailMapper confirmationMapper, final ExternalRejectEmailMapper rejectMapper) {
+        @Qualifier("confirmationEmailMapper")
+        final ExternalNotificationEmailMapper confirmationMapper,
+        @Qualifier("paymentFailedEmailMapper")
+        final ExternalNotificationEmailMapper paymentFailedMapper,
+        final ExternalRejectEmailMapper rejectMapper) {
         this.acceptEmailMapper = acceptEmailMapper;
         this.confirmationMapper = confirmationMapper;
+        this.paymentFailedMapper = paymentFailedMapper;
         this.rejectMapper = rejectMapper;
     }
 
@@ -19,8 +26,12 @@ public class ExternalEmailMapperFactory {
         return acceptEmailMapper;
     }
 
-    public ExternalConfirmationEmailMapper getConfirmationMapper() {
+    public ExternalNotificationEmailMapper getConfirmationMapper() {
         return confirmationMapper;
+    }
+
+    public ExternalNotificationEmailMapper getPaymentFailedMapper() {
+        return paymentFailedMapper;
     }
 
     public ExternalRejectEmailMapper getRejectMapper() {

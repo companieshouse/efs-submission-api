@@ -23,7 +23,7 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.api.model.paymentsession.SessionApi;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.email.EmailService;
-import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
+import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.payment.PaymentClose;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
@@ -249,9 +249,14 @@ public class SubmissionServiceImpl implements SubmissionService {
         updateSubmission(submission);
         LOGGER.debug(String.format("Successfully completed submission for id: [%s]", id));
 
-        if (submission.getFeeOnSubmission() == null
-            || submission.getStatus() == SubmissionStatus.SUBMITTED) {
-            emailService.sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
+        final SubmissionStatus status = submission.getStatus();
+
+        if (submission.getFeeOnSubmission() == null || status == SubmissionStatus.SUBMITTED) {
+            emailService.sendExternalConfirmation(new ExternalNotificationEmailModel(submission));
+        }
+        if (status == SubmissionStatus.PAYMENT_FAILED) {
+            emailService.sendExternalPaymentFailedNotification(
+                new ExternalNotificationEmailModel(submission));
         }
 
         return new SubmissionResponseApi(id);

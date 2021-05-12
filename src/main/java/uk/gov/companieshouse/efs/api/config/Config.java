@@ -4,6 +4,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.time.Clock;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -27,14 +28,20 @@ import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
+import uk.gov.companieshouse.efs.api.email.config.ExternalConfirmationEmailConfig;
+import uk.gov.companieshouse.efs.api.email.config.ExternalPaymentFailedEmailConfig;
 import uk.gov.companieshouse.efs.api.email.mapper.EmailMapperFactory;
 import uk.gov.companieshouse.efs.api.email.mapper.ExternalEmailMapperFactory;
+import uk.gov.companieshouse.efs.api.email.mapper.ExternalNotificationEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.InternalEmailMapperFactory;
+import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.interceptor.AuthenticationHelper;
 import uk.gov.companieshouse.efs.api.interceptor.AuthenticationHelperImpl;
 import uk.gov.companieshouse.efs.api.interceptor.UserAuthenticationInterceptor;
 import uk.gov.companieshouse.efs.api.paymentreports.service.OutputStreamWriterFactory;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
+import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 import uk.gov.companieshouse.efs.api.util.UuidGenerator;
 import uk.gov.companieshouse.logging.Logger;
 
@@ -252,18 +259,45 @@ public class Config {
         return S3Presigner.create();
     }
 
+    @Bean("confirmationEmailMapper")
+    ExternalNotificationEmailMapper confirmationEmailMapper(
+        final ExternalConfirmationEmailConfig externalConfirmationEmailConfig,
+        final TimestampGenerator<LocalDateTime> timestampGenerator,
+        final CategoryTemplateService categoryTemplateService,
+        final FormTemplateService formTemplateService, final IdentifierGeneratable idGenerator) {
+        return new ExternalNotificationEmailMapper(externalConfirmationEmailConfig, idGenerator,
+            timestampGenerator, categoryTemplateService, formTemplateService);
+    }
+
+    @Bean("paymentFailedEmailMapper")
+    ExternalNotificationEmailMapper paymentFailedEmailMapper(
+        final ExternalPaymentFailedEmailConfig externalPaymentFailedEmailConfig,
+        final TimestampGenerator<LocalDateTime> timestampGenerator,
+        final CategoryTemplateService categoryTemplateService,
+        final FormTemplateService formTemplateService, final IdentifierGeneratable idGenerator) {
+        return new ExternalNotificationEmailMapper(externalPaymentFailedEmailConfig, idGenerator,
+            timestampGenerator, categoryTemplateService, formTemplateService);
+    }
+
     @Bean
-    EmailMapperFactory emailMapperFactory(final ExternalEmailMapperFactory externalEmailMapperFactory,
+    EmailMapperFactory emailMapperFactory(
+        final ExternalEmailMapperFactory externalEmailMapperFactory,
         final InternalEmailMapperFactory internalEmailMapperFactory) {
 
 
-        return EmailMapperFactory.newBuilder().withAcceptEmailMapper(externalEmailMapperFactory.getAcceptEmailMapper())
+        return EmailMapperFactory.newBuilder()
+            .withAcceptEmailMapper(externalEmailMapperFactory.getAcceptEmailMapper())
             .withConfirmationEmailMapper(externalEmailMapperFactory.getConfirmationMapper())
-            .withDelayedSubmissionBusinessEmailMapper(internalEmailMapperFactory.getDelayedSubmissionBusinessMapper())
-            .withDelayedSubmissionSupportEmailMapper(internalEmailMapperFactory.getDelayedSubmissionSupportMapper())
+            .withPaymentFailedEmailMapper(externalEmailMapperFactory.getPaymentFailedMapper())
+            .withDelayedSubmissionBusinessEmailMapper(
+                internalEmailMapperFactory.getDelayedSubmissionBusinessMapper())
+            .withDelayedSubmissionSupportEmailMapper(
+                internalEmailMapperFactory.getDelayedSubmissionSupportMapper())
             .withInternalAvFailedEmailMapper(internalEmailMapperFactory.getInternalAvFailedMapper())
-            .withInternalFailedConversionEmailMapper(internalEmailMapperFactory.getInternalFailedConversionMapper())
-            .withInternalSubmissionEmailMapper(internalEmailMapperFactory.getInternalSubmissionMapper())
+            .withInternalFailedConversionEmailMapper(
+                internalEmailMapperFactory.getInternalFailedConversionMapper())
+            .withInternalSubmissionEmailMapper(
+                internalEmailMapperFactory.getInternalSubmissionMapper())
             .withPaymentReportEmailMapper(internalEmailMapperFactory.getPaymentReportMapper())
             .withRejectEmailMapper(externalEmailMapperFactory.getRejectMapper())
             .build();

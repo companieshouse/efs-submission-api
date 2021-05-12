@@ -15,8 +15,8 @@ import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionBusinessEmail
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionSupportEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.EmailMapperFactory;
 import uk.gov.companieshouse.efs.api.email.mapper.ExternalAcceptEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.ExternalConfirmationEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.ExternalEmailMapperFactory;
+import uk.gov.companieshouse.efs.api.email.mapper.ExternalNotificationEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.ExternalRejectEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.InternalAvFailedEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.InternalEmailMapperFactory;
@@ -61,11 +61,14 @@ class ConfigTest {
     @Test
     void emailMapperFactory() {
         final ExternalAcceptEmailMapper acceptEmailMapper = new ExternalAcceptEmailMapper(null, null, null);
-        final ExternalConfirmationEmailMapper confirmationMapper =
-            new ExternalConfirmationEmailMapper(null, null, null, null, null);
+        final ExternalNotificationEmailMapper confirmationMapper =
+            new ExternalNotificationEmailMapper(null, null, null, null, null);
+        final ExternalNotificationEmailMapper paymentFailedMapper =
+            new ExternalNotificationEmailMapper(null, null, null, null, null);
         final ExternalRejectEmailMapper rejectMapper = new ExternalRejectEmailMapper(null, null, null);
         final ExternalEmailMapperFactory externalMapperFactory =
-            new ExternalEmailMapperFactory(acceptEmailMapper, confirmationMapper, rejectMapper);
+            new ExternalEmailMapperFactory(acceptEmailMapper, confirmationMapper,
+                paymentFailedMapper, rejectMapper);
         final DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessMapper =
             new DelayedSubmissionBusinessEmailMapper(null, null, null);
         final DelayedSubmissionSupportEmailMapper delayedSubmissionSupportMapper =
@@ -88,7 +91,8 @@ class ConfigTest {
 
         assertThat(mapperFactory, isA(EmailMapperFactory.class));
         assertThat(mapperFactory.getAcceptEmailMapper(), isA(ExternalAcceptEmailMapper.class));
-        assertThat(mapperFactory.getConfirmationEmailMapper(), isA(ExternalConfirmationEmailMapper.class));
+        assertThat(mapperFactory.getConfirmationEmailMapper(), isA(ExternalNotificationEmailMapper.class));
+        assertThat(mapperFactory.getPaymentFailedEmailMapper(), isA(ExternalNotificationEmailMapper.class));
         assertThat(mapperFactory.getRejectEmailMapper(), isA(ExternalRejectEmailMapper.class));
         assertThat(mapperFactory.getDelayedSubmissionBusinessEmailMapper(), isA(DelayedSubmissionBusinessEmailMapper.class));
         assertThat(mapperFactory.getDelayedSubmissionSupportEmailMapper(), isA(DelayedSubmissionSupportEmailMapper.class));

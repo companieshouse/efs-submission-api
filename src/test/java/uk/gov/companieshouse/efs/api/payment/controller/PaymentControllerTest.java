@@ -5,9 +5,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -27,7 +28,7 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.email.EmailService;
-import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
+import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.payment.PaymentClose;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
@@ -380,7 +381,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    void closePaymentSessionReturns404NotFound() {
+    void patchPaymentSessionReturns404NotFound() {
         // when
         ResponseEntity<SubmissionResponseApi> actual =
             paymentController.patchPaymentSession(SUB_ID, paymentClose, request);
@@ -391,7 +392,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    void closePaymentSessionReturns409Conflict() {
+    void patchPaymentSessionReturns409Conflict() {
         // given
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         final SubmissionApi submission = new SubmissionMapper().map(
@@ -412,7 +413,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    void closePaymentSessionReturns400BadRequestWhenSessionNotFound() {
+    void patchPaymentSessionReturns400BadRequestWhenSessionNotFound() {
         // given
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         final SubmissionApi submission = new SubmissionMapper().map(
@@ -436,7 +437,7 @@ class PaymentControllerTest {
     }
     
     @Test
-    void closePaymentSessionReturns204NoContentWhenPaidBeforeCompletion() {
+    void patchPaymentSessionReturns204NoContentWhenPaidBeforeCompletion() {
         // given
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         final Submission submission = new Submission.Builder().withFormDetails(formDetails)
@@ -460,7 +461,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    void closePaymentSessionReturns204NoContentWhenFailedAfterCompletion() {
+    void patchPaymentSessionReturns204NoContentWhenFailedAfterCompletion() {
         // given
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         final Submission submission = new Submission.Builder().withFormDetails(formDetails)
@@ -472,14 +473,17 @@ class PaymentControllerTest {
 
         when(service.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(paymentClose.isPaid()).thenReturn(false);
-        when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(submissionResponse);
+        when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(
+            submissionResponse);
 
         // when
         ResponseEntity<SubmissionResponseApi> actual =
             paymentController.patchPaymentSession(SUB_ID, paymentClose, request);
 
         // then
-        verify(emailService, never()).sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
+        verify(emailService).sendExternalPaymentFailedNotification(
+            any(ExternalNotificationEmailModel.class));
+        verifyNoMoreInteractions(emailService);
         assertNull(actual.getBody());
         assertEquals(HttpStatus.NO_CONTENT, actual.getStatusCode());
     }
@@ -509,7 +513,7 @@ class PaymentControllerTest {
     }
 
     @Test
-    void closePaymentSessionReturns204NoContentWhenPaidAfterCompletion() {
+    void patchPaymentSessionReturns204NoContentWhenPaidAfterCompletion() {
         // given
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         final Submission submission = new Submission.Builder().withFormDetails(formDetails)
@@ -529,7 +533,8 @@ class PaymentControllerTest {
             paymentController.patchPaymentSession(SUB_ID, paymentClose, request);
 
         // then
-        verify(emailService).sendExternalConfirmation(new ExternalConfirmationEmailModel(submission));
+        verify(emailService).sendExternalConfirmation(
+            new ExternalNotificationEmailModel(submission));
         assertNull(actual.getBody());
         assertEquals(HttpStatus.NO_CONTENT, actual.getStatusCode());
     }

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
  * Email configuration POJO; not a Spring @Configuration.
  */
 @Component
-@PropertySource("classpath:external.confirmation.mail.properties")
-@ConfigurationProperties(prefix = "external.confirmation.mail")
-public class ExternalConfirmationEmailConfig extends NotificationConfig {
+@PropertySource("classpath:external.payment.failed.mail.properties")
+@ConfigurationProperties(prefix = "external.payment.failed.mail")
+public class ExternalPaymentFailedEmailConfig extends NotificationConfig {
 
 }

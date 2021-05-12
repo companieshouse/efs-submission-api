@@ -32,7 +32,7 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
 import uk.gov.companieshouse.efs.api.email.EmailService;
-import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
+import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.payment.PaymentClose;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
@@ -158,12 +158,16 @@ public class PaymentController {
 
             try {
                 submissionService.updateSubmissionWithPaymentOutcome(id, paymentClose);
-                if (oldStatus == SubmissionStatus.PAYMENT_REQUIRED && paymentClose.isPaid()) {
-                    emailService.sendExternalConfirmation(
-                        new ExternalConfirmationEmailModel(submissionApiMapper.map(submission)));
+                if (oldStatus == SubmissionStatus.PAYMENT_REQUIRED) {
+                    if (paymentClose.isPaid()) {
+                        emailService.sendExternalConfirmation(new ExternalNotificationEmailModel(
+                            submissionApiMapper.map(submission)));
 
-                } else {
-                    // send payment failed email - See BI-7733
+                    } else {
+                        emailService.sendExternalPaymentFailedNotification(
+                            new ExternalNotificationEmailModel(
+                                submissionApiMapper.map(submission)));
+                    }
                 }
             } catch (SubmissionIncorrectStateException e) {
                 response = ResponseEntity.badRequest().build();
