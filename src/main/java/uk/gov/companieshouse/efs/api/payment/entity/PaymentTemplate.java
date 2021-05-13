@@ -414,16 +414,10 @@ public final class PaymentTemplate {
     public enum Status {
         PAID("paid"), PENDING("pending"), FAILED("failed");
 
-        private String value;
+        private final String value;
 
         Status(String value) {
             this.value = value;
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return String.valueOf(value);
         }
 
         /**
@@ -440,6 +434,12 @@ public final class PaymentTemplate {
                 }
             }
             return null;
+        }
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return String.valueOf(value);
         }
     }
 
