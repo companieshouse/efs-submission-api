@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.efs.api.payment.controller;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,10 +29,15 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
+import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
+import uk.gov.companieshouse.efs.api.email.EmailService;
+import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
+import uk.gov.companieshouse.efs.api.payment.PaymentClose;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
 import uk.gov.companieshouse.efs.api.payment.service.PaymentTemplateService;
+import uk.gov.companieshouse.efs.api.submissions.mapper.SubmissionApiMapper;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionIncorrectStateException;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNotFoundException;
@@ -38,19 +46,30 @@ import uk.gov.companieshouse.logging.Logger;
 @RestController
 @RequestMapping("/efs-submission-api/submission/")
 public class PaymentController {
+    private static final ImmutableSet<SubmissionStatus> VALID_STATUSES =
+        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED,
+            SubmissionStatus.PAYMENT_RECEIVED, SubmissionStatus.PAYMENT_FAILED);
 
     private final Logger logger;
 
     private final SubmissionService service;
     private final FormTemplateService formTemplateService;
     private final PaymentTemplateService paymentTemplateService;
+    private final SubmissionService submissionService;
+    private final EmailService emailService;
+    private final SubmissionApiMapper submissionApiMapper;
 
     @Autowired
     public PaymentController(SubmissionService service, FormTemplateService formTemplateService,
-        final PaymentTemplateService paymentTemplateService, Logger logger) {
+        final PaymentTemplateService paymentTemplateService,
+        final SubmissionService submissionService, final EmailService emailService,
+        final SubmissionApiMapper submissionApiMapper, Logger logger) {
         this.service = service;
         this.formTemplateService = formTemplateService;
         this.paymentTemplateService = paymentTemplateService;
+        this.submissionService = submissionService;
+        this.emailService = emailService;
+        this.submissionApiMapper = submissionApiMapper;
         this.logger = logger;
     }
 
@@ -98,6 +117,60 @@ public class PaymentController {
                 }
             } else {
                 response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+
+        return response;
+    }
+
+    /**
+     * Process payment patch request by CHS Payment Service after payment journey has completed.
+     *
+     * @param id      the submission ID
+     * @param request the HTTP request
+     * @return the payment template details
+     */
+    @PatchMapping(value = "{id}/payment", produces = {"application/json"})
+    public ResponseEntity<SubmissionResponseApi> patchPaymentSession(
+        @PathVariable("id") final String id, @RequestBody PaymentClose paymentClose,
+        final HttpServletRequest request) {
+
+        final Map<String, Object> debug = new HashMap<>();
+
+        debug.put("submissionId", id);
+        debug.put("paymentClose.paymentReference", paymentClose.getPaymentReference());
+        debug.put("paymentClose.paidAt", paymentClose.getPaidAt());
+        debug.put("paymentClose.status", paymentClose.getStatus());
+        logger.debug("PATCH payment", debug);
+        
+        logger.debug(MessageFormat.format("Fetching submission with id: {0}", id));
+
+        final SubmissionApi submission = service.readSubmission(id);
+        ResponseEntity<SubmissionResponseApi> response = ResponseEntity.noContent()
+            .build();
+
+        if (submission == null) {
+            response = ResponseEntity.notFound().build();
+        } else if (!VALID_STATUSES.contains(submission.getStatus())) {
+            response = ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } else {
+            final SubmissionStatus oldStatus = submission.getStatus();
+
+            try {
+                submissionService.updateSubmissionWithPaymentOutcome(id, paymentClose);
+                if (oldStatus == SubmissionStatus.PAYMENT_REQUIRED) {
+                    if (paymentClose.isPaid()) {
+                        emailService.sendExternalConfirmation(new ExternalNotificationEmailModel(
+                            submissionApiMapper.map(submission)));
+
+                    } else {
+                        emailService.sendExternalPaymentFailedNotification(
+                            new ExternalNotificationEmailModel(
+                                submissionApiMapper.map(submission)));
+                    }
+                }
+            } catch (SubmissionIncorrectStateException e) {
+                response = ResponseEntity.badRequest().build();
             }
         }
 

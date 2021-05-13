@@ -12,7 +12,7 @@ import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailM
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.email.model.ExternalAcceptEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
+import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.ExternalRejectEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.InternalAvFailedEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.InternalFailedConversionModel;
@@ -55,9 +55,15 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendExternalConfirmation(ExternalConfirmationEmailModel emailModel) {
+    public void sendExternalConfirmation(ExternalNotificationEmailModel emailModel) {
         LOGGER.debug(String.format("Sending external email confirming submission [%s]", emailModel.getSubmission().getId()));
         sendMessage(this.emailMapperFactory.getConfirmationEmailMapper().map(emailModel));
+    }
+
+    @Override
+    public void sendExternalPaymentFailedNotification(ExternalNotificationEmailModel emailModel) {
+        LOGGER.debug(String.format("Sending external email notifying payment failed for submission [%s]", emailModel.getSubmission().getId()));
+        sendMessage(this.emailMapperFactory.getPaymentFailedEmailMapper().map(emailModel));
     }
 
     @Override

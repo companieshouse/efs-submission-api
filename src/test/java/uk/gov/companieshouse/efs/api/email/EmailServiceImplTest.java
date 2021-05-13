@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
 import java.util.concurrent.ExecutionException;
-
 import org.apache.avro.Schema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,13 +22,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionBusinessEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionSupportEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.EmailMapperFactory;
 import uk.gov.companieshouse.efs.api.email.mapper.ExternalAcceptEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.ExternalConfirmationEmailMapper;
+import uk.gov.companieshouse.efs.api.email.mapper.ExternalNotificationEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.ExternalRejectEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.InternalAvFailedEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.InternalFailedConversionEmailMapper;
@@ -43,7 +41,7 @@ import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.email.model.ExternalAcceptEmailData;
 import uk.gov.companieshouse.efs.api.email.model.ExternalAcceptEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailData;
-import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
+import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.ExternalRejectEmailData;
 import uk.gov.companieshouse.efs.api.email.model.ExternalRejectEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.InternalAvFailedEmailData;
@@ -95,7 +93,7 @@ class EmailServiceImplTest {
     private InternalFailedConversionModel internalFailedConversionModel;
 
     @Mock
-    private ExternalConfirmationEmailModel externalConfirmationEmailModel;
+    private ExternalNotificationEmailModel externalNotificationEmailModel;
 
     @Mock
     private InternalSubmissionEmailModel internalSubmissionEmailModel;
@@ -109,7 +107,7 @@ class EmailServiceImplTest {
     @Mock
     private PaymentReportEmailModel paymentReportEmailModel;
     @Mock
-    private EmailDocument<ExternalConfirmationEmailData> externalConfirmationEmailDocument;
+    private EmailDocument<ExternalConfirmationEmailData> externalNotificationEmailDocument;
 
     @Mock
     private EmailDocument<ExternalAcceptEmailData> externalAcceptEmailDocument;
@@ -138,7 +136,7 @@ class EmailServiceImplTest {
     private EmailMapperFactory emailMapperFactory;
 
     @Mock
-    private ExternalConfirmationEmailMapper confirmationEmailMapper;
+    private ExternalNotificationEmailMapper notificationEmailMapper;
 
     @Mock
     private ExternalAcceptEmailMapper acceptEmailMapper;
@@ -310,25 +308,48 @@ class EmailServiceImplTest {
         //given
         LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
         when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(externalConfirmationEmailDocument.getTopic()).thenReturn("confirm-email-send");
-        when(externalConfirmationEmailModel.getSubmission()).thenReturn(submission);
+        when(externalNotificationEmailDocument.getTopic()).thenReturn("confirm-email-send");
+        when(externalNotificationEmailModel.getSubmission()).thenReturn(submission);
         when(submission.getId()).thenReturn("123");
-        when(emailMapperFactory.getConfirmationEmailMapper()).thenReturn(confirmationEmailMapper);
-        when(confirmationEmailMapper.map(any())).thenReturn(externalConfirmationEmailDocument);
+        when(emailMapperFactory.getConfirmationEmailMapper()).thenReturn(notificationEmailMapper);
+        when(notificationEmailMapper.map(any())).thenReturn(externalNotificationEmailDocument);
         when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
 
         //when
-        this.emailService.sendExternalConfirmation(externalConfirmationEmailModel);
+        this.emailService.sendExternalConfirmation(externalNotificationEmailModel);
 
         //then
-        verify(confirmationEmailMapper).map(externalConfirmationEmailModel);
-        verify(serializer).serialize(eq(externalConfirmationEmailDocument), eq(schema));
+        verify(notificationEmailMapper).map(externalNotificationEmailModel);
+        verify(serializer).serialize(eq(externalNotificationEmailDocument), eq(schema));
         verify(producer).send(messageCaptor.capture());
         assertEquals("confirm-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
         assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
     }
 
+    @Test
+    void testSendExternalPaymentFailedNotification() throws ExecutionException, InterruptedException {
+        //given
+        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(externalNotificationEmailDocument.getTopic()).thenReturn("notification-email-send");
+        when(externalNotificationEmailModel.getSubmission()).thenReturn(submission);
+        when(submission.getId()).thenReturn("123");
+        when(emailMapperFactory.getPaymentFailedEmailMapper()).thenReturn(notificationEmailMapper);
+        when(notificationEmailMapper.map(any())).thenReturn(externalNotificationEmailDocument);
+        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+
+        //when
+        this.emailService.sendExternalPaymentFailedNotification(externalNotificationEmailModel);
+
+        //then
+        verify(notificationEmailMapper).map(externalNotificationEmailModel);
+        verify(serializer).serialize(eq(externalNotificationEmailDocument), eq(schema));
+        verify(producer).send(messageCaptor.capture());
+        assertEquals("notification-email-send", messageCaptor.getValue().getTopic());
+        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
+        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+    }
 
     @Test
     void testEmailServiceSendsMessageToKafkaWhenSubmissionNotFesEnabled() throws ExecutionException, InterruptedException {

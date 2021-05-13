@@ -42,9 +42,10 @@ class PaymentReportMapperTest {
 
     @Test
     void map() {
-        paySessions = new SessionListApi(
-            IntStream.range(1, 10).mapToObj(i -> new SessionApi("test-pay-ref-" + i, "test-state-" + i))
-                .collect(Collectors.toList()));
+        paySessions = new SessionListApi(IntStream.range(1, 10)
+            .mapToObj(
+                i -> new SessionApi("test-pay-ref-" + i, "test-state-" + i, "test-status-" + i))
+            .collect(Collectors.toList()));
         submission = Submission.builder().withId("id").withConfirmationReference("confirmRef").withPresenter(presenter)
             .withSubmittedAt(submitted).withFeeOnSubmission("fee").withPaymentSessions(paySessions)
             .withFormDetails(formDetails).withCompany(company).build();

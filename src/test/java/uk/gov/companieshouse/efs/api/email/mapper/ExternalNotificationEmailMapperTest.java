@@ -19,7 +19,7 @@ import uk.gov.companieshouse.efs.api.email.config.ExternalConfirmationEmailConfi
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.email.model.EmailFileDetails;
 import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailData;
-import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
+import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
@@ -30,9 +30,9 @@ import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
 @ExtendWith(MockitoExtension.class)
-class ExternalConfirmationEmailMapperTest {
+class ExternalNotificationEmailMapperTest {
 
-    private ExternalConfirmationEmailMapper confirmationEmailMapper;
+    private ExternalNotificationEmailMapper confirmationEmailMapper;
 
     @Mock
     private ExternalConfirmationEmailConfig config;
@@ -47,7 +47,7 @@ class ExternalConfirmationEmailMapperTest {
     private Submission submission;
 
     @Mock
-    private ExternalConfirmationEmailModel externalConfirmationEmailModel;
+    private ExternalNotificationEmailModel externalNotificationEmailModel;
 
     @Mock
     private Company company;
@@ -72,7 +72,7 @@ class ExternalConfirmationEmailMapperTest {
 
     @BeforeEach
     void setUp() {
-        this.confirmationEmailMapper = new ExternalConfirmationEmailMapper(config, idGenerator, timestampGenerator,
+        this.confirmationEmailMapper = new ExternalNotificationEmailMapper(config, idGenerator, timestampGenerator,
             categoryTemplateService, formTemplateService);
     }
 
@@ -100,13 +100,14 @@ class ExternalConfirmationEmailMapperTest {
         when(submission.getFeeOnSubmission()).thenReturn("17");
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
 
-        when(externalConfirmationEmailModel.getSubmission()).thenReturn(submission);
+        when(externalNotificationEmailModel.getSubmission()).thenReturn(submission);
         when(formTemplateService.getFormTemplate("SH01")).thenReturn(formTemplateApi);
         when(formTemplateApi.getFormCategory()).thenReturn("SH");
         when(categoryTemplateService.getTopLevelCategory("SH")).thenReturn(CategoryTypeConstants.SHARE_CAPITAL);
 
         //when
-        EmailDocument<ExternalConfirmationEmailData> actual = confirmationEmailMapper.map(externalConfirmationEmailModel);
+        EmailDocument<ExternalConfirmationEmailData> actual = confirmationEmailMapper.map(
+            externalNotificationEmailModel);
 
         //then
         assertEquals(expectedConfirmationEmailDocument(), actual);

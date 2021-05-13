@@ -19,7 +19,9 @@ class EmailMapperFactoryTest {
     private EmailMapperFactory testFactory;
 
     @Mock
-    private ExternalConfirmationEmailMapper confirmationEmailMapper;
+    private ExternalNotificationEmailMapper confirmationEmailMapper;
+    @Mock
+    private ExternalNotificationEmailMapper paymentFailedEmailMapper;
     @Mock
     private ExternalAcceptEmailMapper acceptEmailMapper;
     @Mock
@@ -39,7 +41,9 @@ class EmailMapperFactoryTest {
 
     @BeforeEach
     void setUp() {
-        testFactory = EmailMapperFactory.newBuilder().withConfirmationEmailMapper(confirmationEmailMapper)
+        testFactory = EmailMapperFactory.newBuilder()
+            .withConfirmationEmailMapper(confirmationEmailMapper)
+            .withPaymentFailedEmailMapper(paymentFailedEmailMapper)
             .withAcceptEmailMapper(acceptEmailMapper).withRejectEmailMapper(rejectEmailMapper)
             .withInternalAvFailedEmailMapper(internalAVFailedEmailMapper)
             .withInternalFailedConversionEmailMapper(internalFailedConversionEmailMapper)
@@ -53,6 +57,7 @@ class EmailMapperFactoryTest {
     void buildWhenConfirmationMapperNull() {
         final EmailMapperFactory.Builder builder =
             EmailMapperFactory.newBuilder().withAcceptEmailMapper(acceptEmailMapper)
+                .withPaymentFailedEmailMapper(paymentFailedEmailMapper)
                 .withRejectEmailMapper(rejectEmailMapper).withInternalAvFailedEmailMapper(internalAVFailedEmailMapper)
                 .withInternalFailedConversionEmailMapper(internalFailedConversionEmailMapper)
                 .withInternalSubmissionEmailMapper(internalSubmissionEmailMapper)
@@ -79,7 +84,8 @@ class EmailMapperFactoryTest {
 
     @Test
     void getConfirmationEmailMapper() {
-        assertThat(testFactory.getConfirmationEmailMapper(), isA(ExternalConfirmationEmailMapper.class));
+        assertThat(testFactory.getConfirmationEmailMapper(),
+            isA(ExternalNotificationEmailMapper.class));
     }
 
     @Test

@@ -4,30 +4,28 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
-import uk.gov.companieshouse.efs.api.email.config.ExternalConfirmationEmailConfig;
+import uk.gov.companieshouse.efs.api.email.config.NotificationConfig;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.email.model.EmailFileDetails;
 import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailData;
-import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailModel;
+import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
-@Component
-public class ExternalConfirmationEmailMapper {
+public class ExternalNotificationEmailMapper {
 
-    private ExternalConfirmationEmailConfig config;
+    private NotificationConfig config;
     private IdentifierGeneratable idGenerator;
     private TimestampGenerator<LocalDateTime> timestampGenerator;
     private CategoryTemplateService categoryTemplateService;
     private FormTemplateService formTemplateService;
 
-    public ExternalConfirmationEmailMapper(ExternalConfirmationEmailConfig config,
+    public ExternalNotificationEmailMapper(NotificationConfig config,
         IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator,
         final CategoryTemplateService categoryTemplateService,
         final FormTemplateService formTemplateService) {
@@ -38,7 +36,7 @@ public class ExternalConfirmationEmailMapper {
         this.formTemplateService = formTemplateService;
     }
 
-    public EmailDocument<ExternalConfirmationEmailData> map(ExternalConfirmationEmailModel model) {
+    public EmailDocument<ExternalConfirmationEmailData> map(ExternalNotificationEmailModel model) {
         return EmailDocument.<ExternalConfirmationEmailData>builder()
                 .withTopic(config.getTopic())
                 .withMessageId(idGenerator.generateId())
@@ -50,7 +48,7 @@ public class ExternalConfirmationEmailMapper {
                         .format(DateTimeFormatter.ofPattern(config.getDateFormat()))).build();
     }
 
-    private ExternalConfirmationEmailData fromSubmission(ExternalConfirmationEmailModel model) {
+    private ExternalConfirmationEmailData fromSubmission(ExternalNotificationEmailModel model) {
         return ExternalConfirmationEmailData.builder()
                 .withTo(model.getSubmission().getPresenter().getEmail())
                 .withPresenter(model.getSubmission().getPresenter())
@@ -72,7 +70,7 @@ public class ExternalConfirmationEmailMapper {
         return new EmailFileDetails(fileDetails, null);
     }
 
-    private CategoryTypeConstants getTopLevelCategoryForFormType(final ExternalConfirmationEmailModel model) {
+    private CategoryTypeConstants getTopLevelCategoryForFormType(final ExternalNotificationEmailModel model) {
         FormTemplateApi formTemplate = formTemplateService
             .getFormTemplate(model.getSubmission().getFormDetails().getFormType());
         return categoryTemplateService.getTopLevelCategory(formTemplate.getFormCategory());

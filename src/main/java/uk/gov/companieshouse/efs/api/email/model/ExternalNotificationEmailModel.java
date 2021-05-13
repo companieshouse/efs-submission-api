@@ -3,11 +3,11 @@ package uk.gov.companieshouse.efs.api.email.model;
 import java.util.Objects;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 
-public class ExternalConfirmationEmailModel {
+public class ExternalNotificationEmailModel {
 
     private final Submission submission;
 
-    public ExternalConfirmationEmailModel(Submission submission) {
+    public ExternalNotificationEmailModel(Submission submission) {
         this.submission = submission;
     }
 
@@ -31,7 +31,7 @@ public class ExternalConfirmationEmailModel {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ExternalConfirmationEmailModel other = (ExternalConfirmationEmailModel) obj;
+        ExternalNotificationEmailModel other = (ExternalNotificationEmailModel) obj;
         return Objects.equals(submission, other.submission);
     }
 
