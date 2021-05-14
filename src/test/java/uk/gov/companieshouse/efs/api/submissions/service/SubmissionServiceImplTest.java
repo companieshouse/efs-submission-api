@@ -930,7 +930,7 @@ class SubmissionServiceImplTest {
         assertEquals(SUBMISSION_ID, actual.getId());
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(),
             is(STATUS_FAILED));
-        verify(submission).setStatus(SubmissionStatus.PAYMENT_FAILED);
+        verify(submission).setStatus(SubmissionStatus.OPEN);
         verify(timestampGenerator).generateTimestamp();
         verify(submission).setLastModifiedAt(now);
         verifyNoMoreInteractions(submission, emailService);

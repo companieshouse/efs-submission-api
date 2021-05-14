@@ -184,7 +184,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         switch (status) {
             case OPEN:
                 resultStatus = paymentClose.isFailed()
-                    ? SubmissionStatus.PAYMENT_FAILED
+                    ? SubmissionStatus.OPEN
                     : SubmissionStatus.PAYMENT_RECEIVED;
                 break;
             case PAYMENT_REQUIRED:
@@ -200,8 +200,8 @@ public class SubmissionServiceImpl implements SubmissionService {
         }
         submission.setStatus(resultStatus);
         submission.setLastModifiedAt(timestampGenerator.generateTimestamp());
-        LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, resultStatus, submission.getId()));
         submissionRepository.updateSubmission(submission);
+        LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, resultStatus, submission.getId()));
 
         return new SubmissionResponseApi(id);
     }
