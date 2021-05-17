@@ -56,12 +56,23 @@ public class PaymentClose {
         return Status.PAID.equals(Status.fromValue(status));
     }
 
+    public boolean isCancelled() {
+        return Status.CANCELLED.equals(Status.fromValue(status));
+    }
+
+    public boolean isError() {
+        return Status.ERROR.equals(Status.fromValue(status));
+    }
+
     public boolean isFailed() {
         return Status.FAILED.equals(Status.fromValue(status));
     }
 
     public enum Status {
-        PAID("paid"), FAILED("failed");
+        PAID("paid"),
+        CANCELLED("cancelled"),
+        ERROR("error"),
+        FAILED("failed");
 
         private String value;
 

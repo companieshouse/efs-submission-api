@@ -183,12 +183,12 @@ public class SubmissionServiceImpl implements SubmissionService {
             status, submission.getId()));
         switch (status) {
             case OPEN:
-                resultStatus = paymentClose.isFailed()
+                resultStatus = !paymentClose.isPaid()
                     ? SubmissionStatus.OPEN
                     : SubmissionStatus.PAYMENT_RECEIVED;
                 break;
             case PAYMENT_REQUIRED:
-                resultStatus = paymentClose.isFailed()
+                resultStatus = !paymentClose.isPaid()
                     ? SubmissionStatus.PAYMENT_FAILED
                     : SubmissionStatus.SUBMITTED;
                 break;

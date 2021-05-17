@@ -66,6 +66,7 @@ class SubmissionServiceImplTest {
     private static final String SUBMISSION_ID = "123";
     public static final String STATUS_PAID = PaymentClose.Status.PAID.toString();
     private static final String STATUS_FAILED = PaymentClose.Status.FAILED.toString();
+    private static final String STATUS_CANCELLED = PaymentClose.Status.CANCELLED.toString();
     public static final String EXPECTED_UPDATE_ERROR_MSG =
         "Submission status for [123] wasn't in [OPEN, PAYMENT_REQUIRED, PAYMENT_RECEIVED, "
             + "PAYMENT_FAILED], couldn't update";
@@ -1007,6 +1008,47 @@ class SubmissionServiceImplTest {
         verify(submission).setStatus(SubmissionStatus.PAYMENT_FAILED);
         verify(submissionRepository).read(SUBMISSION_ID);
         verify(submissionRepository).updateSubmission(submission);
+    }
+
+    @Test
+    void updateSubmissionWithPaymentOutcomeWhenSessionMatchedAndCancelled() {
+        // given
+        final PaymentClose paymentClose = new PaymentClose(SESSION_ID, PaymentClose.Status.CANCELLED);
+        SessionApi sessionApi =
+                new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
+
+        expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_REQUIRED, sessionApi);
+        when(submissionRepository.read(anyString())).thenReturn(submission);
+
+        // when
+        final SubmissionResponseApi actual =
+                submissionService.updateSubmissionWithPaymentOutcome(SUBMISSION_ID, paymentClose);
+
+        assertThat(actual.getId(), is(SUBMISSION_ID));
+        assertThat(submission.getPaymentSessions().get(0).getSessionStatus(), is(STATUS_CANCELLED));
+        verify(submission).setStatus(SubmissionStatus.PAYMENT_FAILED);
+        verify(submissionRepository).read(SUBMISSION_ID);
+        verify(submissionRepository).updateSubmission(submission);
+    }
+
+    @Test
+    void updateSubmissionWithPaymentOutcomeWhenPaymentAlreadyFailed() {
+        // given
+        final PaymentClose paymentClose = new PaymentClose(SESSION_ID, PaymentClose.Status.FAILED);
+        SessionApi sessionApi =
+                new SessionApi(SESSION_ID, SESSION_STATE, PaymentClose.Status.FAILED.toString());
+
+        expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_FAILED, sessionApi);
+        when(submissionRepository.read(anyString())).thenReturn(submission);
+
+        // when
+        final SubmissionResponseApi actual =
+                submissionService.updateSubmissionWithPaymentOutcome(SUBMISSION_ID, paymentClose);
+
+        assertThat(actual.getId(), is(SUBMISSION_ID));
+        assertThat(submission.getPaymentSessions().get(0).getSessionStatus(), is(STATUS_FAILED));
+        verify(submission, never()).setStatus(any(SubmissionStatus.class));
+        verifyNoMoreInteractions(submissionRepository);
     }
 
     private void expectSubmissionWithPaymentSession(final SubmissionStatus submissionStatus,
