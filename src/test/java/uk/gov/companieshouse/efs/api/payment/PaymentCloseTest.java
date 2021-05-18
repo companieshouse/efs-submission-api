@@ -76,12 +76,42 @@ class PaymentCloseTest {
 
     @Test
     void isPaid() {
+        testClose.setStatus(PaymentClose.Status.PAID.toString());
+        
         assertThat(testClose.isPaid(), is(true));
+        assertThat(testClose.isCancelled(), is(false));
+        assertThat(testClose.isError(), is(false));
+        assertThat(testClose.isFailed(), is(false));
     }
 
     @Test
-    void isFailed() {
+    void isError() {
+        testClose.setStatus(PaymentClose.Status.ERROR.toString());
+
+        assertThat(testClose.isPaid(), is(false));
+        assertThat(testClose.isCancelled(), is(false));
+        assertThat(testClose.isError(), is(true));
         assertThat(testClose.isFailed(), is(false));
+    }
+    
+    @Test
+    void isCancelled() {
+        testClose.setStatus(PaymentClose.Status.CANCELLED.toString());
+
+        assertThat(testClose.isPaid(), is(false));
+        assertThat(testClose.isCancelled(), is(true));
+        assertThat(testClose.isError(), is(false));
+        assertThat(testClose.isFailed(), is(false));
+    }
+    
+    @Test
+    void isFailed() {
+        testClose.setStatus(PaymentClose.Status.FAILED.toString());
+
+        assertThat(testClose.isPaid(), is(false));
+        assertThat(testClose.isCancelled(), is(false));
+        assertThat(testClose.isError(), is(false));
+        assertThat(testClose.isFailed(), is(true));
     }
     
     @Test
