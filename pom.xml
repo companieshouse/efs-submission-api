@@ -33,7 +33,7 @@
         <junit-jupiter.version>5.7.1</junit-jupiter.version>
         <mockito-junit-jupiter.version>3.8.0</mockito-junit-jupiter.version>
         <commons-lang3.version>3.10</commons-lang3.version>
-        <commons-io.version>2.6</commons-io.version>
+        <commons-io.version>2.8.0</commons-io.version>
         <equalsverifier.version>3.1.6</equalsverifier.version>
         <sqs-common-version>0.0.1</sqs-common-version>
         <imageio.version>1.4.0</imageio.version>
@@ -163,7 +163,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>28.1-jre</version>
+            <version>30.1-jre</version>
         </dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
