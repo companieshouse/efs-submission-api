@@ -40,9 +40,6 @@
 
         <testcontainers.version>1.15.0-rc1</testcontainers.version>
 
-        <!-- Security -->
-        <web-security-java.version>1.3.1</web-security-java.version>
-
         <!-- Spring -->
         <spring-boot-dependencies.version>2.4.4</spring-boot-dependencies.version>
         <spring-test.version>5.2.0.RELEASE</spring-test.version>
