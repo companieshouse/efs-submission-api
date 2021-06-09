@@ -40,5 +40,26 @@
       }
     ],
     "kind": "EFS"
+  },
+  {
+    "_id": "SH19",
+    "description": "Upload form SH19",
+    "etag": "2F9C0BC7B841A686BCCDA23C85AE54A3354B7B0F",
+    "items": [
+      {
+        "amount": "10",
+        "available_payment_methods": [
+          "credit-card"
+        ],
+        "class_of_payment": [
+          "data-maintenance"
+        ],
+        "description": "Upload a document to Companies House: SH19",
+        "description_identifier": "EFS_SH19",
+        "kind": "cost#cost",
+        "product_type": "efs-sh19"
+      }
+    ],
+    "kind": "EFS"
   }
 ]
