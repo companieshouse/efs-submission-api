@@ -2917,22 +2917,6 @@
   "isFesEnabled" : true,
   "messageTextIdList": [1,4]
 }, {
-  "_id" : "SH19",
-  "formName" : "SH19 - Statement of capital when reducing capital in a company",
-  "formCategory" : "SH-RED",
-  "fee" : "SH19",
-  "isAuthenticationRequired" : true,
-  "isFesEnabled" : true,
-  "messageTextIdList": [1,4]
-}, {
-  "_id" : "SH20",
-  "formName" : "Statement by directors",
-  "formCategory" : "SH-RED",
-  "fee" : "",
-  "isAuthenticationRequired" : true,
-  "isFesEnabled" : true,
-  "messageTextIdList": [1,4]
-}, {
   "_id" : "S-CAP-RES",
   "formName" : "Resolution - Approving a share capital reduction",
   "formCategory" : "SH-RED",
@@ -2945,6 +2929,22 @@
   "formName" : "Solvency statement",
   "formCategory" : "SH-RED",
   "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
+}, {
+  "_id" : "SH20",
+  "formName" : "Statement by directors",
+  "formCategory" : "SH-RED",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
+}, {
+  "_id" : "SH19",
+  "formName" : "SH19 - Statement of capital when reducing capital in a company",
+  "formCategory" : "SH-RED",
+  "fee" : "SH19",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
   "messageTextIdList": [1,4]
