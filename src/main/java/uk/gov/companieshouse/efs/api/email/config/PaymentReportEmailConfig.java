@@ -12,6 +12,7 @@ public class PaymentReportEmailConfig extends EmailConfig {
 
     private String financeEmailAddress;
     private String scottishEmailAddress;
+    private String specialCapitalEmailAddress;
 
     public String getFinanceEmailAddress() {
         return financeEmailAddress;
@@ -29,6 +30,14 @@ public class PaymentReportEmailConfig extends EmailConfig {
         this.scottishEmailAddress = scottishEmailAddress;
     }
 
+    public String getSpecialCapitalEmailAddress() {
+        return specialCapitalEmailAddress;
+    }
+
+    public void setSpecialCapitalEmailAddress(final String specialCapitalEmailAddress) {
+        this.specialCapitalEmailAddress = specialCapitalEmailAddress;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -41,12 +50,16 @@ public class PaymentReportEmailConfig extends EmailConfig {
             return false;
         }
         final PaymentReportEmailConfig that = (PaymentReportEmailConfig) o;
-        return Objects.equals(getFinanceEmailAddress(), that.getFinanceEmailAddress()) && Objects
-            .equals(getScottishEmailAddress(), that.getScottishEmailAddress());
+        return Objects.equals(getFinanceEmailAddress(), that.getFinanceEmailAddress()) &&
+               Objects.equals(getScottishEmailAddress(), that.getScottishEmailAddress()) &&
+               Objects.equals(getSpecialCapitalEmailAddress(), that.getSpecialCapitalEmailAddress());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getFinanceEmailAddress(), getScottishEmailAddress());
+        return Objects.hash(super.hashCode(),
+            getFinanceEmailAddress(),
+            getScottishEmailAddress(),
+            getSpecialCapitalEmailAddress());
     }
 }
