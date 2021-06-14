@@ -1,11 +1,15 @@
 [ {
+  "_id" : "ROOT",
+  "categoryName" : "ROOT",
+  "parent" : ""
+}, {
   "_id" : "INS",
   "categoryName" : "Insolvency",
   "parent" : ""
 }, {
   "_id": "SH",
   "categoryName": "Share capital",
-  "categoryHint": "SH forms",
+  "categoryHint": "SH forms, statement by directors and solvency statement",
   "parent": ""
 }, {
   "_id" : "RP",
