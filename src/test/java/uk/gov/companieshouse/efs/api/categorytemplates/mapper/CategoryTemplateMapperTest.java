@@ -45,19 +45,16 @@ class CategoryTemplateMapperTest {
     }
 
     private CategoryTemplate getCategory() {
-        return new CategoryTemplate("MA", "New Incorporation",
-                "", "", null);
+        return new CategoryTemplate("MA", "New Incorporation", "", "");
     }
 
     private CategoryTemplateListApi expectedList() {
-        CategoryTemplateApi element = new CategoryTemplateApi("MA", "New Incorporation", "", "",
-                Collections.emptyList());
+        CategoryTemplateApi element = new CategoryTemplateApi("MA", "New Incorporation", "", "");
         return new CategoryTemplateListApi(Collections.singletonList(element));
     }
 
     private CategoryTemplateApi expectedSingle() {
-        CategoryTemplateApi element = new CategoryTemplateApi("MA", "New Incorporation", "", "",
-                Collections.emptyList());
+        CategoryTemplateApi element = new CategoryTemplateApi("MA", "New Incorporation", "", "");
         return new CategoryTemplateApi(element);
     }
 }

@@ -21,8 +21,7 @@ class CategoryTemplateTest {
 
     @BeforeEach
     void setUp() {
-        testCategoryTemplate = new CategoryTemplate("CC01",
-                "Category01", "", "", null);
+        testCategoryTemplate = new CategoryTemplate("CC01", "Category01", "", "");
         JacksonTester.initFields(this, new ObjectMapper());
     }
 
@@ -45,7 +44,7 @@ class CategoryTemplateTest {
     void toStringTest() {
         assertThat(testCategoryTemplate.toString(), Matchers.is(
                 //@formatter:off
-                "CategoryTemplate[categoryType=CC01,categoryName=Category01,parent=,categoryHint=,guidanceTexts=[]]"
+                "CategoryTemplate[categoryType=CC01,categoryName=Category01,parent=,categoryHint=]"
                 //@formatter:on
         ));
     }

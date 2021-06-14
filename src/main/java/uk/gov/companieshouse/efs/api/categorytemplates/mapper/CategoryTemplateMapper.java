@@ -20,8 +20,11 @@ public class CategoryTemplateMapper {
      */
     public CategoryTemplateListApi map(List<CategoryTemplate> categoryTemplates) {
         return categoryTemplates.stream()
-                .map(this::map)
-                .collect(Collectors.toCollection(CategoryTemplateListApi::new));
+                .map(form -> new CategoryTemplateApi(
+                        form.getCategoryType(),
+                        form.getCategoryName(),
+                        form.getParent(),
+                        form.getCategoryHint())).collect(Collectors.toCollection(CategoryTemplateListApi::new));
     }
 
     /**
@@ -35,7 +38,6 @@ public class CategoryTemplateMapper {
                 categoryTemplate.getCategoryType(),
                 categoryTemplate.getCategoryName(),
                 categoryTemplate.getParent(),
-                categoryTemplate.getCategoryHint(),
-                categoryTemplate.getGuidanceTexts());
+                categoryTemplate.getCategoryHint());
     }
 }

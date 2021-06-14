@@ -1,8 +1,4 @@
 [ {
-  "_id" : "ROOT",
-  "categoryName" : "ROOT",
-  "parent" : ""
-}, {
   "_id" : "INS",
   "categoryName" : "Insolvency",
   "parent" : ""
