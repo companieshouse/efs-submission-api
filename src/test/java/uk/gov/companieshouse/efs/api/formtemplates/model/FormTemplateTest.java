@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 class FormTemplateTest {
-    private static final FormTemplate.FormTypeKey FORM_TYPE_KEY = new FormTemplate.FormTypeKey("CC01", "CC");
+    private static final FormTemplate.FormTypeId FORM_TYPE_KEY = new FormTemplate.FormTypeId("CC01", "CC");
     public static final List<Integer> MESSAGE_TEXT_ID_LIST = Collections.singletonList(1);
     
     private FormTemplate testFormTemplate;

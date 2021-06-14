@@ -34,7 +34,7 @@ public class FormTemplateServiceImpl implements FormTemplateService {
     }
 
     @Override
-    public FormTemplateApi getFormTemplateById(final FormTemplate.FormTypeKey id) {
+    public FormTemplateApi getFormTemplateById(final FormTemplate.FormTypeId id) {
         return repository.findById(id).map(mapper::map).orElse(null);
     }
 

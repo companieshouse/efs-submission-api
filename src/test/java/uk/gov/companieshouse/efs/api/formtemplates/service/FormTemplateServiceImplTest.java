@@ -40,7 +40,7 @@ class FormTemplateServiceImplTest {
     private FormTemplateServiceImpl service;
     public static final String FORM_TYPE = "IN01";
     public static final String CATEGORY_TYPE = "NEWINC";
-    public static final FormTemplate.FormTypeKey FORM_TYPE_KEY = new FormTemplate.FormTypeKey(FORM_TYPE, CATEGORY_TYPE);
+    public static final FormTemplate.FormTypeId FORM_TYPE_KEY = new FormTemplate.FormTypeId(FORM_TYPE, CATEGORY_TYPE);
     public static final FormTemplateApi FORM_TEMPLATE =
         new FormTemplateApi(FORM_TYPE, "New Incorporation", CATEGORY_TYPE, "12", false, false, null);
     public static final FormTemplate MAPPED_FORM =
@@ -79,10 +79,10 @@ class FormTemplateServiceImplTest {
     void testFetchEntityAndMapToFormTemplateApiObject() {
 
         //given
-        final FormTemplate.FormTypeKey formTypeKey = new FormTemplate.FormTypeKey(FORM_TYPE, CATEGORY_TYPE);
-        FormTemplate formTemplate = new FormTemplate(formTypeKey, "New Incorporation", "12", false, false, null);
+        final FormTemplate.FormTypeId formTypeId = new FormTemplate.FormTypeId(FORM_TYPE, CATEGORY_TYPE);
+        FormTemplate formTemplate = new FormTemplate(formTypeId, "New Incorporation", "12", false, false, null);
         FormTemplateApi mappedForm =
-            new FormTemplateApi(formTypeKey.getFormType(), "New Incorporation", formTypeKey.getFormCategory(), "12",
+            new FormTemplateApi(formTypeId.getFormType(), "New Incorporation", formTypeId.getFormCategory(), "12",
                 false, false, null);
 
         when(formRepository.findById(FORM_TYPE_KEY)).thenReturn(Optional.of(formTemplate));

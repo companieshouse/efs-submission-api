@@ -20,7 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class FormTemplate implements Serializable {
 
     @EmbeddedId
-    private FormTypeKey id;
+    private FormTypeId id;
  
     @JsonProperty("form_name")
     @Field
@@ -52,7 +52,7 @@ public class FormTemplate implements Serializable {
      * @param isFesEnabled is fes enabled
      * @param messageTextIdList list of message textids
      */
-    public FormTemplate(final FormTypeKey id, final String formName, final String fee, final boolean isAuthenticationRequired,
+    public FormTemplate(final FormTypeId id, final String formName, final String fee, final boolean isAuthenticationRequired,
         final boolean isFesEnabled, final List<Integer> messageTextIdList) {
         this.id = id;
         this.formName = formName;
@@ -62,16 +62,16 @@ public class FormTemplate implements Serializable {
         this.messageTextIdList = messageTextIdList;
     }
 
-    public FormTypeKey getId() {
+    public FormTypeId getId() {
         return id;
     }
 
     public String getFormType() {
-        return Optional.ofNullable(id).map(FormTypeKey::getFormType).orElse(null);
+        return Optional.ofNullable(id).map(FormTypeId::getFormType).orElse(null);
     }
 
     public String getFormCategory() {
-        return Optional.ofNullable(id).map(FormTypeKey::getFormCategory).orElse(null);
+        return Optional.ofNullable(id).map(FormTypeId::getFormCategory).orElse(null);
     }
 
     public String getFormName() {
@@ -139,7 +139,7 @@ public class FormTemplate implements Serializable {
      * defines both equals() and hashCode() methods, and implements the Serializable interface.
      */
     @Embeddable
-    public static class FormTypeKey implements Serializable {
+    public static class FormTypeId implements Serializable {
         @JsonProperty("form_type")
         @Field
         private String formType;
@@ -148,11 +148,11 @@ public class FormTemplate implements Serializable {
         @Field
         private String formCategory;
 
-        public FormTypeKey() {
+        public FormTypeId() {
             // required by Spring Data
         }
 
-        public FormTypeKey(final String formType, final String formCategory) {
+        public FormTypeId(final String formType, final String formCategory) {
             this.formType = formType;
             this.formCategory = formCategory;
         }
@@ -165,7 +165,7 @@ public class FormTemplate implements Serializable {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            final FormTypeKey that = (FormTypeKey) o;
+            final FormTypeId that = (FormTypeId) o;
             return Objects.equals(formType, that.formType) && Objects.equals(formCategory, that.formCategory);
         }
 

@@ -13,22 +13,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class FormTypeKeyTest {
-    private FormTemplate.FormTypeKey testKey;
+class FormTypeIdTest {
+    private FormTemplate.FormTypeId testKey;
 
     @BeforeEach
     void setUp() {
-        testKey = new FormTemplate.FormTypeKey("form", "category");
+        testKey = new FormTemplate.FormTypeId("form", "category");
     }
     
     @Test
     void isSerializable() {
-        assertThat(new FormTemplate.FormTypeKey(), isA(Serializable.class));    
+        assertThat(new FormTemplate.FormTypeId(), isA(Serializable.class));    
     }
     
     @Test
     void equalsAndHashCode() {
-        EqualsVerifier.forClass(FormTemplate.FormTypeKey.class).usingGetClass().verify();
+        EqualsVerifier.forClass(FormTemplate.FormTypeId.class).usingGetClass().verify();
     }
     
     @Test

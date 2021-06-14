@@ -133,7 +133,7 @@ class DecisionEngineTest {
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
         when(formTemplateRepository.findByIdFormType(anyString())).thenReturn(Collections.singletonList(
-            new FormTemplate(new FormTemplate.FormTypeKey("AD01", ""), "Change of address", "", false, true, null)));
+            new FormTemplate(new FormTemplate.FormTypeId("AD01", ""), "Change of address", "", false, true, null)));
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine
@@ -161,7 +161,7 @@ class DecisionEngineTest {
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
         when(formTemplateRepository.findByIdFormType(anyString())).thenReturn(Collections.singletonList(
-            new FormTemplate(new FormTemplate.FormTypeKey("AD01", ""), "Change of address", "", false, false, null)));
+            new FormTemplate(new FormTemplate.FormTypeId("AD01", ""), "Change of address", "", false, false, null)));
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine

@@ -7,7 +7,7 @@ import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 /**
  * Store and retrieve form template information.
  */
-public interface FormTemplateRepository extends MongoRepository<FormTemplate, FormTemplate.FormTypeKey> {
+public interface FormTemplateRepository extends MongoRepository<FormTemplate, FormTemplate.FormTypeId> {
 
     /**
      * Finds all form template details by form type.

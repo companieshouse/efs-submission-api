@@ -31,11 +31,11 @@ class FormTemplateServiceTest {
 
     @Test
     void getFormTemplate() {
-        final FormTemplate.FormTypeKey formTypeKey = new FormTemplate.FormTypeKey("RESOLUTIONS", "CC");
+        final FormTemplate.FormTypeId formTypeId = new FormTemplate.FormTypeId("RESOLUTIONS", "CC");
         
         UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,
             () -> {
-                testService.getFormTemplateById(formTypeKey);
+                testService.getFormTemplateById(formTypeId);
             });
 
         assertThat(thrown.getMessage(), is("not implemented"));

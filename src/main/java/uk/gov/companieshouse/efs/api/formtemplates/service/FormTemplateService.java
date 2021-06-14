@@ -16,7 +16,7 @@ public interface FormTemplateService {
      *
      * @return a submission form template
      */
-    default FormTemplateApi getFormTemplateById(FormTemplate.FormTypeKey id) {
+    default FormTemplateApi getFormTemplateById(FormTemplate.FormTypeId id) {
         throw new UnsupportedOperationException("not implemented");
     }
 
