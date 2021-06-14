@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.text.MessageFormat;
-import java.util.Optional;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,8 +56,8 @@ class FormTemplateValidatorTest {
     void validateWhenFormFoundThenValid() throws SubmissionValidationException {
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn("FORM");
-        when(formRepository.findById("FORM")).thenReturn(Optional.of(
-            new FormTemplate(null, null, null, null, false, false, null)));
+        when(formRepository.findByIdFormType("FORM")).thenReturn(
+            Collections.singletonList(new FormTemplate(null, null, null, false, false, null)));
 
         testValidator.validate(submission);
 
@@ -69,7 +69,7 @@ class FormTemplateValidatorTest {
         when(submission.getId()).thenReturn(SUB_ID);
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn("FORM");
-        when(formRepository.findById("FORM")).thenReturn(Optional.empty());
+        when(formRepository.findByIdFormType("FORM")).thenReturn(Collections.emptyList());
 
         final SubmissionValidationException exception =
             assertThrows(SubmissionValidationException.class, () -> testValidator.validate(submission));

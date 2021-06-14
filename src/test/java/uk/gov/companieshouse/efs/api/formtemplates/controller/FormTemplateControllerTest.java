@@ -19,7 +19,7 @@ import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
-class FormTemplateTemplateControllerTest {
+class FormTemplateControllerTest {
 
     @Mock
     private FormTemplateService service;
@@ -80,10 +80,11 @@ class FormTemplateTemplateControllerTest {
     }
 
     @Test
-    void testGetFormsTemplate() {
+    void testGetFormTemplate() {
         //given
         FormTemplateApi expected = new FormTemplateApi();
         final String formType = "form01";
+        
         when(service.getFormTemplate(formType)).thenReturn(expected);
 
         //when
@@ -99,6 +100,7 @@ class FormTemplateTemplateControllerTest {
 
         //given
         final String formType = "form01";
+        
         when(service.getFormTemplate(formType)).thenThrow(new RuntimeException("Test exception scenario"));
 
         //when

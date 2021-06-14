@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.efs.api.events.service.model.Decision;
 import uk.gov.companieshouse.efs.api.events.service.model.DecisionResult;
@@ -100,7 +98,9 @@ public class DecisionEngine {
     }
 
     private Decision decide(Decision decision, String formType) {
-        Optional<FormTemplate> formTemplate = repository.findById(formType);
+        final List<FormTemplate> formTemplateList = repository.findByIdFormType(formType);
+        final Optional<FormTemplate> formTemplate = formTemplateList.stream().findFirst();
+
         if (decision.getExpectedDecisions() != decision.getNumberOfDecisions()) {
             decision.setDecisionResult(DecisionResult.NO_DECISION);
         } else if (decision.containsInfectedFile()) {

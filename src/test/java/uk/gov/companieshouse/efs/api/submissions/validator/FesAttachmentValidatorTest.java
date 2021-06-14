@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import java.text.MessageFormat;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.BooleanUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,8 +106,8 @@ class FesAttachmentValidatorTest {
         final String formType = BooleanUtils.isTrue(hasFee) ? FEE_FORM : NO_FEE_FORM;
 
         when(formDetails.getFormType()).thenReturn(formType);
-        when(formRepository.findById(formType))
-            .thenReturn(hasFee != null ? Optional.of(formTemplate) : Optional.empty());
+        when(formRepository.findByIdFormType(formType))
+            .thenReturn(hasFee != null ? Collections.singletonList(formTemplate) : Collections.emptyList());
         if (fesEnabled != null) {
             when(formTemplate.isFesEnabled()).thenReturn(fesEnabled);
         }

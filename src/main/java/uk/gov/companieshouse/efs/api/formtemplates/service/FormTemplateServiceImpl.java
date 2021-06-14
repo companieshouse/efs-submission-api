@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.formtemplates.service;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,8 @@ import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateReposi
 @Import(Config.class)
 public class FormTemplateServiceImpl implements FormTemplateService {
 
-    private FormTemplateRepository repository;
-    private FormTemplateMapper mapper;
+    private final FormTemplateRepository repository;
+    private final FormTemplateMapper mapper;
 
     /**
      * FormTemplateService constructor.
@@ -33,20 +34,27 @@ public class FormTemplateServiceImpl implements FormTemplateService {
     }
 
     @Override
+    public FormTemplateApi getFormTemplateById(final FormTemplate.FormTypeKey id) {
+        return repository.findById(id).map(mapper::map).orElse(null);
+    }
+
+    @Override
     public FormTemplateListApi getFormTemplates() {
         List<FormTemplate> formTemplates = repository.findAll();
         return mapper.map(formTemplates);
     }
 
     @Override
-    public FormTemplateApi getFormTemplate(String id) {
-        FormTemplate formTemplate = repository.findById(id).orElse(null);
-        return formTemplate == null ? null : mapper.map(formTemplate);
+    public FormTemplateApi getFormTemplate(String formType) {
+        List<FormTemplate> formTemplates = repository.findByIdFormType(formType);
+        return Optional.of(formTemplates).flatMap(list -> list.stream().findFirst())
+            .map(mapper::map)
+            .orElse(null);
     }
 
     @Override
     public FormTemplateListApi getFormTemplatesByCategory(final String id) {
-        final List<FormTemplate> byCategory = repository.findByFormCategory(id);
+        final List<FormTemplate> byCategory = repository.findByIdFormCategory(id);
         return mapper.map(byCategory);
     }
 }

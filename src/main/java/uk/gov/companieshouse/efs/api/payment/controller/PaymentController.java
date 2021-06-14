@@ -97,8 +97,10 @@ public class PaymentController {
         } else {
             String formType = submission.getSubmissionForm().getFormType();
 
-            logger.debug(MessageFormat.format("Fetching form type with id: {0}", formType));
+            logger.debug(MessageFormat.format("Fetching form type with formType: {0}", formType));
+            
             FormTemplateApi formTemplate = formTemplateService.getFormTemplate(formType);
+            
             if (formTemplate != null) {
                 final String chargeTemplateId = formTemplate.getPaymentCharge();
 

@@ -13,7 +13,7 @@ public class FormTemplateValidator extends ValidatorImpl<Submission> implements 
 
     @Override
     public void validate(final Submission input) throws SubmissionValidationException {
-        if (repository != null && !repository.findById(input.getFormDetails().getFormType()).isPresent()) {
+        if (repository != null && repository.findByIdFormType(input.getFormDetails().getFormType()).isEmpty()) {
             throw new SubmissionValidationException(String
                 .format("Form type [%s] unknown in submission [%s]", input.getFormDetails().getFormType(),
                     input.getId()));

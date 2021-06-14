@@ -38,6 +38,13 @@ class FormTemplateServiceImplTest {
     private FormTemplate formTemplate;
 
     private FormTemplateServiceImpl service;
+    public static final String FORM_TYPE = "IN01";
+    public static final String CATEGORY_TYPE = "NEWINC";
+    public static final FormTemplate.FormTypeKey FORM_TYPE_KEY = new FormTemplate.FormTypeKey(FORM_TYPE, CATEGORY_TYPE);
+    public static final FormTemplateApi FORM_TEMPLATE =
+        new FormTemplateApi(FORM_TYPE, "New Incorporation", CATEGORY_TYPE, "12", false, false, null);
+    public static final FormTemplate MAPPED_FORM =
+        new FormTemplate(FORM_TYPE_KEY, "New Incorporation", "12", false, false, null);
 
     @BeforeEach
     void setUp() {
@@ -72,17 +79,17 @@ class FormTemplateServiceImplTest {
     void testFetchEntityAndMapToFormTemplateApiObject() {
 
         //given
-        String categoryId = "CC01";
-        FormTemplate formTemplate = new FormTemplate("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, null);
-        FormTemplateApi mappedForm = new FormTemplateApi("IN01", "New Incorporation", "NEWINC", "12",
+        final FormTemplate.FormTypeKey formTypeKey = new FormTemplate.FormTypeKey(FORM_TYPE, CATEGORY_TYPE);
+        FormTemplate formTemplate = new FormTemplate(formTypeKey, "New Incorporation", "12", false, false, null);
+        FormTemplateApi mappedForm =
+            new FormTemplateApi(formTypeKey.getFormType(), "New Incorporation", formTypeKey.getFormCategory(), "12",
                 false, false, null);
 
-        when(formRepository.findById(categoryId)).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findById(FORM_TYPE_KEY)).thenReturn(Optional.of(formTemplate));
         when(mapper.map(formTemplate)).thenReturn(mappedForm);
 
         //when
-        FormTemplateApi actual = service.getFormTemplate(categoryId);
+        FormTemplateApi actual = service.getFormTemplateById(FORM_TYPE_KEY);
 
         //then
         assertEquals(mappedForm, actual);
@@ -92,11 +99,9 @@ class FormTemplateServiceImplTest {
     void testFetchEntityWhenFormTemplateApiObjectNotFound() {
 
         //given
-        String categoryId = "CC01";
-
-        when(formRepository.findById(categoryId)).thenReturn(Optional.empty());
+        when(formRepository.findById(FORM_TYPE_KEY)).thenReturn(Optional.empty());
         //when
-        FormTemplateApi actual = service.getFormTemplate(categoryId);
+        FormTemplateApi actual = service.getFormTemplateById(FORM_TYPE_KEY);
 
         //then
         assertThat(actual, is(nullValue()));
@@ -108,13 +113,11 @@ class FormTemplateServiceImplTest {
 
         //given
         String categoryId = "CC01";
-        FormTemplate mappedForm = new FormTemplate("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, null);
 
         List<FormTemplate> listForm = new ArrayList<>();
-        listForm.add(mappedForm);
+        listForm.add(MAPPED_FORM);
 
-        when(formRepository.findByFormCategory(categoryId)).thenReturn(listForm);
+        when(formRepository.findByIdFormCategory(categoryId)).thenReturn(listForm);
         when(mapper.map(anyList())).thenReturn(formList);
 
         //when
@@ -123,4 +126,36 @@ class FormTemplateServiceImplTest {
         //then
         assertEquals(formList, actual);
     }
+
+    @Test
+    void fetchEntityAndMapToFormTemplateApiObjectByFormType() {
+        List<FormTemplate> listForm = new ArrayList<>();
+        listForm.add(MAPPED_FORM);
+
+        //given
+        when(formRepository.findByIdFormType(FORM_TYPE)).thenReturn(listForm);
+        when(mapper.map(listForm.get(0))).thenReturn(FORM_TEMPLATE);
+
+        //when
+        FormTemplateApi actual = service.getFormTemplate(FORM_TYPE);
+
+        //then
+        assertThat(actual, is(FORM_TEMPLATE));
+    }
+
+    @Test
+    void fetchEntityAndMapToFormTemplateApiObjectNotFound() {
+        List<FormTemplate> listForm = new ArrayList<>();
+
+        //given
+        when(formRepository.findByIdFormType(FORM_TYPE)).thenReturn(listForm);
+
+        //when
+        FormTemplateApi actual = service.getFormTemplate(FORM_TYPE);
+
+        //then
+        assertThat(actual, is(nullValue()));
+        verifyNoInteractions(mapper);
+    }
+
 }

@@ -12,15 +12,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.efs.api.events.service.model.Decision;
 import uk.gov.companieshouse.efs.api.events.service.model.DecisionResult;
@@ -135,7 +132,8 @@ class DecisionEngineTest {
                 .withFormType("AD01")
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
-        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, true, null)));
+        when(formTemplateRepository.findByIdFormType(anyString())).thenReturn(Collections.singletonList(
+            new FormTemplate(new FormTemplate.FormTypeKey("AD01", ""), "Change of address", "", false, true, null)));
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine
@@ -148,7 +146,7 @@ class DecisionEngineTest {
         verify(timestampGenerator).generateTimestamp();
         verify(apiClient).details("abc");
         verify(submissionService).updateSubmission(submission);
-        verify(formTemplateRepository).findById(eq("AD01"));
+        verify(formTemplateRepository).findByIdFormType(eq("AD01"));
     }
 
     @Test
@@ -162,7 +160,8 @@ class DecisionEngineTest {
                 .withFormType("AD01")
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
-        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, false, null)));
+        when(formTemplateRepository.findByIdFormType(anyString())).thenReturn(Collections.singletonList(
+            new FormTemplate(new FormTemplate.FormTypeKey("AD01", ""), "Change of address", "", false, false, null)));
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine
@@ -175,7 +174,7 @@ class DecisionEngineTest {
         verify(timestampGenerator).generateTimestamp();
         verify(apiClient).details("abc");
         verify(submissionService).updateSubmission(submission);
-        verify(formTemplateRepository).findById(eq("AD01"));
+        verify(formTemplateRepository).findByIdFormType(eq("AD01"));
     }
 
     @Test
@@ -189,7 +188,7 @@ class DecisionEngineTest {
                 .withFormType("AD01")
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
-        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.empty());
+        when(formTemplateRepository.findByIdFormType(anyString())).thenReturn(Collections.emptyList());
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine
@@ -202,7 +201,7 @@ class DecisionEngineTest {
         verify(timestampGenerator).generateTimestamp();
         verify(apiClient).details("abc");
         verify(submissionService).updateSubmission(submission);
-        verify(formTemplateRepository).findById(eq("AD01"));
+        verify(formTemplateRepository).findByIdFormType(eq("AD01"));
     }
 
     @Test

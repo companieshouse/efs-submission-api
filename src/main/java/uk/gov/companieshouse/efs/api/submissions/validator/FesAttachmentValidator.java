@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.efs.api.submissions.validator;
 
+import java.util.List;
 import java.util.Optional;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
@@ -17,7 +18,8 @@ public class FesAttachmentValidator extends ValidatorImpl<Submission> implements
     public void validate(final Submission input) throws SubmissionValidationException {
 
         if (formRepository != null) {
-            final Optional<FormTemplate> template = formRepository.findById(input.getFormDetails().getFormType());
+            final List<FormTemplate> formTemplateList = formRepository.findByIdFormType(input.getFormDetails().getFormType());
+            final Optional<FormTemplate> template = formTemplateList.stream().findFirst();
             final boolean hasAttachments = input.getFormDetails().getFileDetailsList().size() > 1;
 
             // don't throw if !template.isPresent()

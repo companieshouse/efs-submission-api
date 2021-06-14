@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.text.MessageFormat;
-import java.util.Optional;
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -48,7 +48,7 @@ class ConfirmAuthorisedValidatorTest {
         testValidator.setNext(nextValidator);
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn(TEST_FORM);
-        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findByIdFormType(TEST_FORM)).thenReturn(Collections.singletonList(formTemplate));
 
         testValidator.validate(submission);
 
@@ -61,7 +61,7 @@ class ConfirmAuthorisedValidatorTest {
         testValidator.setNext(nextValidator);
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn(TEST_FORM);
-        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findByIdFormType(TEST_FORM)).thenReturn(Collections.singletonList(formTemplate));
         when(formTemplate.getFormCategory()).thenReturn("ANY BUT INSOLVENCY");
         when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.OTHER);
 
@@ -79,7 +79,7 @@ class ConfirmAuthorisedValidatorTest {
         when(formDetails.getFormType()).thenReturn(TEST_FORM);
         when(formTemplate.getFormType()).thenReturn(TEST_FORM);
         when(formTemplate.getFormCategory()).thenReturn(CategoryTypeConstants.INSOLVENCY.getValue());
-        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findByIdFormType(TEST_FORM)).thenReturn(Collections.singletonList(formTemplate));
         when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.INSOLVENCY);
 
         final SubmissionValidationException exception =
@@ -99,7 +99,7 @@ class ConfirmAuthorisedValidatorTest {
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn(TEST_FORM);
         when(formTemplate.getFormCategory()).thenReturn("ANY BUT INSOLVENCY");
-        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findByIdFormType(TEST_FORM)).thenReturn(Collections.singletonList(formTemplate));
         when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.OTHER);
 
         testValidator.validate(submission);
@@ -115,7 +115,7 @@ class ConfirmAuthorisedValidatorTest {
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn(TEST_FORM);
         when(formTemplate.getFormCategory()).thenReturn("ANY BUT INSOLVENCY");
-        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findByIdFormType(TEST_FORM)).thenReturn(Collections.singletonList(formTemplate));
         when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.OTHER);
 
         testValidator.validate(submission);
@@ -131,7 +131,7 @@ class ConfirmAuthorisedValidatorTest {
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn(TEST_FORM);
         when(formTemplate.getFormCategory()).thenReturn("INS");
-        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findByIdFormType(TEST_FORM)).thenReturn(Collections.singletonList(formTemplate));
         when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.INSOLVENCY);
 
         testValidator.validate(submission);

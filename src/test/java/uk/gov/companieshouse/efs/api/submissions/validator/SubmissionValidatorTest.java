@@ -70,7 +70,7 @@ class SubmissionValidatorTest {
         when(submission.getCompany()).thenReturn(new Company("00001234", "ACME"));
         when(submission.getFormDetails())
             .thenReturn(new FormDetails(null, NON_FEE_FORM, Collections.singletonList(FileDetails.builder().build())));
-        when(formRepository.findById(anyString())).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findByIdFormType(anyString())).thenReturn(Collections.singletonList(formTemplate));
         when(formTemplate.getFee()).thenReturn(null);
         when(formTemplate.getFormCategory()).thenReturn("SH");
         when(formTemplate.getFormType()).thenReturn(NON_FEE_FORM);
@@ -88,7 +88,7 @@ class SubmissionValidatorTest {
         when(submission.getCompany()).thenReturn(new Company("00001234", "ACME"));
         when(submission.getFormDetails())
             .thenReturn(new FormDetails(null, FEE_FORM, Collections.singletonList(FileDetails.builder().build())));
-        when(formRepository.findById(anyString())).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findByIdFormType(anyString())).thenReturn(Collections.singletonList(formTemplate));
         when(formTemplate.getFee()).thenReturn("TEST_FEE");
         when(paymentRepository.findById("TEST_FEE")).thenReturn(Optional.of(paymentTemplate));
         when(paymentTemplate.getItems()).thenReturn(Collections.singletonList(TEST_ITEM));

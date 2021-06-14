@@ -1,10 +1,10 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
+import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.REGISTRAR_POWERS;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 import org.springframework.stereotype.Component;
-
 import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
@@ -15,8 +15,6 @@ import uk.gov.companieshouse.efs.api.email.model.InternalSubmissionEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
-
-import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.REGISTRAR_POWERS;
 
 @Component
 public class InternalSubmissionEmailMapper {
@@ -45,9 +43,8 @@ public class InternalSubmissionEmailMapper {
 
         String emailAddress;
         String formType = model.getSubmission().getFormDetails().getFormType();
-        CategoryTypeConstants categoryType =
-                categoryTemplateService.getTopLevelCategory(
-                        formTemplateService.getFormTemplate(formType).getFormCategory());
+        CategoryTypeConstants categoryType = categoryTemplateService.getTopLevelCategory(
+            formTemplateService.getFormTemplate(formType).getFormCategory());
 
         if (categoryType.getValue().equals(REGISTRAR_POWERS.getValue())) {
 

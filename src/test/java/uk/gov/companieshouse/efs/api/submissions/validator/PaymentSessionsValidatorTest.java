@@ -81,7 +81,7 @@ class PaymentSessionsValidatorTest {
     @Test
     void validateWhenFormNotFoundThenValid() throws SubmissionValidationException {
         expectSubmissionWithForm();
-        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.empty());
+        when(formRepository.findByIdFormType(TEST_FORM)).thenReturn(Collections.emptyList());
 
         testValidator.validate(submission);
 
@@ -175,7 +175,7 @@ class PaymentSessionsValidatorTest {
     @Test
     void validateWhenFeeAmountZeroThenValid() throws SubmissionValidationException {
         expectSubmissionWithForm();
-        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findByIdFormType(TEST_FORM)).thenReturn(Collections.singletonList(formTemplate));
         when(formTemplate.getFee()).thenReturn(TEST_FEE);
         expectPaymentTemplateWithSingleItem();
         when(paymentItem.getAmount()).thenReturn("0.00");
@@ -246,7 +246,7 @@ class PaymentSessionsValidatorTest {
     }
 
     private void expectFormWithPaymentTemplate(final String paymentTemplateId) {
-        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
+        when(formRepository.findByIdFormType(TEST_FORM)).thenReturn(Collections.singletonList(formTemplate));
         when(formTemplate.getFormType()).thenReturn(TEST_FORM);
         when(formTemplate.getFee()).thenReturn(paymentTemplateId);
     }

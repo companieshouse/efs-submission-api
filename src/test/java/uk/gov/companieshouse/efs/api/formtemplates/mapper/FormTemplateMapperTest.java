@@ -13,6 +13,7 @@ import uk.gov.companieshouse.api.model.efs.formtemplates.MessageTextListApi;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 
 class FormTemplateMapperTest {
+    private static final FormTemplate.FormTypeKey FORM_TYPE_KEY = new FormTemplate.FormTypeKey("IN01", "NEWINC");
     private FormTemplateMapper mapper;
 
     @BeforeEach
@@ -70,7 +71,7 @@ class FormTemplateMapperTest {
     }
 
     private FormTemplate getForm(final List<Integer> messageTextIdList) {
-        return new FormTemplate("IN01", "New Incorporation", "NEWINC", "12",
+        return new FormTemplate(FORM_TYPE_KEY, "New Incorporation", "12",
                 false, false, messageTextIdList);
     }
 

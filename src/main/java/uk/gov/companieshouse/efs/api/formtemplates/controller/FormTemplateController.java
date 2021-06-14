@@ -70,15 +70,15 @@ public class FormTemplateController {
      * @return responseEntity
      */
     @GetMapping(value = "/form-template")
-    public ResponseEntity<FormTemplateApi> getFormTemplate(@RequestParam("type") String id,
-        HttpServletRequest request) {
+    public ResponseEntity<FormTemplateApi> getFormTemplate(@RequestParam("type") String formType, HttpServletRequest request) {
 
         try {
-            return ResponseEntity.ok().body(formService.getFormTemplate(id));
-        } catch (Exception ex) {
+            return ResponseEntity.ok().body(formService.getFormTemplate(formType));
+        }
+        catch (Exception ex) {
             Map<String, Object> debug = new HashMap<>();
 
-            debug.put("id", id);
+            debug.put("formType", formType);
             logger.error("Failed to get form template", ex, debug);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

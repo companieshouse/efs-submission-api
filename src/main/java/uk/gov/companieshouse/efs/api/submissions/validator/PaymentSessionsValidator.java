@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.submissions.validator;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -26,7 +27,8 @@ public class PaymentSessionsValidator extends ValidatorImpl<Submission> implemen
         final boolean hasPaymentSessions = !CollectionUtils.isEmpty(input.getPaymentSessions());
 
         if (formRepository != null && paymentRepository != null) {
-            final Optional<FormTemplate> formTemplate = formRepository.findById(input.getFormDetails().getFormType());
+            final List<FormTemplate> formTemplateList = formRepository.findByIdFormType(input.getFormDetails().getFormType());
+            final Optional<FormTemplate> formTemplate = formTemplateList.stream().findFirst();
             final String formType = formTemplate.map(FormTemplate::getFormType).orElse(null);
             final String formFee = formTemplate.map(FormTemplate::getFee).orElse(null);
 

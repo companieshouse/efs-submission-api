@@ -1,12 +1,15 @@
 package uk.gov.companieshouse.efs.api.formtemplates.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -14,24 +17,15 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * Builder class for the {@code FormTemplate}.
  */
 @Document(collection = "form_templates")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class FormTemplate {
+public class FormTemplate implements Serializable {
 
-    private FormTemplate() {
-        // required by Spring Data
-    }
-
-    @JsonProperty("form_type")
-    @Id
-    private String formType;
-
+    @EmbeddedId
+    private FormTypeKey id;
+ 
     @JsonProperty("form_name")
     @Field
     private String formName;
 
-    @JsonProperty("form_category")
-    @Field
-    private String formCategory;
 
     @JsonProperty("fee")
     @Field
@@ -51,36 +45,37 @@ public class FormTemplate {
 
     /**
      * Constructor which sets the submission form data.
-     * @param formType the form type
+     * @param id
      * @param formName the form name
-     * @param formCategory the form category
      * @param fee the form submission fee
      * @param isAuthenticationRequired is authentication required
      * @param isFesEnabled is fes enabled
      * @param messageTextIdList list of message textids
      */
-    public FormTemplate(final String formType, final String formName, final String formCategory,
-        final String fee, final boolean isAuthenticationRequired, final boolean isFesEnabled,
-        final List<Integer> messageTextIdList) {
-        this.formType = formType;
+    public FormTemplate(final FormTypeKey id, final String formName, final String fee, final boolean isAuthenticationRequired,
+        final boolean isFesEnabled, final List<Integer> messageTextIdList) {
+        this.id = id;
         this.formName = formName;
-        this.formCategory = formCategory;
         this.fee = fee;
         this.isAuthenticationRequired = isAuthenticationRequired;
         this.isFesEnabled = isFesEnabled;
         this.messageTextIdList = messageTextIdList;
     }
 
+    public FormTypeKey getId() {
+        return id;
+    }
+
     public String getFormType() {
-        return formType;
+        return Optional.ofNullable(id).map(FormTypeKey::getFormType).orElse(null);
+    }
+
+    public String getFormCategory() {
+        return Optional.ofNullable(id).map(FormTypeKey::getFormCategory).orElse(null);
     }
 
     public String getFormName() {
         return formName;
-    }
-
-    public String getFormCategory() {
-        return formCategory;
     }
 
     public String getFee() {
@@ -103,6 +98,7 @@ public class FormTemplate {
         this.messageTextIdList = messageTextIdList;
     }
 
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -112,31 +108,84 @@ public class FormTemplate {
             return false;
         }
         final FormTemplate that = (FormTemplate) o;
-        return isAuthenticationRequired() == that.isAuthenticationRequired()
-               && isFesEnabled() == that.isFesEnabled()
-               && Objects.equals(getFormType(), that.getFormType())
-               && Objects.equals(getFormName(), that.getFormName())
-               && Objects.equals(getFormCategory(), that.getFormCategory())
-               && Objects.equals(getFee(), that.getFee())
-               && Objects.equals(getMessageTextIdList(), that.getMessageTextIdList());
+        return isAuthenticationRequired() == that.isAuthenticationRequired() && isFesEnabled() == that.isFesEnabled()
+            && Objects.equals(getFormName(), that.getFormName()) && Objects.equals(getFee(), that.getFee())
+            && Objects.equals(getMessageTextIdList(), that.getMessageTextIdList());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFormType(), getFormName(), getFormCategory(), getFee(),
-            isAuthenticationRequired(), isFesEnabled(), getMessageTextIdList());
+        return Objects.hash(getFormName(), getFee(), isAuthenticationRequired(), isFesEnabled(),
+            getMessageTextIdList());
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("formType", getFormType())
-                .append("formName", getFormName())
                 .append("formCategory", getFormCategory())
+                .append("formName", getFormName())
                 .append("fee", getFee())
                 .append("isAuthenticationRequired", isAuthenticationRequired())
                 .append("isFesEnabled", isFesEnabled())
                 .append("messageTextIdList", messageTextIdList)
                 .toString();
+    }
+
+    /**
+     * Composite key identifying a unique form template.
+     * <p>
+     * The composite primary key class must be public, contains a no-argument constructor,
+     * defines both equals() and hashCode() methods, and implements the Serializable interface.
+     */
+    @Embeddable
+    public static class FormTypeKey implements Serializable {
+        @JsonProperty("form_type")
+        @Field
+        private String formType;
+        
+        @JsonProperty("form_category")
+        @Field
+        private String formCategory;
+
+        public FormTypeKey() {
+            // required by Spring Data
+        }
+
+        public FormTypeKey(final String formType, final String formCategory) {
+            this.formType = formType;
+            this.formCategory = formCategory;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            final FormTypeKey that = (FormTypeKey) o;
+            return Objects.equals(formType, that.formType) && Objects.equals(formCategory, that.formCategory);
+        }
+
+        public String getFormType() {
+            return formType;
+        }
+
+        public String getFormCategory() {
+            return formCategory;
+        }
+    
+        @Override
+        public int hashCode() {
+            return Objects.hash(formType, formCategory);
+        }
+    
+        @Override
+        public String toString() {
+            return new ReflectionToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
+        }
+    
     }
 }
