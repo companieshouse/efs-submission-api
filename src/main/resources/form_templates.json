@@ -2915,7 +2915,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,4]
+  "messageTextIdList": [1,2]
 }, {
   "_id" : "CAP-SS",
   "formName" : "Solvency statement",
@@ -2923,7 +2923,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,4]
+  "messageTextIdList": [1,2]
 }, {
   "_id" : "SH20",
   "formName" : "Statement by directors",
@@ -2931,7 +2931,7 @@
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,4]
+  "messageTextIdList": [1,2]
 }, {
   "_id" : "SH19",
   "formName" : "SH19 - Statement of capital when reducing capital in a company",
@@ -2939,6 +2939,6 @@
   "fee" : "SH19",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "messageTextIdList": [1,4]
+  "messageTextIdList": [1,2]
 }
 ]
