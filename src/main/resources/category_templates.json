@@ -6,7 +6,8 @@
   "_id": "SH",
   "categoryName": "Share capital",
   "categoryHint": "SH forms, statement by directors and solvency statement",
-  "parent": ""
+  "parent": "",
+  "guidanceTexts": [0]
 }, {
   "_id" : "RP",
   "categoryName" : "Registrar's powers",
