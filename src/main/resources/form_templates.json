@@ -2909,7 +2909,7 @@
   "isFesEnabled" : true,
   "messageTextIdList": [1,4]
 }, {
-  "_id" : "S-CAP-RES",
+  "_id" : "S CAP RES",
   "formName" : "Resolution - Approving a share capital reduction",
   "formCategory" : "SH-RED",
   "fee" : "",
