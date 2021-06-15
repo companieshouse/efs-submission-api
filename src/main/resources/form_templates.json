@@ -2791,7 +2791,7 @@
 }, {
   "_id" : "SH02",
   "formName" : "SH02 - Consolidate, sub-divide, redeem shares or re-convert stock into shares",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2799,7 +2799,7 @@
 }, {
   "_id" : "SH04",
   "formName" : "SH04 - Notify a sale or transfer of treasury shares",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2807,7 +2807,7 @@
 }, {
   "_id" : "SH05",
   "formName" : "SH05 - Notify a cancellation of treasury shares",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2815,7 +2815,7 @@
 }, {
   "_id" : "SH06",
   "formName" : "SH06 - Notify a cancellation of shares",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2823,7 +2823,7 @@
 }, {
   "_id" : "SH07",
   "formName" : "SH07 - Notify a cancellation of shares held by or for a public company",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2831,7 +2831,7 @@
 }, {
   "_id" : "SH08",
   "formName" : "SH08 - Notify a name or other designation of class of shares",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2839,7 +2839,7 @@
 }, {
   "_id" : "SH09",
   "formName" : "SH09 - Allotting a new class of shares by an unlimited company",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2847,7 +2847,7 @@
 }, {
   "_id" : "SH10",
   "formName" : "SH10 - Give notice of particulars of variation of rights attached to shares",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2855,7 +2855,7 @@
 }, {
   "_id" : "SH11",
   "formName" : "SH11 - Give notice of a new class of members",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2863,7 +2863,7 @@
 }, {
   "_id" : "SH12",
   "formName" : "SH12 - Give notice of particulars of variation of class rights",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2871,7 +2871,7 @@
 }, {
   "_id" : "SH13",
   "formName" : "SH13 - Give notice of name or other designation of class of members",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2879,7 +2879,7 @@
 }, {
   "_id" : "SH14",
   "formName" : "SH14 - Notify a redenomination of shares",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2887,7 +2887,7 @@
 }, {
   "_id" : "SH15",
   "formName" : "SH15 - Notify a reduction of capital following redenomination",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2895,7 +2895,7 @@
 }, {
   "_id" : "SH16",
   "formName" : "SH16 - Give notice of application to court to cancel special resolution",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
@@ -2903,9 +2903,42 @@
 }, {
   "_id" : "SH17",
   "formName" : "SH17 - Give notice by the company of application to cancel special resolution",
-  "formCategory" : "SH",
+  "formCategory" : "SH-OTHER",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
   "messageTextIdList": [1,4]
-} ]
+}, {
+  "_id" : "S-CAP-RES",
+  "formName" : "Resolution - Approving a share capital reduction",
+  "formCategory" : "SH-RED",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
+}, {
+  "_id" : "CAP-SS",
+  "formName" : "Solvency statement",
+  "formCategory" : "SH-RED",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
+}, {
+  "_id" : "SH20",
+  "formName" : "Statement by directors",
+  "formCategory" : "SH-RED",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
+}, {
+  "_id" : "SH19",
+  "formName" : "SH19 - Statement of capital when reducing capital in a company",
+  "formCategory" : "SH-RED",
+  "fee" : "SH19",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true,
+  "messageTextIdList": [1,4]
+}
+]

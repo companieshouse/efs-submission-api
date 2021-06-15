@@ -167,4 +167,15 @@
   "_id" : "INSCROA",
   "categoryName" : "Change a company’s registered office address",
   "parent" : "INS"
-} ]
+}, {
+  "_id": "SH-RED",
+  "categoryName": "Reduction of capital documents",
+  "categoryHint": "Form SH19, solvency statement, statement by directors and resolution",
+  "parent": "SH"
+},{
+  "_id": "SH-OTHER",
+  "categoryName": "Other share capital documents",
+  "categoryHint": "Form SH02, SH04, SH05, SH06, SH07, SH08, SH09, SH10, SH11, SH12, SH13, SH14, SH15, SH16, SH17 and resolution",
+  "parent": "SH"
+}
+]
