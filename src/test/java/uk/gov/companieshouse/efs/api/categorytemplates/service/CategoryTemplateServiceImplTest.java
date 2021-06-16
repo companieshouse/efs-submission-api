@@ -79,8 +79,8 @@ class CategoryTemplateServiceImplTest {
 
         //given
         String categoryId = "CC01";
-        CategoryTemplate category = new CategoryTemplate(categoryId, "CatCat", null, null);
-        CategoryTemplateApi mappedCategory = new CategoryTemplateApi(categoryId, "CatCat", null, null);
+        CategoryTemplate category = new CategoryTemplate(categoryId, "CatCat", null, null, null);
+        CategoryTemplateApi mappedCategory = new CategoryTemplateApi(categoryId, "CatCat", null, null, null);
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
         when(mapper.map(category)).thenReturn(mappedCategory);
@@ -112,7 +112,7 @@ class CategoryTemplateServiceImplTest {
 
         //given
         String categoryId = "CC01";
-        CategoryTemplate mappedCategory = new CategoryTemplate(categoryId, "CatCat", null, null);
+        CategoryTemplate mappedCategory = new CategoryTemplate(categoryId, "CatCat", null, null, null);
 
         List<CategoryTemplate> listCategory = new ArrayList<>();
         listCategory.add(mappedCategory);
