@@ -34,6 +34,13 @@ class PaymentReportEmailConfigTest {
     }
 
     @Test
+    void setGetSpecialCapitalEmailAddress() {
+        testConfig.setSpecialCapitalEmailAddress("sh19");
+
+        assertThat(testConfig.getSpecialCapitalEmailAddress(), is("sh19"));
+    }
+
+    @Test
     void testEqualsAndHashCode() {
         EqualsVerifier.forClass(PaymentReportEmailConfig.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS)
             .verify();

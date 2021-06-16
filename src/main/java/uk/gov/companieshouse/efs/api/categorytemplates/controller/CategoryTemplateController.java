@@ -72,7 +72,6 @@ public class CategoryTemplateController {
      */
     @GetMapping(value = "/category-template/{id}")
     public ResponseEntity<CategoryTemplateApi> getCategoryTemplate(@PathVariable String id, HttpServletRequest request) {
-
         try {
             return ResponseEntity.ok().body(categoryService.getCategoryTemplate(id));
         } catch (Exception ex) {
@@ -82,5 +81,11 @@ public class CategoryTemplateController {
             logger.error("Failed to get category template", ex, debug);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping(value = "/category-template/")
+    public ResponseEntity<CategoryTemplateApi> getRootCategory(HttpServletRequest request) {
+        final String id = "ROOT";
+        return getCategoryTemplate(id, request);
     }
 }

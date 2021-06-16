@@ -39,11 +39,22 @@ public class PaymentReportEmailMapper {
 
     private PaymentReportEmailData fromPaymentReport(PaymentReportEmailModel model) {
         return PaymentReportEmailData.builder()
-            .withTo(model.getFileName().contains("Scottish") ? config.getScottishEmailAddress() : config.getFinanceEmailAddress())
+            .withTo(getEmailAddressForReportFilename(model))
             .withSubject(model.getFileName())
             .withFileLink(model.getFileLink())
             .withFileName(model.getFileName())
             .witHasNoPaymentTransactions(model.getHasNoPaymentTransactions())
             .build();
+    }
+
+    private String getEmailAddressForReportFilename(final PaymentReportEmailModel model) {
+        String filename = model.getFileName();
+        if (filename.contains("Scottish")) {
+            return config.getScottishEmailAddress();
+        } else if (filename.contains("SH19")) {
+            return config.getSpecialCapitalEmailAddress();
+        } else {
+            return config.getFinanceEmailAddress();
+        }
     }
 }
