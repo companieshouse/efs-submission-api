@@ -10,7 +10,8 @@
   "_id": "SH",
   "categoryName": "Share capital",
   "categoryHint": "SH forms, statement by directors and solvency statement",
-  "parent": ""
+  "parent": "",
+  "guidanceTexts": [0]
 }, {
   "_id" : "RP",
   "categoryName" : "Registrar's powers",
@@ -171,7 +172,8 @@
   "_id": "SH-RED",
   "categoryName": "Reduction of capital documents",
   "categoryHint": "Form SH19, solvency statement, statement by directors and resolution",
-  "parent": "SH"
+  "parent": "SH",
+  "guidanceTexts": [0]
 },{
   "_id": "SH-OTHER",
   "categoryName": "Other share capital documents",
