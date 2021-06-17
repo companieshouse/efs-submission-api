@@ -311,12 +311,13 @@
   "isFesEnabled" : true,
   "messageTextIdList": [1,4]
 }, {
-  "_id" : "RESOLUTIONS",
+  "_id" : "RESOLUTIONS_CC",
   "formName" : "Resolution",
   "formCategory" : "CC",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
+  "fesDocType": "RESOLUTIONS",
   "messageTextIdList": [1,4]
 }, {
   "_id" : "MT01",
@@ -2788,6 +2789,16 @@
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
   "messageTextIdList": [1,4]
+}, {
+  "_id" : "RESOLUTIONS_SH-OTHER",
+  "formName" : "Resolution - Part of a share capital submission (not including reduction of capital)",
+  "formCategory" : "SH-OTHER",
+  "fee" : "",
+  "isAuthenticationRequired" : true,
+  "isFesEnabled" : true,
+  "fesDocType" : "RESOLUTIONS",
+  "messageTextIdList": [1,4]
+}, {
 }, {
   "_id" : "SH02",
   "formName" : "SH02 - Consolidate, sub-divide, redeem shares or re-convert stock into shares",

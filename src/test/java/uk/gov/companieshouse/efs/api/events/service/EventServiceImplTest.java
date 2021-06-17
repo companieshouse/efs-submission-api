@@ -1,5 +1,25 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.efs.events.FileConversionResultStatusApi;
 import uk.gov.companieshouse.api.model.efs.events.FileConversionStatusApi;
+import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
@@ -26,6 +47,7 @@ import uk.gov.companieshouse.efs.api.events.service.model.Decision;
 import uk.gov.companieshouse.efs.api.events.service.model.DecisionResult;
 import uk.gov.companieshouse.efs.api.events.service.model.FesFileModel;
 import uk.gov.companieshouse.efs.api.events.service.model.FesLoaderModel;
+import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
@@ -38,27 +60,6 @@ import uk.gov.companieshouse.efs.api.submissions.service.exception.FileNotFoundE
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionIncorrectStateException;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EventServiceImplTest {
@@ -86,6 +87,9 @@ class EventServiceImplTest {
 
     @Mock
     private SubmissionService submissionService;
+    
+    @Mock
+    private FormTemplateService formTemplateService;
 
     @Mock
     private FormDetails formDetails;
@@ -126,7 +130,9 @@ class EventServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        this.eventService = new EventServiceImpl(submissionService, emailService, repository, currentTimestampGenerator, 50, decisionEngine, barcodeGeneratorService, tiffDownloadService, fesLoaderService, executionEngine, formCategoryToEmailAddressService, supportHours, businessHours);
+        this.eventService = new EventServiceImpl(submissionService, formTemplateService, emailService, repository,
+            currentTimestampGenerator, 50, decisionEngine, barcodeGeneratorService, tiffDownloadService,
+            fesLoaderService, executionEngine, formCategoryToEmailAddressService, supportHours, businessHours);
     }
 
     @Test
@@ -419,6 +425,8 @@ class EventServiceImplTest {
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
         when(formDetails.getFormType()).thenReturn("SH01");
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
+        when(formTemplateService.getFormTemplate("SH01")).thenReturn(
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
 
         //when
         eventService.submitToFes();
@@ -430,6 +438,38 @@ class EventServiceImplTest {
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
                 "SH01", Collections.singletonList(new FesFileModel(null, 0)), now));
+        verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
+    }
+
+    @Test
+    void testSubmitToFesWithMappedFesDocType() {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        String convertedFileId = "1234";
+        when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
+        when(submission.getId()).thenReturn("1234abcd");
+        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(submission.getFormDetails()).thenReturn(formDetails);
+        when(submission.getCompany()).thenReturn(company);
+        when(submission.getSubmittedAt()).thenReturn(now);
+        when(company.getCompanyName()).thenReturn("abc");
+        when(company.getCompanyNumber()).thenReturn("1223456");
+        when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
+        when(formDetails.getFormType()).thenReturn("SH01");
+        when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
+        when(formTemplateService.getFormTemplate("SH01")).thenReturn(
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, "FES-DOC-TYPE", null));
+
+        //when
+        eventService.submitToFes();
+
+        //then
+        verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
+        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(barcodeGeneratorService, times(1)).getBarcode(now);
+        verify(tiffDownloadService).downloadTiffFile(convertedFileId);
+        verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
+                "FES-DOC-TYPE", Collections.singletonList(new FesFileModel(null, 0)), now));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -450,6 +490,8 @@ class EventServiceImplTest {
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
         when(formDetails.getFormType()).thenReturn("SH01");
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
+        when(formTemplateService.getFormTemplate("SH01")).thenReturn(
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
 
         //when
         eventService.submitToFes();
@@ -502,7 +544,7 @@ class EventServiceImplTest {
     }
 
     @Test
-    void testHandlesFesLoaderExecption() {
+    void testHandlesFesLoaderException() {
         //given
         LocalDateTime now = LocalDateTime.now();
         String convertedFileId = "1234";
@@ -517,6 +559,8 @@ class EventServiceImplTest {
 
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
         when(formDetails.getFormType()).thenReturn("SH01");
+        when(formTemplateService.getFormTemplate("SH01")).thenReturn(
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
 
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
 
@@ -540,6 +584,8 @@ class EventServiceImplTest {
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
         when(formDetails.getFormType()).thenReturn("SH01");
+        when(formTemplateService.getFormTemplate("SH01")).thenReturn(
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
@@ -572,6 +618,8 @@ class EventServiceImplTest {
         when(failedSubmission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
         when(formDetails.getFormType()).thenReturn("SH01");
+        when(formTemplateService.getFormTemplate("SH01")).thenReturn(
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
 
         when(submission.getSubmittedAt()).thenReturn(now);
@@ -609,6 +657,8 @@ class EventServiceImplTest {
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
         when(formDetails.getFormType()).thenReturn("SH01");
         when(formDetails.getBarcode()).thenReturn("Y9999999");
+        when(formTemplateService.getFormTemplate("SH01")).thenReturn(
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
 
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
 

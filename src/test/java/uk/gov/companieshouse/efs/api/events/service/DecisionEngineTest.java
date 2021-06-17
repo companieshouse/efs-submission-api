@@ -13,14 +13,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.efs.api.events.service.model.Decision;
 import uk.gov.companieshouse.efs.api.events.service.model.DecisionResult;
@@ -135,7 +133,8 @@ class DecisionEngineTest {
                 .withFormType("AD01")
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
-        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, true, null)));
+        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, true,
+            "FES", null)));
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine
@@ -162,7 +161,8 @@ class DecisionEngineTest {
                 .withFormType("AD01")
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
-        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, false, null)));
+        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, false,
+            "FES", null)));
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine

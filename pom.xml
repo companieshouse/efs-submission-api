@@ -20,7 +20,7 @@
 
         <java.version>1.8</java.version>
         <java-session-handler.version>2.2.0</java-session-handler.version>
-        <private-api-sdk-java.version>2.0.70</private-api-sdk-java.version>
+        <private-api-sdk-java.version>2.0.71</private-api-sdk-java.version>
         <sdk-manager-java.version>1.5.1</sdk-manager-java.version>
         <api-helper-java.version>1.1.0-rc1</api-helper-java.version>
         <rest-service-common-library.version>0.0.3</rest-service-common-library.version>

@@ -44,6 +44,10 @@ public class FormTemplate {
     @JsonProperty("fes_enabled")
     @Field
     private boolean isFesEnabled;
+    
+    @JsonProperty("fes_doc_type")
+    @Field
+    private String fesDocType;
 
     @JsonProperty("message_text_list")
     @Field
@@ -57,10 +61,11 @@ public class FormTemplate {
      * @param fee the form submission fee
      * @param isAuthenticationRequired is authentication required
      * @param isFesEnabled is fes enabled
+     * @param fesDocType FES doc type (if different from formType, otherwise null) 
      * @param messageTextIdList list of message textids
      */
-    public FormTemplate(final String formType, final String formName, final String formCategory,
-        final String fee, final boolean isAuthenticationRequired, final boolean isFesEnabled,
+    public FormTemplate(final String formType, final String formName, final String formCategory, final String fee,
+        final boolean isAuthenticationRequired, final boolean isFesEnabled, final String fesDocType,
         final List<Integer> messageTextIdList) {
         this.formType = formType;
         this.formName = formName;
@@ -68,6 +73,7 @@ public class FormTemplate {
         this.fee = fee;
         this.isAuthenticationRequired = isAuthenticationRequired;
         this.isFesEnabled = isFesEnabled;
+        this.fesDocType = fesDocType;
         this.messageTextIdList = messageTextIdList;
     }
 
@@ -95,6 +101,10 @@ public class FormTemplate {
         return isFesEnabled;
     }
 
+    public String getFesDocType() {
+        return fesDocType;
+    }
+
     public List<Integer> getMessageTextIdList() {
         return messageTextIdList;
     }
@@ -112,19 +122,17 @@ public class FormTemplate {
             return false;
         }
         final FormTemplate that = (FormTemplate) o;
-        return isAuthenticationRequired() == that.isAuthenticationRequired()
-               && isFesEnabled() == that.isFesEnabled()
-               && Objects.equals(getFormType(), that.getFormType())
-               && Objects.equals(getFormName(), that.getFormName())
-               && Objects.equals(getFormCategory(), that.getFormCategory())
-               && Objects.equals(getFee(), that.getFee())
-               && Objects.equals(getMessageTextIdList(), that.getMessageTextIdList());
+        return isAuthenticationRequired() == that.isAuthenticationRequired() && isFesEnabled() == that.isFesEnabled()
+            && Objects.equals(getFormType(), that.getFormType()) && Objects.equals(getFormName(), that.getFormName())
+            && Objects.equals(getFormCategory(), that.getFormCategory()) && Objects.equals(getFee(), that.getFee())
+            && Objects.equals(getFesDocType(), that.getFesDocType()) && Objects.equals(getMessageTextIdList(),
+            that.getMessageTextIdList());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFormType(), getFormName(), getFormCategory(), getFee(),
-            isAuthenticationRequired(), isFesEnabled(), getMessageTextIdList());
+        return Objects.hash(getFormType(), getFormName(), getFormCategory(), getFee(), isAuthenticationRequired(),
+            isFesEnabled(), getFesDocType(), getMessageTextIdList());
     }
 
     @Override
@@ -136,6 +144,7 @@ public class FormTemplate {
                 .append("fee", getFee())
                 .append("isAuthenticationRequired", isAuthenticationRequired())
                 .append("isFesEnabled", isFesEnabled())
+                .append("fesDocType", getFesDocType())
                 .append("messageTextIdList", messageTextIdList)
                 .toString();
     }
