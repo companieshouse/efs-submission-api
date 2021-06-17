@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,6 +54,7 @@ class PaymentReportServiceImplTest {
     private static final FormDetails FORM_NON_SCOT_FEE = new FormDetails(null, "CS01", null);
     private static final String REPORT_SCOT = "'EFS_ScottishPaymentTransactions_'yyyy-MM-dd'.csv'";
     private static final String REPORT_FAILED = "'EFS_FailedPaymentTransactions_'yyyy-MM-dd'.csv'";
+    private static final String REPORT_SH19 = "'EFS_SH19Transactions_'yyyy-MM-dd'.csv'";
     private static final List<String> SCOT_FORM_LIST = Arrays.asList("SQPCS01", "SLPCS01", "SQP1", "LP5(S)", "LP7(S)");
     private static final String BUCKET_NAME = "TEST_BUCKET";
     private static final String ENV_NAME = "TEST_ENV";
@@ -112,6 +114,7 @@ class PaymentReportServiceImplTest {
         ReflectionTestUtils.setField(spyService, "scotlandReportPattern", REPORT_SCOT);
         ReflectionTestUtils.setField(spyService, "scotlandForms", SCOT_FORM_LIST);
         ReflectionTestUtils.setField(spyService, "failedTransactionsFinanceReportPattern", REPORT_FAILED);
+        ReflectionTestUtils.setField(spyService, "sh19FinanceReportPattern", REPORT_SH19);
         ReflectionTestUtils.setField(spyService, "reportPeriodDaysBeforeToday", reportPeriodDaysBeforeToday);
 
         return spyService;
@@ -189,7 +192,12 @@ class PaymentReportServiceImplTest {
     void sendFinancePaymentFailureReport() throws IOException {
         final String failedReportName = "EFS_FailedPaymentTransactions_2020-08-31.csv";
         final String failedFileLink = "link.to.uploaded.failed.file";
+        final String sh19ReportName = "EFS_SH19Transactions_2020-08-31.csv";
+        final String successFileLink = "link.to.uploaded.success.file";
 
+        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, START_DATE,
+            Arrays.asList(submissionSFF, submissionNSFF));
+        expectReportUpload(successFileLink, sh19ReportName);
         expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES, START_DATE,
             Arrays.asList(submissionSFF, submissionNSFF));
         expectReportUpload(failedFileLink, failedReportName);
@@ -197,10 +205,14 @@ class PaymentReportServiceImplTest {
 
         testService.sendFinancePaymentReports();
 
-        verify(emailService).sendPaymentReportEmail(emailCaptor.capture());
+        verify(emailService, times(2)).sendPaymentReportEmail(emailCaptor.capture());
 
-        assertThat(emailCaptor.getValue().getFileLink(), is(failedFileLink));
-        assertThat(emailCaptor.getValue().getFileName(), is(failedReportName.replace(".csv", "")));
+        final List<PaymentReportEmailModel> values = emailCaptor.getAllValues();
+
+        assertThat(values.get(0).getFileLink(), is(successFileLink));
+        assertThat(values.get(0).getFileName(), is(sh19ReportName.replace(".csv", "")));
+        assertThat(values.get(1).getFileLink(), is(failedFileLink));
+        assertThat(values.get(1).getFileName(), is(failedReportName.replace(".csv", "")));
 
     }
 
@@ -208,17 +220,25 @@ class PaymentReportServiceImplTest {
     void sendFinancePaymentFailureReportWhenEmpty() throws IOException {
         final String failedReportName = "EFS_FailedPaymentTransactions_2020-08-31.csv";
         final String failedFileLink = "link.to.uploaded.failed.file";
+        final String sh19ReportName = "EFS_SH19Transactions_2020-08-31.csv";
+        final String successFileLink = "link.to.uploaded.success.file";
 
+        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, START_DATE, Collections.emptyList());
+        expectReportUpload(successFileLink, sh19ReportName);
         expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES, START_DATE, Collections.emptyList());
         expectReportUpload(failedFileLink, failedReportName);
         when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
 
         testService.sendFinancePaymentReports();
 
-        verify(emailService).sendPaymentReportEmail(emailCaptor.capture());
+        verify(emailService, times(2)).sendPaymentReportEmail(emailCaptor.capture());
 
-        assertThat(emailCaptor.getValue().getFileLink(), is(failedFileLink));
-        assertThat(emailCaptor.getValue().getFileName(), is(failedReportName.replace(".csv", "")));
+        final List<PaymentReportEmailModel> values = emailCaptor.getAllValues();
+
+        assertThat(values.get(0).getFileLink(), is(successFileLink));
+        assertThat(values.get(0).getFileName(), is(sh19ReportName.replace(".csv", "")));
+        assertThat(values.get(1).getFileLink(), is(failedFileLink));
+        assertThat(values.get(1).getFileName(), is(failedReportName.replace(".csv", "")));
 
     }
 
