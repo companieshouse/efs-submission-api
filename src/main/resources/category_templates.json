@@ -172,7 +172,8 @@
   "_id": "SH-RED",
   "categoryName": "Reduction of capital documents",
   "categoryHint": "Form SH19, solvency statement, statement by directors and resolution",
-  "parent": "SH"
+  "parent": "SH",
+  "guidanceTexts": [0]
 },{
   "_id": "SH-OTHER",
   "categoryName": "Other share capital documents",
