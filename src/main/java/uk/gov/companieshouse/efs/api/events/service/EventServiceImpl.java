@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.efs.events.FileConversionStatusApi;
+import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
@@ -28,6 +29,7 @@ import uk.gov.companieshouse.efs.api.events.service.exception.InvalidTiffExcepti
 import uk.gov.companieshouse.efs.api.events.service.exception.TiffDownloadException;
 import uk.gov.companieshouse.efs.api.events.service.model.FesFileModel;
 import uk.gov.companieshouse.efs.api.events.service.model.FesLoaderModel;
+import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository;
@@ -52,6 +54,7 @@ public class EventServiceImpl implements EventService {
     private static final String SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT = "dd/MM/yyyy";
 
     private SubmissionService submissionService;
+    private FormTemplateService formTemplateService;
     private EmailService emailService;
     private SubmissionRepository repository;
     private CurrentTimestampGenerator currentTimestampGenerator;
@@ -66,14 +69,14 @@ public class EventServiceImpl implements EventService {
     private int businessDelayInHours;
 
     @Autowired
-    public EventServiceImpl(SubmissionService submissionService, EmailService emailService,
-                            SubmissionRepository repository, CurrentTimestampGenerator currentTimestampGenerator,
-                            @Value("${max.queue.messages}") int maxQueuedMessages, DecisionEngine decisionEngine,
-                            BarcodeGeneratorService barcodeGeneratorService, TiffDownloadService tiffDownloadService,
-                            FesLoaderService fesLoaderService, ExecutionEngine executionEngine, FormCategoryToEmailAddressService formCategoryToEmailAddressService,
-                            @Value("${submission.processing.support.hours}") int supportDelayInHours,
-                            @Value("${submission.processing.business.hours}") int businessDelayInHours) {
+    public EventServiceImpl(SubmissionService submissionService, final FormTemplateService formTemplateService,
+        EmailService emailService, SubmissionRepository repository, CurrentTimestampGenerator currentTimestampGenerator,
+        @Value("${max.queue.messages}") int maxQueuedMessages, DecisionEngine decisionEngine, BarcodeGeneratorService barcodeGeneratorService, TiffDownloadService tiffDownloadService,
+        FesLoaderService fesLoaderService, ExecutionEngine executionEngine, FormCategoryToEmailAddressService formCategoryToEmailAddressService,
+        @Value("${submission.processing.support.hours}") int supportDelayInHours,
+        @Value("${submission.processing.business.hours}") int businessDelayInHours) {
         this.submissionService = submissionService;
+        this.formTemplateService = formTemplateService;
         this.emailService = emailService;
         this.repository = repository;
         this.currentTimestampGenerator = currentTimestampGenerator;
@@ -183,9 +186,13 @@ public class EventServiceImpl implements EventService {
                 LOGGER.debug(String.format("Retrieved [%d] files for submission [%s] from S3", tiffFiles.size(), submission.getId()));
 
                 // insert into FES DB
+                final String efsFormId = submission.getFormDetails().getFormType();
+                final FormTemplateApi formTemplate = formTemplateService.getFormTemplate(efsFormId);
+                final String fesDocType =
+                    Optional.ofNullable(formTemplate.getFesDocType()).orElseGet(formTemplate::getFormType);
+
                 fesLoaderService.insertSubmission(new FesLoaderModel(barcode, submission.getCompany().getCompanyName(),
-                        submission.getCompany().getCompanyNumber(), submission.getFormDetails().getFormType(),
-                        tiffFiles, submittedAt));
+                    submission.getCompany().getCompanyNumber(), fesDocType, tiffFiles, submittedAt));
                 LOGGER.debug(String.format("Inserted submission details into FES DB for submission [%s]",
                         submission.getId()));
 

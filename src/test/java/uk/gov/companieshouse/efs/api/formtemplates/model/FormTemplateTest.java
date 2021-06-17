@@ -20,7 +20,7 @@ class FormTemplateTest {
 
     @BeforeEach
     void setUp() {
-        testFormTemplate = new FormTemplate("CC01", "Form01", "CC", "100", false, false, null);
+        testFormTemplate = new FormTemplate("CC01", "Form01", "CC", "100", false, true, "FES", null);
         JacksonTester.initFields(this, new ObjectMapper());
     }
 
@@ -44,7 +44,7 @@ class FormTemplateTest {
         assertThat(testFormTemplate.toString(), Matchers.is(
                 //@formatter:off
                 "FormTemplate[formType=CC01,formName=Form01,formCategory=CC,fee=100," +
-                        "isAuthenticationRequired=false,isFesEnabled=false,messageTextIdList=<null>]"
+                        "isAuthenticationRequired=false,isFesEnabled=true,fesDocType=FES,messageTextIdList=<null>]"
                 //@formatter:on
         ));
     }
