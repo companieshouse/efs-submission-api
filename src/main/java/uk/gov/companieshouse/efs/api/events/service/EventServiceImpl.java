@@ -179,6 +179,12 @@ public class EventServiceImpl implements EventService {
 
                 final String efsFormId = submission.getFormDetails().getFormType();
                 final FormTemplateApi formTemplate = formTemplateService.getFormTemplate(efsFormId);
+                
+                if (formTemplate == null) {
+                    throw new SubmissionIncorrectStateException(
+                        String.format("Unrecognised form type '%s' in form details", efsFormId));
+                }
+                
                 final String fesDocType =
                     Optional.ofNullable(formTemplate.getFesDocType()).orElseGet(formTemplate::getFormType);
                 LOGGER.debug(String.format("Submit to FES: [%s]", fesDocType));
@@ -200,7 +206,8 @@ public class EventServiceImpl implements EventService {
 
                 submissionService.updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
 
-            } catch (BarcodeException | TiffDownloadException | FesLoaderException | InvalidTiffException ex) {
+            }
+            catch (SubmissionIncorrectStateException | BarcodeException | TiffDownloadException | FesLoaderException | InvalidTiffException ex) {
                 LOGGER.errorContext(submission.getId(), "Unable to submit to fes" +
                         ex.getMessage(), ex, null);
             }
