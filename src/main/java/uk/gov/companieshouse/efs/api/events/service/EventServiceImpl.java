@@ -177,6 +177,18 @@ public class EventServiceImpl implements EventService {
                     submissionService.updateSubmissionBarcode(submission.getId(), barcode);
                 }
 
+                final String efsFormId = submission.getFormDetails().getFormType();
+                final FormTemplateApi formTemplate = formTemplateService.getFormTemplate(efsFormId);
+                
+                if (formTemplate == null) {
+                    throw new SubmissionIncorrectStateException(
+                        String.format("Unrecognised form type '%s' in form details", efsFormId));
+                }
+                
+                final String fesDocType =
+                    Optional.ofNullable(formTemplate.getFesDocType()).orElseGet(formTemplate::getFormType);
+                LOGGER.debug(String.format("Submit to FES: [%s]", fesDocType));
+
                 // retrieve TIFF file
                 List<FesFileModel> tiffFiles = new ArrayList<>();
                 submission.getFormDetails().getFileDetailsList().forEach(
@@ -186,19 +198,16 @@ public class EventServiceImpl implements EventService {
                 LOGGER.debug(String.format("Retrieved [%d] files for submission [%s] from S3", tiffFiles.size(), submission.getId()));
 
                 // insert into FES DB
-                final String efsFormId = submission.getFormDetails().getFormType();
-                final FormTemplateApi formTemplate = formTemplateService.getFormTemplate(efsFormId);
-                final String fesDocType =
-                    Optional.ofNullable(formTemplate.getFesDocType()).orElseGet(formTemplate::getFormType);
 
                 fesLoaderService.insertSubmission(new FesLoaderModel(barcode, submission.getCompany().getCompanyName(),
                     submission.getCompany().getCompanyNumber(), fesDocType, tiffFiles, submittedAt));
-                LOGGER.debug(String.format("Inserted submission details into FES DB for submission [%s]",
-                        submission.getId()));
+                LOGGER.debug(String.format("Inserted submission details into FES DB for submission [%s], form [%s]",
+                        submission.getId(), fesDocType));
 
                 submissionService.updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
 
-            } catch (BarcodeException | TiffDownloadException | FesLoaderException | InvalidTiffException ex) {
+            }
+            catch (SubmissionIncorrectStateException | BarcodeException | TiffDownloadException | FesLoaderException | InvalidTiffException ex) {
                 LOGGER.errorContext(submission.getId(), "Unable to submit to fes" +
                         ex.getMessage(), ex, null);
             }

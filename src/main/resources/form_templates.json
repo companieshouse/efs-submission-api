@@ -311,13 +311,12 @@
   "isFesEnabled" : true,
   "messageTextIdList": [1,4]
 }, {
-  "_id" : "RESOLUTIONS_CC",
+  "_id" : "RESOLUTIONS",
   "formName" : "Resolution",
   "formCategory" : "CC",
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
-  "fesDocType": "RESOLUTIONS",
   "messageTextIdList": [1,4]
 }, {
   "_id" : "MT01",

@@ -529,6 +529,9 @@ class EventServiceImplTest {
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getId()).thenReturn("1234abcd");
         when(submission.getFormDetails()).thenReturn(formDetails);
+        when(formDetails.getFormType()).thenReturn("SH01");
+        when(formTemplateService.getFormTemplate("SH01")).thenReturn(
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(tiffDownloadService.downloadTiffFile(any())).thenThrow(TiffDownloadException.class);
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
@@ -540,6 +543,26 @@ class EventServiceImplTest {
         verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
         verify(submissionService).updateSubmissionBarcode(submission.getId(), "Y123XYZ");
         verifyNoInteractions(fesLoaderService);
+        verifyNoMoreInteractions(submissionService);
+    }
+
+    @Test
+    void formTemplateMissing() {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(submission.getId()).thenReturn("1234abcd");
+        when(submission.getFormDetails()).thenReturn(formDetails);
+        when(formDetails.getFormType()).thenReturn("SH01");
+        when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
+
+        //when
+        eventService.submitToFes();
+
+        //then
+        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(submissionService).updateSubmissionBarcode(submission.getId(), "Y123XYZ");
+        verifyNoInteractions(fesLoaderService, tiffDownloadService);
         verifyNoMoreInteractions(submissionService);
     }
 
