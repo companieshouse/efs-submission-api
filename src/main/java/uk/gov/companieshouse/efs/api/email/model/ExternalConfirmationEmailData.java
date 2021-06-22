@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.email.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstan
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
 
+@JsonDeserialize(builder = ExternalConfirmationEmailData.Builder.class)
 public class ExternalConfirmationEmailData {
 
     private String to;
