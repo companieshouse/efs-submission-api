@@ -1,13 +1,11 @@
 package uk.gov.companieshouse.efs.api.email.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-@JsonDeserialize(builder = ExternalRejectEmailData.Builder.class)
 public class ExternalRejectEmailData {
     private String to;
     private String subject;

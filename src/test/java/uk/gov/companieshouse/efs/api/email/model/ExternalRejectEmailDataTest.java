@@ -1,13 +1,10 @@
 package uk.gov.companieshouse.efs.api.email.model;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -87,25 +84,4 @@ class ExternalRejectEmailDataTest {
         EqualsVerifier.forClass(ExternalRejectEmailData.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
     }
 
-    @Test
-    void deserializeWithBuilder() throws JsonProcessingException {
-        String json =
-            //@formatter:off
-            "{" 
-                + "\"to\":\"recipient\"," 
-                + "\"subject\":\"subject\"," 
-                + "\"companyNumber\":\"10010010\"," 
-                + "\"companyName\":\"TEST COMPANY\"," 
-                + "\"confirmationReference\":\"reference\"," 
-                + "\"formType\":\"form\"," 
-                + "\"rejectionDate\":\"2020-02-20\"," 
-                + "\"rejectReasons\":[\"reason1\",\"reason2\"]" 
-            + "}\n";
-            //@formatter:on
-
-        final ExternalRejectEmailData deserializedData =
-            new ObjectMapper().readValue(json, ExternalRejectEmailData.class);
-        
-        assertThat(deserializedData, is(equalTo(testData)));
-    }
 }
