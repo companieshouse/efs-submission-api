@@ -29,6 +29,7 @@ class FormCategoryToEmailAddressServiceTest {
     protected static final String EMAIL_SP = "internal_SP_demo@ch.gov.uk";
     protected static final String EMAIL_INS = "internal_INS_demo@ch.gov.uk";
     protected static final String EMAIL_SH = "internal_SH_demo@ch.gov.uk";
+    protected static final String EMAIL_SH_RED = "internal_SH-RED_demo@ch.gov.uk";
     private static final List<String> SCOTLAND_COMPANY_PREFIXES = Arrays.asList("SC","SL","SO","SG","SF");
     private static final List<String> NORTHERN_IRELAND_COMPANY_PREFIXES = Arrays.asList("NI","NC","R");
     @Mock
@@ -43,10 +44,17 @@ class FormCategoryToEmailAddressServiceTest {
     @BeforeEach
     void setUp() {
         this.formCategoryToEmailAddressService =
-            new FormCategoryToEmailAddressService(formTemplateRepository, categoryTemplateService, EMAIL_CC, EMAIL_RP,
-                EMAIL_SCOT, EMAIL_NI, EMAIL_SP, EMAIL_INS, EMAIL_SH);
+            new FormCategoryToEmailAddressService(formTemplateRepository, categoryTemplateService);
         ReflectionTestUtils.setField(formCategoryToEmailAddressService, "scotlandCompanyPrefixes", SCOTLAND_COMPANY_PREFIXES);
         ReflectionTestUtils.setField(formCategoryToEmailAddressService, "northernIrelandCompanyPrefixes", NORTHERN_IRELAND_COMPANY_PREFIXES);
+        ReflectionTestUtils.setField(formCategoryToEmailAddressService, "internalConstitutionEmailAddress", EMAIL_CC);
+        ReflectionTestUtils.setField(formCategoryToEmailAddressService, "internalRegistryFunctionEmailAddress", EMAIL_RP);
+        ReflectionTestUtils.setField(formCategoryToEmailAddressService, "internalScotEmailAddress", EMAIL_SCOT);
+        ReflectionTestUtils.setField(formCategoryToEmailAddressService, "internalNIEmailAddress", EMAIL_NI);
+        ReflectionTestUtils.setField(formCategoryToEmailAddressService, "internalScottishPartnershipsEmailAddress", EMAIL_SP);
+        ReflectionTestUtils.setField(formCategoryToEmailAddressService, "internalInsolvencyEmailAddress", EMAIL_INS);
+        ReflectionTestUtils.setField(formCategoryToEmailAddressService, "internalShareCapitalEmailAddress", EMAIL_SH);
+        ReflectionTestUtils.setField(formCategoryToEmailAddressService, "internalShareCapitalReductionEmailAddress", EMAIL_SH_RED);
     }
 
     @Test
@@ -59,7 +67,7 @@ class FormCategoryToEmailAddressServiceTest {
             .thenReturn(CategoryTypeConstants.CHANGE_OF_CONSTITUTION);
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForFormCategory("CC01");
 
         //then
@@ -76,7 +84,7 @@ class FormCategoryToEmailAddressServiceTest {
             .thenReturn(CategoryTypeConstants.SCOTTISH_LIMITED_PARTNERSHIP);
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForFormCategory("SLPPSC01");
 
         //then
@@ -93,7 +101,7 @@ class FormCategoryToEmailAddressServiceTest {
             .thenReturn(CategoryTypeConstants.SCOTTISH_QUALIFYING_PARTNERSHIP);
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForFormCategory("SQP2");
 
         //then
@@ -106,7 +114,7 @@ class FormCategoryToEmailAddressServiceTest {
         setUpRegPowersCategoryAndForm();
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForFormCategory("RP02A");
 
         //then
@@ -119,7 +127,7 @@ class FormCategoryToEmailAddressServiceTest {
         setUpRegPowersCategoryAndForm();
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "12345678");
 
         //then
@@ -132,7 +140,7 @@ class FormCategoryToEmailAddressServiceTest {
         setUpRegPowersCategoryAndForm();
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "SC123456");
 
         //then
@@ -145,7 +153,7 @@ class FormCategoryToEmailAddressServiceTest {
         setUpRegPowersCategoryAndForm();
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "SL123456");
 
         //then
@@ -158,7 +166,7 @@ class FormCategoryToEmailAddressServiceTest {
         setUpRegPowersCategoryAndForm();
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "NI123456");
 
         //then
@@ -171,7 +179,7 @@ class FormCategoryToEmailAddressServiceTest {
         setUpRegPowersCategoryAndForm();
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForRegPowersFormCategory("RP02A", "R123456");
 
         //then
@@ -187,7 +195,7 @@ class FormCategoryToEmailAddressServiceTest {
         when(categoryTemplateService.getTopLevelCategory("CIGA2000")).thenReturn(CategoryTypeConstants.INSOLVENCY);
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForFormCategory("MT01");
 
         //then
@@ -204,11 +212,26 @@ class FormCategoryToEmailAddressServiceTest {
             .thenReturn(CategoryTypeConstants.SHARE_CAPITAL);
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForFormCategory("SH02");
 
         //then
         assertEquals(EMAIL_SH, actual);
+    }
+
+    @Test
+    void testEmailAddressServiceReturnsEmailAddressForShareCapitalReductionForm() {
+        //given
+        when(formTemplateRepository.findAll()).thenReturn(Collections.singletonList(formTemplate));
+        when(formTemplate.getFormCategory()).thenReturn("SH-RED");
+        when(formTemplate.getFormType()).thenReturn("SH19");
+
+        //when
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
+        String actual = formCategoryToEmailAddressService.getEmailAddressForFormCategory("SH19");
+
+        //then
+        assertEquals(EMAIL_SH_RED, actual);
     }
 
     @Test
@@ -217,7 +240,7 @@ class FormCategoryToEmailAddressServiceTest {
         when(formTemplateRepository.findAll()).thenReturn(Collections.emptyList());
 
         //when
-        formCategoryToEmailAddressService.cacheFormTemplates();
+        formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
         String actual = formCategoryToEmailAddressService.getEmailAddressForFormCategory("AD01");
 
         //then
@@ -231,7 +254,7 @@ class FormCategoryToEmailAddressServiceTest {
         when(formTemplate.getFormCategory()).thenReturn(null);
 
         //when
-        Executable actual = () -> formCategoryToEmailAddressService.cacheFormTemplates();
+        Executable actual = () -> formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
 
         //then
         Exception ex = assertThrows(Exception.class, actual);
