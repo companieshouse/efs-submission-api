@@ -2,6 +2,8 @@ package uk.gov.companieshouse.efs.api.email.mapper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import com.google.common.base.Strings;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.email.config.ExternalRejectedEmailConfig;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
@@ -44,6 +46,7 @@ public class ExternalRejectEmailMapper {
                 .withFormType(model.getSubmission().getFormDetails().getFormType())
                 .withRejectionDate(model.getSubmission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())))
                 .withRejectReasons(model.getRejectReasons())
+                .withIsPaidForm(!Strings.isNullOrEmpty(model.getSubmission().getFeeOnSubmission()))
                 .build();
     }
 }

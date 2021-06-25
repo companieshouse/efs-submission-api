@@ -12,8 +12,9 @@ public class ExternalRejectEmailData {
     private String formType;
     private String rejectionDate;
     private List<String> rejectReasons;
+    private boolean isPaidForm;
 
-    public ExternalRejectEmailData(String to, String subject, String companyNumber, String companyName, String confirmationReference, String formType, String rejectionDate, List<String> rejectReasons) {
+    public ExternalRejectEmailData(String to, String subject, String companyNumber, String companyName, String confirmationReference, String formType, String rejectionDate, List<String> rejectReasons, boolean isPaidForm) {
         this.to = to;
         this.subject = subject;
         this.companyNumber = companyNumber;
@@ -22,6 +23,7 @@ public class ExternalRejectEmailData {
         this.formType = formType;
         this.rejectionDate = rejectionDate;
         this.rejectReasons = rejectReasons;
+        this.isPaidForm = isPaidForm;
     }
 
     public String getTo() {
@@ -88,6 +90,14 @@ public class ExternalRejectEmailData {
         this.rejectReasons = rejectReasons;
     }
 
+    public boolean isPaidForm() {
+        return isPaidForm;
+    }
+
+    public void setPaidForm(boolean paidForm) {
+        isPaidForm = paidForm;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -104,13 +114,15 @@ public class ExternalRejectEmailData {
                    .equals(getConfirmationReference(), that.getConfirmationReference()) && Objects
                    .equals(getFormType(), that.getFormType()) && Objects
                    .equals(getRejectionDate(), that.getRejectionDate()) && Objects
-                   .equals(getRejectReasons(), that.getRejectReasons());
+                   .equals(getRejectReasons(), that.getRejectReasons()) && Objects
+                   .equals(isPaidForm(), that.isPaidForm());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getTo(), getSubject(), getCompanyNumber(), getCompanyName(),
-            getConfirmationReference(), getFormType(), getRejectionDate(), getRejectReasons());
+            getConfirmationReference(), getFormType(), getRejectionDate(), getRejectReasons(),
+                isPaidForm());
     }
 
     public static Builder builder() {
@@ -127,6 +139,7 @@ public class ExternalRejectEmailData {
         private String formType;
         private String rejectionDate;
         private List<String> rejectReasons;
+        private boolean isPaidForm;
 
         public Builder withTo(String to) {
             this.to = to;
@@ -168,8 +181,13 @@ public class ExternalRejectEmailData {
             return this;
         }
 
+        public Builder withIsPaidForm(boolean isPaidForm) {
+            this.isPaidForm = isPaidForm;
+            return this;
+        }
+
         public ExternalRejectEmailData build() {
-            return new ExternalRejectEmailData(to, subject, companyNumber, companyName, confirmationReference, formType, rejectionDate, rejectReasons);
+            return new ExternalRejectEmailData(to, subject, companyNumber, companyName, confirmationReference, formType, rejectionDate, rejectReasons, isPaidForm);
         }
 
     }
