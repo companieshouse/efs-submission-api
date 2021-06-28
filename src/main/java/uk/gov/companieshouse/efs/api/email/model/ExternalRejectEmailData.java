@@ -1,7 +1,10 @@
 package uk.gov.companieshouse.efs.api.email.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class ExternalRejectEmailData {
     private String to;
@@ -13,79 +16,40 @@ public class ExternalRejectEmailData {
     private String rejectionDate;
     private List<String> rejectReasons;
 
-    public ExternalRejectEmailData(String to, String subject, String companyNumber, String companyName, String confirmationReference, String formType, String rejectionDate, List<String> rejectReasons) {
-        this.to = to;
-        this.subject = subject;
-        this.companyNumber = companyNumber;
-        this.companyName = companyName;
-        this.confirmationReference = confirmationReference;
-        this.formType = formType;
-        this.rejectionDate = rejectionDate;
-        this.rejectReasons = rejectReasons;
+    private ExternalRejectEmailData() {
+        // no direct instantiation
     }
 
     public String getTo() {
         return to;
     }
 
-    public void setTo(String to) {
-        this.to = to;
-    }
-
     public String getSubject() {
         return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
     }
 
     public String getCompanyNumber() {
         return companyNumber;
     }
 
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
-    }
-
     public String getCompanyName() {
         return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 
     public String getConfirmationReference() {
         return confirmationReference;
     }
 
-    public void setConfirmationReference(String confirmationReference) {
-        this.confirmationReference = confirmationReference;
-    }
-
     public String getFormType() {
         return formType;
-    }
-
-    public void setFormType(String formType) {
-        this.formType = formType;
     }
 
     public String getRejectionDate() {
         return rejectionDate;
     }
 
-    public void setRejectionDate(String rejectionDate) {
-        this.rejectionDate = rejectionDate;
-    }
-
     public List<String> getRejectReasons() {
-        return rejectReasons;
-    }
-
-    public void setRejectReasons(List<String> rejectReasons) {
-        this.rejectReasons = rejectReasons;
+        return Optional.ofNullable(rejectReasons).map(ArrayList::new).orElse(null);
     }
 
     @Override
@@ -119,57 +83,58 @@ public class ExternalRejectEmailData {
 
     public static class Builder {
 
-        private String to;
-        private String subject;
-        private String companyNumber;
-        private String companyName;
-        private String confirmationReference;
-        private String formType;
-        private String rejectionDate;
-        private List<String> rejectReasons;
+        private final List<Consumer<ExternalRejectEmailData>> buildSteps;
+
+        private Builder() {
+            buildSteps = new ArrayList<>();
+        }
 
         public Builder withTo(String to) {
-            this.to = to;
+            buildSteps.add(data -> data.to = to);
             return this;
         }
 
         public Builder withSubject(String subject) {
-            this.subject = subject;
+            buildSteps.add(data -> data.subject = subject);
             return this;
         }
 
         public Builder withCompanyNumber(String companyNumber) {
-            this.companyNumber = companyNumber;
+            buildSteps.add(data -> data.companyNumber = companyNumber);
             return this;
         }
 
         public Builder withCompanyName(String companyName) {
-            this.companyName = companyName;
+            buildSteps.add(data -> data.companyName = companyName);
             return this;
         }
 
         public Builder withConfirmationReference(String confirmationReference) {
-            this.confirmationReference = confirmationReference;
+            buildSteps.add(data -> data.confirmationReference = confirmationReference);
             return this;
         }
 
         public Builder withFormType(String formType) {
-            this.formType = formType;
+            buildSteps.add(data -> data.formType = formType);
             return this;
         }
 
         public Builder withRejectionDate(String rejectionDate) {
-            this.rejectionDate = rejectionDate;
+            buildSteps.add(data -> data.rejectionDate = rejectionDate);
             return this;
         }
 
         public Builder withRejectReasons(List<String> rejectReasons) {
-            this.rejectReasons = rejectReasons;
+            buildSteps.add(data -> data.rejectReasons = new ArrayList<>(rejectReasons));
             return this;
         }
 
         public ExternalRejectEmailData build() {
-            return new ExternalRejectEmailData(to, subject, companyNumber, companyName, confirmationReference, formType, rejectionDate, rejectReasons);
+            final ExternalRejectEmailData data = new ExternalRejectEmailData();
+            
+            buildSteps.forEach(step -> step.accept(data));
+            
+            return data;
         }
 
     }
