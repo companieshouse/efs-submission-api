@@ -2,9 +2,11 @@ package uk.gov.companieshouse.efs.api.email;
 
 import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.CHANGE_OF_CONSTITUTION;
 import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.INSOLVENCY;
+import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.OTHER;
 import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.SCOTTISH_LIMITED_PARTNERSHIP;
 import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.SCOTTISH_QUALIFYING_PARTNERSHIP;
 import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.SHARE_CAPITAL;
+import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.SHARE_CAPITAL_REDUCTION;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -27,19 +29,28 @@ public class FormCategoryToEmailAddressService {
     private FormTemplateRepository formTemplateRepository;
     private final CategoryTemplateService categoryTemplateService;
 
+    @Value("${internal.constitution.email.address}")
     private String internalConstitutionEmailAddress;
+    @Value("${internal.regfunc.email.address}")
     private String internalRegistryFunctionEmailAddress;
+    @Value("${internal.scot.email.address}")
     private String internalScotEmailAddress;
+    @Value("${internal.ni.email.address}")
     private String internalNIEmailAddress;
+    @Value("${internal.scottishpartnerships.email.address}")
     private String internalScottishPartnershipsEmailAddress;
+    @Value("${internal.insolvency.email.address}") 
     private String internalInsolvencyEmailAddress;
-    private String internalSharedCapitalEmailAddress;
+    @Value("${internal.sharecapital.email.address}")
+    private String internalShareCapitalEmailAddress;
+    @Value("${internal.sharecapitalreduction.email.address}")
+    private String internalShareCapitalReductionEmailAddress;
     @Value("${scotland.company.prefixes}")
     private List<String> scotlandCompanyPrefixes;
     @Value("${northernIreland.company.prefixes}")
     private List<String> northernIrelandCompanyPrefixes;
 
-    private Map<String, String> formTypeEmailMap;
+    private Map<String, String> categoryTypeEmailMap;
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
     private class EmailSupplier {
@@ -52,7 +63,8 @@ public class FormCategoryToEmailAddressService {
             categories.put(SCOTTISH_QUALIFYING_PARTNERSHIP, internalScottishPartnershipsEmailAddress);
             categories.put(CHANGE_OF_CONSTITUTION, internalConstitutionEmailAddress);
             categories.put(INSOLVENCY, internalInsolvencyEmailAddress);
-            categories.put(SHARE_CAPITAL, internalSharedCapitalEmailAddress);
+            categories.put(SHARE_CAPITAL, internalShareCapitalEmailAddress);
+            categories.put(SHARE_CAPITAL_REDUCTION, internalShareCapitalReductionEmailAddress);
         }
 
         public String supplyEmail(CategoryTypeConstants categoryType) {
@@ -63,33 +75,31 @@ public class FormCategoryToEmailAddressService {
 
     @Autowired
     public FormCategoryToEmailAddressService(FormTemplateRepository formTemplateRepository,
-        CategoryTemplateService categoryTemplateService,
-        @Value("${internal.constitution.email.address}") String internalConstitutionEmailAddress,
-        @Value("${internal.regfunc.email.address}") String internalRegistryFunctionEmailAddress,
-        @Value("${internal.scot.email.address}") String internalScotEmailAddress,
-        @Value("${internal.ni.email.address}") String internalNIEmailAddress,
-        @Value("${internal.scottishpartnerships.email.address}") String internalScottishPartnershipsEmailAddress,
-        @Value("${internal.insolvency.email.address}") String internalInsolvencyEmailAddress,
-        @Value("${internal.sharecapital.email.address}") String internalSharedCapitalEmailAddress) {
+        CategoryTemplateService categoryTemplateService) {
         this.formTemplateRepository = formTemplateRepository;
         this.categoryTemplateService = categoryTemplateService;
-        this.internalConstitutionEmailAddress = internalConstitutionEmailAddress;
-        this.internalRegistryFunctionEmailAddress = internalRegistryFunctionEmailAddress;
-        this.internalScotEmailAddress = internalScotEmailAddress;
-        this.internalNIEmailAddress = internalNIEmailAddress;
-        this.internalScottishPartnershipsEmailAddress = internalScottishPartnershipsEmailAddress;
-        this.internalInsolvencyEmailAddress = internalInsolvencyEmailAddress;
-        this.internalSharedCapitalEmailAddress = internalSharedCapitalEmailAddress;
     }
 
     @PostConstruct
-    public void cacheFormTemplates() {
+    public void cacheEmailAddressByFormCategory() {
         final EmailSupplier emailSupplier = new EmailSupplier();
 
         try {
-            this.formTypeEmailMap = formTemplateRepository.findAll().stream().collect(Collectors
-                .toConcurrentMap(FormTemplate::getFormType, formTemplate -> emailSupplier
-                    .supplyEmail(categoryTemplateService.getTopLevelCategory(formTemplate.getFormCategory()))));
+            this.categoryTypeEmailMap = formTemplateRepository.findAll()
+                .stream()
+                .collect(Collectors.toConcurrentMap(FormTemplate::getFormType, t -> {
+                    final String formCategory = t.getFormCategory();
+
+                    final CategoryTypeConstants formCategoryType =
+                        CategoryTypeConstants.nameOf(formCategory).orElse(OTHER);
+
+                    final CategoryTypeConstants categoryType =
+                        formCategoryType != SHARE_CAPITAL_REDUCTION
+                            ? categoryTemplateService.getTopLevelCategory(formCategory)
+                            : SHARE_CAPITAL_REDUCTION;
+
+                    return emailSupplier.supplyEmail(categoryType);
+                }));
         }
         catch (Exception ex) {
             LOGGER.error("Invalid Form data exists in form_templates collection", ex);
@@ -97,8 +107,8 @@ public class FormCategoryToEmailAddressService {
         }
     }
 
-    public String getEmailAddressForFormCategory(String formType) {
-        return this.formTypeEmailMap.getOrDefault(formType, internalRegistryFunctionEmailAddress);
+    public String getEmailAddressForFormCategory(String categoryType) {
+        return this.categoryTypeEmailMap.getOrDefault(categoryType, internalRegistryFunctionEmailAddress);
     }
 
     public String getEmailAddressForRegPowersFormCategory(String formType, String companyNumber) {
@@ -110,7 +120,7 @@ public class FormCategoryToEmailAddressService {
             return internalNIEmailAddress;
 
         } else {
-            return this.formTypeEmailMap.getOrDefault(formType, internalRegistryFunctionEmailAddress);
+            return this.categoryTypeEmailMap.getOrDefault(formType, internalRegistryFunctionEmailAddress);
         }
     }
 
