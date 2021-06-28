@@ -11,6 +11,7 @@ public enum CategoryTypeConstants {
     SCOTTISH_LIMITED_PARTNERSHIP("SLP"),
     SCOTTISH_QUALIFYING_PARTNERSHIP("SQP"),
     SHARE_CAPITAL("SH"),
+    SHARE_CAPITAL_REDUCTION("SH-RED"),
     REGISTRAR_POWERS("RP");
 
     CategoryTypeConstants(final String value) {
