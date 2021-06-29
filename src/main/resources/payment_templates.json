@@ -64,7 +64,7 @@
   },
   {
     "_id": "SH19-SAMEDAY",
-    "description": "Upload form SH19 (Same day service)",
+    "description": "Upload form SH19",
     "etag": "FB9F50ED470E23678519F3AE0E84F31587C43ED8",
     "items": [
       {
@@ -75,7 +75,7 @@
         "class_of_payment": [
           "data-maintenance"
         ],
-        "description": "Upload a document to Companies House: SH19 (Same day service)",
+        "description": "Upload a document to Companies House: SH19",
         "description_identifier": "EFS_SH19_SAMEDAY",
         "kind": "cost#cost",
         "product_type": "efs-sh19-same-day"
