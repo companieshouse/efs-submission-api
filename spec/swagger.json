@@ -1327,25 +1327,20 @@
           "example": "10.00",
           "description": "Form fee"
         },
-        "isAuthenticationRequired": {
+        "authenticationRequired": {
           "type": "boolean",
           "example": "false",
           "description": "Is authentication required?"
         },
-        "isInternalEmailRequired": {
-          "type": "boolean",
-          "example": "false",
-          "description": "Is internal email required?"
-        },
-        "isFesEnabled": {
+        "fes_enabled": {
           "type": "boolean",
           "example": "false",
           "description": "FES enabled?"
         },
-        "isSameDayService": {
+        "same_day": {
           "type": "boolean",
           "example": false,
-          "description": "Is same day service required?"
+          "description": "Is same day indicator required?"
         }
       }
     },
