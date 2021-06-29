@@ -3,7 +3,7 @@
   "info": {
     "title": "Emergency Filing Service API",
     "description": "Emergency Filing Service API specification",
-    "version": "0.2.3"
+    "version": "0.2.4"
   },
   "basePath": "/efs-submissions-api",
   "schemes": [
@@ -94,8 +94,8 @@
       "x-example": "Insolvency"
     },
     "template-id": {
-      "name": "template-id",
-      "in": "path",
+      "name": "type",
+      "in": "query",
       "description": "Unique form template selector",
       "required": true,
       "type": "string",
@@ -637,7 +637,7 @@
         }
       }
     },
-    "/form-template/{template-id}": {
+    "/form-template": {
       "parameters": [
         {
           "$ref": "#/parameters/template-id"
@@ -1341,6 +1341,11 @@
           "type": "boolean",
           "example": "false",
           "description": "FES enabled?"
+        },
+        "isSameDayService": {
+          "type": "boolean",
+          "example": false,
+          "description": "Is same day service required?"
         }
       }
     },

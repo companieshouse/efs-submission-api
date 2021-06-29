@@ -2,8 +2,10 @@ package uk.gov.companieshouse.efs.api.formtemplates.model;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInOrder.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.hamcrest.Matchers;
@@ -20,7 +22,17 @@ class FormTemplateTest {
 
     @BeforeEach
     void setUp() {
-        testFormTemplate = new FormTemplate("CC01", "Form01", "CC", "100", false, true, "FES", null);
+        testFormTemplate = FormTemplate.builder()
+            .withFormType("CC01")
+            .withFormName("Form01")
+            .withFormCategory("CC")
+            .withFee("100")
+            .withAuthenticationRequired(true)
+            .withFesEnabled(true)
+            .withFesDocType("FES")
+            .withSameDay(true)
+            .withMessageTextIdList(Arrays.asList(1, 2, 3))
+            .build();
         JacksonTester.initFields(this, new ObjectMapper());
     }
 
@@ -31,6 +43,10 @@ class FormTemplateTest {
         assertThat(testFormTemplate.getFormName(), is("Form01"));
         assertThat(testFormTemplate.getFormCategory(), is("CC"));
         assertThat(testFormTemplate.getFee(), is("100"));
+        assertThat(testFormTemplate.isAuthenticationRequired(), is(true));
+        assertThat(testFormTemplate.isFesEnabled(), is(true));
+        assertThat(testFormTemplate.isSameDay(), is(true));
+        assertThat(testFormTemplate.getMessageTextIdList(), contains(1, 2, 3));
     }
 
     @Test
@@ -43,8 +59,9 @@ class FormTemplateTest {
     void toStringTest() {
         assertThat(testFormTemplate.toString(), Matchers.is(
                 //@formatter:off
-                "FormTemplate[formType=CC01,formName=Form01,formCategory=CC,fee=100," +
-                        "isAuthenticationRequired=false,isFesEnabled=true,fesDocType=FES,messageTextIdList=<null>]"
+                "FormTemplate[formType=CC01,formName=Form01,formCategory=CC,fee=100,"
+                    + "isAuthenticationRequired=true,isFesEnabled=true,fesDocType=FES," 
+                    + "sameDay=true,messageTextIdList=[1, 2, 3]]"
                 //@formatter:on
         ));
     }

@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.efs.api.events.service.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class FesLoaderModel {
     private List<FesFileModel> tiffFiles;
@@ -12,23 +14,29 @@ public class FesLoaderModel {
     private String companyName;
     private String companyNumber;
     private String formType;
+    private boolean sameDay;
 
     public FesLoaderModel(String barcode, String companyName, String companyNumber, String formType,
-                          List<FesFileModel> tiffFiles, LocalDateTime barcodeDate) {
+        final boolean sameDay, List<FesFileModel> tiffFiles, LocalDateTime barcodeDate) {
         this.barcode = barcode;
         this.companyName = companyName;
         this.companyNumber = companyNumber;
         this.formType = formType;
+        this.sameDay = sameDay;
         this.tiffFiles = tiffFiles;
         this.barcodeDate = barcodeDate;
     }
 
     public List<FesFileModel> getTiffFiles() {
-        return tiffFiles;
+        return copyModelList(tiffFiles);
     }
 
     public void setTiffFiles(List<FesFileModel> tiffFiles) {
-        this.tiffFiles = tiffFiles;
+        this.tiffFiles = copyModelList(tiffFiles);
+    }
+
+    private List<FesFileModel> copyModelList(final List<FesFileModel> tiffFiles) {
+        return Optional.ofNullable(tiffFiles).map(ArrayList::new).orElse(null);
     }
 
     public LocalDateTime getBarcodeDate() {
@@ -71,6 +79,14 @@ public class FesLoaderModel {
         this.formType = formType;
     }
 
+    public boolean isSameDay() {
+        return sameDay;
+    }
+
+    public void setSameDay(final boolean sameDay) {
+        this.sameDay = sameDay;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -80,17 +96,16 @@ public class FesLoaderModel {
             return false;
         }
         final FesLoaderModel that = (FesLoaderModel) o;
-        return Objects.equals(getTiffFiles(), that.getTiffFiles()) && Objects
-            .equals(getBarcodeDate(), that.getBarcodeDate()) && Objects
-                   .equals(getBarcode(), that.getBarcode()) && Objects
-                   .equals(getCompanyName(), that.getCompanyName()) && Objects
-                   .equals(getCompanyNumber(), that.getCompanyNumber()) && Objects
-                   .equals(getFormType(), that.getFormType());
+        return isSameDay() == that.isSameDay() && Objects.equals(getTiffFiles(),
+            that.getTiffFiles()) && Objects.equals(getBarcodeDate(), that.getBarcodeDate())
+            && Objects.equals(getBarcode(), that.getBarcode()) && Objects.equals(getCompanyName(),
+            that.getCompanyName()) && Objects.equals(getCompanyNumber(), that.getCompanyNumber())
+            && Objects.equals(getFormType(), that.getFormType());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getTiffFiles(), getBarcodeDate(), getBarcode(), getCompanyName(),
-            getCompanyNumber(), getFormType());
+            getCompanyNumber(), getFormType(), isSameDay());
     }
 }

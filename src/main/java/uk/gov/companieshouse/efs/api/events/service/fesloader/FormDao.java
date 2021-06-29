@@ -24,6 +24,6 @@ public class FormDao {
             model.getFormType(), model.getImageId(), model.getEnvelopeId(), model.getFormStatus(),
             model.getNumberOfPages(), model.getFormType(), model.getCompanyName(),
             model.getCompanyNumber(), model.getBarcode(), Timestamp.valueOf(model.getBarcodeDate()),
-            "N");
+            model.getSameDayIndicator());
     }
 }

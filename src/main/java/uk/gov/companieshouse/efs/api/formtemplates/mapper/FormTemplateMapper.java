@@ -21,6 +21,7 @@ public class FormTemplateMapper {
                         form.isAuthenticationRequired(),
                         form.isFesEnabled(),
                         form.getFesDocType(),
+                        form.isSameDay(),
                         new MessageTextListApi(form.getMessageTextIdList())))
                             .collect(Collectors.toCollection(FormTemplateListApi::new));
     }
@@ -34,6 +35,7 @@ public class FormTemplateMapper {
                         formTemplate.isAuthenticationRequired(),
                         formTemplate.isFesEnabled(),
                         formTemplate.getFesDocType(),
+                        formTemplate.isSameDay(),
                         new MessageTextListApi(formTemplate.getMessageTextIdList()));
     }
 }

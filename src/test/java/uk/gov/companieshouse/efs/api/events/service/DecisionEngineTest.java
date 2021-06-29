@@ -133,8 +133,14 @@ class DecisionEngineTest {
                 .withFormType("AD01")
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
-        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, true,
-            "FES", null)));
+        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(
+            FormTemplate.builder()
+                .withFormType("AD01")
+                .withFormName("Change of address")
+                .withFormCategory("CC")
+                .withFesEnabled(true)
+                .withFesDocType("FES")
+                .build()));
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine
@@ -161,8 +167,13 @@ class DecisionEngineTest {
                 .withFormType("AD01")
                 .build());
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
-        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(new FormTemplate("AD01", "Change of address", "CC", "", false, false,
-            "FES", null)));
+        when(formTemplateRepository.findById(anyString())).thenReturn(Optional.of(
+            FormTemplate.builder()
+                .withFormType("AD01")
+                .withFormName("Change of address")
+                .withFormCategory("CC")
+                .withFesDocType("FES")
+                .build()));
 
         //when
         Map<DecisionResult, List<Decision>> actual = decisionEngine

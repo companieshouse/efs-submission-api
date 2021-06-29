@@ -17,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -77,8 +79,9 @@ class FesLoaderServiceImplTest {
         this.fesLoaderService = new FesLoaderServiceImpl(batchDao, envelopeDao, dateGenerator, imageDao, formDao);
     }
 
-    @Test
-    void testInsertSubmission() throws IOException {
+    @ParameterizedTest(name = "sameDayIndicator: {0}")
+    @ValueSource(strings = {"N", "Y"})
+    void testInsertSubmission(final String sameDayIndicator) throws IOException {
 
         // given
         LocalDateTime someDate = LocalDateTime.of(2020, Month.MAY, 1, 12, 0);
@@ -96,6 +99,7 @@ class FesLoaderServiceImplTest {
         when(model.getCompanyName()).thenReturn(COMPANY_NAME);
         when(model.getCompanyNumber()).thenReturn(COMPANY_NUMBER);
         when(model.getFormType()).thenReturn(FORM_TYPE);
+        when(model.isSameDay()).thenReturn("Y".equalsIgnoreCase(sameDayIndicator));
 
         // when
         fesLoaderService.insertSubmission(model);
@@ -116,6 +120,7 @@ class FesLoaderServiceImplTest {
         assertEquals(COMPANY_NAME, formModelCaptor.getValue().getCompanyName());
         assertEquals(COMPANY_NUMBER, formModelCaptor.getValue().getCompanyNumber());
         assertEquals(FORM_TYPE, formModelCaptor.getValue().getFormType());
+        assertEquals(sameDayIndicator, formModelCaptor.getValue().getSameDayIndicator());
     }
 
     @Test
