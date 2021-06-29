@@ -9,8 +9,9 @@ import java.time.Month;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -59,8 +60,9 @@ class ExternalRejectEmailMapperTest {
         this.rejectEmailMapper = new ExternalRejectEmailMapper(config, idGenerator, timestampGenerator);
     }
 
-    @Test
-    void mapSubmissionDataToRejectEmailModel() {
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void mapSubmissionDataToRejectEmailModel(boolean hasFee) {
         //given
         LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 
@@ -89,16 +91,18 @@ class ExternalRejectEmailMapperTest {
         when(externalRejectEmailModel.getRejectReasons()).thenReturn(Collections.singletonList("ReasonList"));
         when(externalRejectEmailModel.getSubmission()).thenReturn(submission);
 
+        when(submission.getFeeOnSubmission()).thenReturn(hasFee ? "10" : null);
+
         //when
         EmailDocument<ExternalRejectEmailData> actual = rejectEmailMapper.map(externalRejectEmailModel);
 
         //then
-        assertEquals(expectedRejectEmailDocument(), actual);
+        assertEquals(expectedRejectEmailDocument(hasFee), actual);
         verify(idGenerator).generateId();
         verify(timestampGenerator).generateTimestamp();
     }
 
-    private EmailDocument<ExternalRejectEmailData> expectedRejectEmailDocument() {
+    private EmailDocument<ExternalRejectEmailData> expectedRejectEmailDocument(final boolean hasFee) {
         return EmailDocument.<ExternalRejectEmailData>builder()
                 .withEmailTemplateAppId("efs-submission-api.efs_submission_external_reject")
                 .withMessageId("123")
@@ -116,6 +120,7 @@ class ExternalRejectEmailMapperTest {
                                 .withConfirmationReference("abcd3434343efsfg")
                                 .withRejectionDate("02 May 2020")
                                 .withRejectReasons(Collections.singletonList("ReasonList"))
+                                .withIsPaidForm(hasFee)
                                 .build())
                 .build();
     }

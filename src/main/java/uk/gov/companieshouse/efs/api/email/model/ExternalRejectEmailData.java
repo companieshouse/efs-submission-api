@@ -15,6 +15,7 @@ public class ExternalRejectEmailData {
     private String formType;
     private String rejectionDate;
     private List<String> rejectReasons;
+    private boolean isPaidForm;
 
     private ExternalRejectEmailData() {
         // no direct instantiation
@@ -52,6 +53,10 @@ public class ExternalRejectEmailData {
         return Optional.ofNullable(rejectReasons).map(ArrayList::new).orElse(null);
     }
 
+    public boolean isPaidForm() {
+        return isPaidForm;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -68,13 +73,15 @@ public class ExternalRejectEmailData {
                    .equals(getConfirmationReference(), that.getConfirmationReference()) && Objects
                    .equals(getFormType(), that.getFormType()) && Objects
                    .equals(getRejectionDate(), that.getRejectionDate()) && Objects
-                   .equals(getRejectReasons(), that.getRejectReasons());
+                   .equals(getRejectReasons(), that.getRejectReasons()) && Objects
+                   .equals(isPaidForm(), that.isPaidForm());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getTo(), getSubject(), getCompanyNumber(), getCompanyName(),
-            getConfirmationReference(), getFormType(), getRejectionDate(), getRejectReasons());
+            getConfirmationReference(), getFormType(), getRejectionDate(), getRejectReasons(),
+                isPaidForm());
     }
 
     public static Builder builder() {
@@ -129,11 +136,16 @@ public class ExternalRejectEmailData {
             return this;
         }
 
+        public Builder withIsPaidForm(boolean isPaidForm) {
+            buildSteps.add(data -> data.isPaidForm = isPaidForm);
+            return this;
+        }
+
         public ExternalRejectEmailData build() {
             final ExternalRejectEmailData data = new ExternalRejectEmailData();
-            
+
             buildSteps.forEach(step -> step.accept(data));
-            
+
             return data;
         }
 
