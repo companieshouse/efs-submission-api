@@ -2958,6 +2958,6 @@
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
   "fesDocType": "SH19",
-  "isSameDay": true,
+  "sameDay": true,
   "messageTextIdList": [1,2]
 }]
