@@ -63,7 +63,7 @@
     "kind": "EFS"
   },
   {
-    "_id": "SH19-SAMEDAY",
+    "_id": "SH19_SAMEDAY",
     "description": "Upload form SH19",
     "etag": "FB9F50ED470E23678519F3AE0E84F31587C43ED8",
     "items": [
