@@ -115,6 +115,7 @@ public class FesLoaderServiceImpl implements FesLoaderService {
                 .withFormStatus(1L)
                 .withNumberOfPages(numberOfPages)
                 .withBarcodeDate(model.getBarcodeDate())
+                .withSameDayService(model.isSameDay())
                 .build();
     }
 

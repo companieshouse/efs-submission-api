@@ -1,7 +1,10 @@
 package uk.gov.companieshouse.efs.api.events.service.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class FormModel {
 
@@ -15,168 +18,128 @@ public class FormModel {
     private Integer numberOfPages;
     private Long formStatus;
     private LocalDateTime barcodeDate;
+    private boolean sameDayService;
 
-    public FormModel(Long envelopeId, String barcode, String companyName, String companyNumber, String formType, Long formId, Long imageId, Integer numberOfPages, Long formStatus, LocalDateTime barcodeDate) {
-        this.envelopeId = envelopeId;
-        this.barcode = barcode;
-        this.companyName = companyName;
-        this.companyNumber = companyNumber;
-        this.formType = formType;
-        this.formId = formId;
-        this.imageId = imageId;
-        this.numberOfPages = numberOfPages;
-        this.formStatus = formStatus;
-        this.barcodeDate = barcodeDate;
+    private FormModel() {
+        // no direct instantiation
     }
 
     public Long getEnvelopeId() {
         return envelopeId;
     }
 
-    public void setEnvelopeId(Long envelopeId) {
-        this.envelopeId = envelopeId;
-    }
-
     public String getBarcode() {
         return barcode;
-    }
-
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
     }
 
     public String getCompanyName() {
         return companyName;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
     public String getCompanyNumber() {
         return companyNumber;
-    }
-
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
     }
 
     public String getFormType() {
         return formType;
     }
 
-    public void setFormType(String formType) {
-        this.formType = formType;
-    }
-
     public Long getFormId() {
         return formId;
-    }
-
-    public void setFormId(Long formId) {
-        this.formId = formId;
     }
 
     public Long getImageId() {
         return imageId;
     }
 
-    public void setImageId(Long imageId) {
-        this.imageId = imageId;
-    }
-
     public Integer getNumberOfPages() {
         return numberOfPages;
-    }
-
-    public void setNumberOfPages(Integer numberOfPages) {
-        this.numberOfPages = numberOfPages;
     }
 
     public Long getFormStatus() {
         return formStatus;
     }
 
-    public void setFormStatus(Long formStatus) {
-        this.formStatus = formStatus;
-    }
-
     public LocalDateTime getBarcodeDate() {
         return barcodeDate;
-    }
-
-    public void setBarcodeDate(LocalDateTime barcodeDate) {
-        this.barcodeDate = barcodeDate;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public static class Builder {
-        private Long envelopeId;
-        private String barcode;
-        private String companyName;
-        private String companyNumber;
-        private String formType;
-        private Long formId;
-        private Long imageId;
-        private Integer numberOfPages;
-        private Long formStatus;
-        private LocalDateTime barcodeDate;
+    public String getSameDayIndicator() {
+        return sameDayService ? "Y" : "N";
+    }
 
+    public static class Builder {
+        private List<Consumer<FormModel>> buildSteps;
+
+        private Builder() {
+            buildSteps = new ArrayList<>();
+        }
+        
         public Builder withEnvelopeId(Long envelopeId) {
-            this.envelopeId = envelopeId;
+            buildSteps.add(data -> data.envelopeId = envelopeId);
             return this;
         }
 
         public Builder withBarcode(String barcode) {
-            this.barcode = barcode;
+            buildSteps.add(data -> data.barcode = barcode);
             return this;
         }
 
         public Builder withCompanyName(String companyName) {
-            this.companyName = companyName;
+            buildSteps.add(data -> data.companyName = companyName);
             return this;
         }
 
         public Builder withCompanyNumber(String companyNumber) {
-            this.companyNumber = companyNumber;
+            buildSteps.add(data -> data.companyNumber = companyNumber);
             return this;
         }
 
         public Builder withFormType(String formType) {
-            this.formType = formType;
+            buildSteps.add(data -> data.formType = formType);
             return this;
         }
 
         public Builder withFormId(Long formId) {
-            this.formId = formId;
+            buildSteps.add(data -> data.formId = formId);
             return this;
         }
 
         public Builder withImageId(Long imageId) {
-            this.imageId = imageId;
+            buildSteps.add(data -> data.imageId = imageId);
             return this;
         }
 
         public Builder withNumberOfPages(Integer numberOfPages) {
-            this.numberOfPages = numberOfPages;
+            buildSteps.add(data -> data.numberOfPages = numberOfPages);
             return this;
         }
 
         public Builder withFormStatus(Long formStatus) {
-            this.formStatus = formStatus;
+            buildSteps.add(data -> data.formStatus = formStatus);
             return this;
         }
 
         public Builder withBarcodeDate(LocalDateTime barcodeDate) {
-            this.barcodeDate = barcodeDate;
+            buildSteps.add(data -> data.barcodeDate = barcodeDate);
+            return this;
+        }
+        
+        public Builder withSameDayService(boolean sameDayService) {
+            buildSteps.add(data -> data.sameDayService = sameDayService);
             return this;
         }
 
         public FormModel build() {
-            return new FormModel(envelopeId, barcode, companyName, companyNumber, formType, formId, imageId, numberOfPages, formStatus, barcodeDate);
+            final FormModel data = new FormModel();
+            
+            buildSteps.forEach(step -> step.accept(data));
+            
+            return data;
         }
     }
 
@@ -189,22 +152,21 @@ public class FormModel {
             return false;
         }
         final FormModel formModel = (FormModel) o;
-        return Objects.equals(getEnvelopeId(), formModel.getEnvelopeId()) && Objects
-            .equals(getBarcode(), formModel.getBarcode()) && Objects
-                   .equals(getCompanyName(), formModel.getCompanyName()) && Objects
-                   .equals(getCompanyNumber(), formModel.getCompanyNumber()) && Objects
-                   .equals(getFormType(), formModel.getFormType()) && Objects
-                   .equals(getFormId(), formModel.getFormId()) && Objects
-                   .equals(getImageId(), formModel.getImageId()) && Objects
-                   .equals(getNumberOfPages(), formModel.getNumberOfPages()) && Objects
-                   .equals(getFormStatus(), formModel.getFormStatus()) && Objects
-                   .equals(getBarcodeDate(), formModel.getBarcodeDate());
+        return sameDayService == formModel.sameDayService && Objects.equals(getEnvelopeId(),
+            formModel.getEnvelopeId()) && Objects.equals(getBarcode(), formModel.getBarcode())
+            && Objects.equals(getCompanyName(), formModel.getCompanyName()) && Objects.equals(
+            getCompanyNumber(), formModel.getCompanyNumber()) && Objects.equals(getFormType(),
+            formModel.getFormType()) && Objects.equals(getFormId(), formModel.getFormId())
+            && Objects.equals(getImageId(), formModel.getImageId()) && Objects.equals(
+            getNumberOfPages(), formModel.getNumberOfPages()) && Objects.equals(getFormStatus(),
+            formModel.getFormStatus()) && Objects.equals(getBarcodeDate(),
+            formModel.getBarcodeDate());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getEnvelopeId(), getBarcode(), getCompanyName(), getCompanyNumber(),
             getFormType(), getFormId(), getImageId(), getNumberOfPages(), getFormStatus(),
-            getBarcodeDate());
+            getBarcodeDate(), sameDayService);
     }
 }

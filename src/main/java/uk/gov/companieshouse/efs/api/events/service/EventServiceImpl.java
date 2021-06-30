@@ -199,10 +199,13 @@ public class EventServiceImpl implements EventService {
 
                 // insert into FES DB
 
-                fesLoaderService.insertSubmission(new FesLoaderModel(barcode, submission.getCompany().getCompanyName(),
-                    submission.getCompany().getCompanyNumber(), fesDocType, tiffFiles, submittedAt));
-                LOGGER.debug(String.format("Inserted submission details into FES DB for submission [%s], form [%s]",
-                        submission.getId(), fesDocType));
+                fesLoaderService.insertSubmission(
+                    new FesLoaderModel(barcode, submission.getCompany().getCompanyName(),
+                        submission.getCompany().getCompanyNumber(), fesDocType,
+                        formTemplate.isSameDay(), tiffFiles, submittedAt));
+                LOGGER.debug(String.format(
+                    "Inserted submission details into FES DB for submission [%s], form [%s], same-day [%s]",
+                    submission.getId(), fesDocType, formTemplate.isSameDay() ? "Y" : "N"));
 
                 submissionService.updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
 

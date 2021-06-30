@@ -24,6 +24,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.efs.events.FileConversionResultStatusApi;
@@ -409,11 +411,13 @@ class EventServiceImplTest {
         verify(repository).read("123");
     }
 
-    @Test
-    void testSubmitToFes() {
+    @ParameterizedTest(name = "sameDayIndicator: {0}")
+    @ValueSource(strings = {"N", "Y"})
+    void testSubmitToFes(final String sameDayIndicator) {
         //given
         LocalDateTime now = LocalDateTime.now();
         String convertedFileId = "1234";
+        boolean sameDay = "Y".equalsIgnoreCase(sameDayIndicator);
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(submission.getId()).thenReturn("1234abcd");
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
@@ -426,7 +430,8 @@ class EventServiceImplTest {
         when(formDetails.getFormType()).thenReturn("SH01");
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
         when(formTemplateService.getFormTemplate("SH01")).thenReturn(
-            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, sameDay,
+                null));
 
         //when
         eventService.submitToFes();
@@ -437,7 +442,7 @@ class EventServiceImplTest {
         verify(barcodeGeneratorService, times(1)).getBarcode(now);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
-                "SH01", Collections.singletonList(new FesFileModel(null, 0)), now));
+                "SH01", sameDay, Collections.singletonList(new FesFileModel(null, 0)), now));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -458,7 +463,7 @@ class EventServiceImplTest {
         when(formDetails.getFormType()).thenReturn("SH01");
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
         when(formTemplateService.getFormTemplate("SH01")).thenReturn(
-            new FormTemplateApi("SH01", "formName", "category", "", false, true, "FES-DOC-TYPE", null));
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, "FES-DOC-TYPE", false, null));
 
         //when
         eventService.submitToFes();
@@ -469,7 +474,7 @@ class EventServiceImplTest {
         verify(barcodeGeneratorService, times(1)).getBarcode(now);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
-                "FES-DOC-TYPE", Collections.singletonList(new FesFileModel(null, 0)), now));
+                "FES-DOC-TYPE", false, Collections.singletonList(new FesFileModel(null, 0)), now));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -491,7 +496,7 @@ class EventServiceImplTest {
         when(formDetails.getFormType()).thenReturn("SH01");
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
         when(formTemplateService.getFormTemplate("SH01")).thenReturn(
-            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, false, null));
 
         //when
         eventService.submitToFes();
@@ -502,7 +507,7 @@ class EventServiceImplTest {
         verify(barcodeGeneratorService, times(1)).getBarcode(now);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
-                "SH01", Collections.singletonList(new FesFileModel(null, 0)), now));
+                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), now));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -531,7 +536,7 @@ class EventServiceImplTest {
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn("SH01");
         when(formTemplateService.getFormTemplate("SH01")).thenReturn(
-            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, false, null));
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(tiffDownloadService.downloadTiffFile(any())).thenThrow(TiffDownloadException.class);
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
@@ -583,7 +588,7 @@ class EventServiceImplTest {
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
         when(formDetails.getFormType()).thenReturn("SH01");
         when(formTemplateService.getFormTemplate("SH01")).thenReturn(
-            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, false, null));
 
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
 
@@ -608,7 +613,7 @@ class EventServiceImplTest {
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
         when(formDetails.getFormType()).thenReturn("SH01");
         when(formTemplateService.getFormTemplate("SH01")).thenReturn(
-            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, false, null));
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
@@ -642,7 +647,7 @@ class EventServiceImplTest {
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
         when(formDetails.getFormType()).thenReturn("SH01");
         when(formTemplateService.getFormTemplate("SH01")).thenReturn(
-            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, false, null));
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
 
         when(submission.getSubmittedAt()).thenReturn(now);
@@ -659,8 +664,8 @@ class EventServiceImplTest {
         verify(submissionService, times(1)).updateSubmissionBarcode("1234abcd", "Y123XYZ");
         verify(tiffDownloadService, times(1)).downloadTiffFile(convertedFileId);
         verify(fesLoaderService, times(1)).insertSubmission(
-                new FesLoaderModel("Y123XYZ", "abc", "1223456", "SH01",
-                        Collections.singletonList(new FesFileModel(null, 0)), now));
+                new FesLoaderModel("Y123XYZ", "abc", "1223456", "SH01", false,
+                    Collections.singletonList(new FesFileModel(null, 0)), now));
         verify(submissionService, times(1)).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -681,7 +686,7 @@ class EventServiceImplTest {
         when(formDetails.getFormType()).thenReturn("SH01");
         when(formDetails.getBarcode()).thenReturn("Y9999999");
         when(formTemplateService.getFormTemplate("SH01")).thenReturn(
-            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, null));
+            new FormTemplateApi("SH01", "formName", "category", "", false, true, null, false, null));
 
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
 
@@ -694,7 +699,7 @@ class EventServiceImplTest {
         verifyNoInteractions(barcodeGeneratorService);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y9999999", "abc", "1223456",
-                "SH01", Collections.singletonList(new FesFileModel(null, 0)), now));
+                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), now));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 

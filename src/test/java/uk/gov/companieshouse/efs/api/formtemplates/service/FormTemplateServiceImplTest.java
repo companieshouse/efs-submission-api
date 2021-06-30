@@ -73,10 +73,16 @@ class FormTemplateServiceImplTest {
 
         //given
         String categoryId = "CC01";
-        FormTemplate formTemplate = new FormTemplate("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, "FES", null);
-        FormTemplateApi mappedForm = new FormTemplateApi("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, "FES", null);
+        FormTemplate formTemplate = FormTemplate.builder()
+            .withFormType("IN01")
+            .withFormName("New Incorporation")
+            .withFormCategory("NEWINC")
+            .withFee("12")
+            .withFesDocType("FES")
+            .build();
+        FormTemplateApi mappedForm =
+            new FormTemplateApi("IN01", "New Incorporation", "NEWINC", "12", false, false, "FES",
+                false, null);
 
         when(formRepository.findById(categoryId)).thenReturn(Optional.of(formTemplate));
         when(mapper.map(formTemplate)).thenReturn(mappedForm);
@@ -108,8 +114,13 @@ class FormTemplateServiceImplTest {
 
         //given
         String categoryId = "CC01";
-        FormTemplate mappedForm = new FormTemplate("IN01", "New Incorporation", "NEWINC", "12",
-                false, false, "FES", null);
+        FormTemplate mappedForm = FormTemplate.builder()
+            .withFormType("IN01")
+            .withFormName("New Incorporation")
+            .withFormCategory("NEWINC")
+            .withFee("12")
+            .withFesDocType("FES")
+            .build();
 
         List<FormTemplate> listForm = new ArrayList<>();
         listForm.add(mappedForm);
