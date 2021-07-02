@@ -108,7 +108,8 @@ public class PaymentReportServiceImpl implements PaymentReportService {
     @Override
     public void sendFinancePaymentReports() throws IOException {
         List<PaymentTransaction> sh19Transactions =
-            findPaymentTransactions(SUCCESSFUL_STATUSES).stream().filter(p -> StringUtils.equals("SH19", p.getFormType()))
+            findPaymentTransactions(SUCCESSFUL_STATUSES).stream()
+                .filter(p -> StringUtils.startsWith(p.getFormType(), "SH19"))
                 .collect(Collectors.toList());
         createReport(sh19FinanceReportPattern, sh19Transactions);
         createReport(failedTransactionsFinanceReportPattern, findPaymentTransactions(FAILED_STATUSES));
