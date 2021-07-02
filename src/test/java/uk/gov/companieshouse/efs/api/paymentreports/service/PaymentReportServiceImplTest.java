@@ -255,6 +255,7 @@ class PaymentReportServiceImplTest {
         assertThat(values.get(0).getHasNoPaymentTransactions(), is(false));
         assertThat(values.get(0).getFileLink(), is(successFileLink));
         assertThat(values.get(0).getFileName(), is(sh19ReportName.replace(".csv", "")));
+        assertThat(values.get(1).getHasNoPaymentTransactions(), is(false));
         assertThat(values.get(1).getFileLink(), is(failedFileLink));
         assertThat(values.get(1).getFileName(), is(failedReportName.replace(".csv", "")));
 
@@ -282,6 +283,7 @@ class PaymentReportServiceImplTest {
         assertThat(values.get(0).getHasNoPaymentTransactions(), is(true));
         assertThat(values.get(0).getFileLink(), is(successFileLink));
         assertThat(values.get(0).getFileName(), is(sh19ReportName.replace(".csv", "")));
+        assertThat(values.get(1).getHasNoPaymentTransactions(), is(true));
         assertThat(values.get(1).getFileLink(), is(failedFileLink));
         assertThat(values.get(1).getFileName(), is(failedReportName.replace(".csv", "")));
 
