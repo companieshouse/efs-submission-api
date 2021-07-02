@@ -52,6 +52,8 @@ class PaymentReportServiceImplTest {
     private static final LocalTime NOW_TIME = LocalTime.of(1, 1, 1);
     private static final FormDetails FORM_SCOT_FEE = new FormDetails(null, "SQP1", null);
     private static final FormDetails FORM_NON_SCOT_FEE = new FormDetails(null, "CS01", null);
+    private static final FormDetails FORM_SH19_FEE = new FormDetails(null, "SH19", null);
+    private static final FormDetails FORM_SH19_SAMEDAY_FEE = new FormDetails(null, "SH19_SAMEDAY", null);
     private static final String REPORT_SCOT = "'EFS_ScottishPaymentTransactions_'yyyy-MM-dd'.csv'";
     private static final String REPORT_FAILED = "'EFS_FailedPaymentTransactions_'yyyy-MM-dd'.csv'";
     private static final String REPORT_SH19 = "'EFS_SH19Transactions_'yyyy-MM-dd'.csv'";
@@ -79,6 +81,8 @@ class PaymentReportServiceImplTest {
     private Submission submissionSF;
     private Submission submissionSFF;
     private Submission submissionNSFF;
+    private Submission submissionSH19;
+    private Submission submissionSH19_SAMEDAY;
 
     @BeforeEach
     void setUp() {
@@ -101,6 +105,16 @@ class PaymentReportServiceImplTest {
         submissionNSFF = builder.withId("FAILED_FEE").withCompany(company).withFormDetails(FORM_NON_SCOT_FEE)
             .withConfirmationReference("REF_FF").withPresenter(presenter).withSubmittedAt(START_DATE.atTime(13, 13, 13))
             .withFeeOnSubmission("10")
+            .withPaymentSessions(createPaymentSessions("PAY_FF"))
+            .withStatus(SubmissionStatus.REJECTED_BY_VIRUS_SCAN).build();
+        submissionSH19 = builder.withId("FAILED_FEE").withCompany(company).withFormDetails(FORM_SH19_FEE)
+            .withConfirmationReference("REF_FF").withPresenter(presenter).withSubmittedAt(START_DATE.atTime(13, 13, 13))
+            .withFeeOnSubmission("50")
+            .withPaymentSessions(createPaymentSessions("PAY_FF"))
+            .withStatus(SubmissionStatus.REJECTED_BY_VIRUS_SCAN).build();
+        submissionSH19_SAMEDAY = builder.withId("FAILED_FEE").withCompany(company).withFormDetails(FORM_SH19_SAMEDAY_FEE)
+            .withConfirmationReference("REF_FF").withPresenter(presenter).withSubmittedAt(START_DATE.atTime(13, 13, 13))
+            .withFeeOnSubmission("50")
             .withPaymentSessions(createPaymentSessions("PAY_FF"))
             .withStatus(SubmissionStatus.REJECTED_BY_VIRUS_SCAN).build();
     }
@@ -189,14 +203,14 @@ class PaymentReportServiceImplTest {
     }
 
     @Test
-    void sendFinancePaymentFailureReport() throws IOException {
+    void sendFinancePaymentFailureReportWithSh19() throws IOException {
         final String failedReportName = "EFS_FailedPaymentTransactions_2020-08-31.csv";
         final String failedFileLink = "link.to.uploaded.failed.file";
         final String sh19ReportName = "EFS_SH19Transactions_2020-08-31.csv";
         final String successFileLink = "link.to.uploaded.success.file";
 
         expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, START_DATE,
-            Arrays.asList(submissionSFF, submissionNSFF));
+            Arrays.asList(submissionSFF, submissionNSFF, submissionSH19));
         expectReportUpload(successFileLink, sh19ReportName);
         expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES, START_DATE,
             Arrays.asList(submissionSFF, submissionNSFF));
@@ -209,6 +223,36 @@ class PaymentReportServiceImplTest {
 
         final List<PaymentReportEmailModel> values = emailCaptor.getAllValues();
 
+        assertThat(values.get(0).getHasNoPaymentTransactions(), is(false));
+        assertThat(values.get(0).getFileLink(), is(successFileLink));
+        assertThat(values.get(0).getFileName(), is(sh19ReportName.replace(".csv", "")));
+        assertThat(values.get(1).getFileLink(), is(failedFileLink));
+        assertThat(values.get(1).getFileName(), is(failedReportName.replace(".csv", "")));
+
+    }
+
+    @Test
+    void sendFinancePaymentFailureReportWithSh19_Sameday() throws IOException {
+        final String failedReportName = "EFS_FailedPaymentTransactions_2020-08-31.csv";
+        final String failedFileLink = "link.to.uploaded.failed.file";
+        final String sh19ReportName = "EFS_SH19Transactions_2020-08-31.csv";
+        final String successFileLink = "link.to.uploaded.success.file";
+
+        expectFindPaidSubmissions(PaymentReportServiceImpl.SUCCESSFUL_STATUSES, START_DATE,
+            Arrays.asList(submissionSFF, submissionNSFF, submissionSH19_SAMEDAY));
+        expectReportUpload(successFileLink, sh19ReportName);
+        expectFindPaidSubmissions(PaymentReportServiceImpl.FAILED_STATUSES, START_DATE,
+            Arrays.asList(submissionSFF, submissionNSFF));
+        expectReportUpload(failedFileLink, failedReportName);
+        when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
+
+        testService.sendFinancePaymentReports();
+
+        verify(emailService, times(2)).sendPaymentReportEmail(emailCaptor.capture());
+
+        final List<PaymentReportEmailModel> values = emailCaptor.getAllValues();
+
+        assertThat(values.get(0).getHasNoPaymentTransactions(), is(false));
         assertThat(values.get(0).getFileLink(), is(successFileLink));
         assertThat(values.get(0).getFileName(), is(sh19ReportName.replace(".csv", "")));
         assertThat(values.get(1).getFileLink(), is(failedFileLink));
@@ -235,6 +279,7 @@ class PaymentReportServiceImplTest {
 
         final List<PaymentReportEmailModel> values = emailCaptor.getAllValues();
 
+        assertThat(values.get(0).getHasNoPaymentTransactions(), is(true));
         assertThat(values.get(0).getFileLink(), is(successFileLink));
         assertThat(values.get(0).getFileName(), is(sh19ReportName.replace(".csv", "")));
         assertThat(values.get(1).getFileLink(), is(failedFileLink));
