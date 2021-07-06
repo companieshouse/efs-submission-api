@@ -1,8 +1,11 @@
 package uk.gov.companieshouse.efs.api.email.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
 import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
@@ -26,91 +29,44 @@ public class ExternalConfirmationEmailData {
     @JsonProperty("fee_on_submission")
     private String feeOnSubmission;
 
-    public ExternalConfirmationEmailData(String to, String subject, String confirmationReference,
-                                         Presenter presenter, Company company, String formType,
-                                         CategoryTypeConstants topLevelCategory, List<EmailFileDetails> emailFileDetailsList,
-                                         String feeOnSubmission) {
-        this.to = to;
-        this.subject = subject;
-        this.confirmationReference = confirmationReference;
-        this.presenter = presenter;
-        this.company = company;
-        this.formType = formType;
-        this.topLevelCategory = topLevelCategory;
-        this.emailFileDetailsList = emailFileDetailsList;
-        this.feeOnSubmission = feeOnSubmission;
+    private ExternalConfirmationEmailData() {
+        // no direct instantiation
     }
 
     public String getTo() {
         return to;
     }
 
-    public void setTo(String to) {
-        this.to = to;
-    }
-
     public String getSubject() {
         return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
     }
 
     public String getConfirmationReference() {
         return confirmationReference;
     }
 
-    public void setConfirmationReference(String confirmationReference) {
-        this.confirmationReference = confirmationReference;
-    }
-
     public Presenter getPresenter() {
         return presenter;
-    }
-
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
     }
 
     public Company getCompany() {
         return company;
     }
 
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
     public String getFormType() {
         return formType;
-    }
-
-    public void setFormType(String formType) {
-        this.formType = formType;
     }
 
     public CategoryTypeConstants getTopLevelCategory() {
         return topLevelCategory;
     }
 
-    public void setTopLevelCategory(final CategoryTypeConstants topLevelCategory) {
-        this.topLevelCategory = topLevelCategory;
-    }
-
     public List<EmailFileDetails> getEmailFileDetailsList() {
-        return emailFileDetailsList;
-    }
-
-    public void setEmailFileDetailsList(List<EmailFileDetails> emailFileDetailsList) {
-        this.emailFileDetailsList = emailFileDetailsList;
+        return Optional.ofNullable(emailFileDetailsList).map(ArrayList::new).orElse(null);
     }
 
     public String getFeeOnSubmission() {
         return feeOnSubmission;
-    }
-
-    public void setFeeOnSubmission(final String feeOnSubmission) {
-        this.feeOnSubmission = feeOnSubmission;
     }
 
     @Override
@@ -146,65 +102,65 @@ public class ExternalConfirmationEmailData {
 
     public static class Builder {
 
-        private String to;
-        private String subject;
-        private String confirmationReference;
-        private Presenter presenter;
-        private Company company;
-        private String formType;
-        private CategoryTypeConstants topLevelCategory;
-        private List<EmailFileDetails> emailFileDetailsList;
-        private String feeOnSubmission;
+        private final List<Consumer<ExternalConfirmationEmailData>> buildSteps;
 
+        private Builder() {
+            this.buildSteps = new ArrayList<>();
+        }
+        
         public ExternalConfirmationEmailData.Builder withTo(String to) {
-            this.to = to;
+            buildSteps.add(data -> data.to = to);
             return this;
         }
 
         public ExternalConfirmationEmailData.Builder withSubject(String subject) {
-            this.subject = subject;
+            buildSteps.add(data -> data.subject = subject);
             return this;
         }
 
         public ExternalConfirmationEmailData.Builder withConfirmationReference(String confirmationReference) {
-            this.confirmationReference = confirmationReference;
+            buildSteps.add(data -> data.confirmationReference = confirmationReference);
             return this;
         }
 
         public ExternalConfirmationEmailData.Builder withPresenter(Presenter presenter) {
-            this.presenter = presenter;
+            buildSteps.add(data -> data.presenter = presenter);
             return this;
         }
 
         public ExternalConfirmationEmailData.Builder withCompany(Company company) {
-            this.company = company;
+            buildSteps.add(data -> data.company = company);
             return this;
         }
 
         public ExternalConfirmationEmailData.Builder withFormType(String formType) {
-            this.formType = formType;
+            buildSteps.add(data -> data.formType = formType);
             return this;
         }
 
         public ExternalConfirmationEmailData.Builder withTopLevelCategory(
             CategoryTypeConstants topLevelCategory) {
-            this.topLevelCategory = topLevelCategory;
+            buildSteps.add(data -> data.topLevelCategory = topLevelCategory);
             return this;
         }
 
         public ExternalConfirmationEmailData.Builder withEmailFileDetailsList(List<EmailFileDetails> emailFileDetailsList) {
-            this.emailFileDetailsList = emailFileDetailsList;
+            buildSteps.add(
+                data -> data.emailFileDetailsList = new ArrayList<>(emailFileDetailsList));
             return this;
         }
 
         public ExternalConfirmationEmailData.Builder withFeeOnSubmission(String feeOnSubmission) {
-            this.feeOnSubmission = feeOnSubmission;
+            buildSteps.add(data -> data.feeOnSubmission = feeOnSubmission);
             return this;
         }
-
+        
         public ExternalConfirmationEmailData build() {
-            return new ExternalConfirmationEmailData(to, subject, confirmationReference, presenter, company, formType,
-                    topLevelCategory, emailFileDetailsList, feeOnSubmission);
+            ExternalConfirmationEmailData data = new ExternalConfirmationEmailData();
+            
+            buildSteps.forEach(step -> step.accept(data));
+            
+            return data;
         }
 
     }
