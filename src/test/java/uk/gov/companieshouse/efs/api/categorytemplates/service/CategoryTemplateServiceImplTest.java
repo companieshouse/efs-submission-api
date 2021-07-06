@@ -152,4 +152,20 @@ class CategoryTemplateServiceImplTest {
         //then
         assertThat(topLevelCategory, is(nullValue()));
     }
+
+    @Test
+    void getTopLevelCategoryWhenParentIsSelf() {
+        // given
+        final CategoryTemplate category =
+            new CategoryTemplate("SELF_PARENT", "parent is self", "SELF_PARENT", null, null);
+
+        when(categoryRepository.findById(category.getCategoryType())).thenReturn(
+            Optional.of(category));
+
+        //when
+        final CategoryTypeConstants topLevelCategory =
+            service.getTopLevelCategory(category.getCategoryType());
+
+        assertThat(topLevelCategory.getValue(), is(OTHER.getValue()));
+    }
 }
