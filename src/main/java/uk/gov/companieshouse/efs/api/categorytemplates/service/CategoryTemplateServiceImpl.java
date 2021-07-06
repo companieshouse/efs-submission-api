@@ -67,7 +67,7 @@ public class CategoryTemplateServiceImpl implements CategoryTemplateService {
                 final CategoryTypeConstants parentCategoryType =
                     CategoryTypeConstants.nameOf(parentCategory).orElse(OTHER);
 
-                if (parentCategoryType == ROOT) {
+                if (parentCategoryType == ROOT || parentCategory.equals(category)) {
                     return result;
                 } else {
                     result = parentCategoryType;
