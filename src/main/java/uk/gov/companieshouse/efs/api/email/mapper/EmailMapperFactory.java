@@ -11,6 +11,7 @@ public class EmailMapperFactory {
     private InternalFailedConversionEmailMapper internalFailedConversionEmailMapper;
     private InternalSubmissionEmailMapper internalSubmissionEmailMapper;
     private DelayedSubmissionSupportEmailMapper delayedSubmissionSupportEmailMapper;
+    private DelayedSH19SameDaySubmissionSupportEmailMapper delayedSH19SameDaySubmissionSupportEmailMapper;
     private DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessEmailMapper;
     private PaymentReportEmailMapper paymentReportEmailMapper;
 
@@ -27,6 +28,7 @@ public class EmailMapperFactory {
         internalFailedConversionEmailMapper = builder.internalFailedConversionEmailMapper;
         internalSubmissionEmailMapper = builder.internalSubmissionEmailMapper;
         delayedSubmissionSupportEmailMapper = builder.delayedSubmissionSupportEmailMapper;
+        delayedSH19SameDaySubmissionSupportEmailMapper = builder.delayedSH19SameDaySubmissionSupportEmailMapper;
         delayedSubmissionBusinessEmailMapper = builder.delayedSubmissionBusinessEmailMapper;
         paymentReportEmailMapper = builder.paymentReportEmailMapper;
     }
@@ -45,6 +47,8 @@ public class EmailMapperFactory {
         builder.internalFailedConversionEmailMapper = copy.getInternalFailedConversionEmailMapper();
         builder.internalSubmissionEmailMapper = copy.getInternalSubmissionEmailMapper();
         builder.delayedSubmissionSupportEmailMapper = copy.getDelayedSubmissionSupportEmailMapper();
+        builder.delayedSH19SameDaySubmissionSupportEmailMapper =
+            copy.getDelayedSH19SameDaySubmissionSupportEmailMapper();
         builder.delayedSubmissionBusinessEmailMapper =
             copy.getDelayedSubmissionBusinessEmailMapper();
         builder.paymentReportEmailMapper = copy.getPaymentReportEmailMapper();
@@ -83,6 +87,10 @@ public class EmailMapperFactory {
         return delayedSubmissionSupportEmailMapper;
     }
 
+    public DelayedSH19SameDaySubmissionSupportEmailMapper getDelayedSH19SameDaySubmissionSupportEmailMapper() {
+        return delayedSH19SameDaySubmissionSupportEmailMapper;
+    }
+
     public DelayedSubmissionBusinessEmailMapper getDelayedSubmissionBusinessEmailMapper() {
         return delayedSubmissionBusinessEmailMapper;
     }
@@ -103,12 +111,14 @@ public class EmailMapperFactory {
         private InternalFailedConversionEmailMapper internalFailedConversionEmailMapper;
         private InternalSubmissionEmailMapper internalSubmissionEmailMapper;
         private DelayedSubmissionSupportEmailMapper delayedSubmissionSupportEmailMapper;
+        private DelayedSH19SameDaySubmissionSupportEmailMapper
+            delayedSH19SameDaySubmissionSupportEmailMapper;
         private DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessEmailMapper;
         private PaymentReportEmailMapper paymentReportEmailMapper;
 
         private Builder() {
         }
-
+        
         /**
          * Sets the {@code confirmationEmailMapper} and returns a reference to this Builder so 
          * that the methods can be chained together.
@@ -205,6 +215,18 @@ public class EmailMapperFactory {
         }
 
         /**
+         * Sets the {@code delayedSH19SubmissionSupportEmailMapper} and returns a reference to this Builder so that the methods can be chained together.
+         *
+         * @param delayedSH19SameDaySubmissionSupportEmailMapper the {@code delayedSubmissionSupportEmailMapper} to set
+         * @return a reference to this Builder
+         */
+        public Builder withDelayedSH19SameDaySubmissionSupportEmailMapper(
+            final DelayedSH19SameDaySubmissionSupportEmailMapper delayedSH19SameDaySubmissionSupportEmailMapper) {
+            this.delayedSH19SameDaySubmissionSupportEmailMapper = delayedSH19SameDaySubmissionSupportEmailMapper;
+            return this;
+        }
+
+        /**
          * Sets the {@code delayedSubmissionBusinessEmailMapper} and returns a reference to this Builder so that the methods can be chained together.
          *
          * @param delayedSubmissionBusinessEmailMapper the {@code delayedSubmissionBusinessEmailMapper} to set
@@ -241,6 +263,8 @@ public class EmailMapperFactory {
             checkNotNull(this.delayedSubmissionBusinessEmailMapper,
                 "'delayedSubmissionBusinessEmailMapper' must not be null");
             checkNotNull(this.delayedSubmissionSupportEmailMapper, "'delayedSubmissionSupportEmailMapper' must not be null");
+            checkNotNull(this.delayedSH19SameDaySubmissionSupportEmailMapper,
+                "'this.delayedSH19SameDaySubmissionSupportEmailMapper' must not be null");
             checkNotNull(this.internalAvFailedEmailMapper, "'internalAVFailedEmailMapper' must not be null");
             checkNotNull(this.internalFailedConversionEmailMapper, "'internalFailedConversionEmailMapper' must not be null");
             checkNotNull(this.internalSubmissionEmailMapper, "'internalSubmissionEmailMapper' must not be null");
@@ -277,7 +301,9 @@ public class EmailMapperFactory {
             && Objects.equals(getInternalSubmissionEmailMapper(),
             that.getInternalSubmissionEmailMapper()) && Objects.equals(
             getDelayedSubmissionSupportEmailMapper(), that.getDelayedSubmissionSupportEmailMapper())
-            && Objects.equals(getDelayedSubmissionBusinessEmailMapper(),
+            && Objects.equals(getDelayedSH19SameDaySubmissionSupportEmailMapper(),
+            that.getDelayedSH19SameDaySubmissionSupportEmailMapper()) && Objects.equals(
+            getDelayedSubmissionBusinessEmailMapper(),
             that.getDelayedSubmissionBusinessEmailMapper()) && Objects.equals(
             getPaymentReportEmailMapper(), that.getPaymentReportEmailMapper());
     }
@@ -287,7 +313,8 @@ public class EmailMapperFactory {
         return Objects.hash(getConfirmationEmailMapper(), getPaymentFailedEmailMapper(),
             getAcceptEmailMapper(), getRejectEmailMapper(), getInternalAvFailedEmailMapper(),
             getInternalFailedConversionEmailMapper(), getInternalSubmissionEmailMapper(),
-            getDelayedSubmissionSupportEmailMapper(), getDelayedSubmissionBusinessEmailMapper(),
-            getPaymentReportEmailMapper());
+            getDelayedSubmissionSupportEmailMapper(),
+            getDelayedSH19SameDaySubmissionSupportEmailMapper(),
+            getDelayedSubmissionBusinessEmailMapper(), getPaymentReportEmailMapper());
     }
 }

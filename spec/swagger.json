@@ -797,8 +797,22 @@
       }
     },
     "/events/handle-delayed-submissions": {
+      "parameters": [
+        {
+          "in": "query",
+          "name": "service",
+          "description": "Service level of submission to handle, default: Standard",
+          "required": false,
+          "type": "string",
+          "enum": [
+            "STANDARD",
+            "SAMEDAY"
+          ],
+          "x-example": "SAMEDAY"
+        }
+      ],
       "post": {
-        "summary": "Poll for submissions stuck in PROCESSING and notify relevant teams",
+        "summary": "Poll for submissions stuck in EFS and notify relevant teams",
         "x-operationName": "notifySubmissionsStuck",
         "tags": [
           "notify submissions stuck",

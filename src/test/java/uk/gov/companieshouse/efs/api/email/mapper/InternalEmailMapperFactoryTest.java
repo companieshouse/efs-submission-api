@@ -19,6 +19,9 @@ class InternalEmailMapperFactoryTest {
     @Mock
     private DelayedSubmissionSupportEmailMapper delayedSupportMapper;
     @Mock
+    private DelayedSH19SameDaySubmissionSupportEmailMapper
+        delayedSH19SameDaySubmissionSupportEmailMapper;
+    @Mock
     private InternalAvFailedEmailMapper avFailedMapper;
     @Mock
     private InternalFailedConversionEmailMapper failedConversionMapper;
@@ -30,7 +33,8 @@ class InternalEmailMapperFactoryTest {
 
     @BeforeEach
     void setUp() {
-        testFactory = new InternalEmailMapperFactory(delayedBusinessMapper, delayedSupportMapper, avFailedMapper,
+        testFactory = new InternalEmailMapperFactory(delayedBusinessMapper, delayedSupportMapper,
+            delayedSH19SameDaySubmissionSupportEmailMapper, avFailedMapper,
             failedConversionMapper, submissionMapper, paymentReportMapper);
     }
 

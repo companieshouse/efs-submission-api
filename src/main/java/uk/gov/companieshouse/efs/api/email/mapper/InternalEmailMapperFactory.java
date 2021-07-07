@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 public class InternalEmailMapperFactory {
     private final DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessMapper;
     private final DelayedSubmissionSupportEmailMapper delayedSubmissionSupportMapper;
+    private final DelayedSH19SameDaySubmissionSupportEmailMapper
+        delayedSH19SameDaySubmissionSupportEmailMapper;
     private final InternalAvFailedEmailMapper internalAvFailedMapper;
     private final InternalFailedConversionEmailMapper internalFailedConversionMapper;
     private final InternalSubmissionEmailMapper internalSubmissionMapper;
@@ -13,12 +15,15 @@ public class InternalEmailMapperFactory {
 
     public InternalEmailMapperFactory(final DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessMapper,
         final DelayedSubmissionSupportEmailMapper delayedSubmissionSupportMapper,
+        final DelayedSH19SameDaySubmissionSupportEmailMapper delayedSH19SameDaySubmissionSupportEmailMapper,
         final InternalAvFailedEmailMapper internalAvFailedMapper,
         final InternalFailedConversionEmailMapper internalFailedConversionMapper,
         final InternalSubmissionEmailMapper internalSubmissionMapper,
         final PaymentReportEmailMapper paymentReportMapper) {
         this.delayedSubmissionBusinessMapper = delayedSubmissionBusinessMapper;
         this.delayedSubmissionSupportMapper = delayedSubmissionSupportMapper;
+        this.delayedSH19SameDaySubmissionSupportEmailMapper =
+            delayedSH19SameDaySubmissionSupportEmailMapper;
         this.internalAvFailedMapper = internalAvFailedMapper;
         this.internalFailedConversionMapper = internalFailedConversionMapper;
         this.internalSubmissionMapper = internalSubmissionMapper;
@@ -31,6 +36,10 @@ public class InternalEmailMapperFactory {
 
     public DelayedSubmissionSupportEmailMapper getDelayedSubmissionSupportMapper() {
         return delayedSubmissionSupportMapper;
+    }
+
+    public DelayedSH19SameDaySubmissionSupportEmailMapper getDelayedSH19SameDaySubmissionSupportEmailMapper() {
+        return delayedSH19SameDaySubmissionSupportEmailMapper;
     }
 
     public InternalAvFailedEmailMapper getInternalAvFailedMapper() {

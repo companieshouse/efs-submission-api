@@ -293,6 +293,8 @@ public class Config {
                 internalEmailMapperFactory.getDelayedSubmissionBusinessMapper())
             .withDelayedSubmissionSupportEmailMapper(
                 internalEmailMapperFactory.getDelayedSubmissionSupportMapper())
+            .withDelayedSH19SameDaySubmissionSupportEmailMapper(
+                internalEmailMapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper())
             .withInternalAvFailedEmailMapper(internalEmailMapperFactory.getInternalAvFailedMapper())
             .withInternalFailedConversionEmailMapper(
                 internalEmailMapperFactory.getInternalFailedConversionMapper())

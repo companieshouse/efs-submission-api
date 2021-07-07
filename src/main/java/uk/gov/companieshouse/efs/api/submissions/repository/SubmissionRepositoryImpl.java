@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -34,6 +35,8 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
     private static final String ID = "_id";
     private static final String STATUS = "status";
     private static final String BARCODE = "form.barcode";
+    private static final String FORM_TYPE = "form.form_type";
+    private static final String SAMEDAY_REGEX = "SAMEDAY$";
     private static final String LAST_MODIFIED_AT = "last_modified_at";
     private static final String SUBMITTED_AT = "submitted_at";
     private static final String FEE_ON_SUBMISSION = "fee_on_submission";
@@ -111,12 +114,35 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
     @Override
     public List<Submission> findDelayedSubmissions(SubmissionStatus status, LocalDateTime before) {
-        LOGGER.debug(String.format("Fetching submissions with status: [%s] and before [%s]", status, before.toString()));
-        List<Submission> submissions = template
-            .find(Query.query(Criteria.where(STATUS).is(status).and(LAST_MODIFIED_AT).lte(before)), Submission.class,
-                SUBMISSIONS_COLLECTION);
-        LOGGER.debug(String.format("Found [%d] submissions with status: [%s] and before [%s]", submissions.size(), status,
-                before.toString()));
+        LOGGER.debug(
+            String.format("Fetching submissions with status: [%s] last modified before [%s]",
+                status, before.toString()));
+        List<Submission> submissions = template.find(Query.query(Criteria.where(STATUS)
+            .is(status)
+            .and(LAST_MODIFIED_AT)
+            .lte(before)
+            .not()
+            .and(FORM_TYPE)
+            .regex(SAMEDAY_REGEX)), Submission.class, SUBMISSIONS_COLLECTION);
+        LOGGER.debug(
+            String.format("Found [%d] submissions with status: [%s] last modified before [%s]",
+                submissions.size(), status, before));
+        return submissions;
+    }
+
+    @Override
+    public List<Submission> findDelayedSameDaySubmissions(Collection<SubmissionStatus> statuses, LocalDateTime submittedBefore) {
+        final String statusesString = Arrays.toString(statuses.toArray());
+        LOGGER.debug(String.format("Fetching sameday submissions with statuses: %s submitted before [%s]",
+            statusesString, submittedBefore));
+        List<Submission> submissions = template.find(Query.query(Criteria.where(STATUS)
+            .in(statuses)
+            .and(SUBMITTED_AT)
+            .lte(submittedBefore)
+            .and(FORM_TYPE)
+            .regex(SAMEDAY_REGEX)), Submission.class, SUBMISSIONS_COLLECTION);
+        LOGGER.debug(String.format("Found [%d] sameday submissions with statuses: %s submitted before [%s]",
+            submissions.size(), statusesString, submittedBefore));
         return submissions;
     }
 

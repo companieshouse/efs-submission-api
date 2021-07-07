@@ -2,6 +2,9 @@ package uk.gov.companieshouse.efs.api.email.model;
 
 import java.util.List;
 import java.util.Objects;
+import org.apache.commons.lang3.builder.RecursiveToStringStyle;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class DelayedSubmissionSupportEmailModel {
     private List<DelayedSubmissionSupportModel> delayedSubmissions;
@@ -37,5 +40,10 @@ public class DelayedSubmissionSupportEmailModel {
     @Override
     public int hashCode() {
         return Objects.hash(getDelayedSubmissions());
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

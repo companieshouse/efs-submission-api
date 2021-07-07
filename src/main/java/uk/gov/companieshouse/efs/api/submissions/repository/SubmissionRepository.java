@@ -28,6 +28,8 @@ public interface SubmissionRepository {
 
     List<Submission> findDelayedSubmissions(SubmissionStatus status, LocalDateTime before);
 
+    List<Submission> findDelayedSameDaySubmissions(Collection<SubmissionStatus> statuses, LocalDateTime submittedBefore);
+
     /**
      * Find paid submissions having any of the given statuses and submit date between startDate and endDate.
      *
