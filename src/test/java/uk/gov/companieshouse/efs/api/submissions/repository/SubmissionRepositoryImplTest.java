@@ -188,7 +188,7 @@ class SubmissionRepositoryImplTest {
             .lte(now)
             .not()
             .and(FORM_TYPE)
-            .regex("SAMEDAY$")), Submission.class, SUBMISSIONS_COLLECTION);
+            .is("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
     }
 
     @Test
@@ -207,7 +207,7 @@ class SubmissionRepositoryImplTest {
             .and("submitted_at")
             .lte(delayedFrom)
             .and(FORM_TYPE)
-            .regex("SAMEDAY$")), Submission.class, SUBMISSIONS_COLLECTION);
+            .is("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
     }
 
     @Test

@@ -20,6 +20,36 @@ class DelayedSH19SameDaySubmissionSupportEmailConfigTest {
     }
 
     @Test
+    void setGetAppId() {
+        testConfig.setAppId("expected");
+        assertThat(testConfig.getAppId(), is("expected"));
+    }
+
+    @Test
+    void setGetSubject() {
+        testConfig.setSubject("expected");
+        assertThat(testConfig.getSubject(), is("expected"));
+    }
+
+    @Test
+    void setGetTopic() {
+        testConfig.setTopic("expected");
+        assertThat(testConfig.getTopic(), is("expected"));
+    }
+
+    @Test
+    void setGetMessageType() {
+        testConfig.setMessageType("expected");
+        assertThat(testConfig.getMessageType(), is("expected"));
+    }
+
+    @Test
+    void setDateFormat() {
+        testConfig.setDateFormat("expected");
+        assertThat(testConfig.getDateFormat(), is("expected"));
+    }
+
+    @Test
     void setGetSupportEmailAddress() {
         testConfig.setSupportEmailAddress("email");
         assertThat(testConfig.getSupportEmailAddress(), is("email"));
@@ -32,4 +62,5 @@ class DelayedSH19SameDaySubmissionSupportEmailConfigTest {
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();
     }
+
 }

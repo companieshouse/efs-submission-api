@@ -1,10 +1,12 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +23,8 @@ import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository
 
 @Component("standardServiceDelayedSubmissionHandler")
 public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerStrategy {
-    static final String SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+    static final ZoneId UK_ZONE = ZoneId.of("Europe/London");
+    static final String SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT = "dd/MM/yyyy HH:mm z";
     static final String SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT = "dd MMMM yyyy";
 
     private SubmissionRepository repository;
@@ -64,12 +67,15 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
                 submission.getConfirmationReference(),
                 Optional.ofNullable(submission.getSubmittedAt())
                     .orElseGet(submission::getCreatedAt)
-                    .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))))
+                    .atZone(UK_ZONE)
+                    .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT)),
+                submission.getPresenter().getEmail(), submission.getCompany().getCompanyNumber()))
             .collect(Collectors.toList());
 
         if (!supportModels.isEmpty()) {
             emailService.sendDelayedSubmissionSupportEmail(
-                new DelayedSubmissionSupportEmailModel(supportModels));
+                new DelayedSubmissionSupportEmailModel(supportModels,
+                    (int) TimeUnit.HOURS.toMinutes(supportDelayInHours)));
             Map<String, List<DelayedSubmissionBusinessModel>> delayedSubmissionBusinessModels =
                 submissions.stream()
                     .filter(submission -> submission.getLastModifiedAt().isBefore(businessDelay))
@@ -80,6 +86,7 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
                         submission.getPresenter().getEmail(),
                         Optional.ofNullable(submission.getSubmittedAt())
                             .orElseGet(submission::getCreatedAt)
+                            .atZone(UK_ZONE)
                             .format(DateTimeFormatter.ofPattern(
                                 SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT))))
                     .collect(Collectors.groupingBy(
@@ -87,7 +94,8 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
                             delayedSubmissionModel.getFormType())));
             delayedSubmissionBusinessModels.forEach(
                 (key, value) -> emailService.sendDelayedSubmissionBusinessEmail(
-                    new DelayedSubmissionBusinessEmailModel(value, key, businessDelayInHours)));
+                    new DelayedSubmissionBusinessEmailModel(value, key,
+                        (int) TimeUnit.HOURS.toMinutes(businessDelayInHours))));
         }
     }
 }

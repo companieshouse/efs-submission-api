@@ -36,7 +36,6 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
     private static final String STATUS = "status";
     private static final String BARCODE = "form.barcode";
     private static final String FORM_TYPE = "form.form_type";
-    private static final String SAMEDAY_REGEX = "SAMEDAY$";
     private static final String LAST_MODIFIED_AT = "last_modified_at";
     private static final String SUBMITTED_AT = "submitted_at";
     private static final String FEE_ON_SUBMISSION = "fee_on_submission";
@@ -123,7 +122,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
             .lte(before)
             .not()
             .and(FORM_TYPE)
-            .regex(SAMEDAY_REGEX)), Submission.class, SUBMISSIONS_COLLECTION);
+            .is("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
         LOGGER.debug(
             String.format("Found [%d] submissions with status: [%s] last modified before [%s]",
                 submissions.size(), status, before));
@@ -140,7 +139,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
             .and(SUBMITTED_AT)
             .lte(submittedBefore)
             .and(FORM_TYPE)
-            .regex(SAMEDAY_REGEX)), Submission.class, SUBMISSIONS_COLLECTION);
+            .is("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
         LOGGER.debug(String.format("Found [%d] sameday submissions with statuses: %s submitted before [%s]",
             submissions.size(), statusesString, submittedBefore));
         return submissions;

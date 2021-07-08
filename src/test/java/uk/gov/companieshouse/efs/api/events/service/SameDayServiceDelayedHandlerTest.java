@@ -10,6 +10,7 @@ import static uk.gov.companieshouse.efs.api.events.service.SameDayServiceDelayed
 import static uk.gov.companieshouse.efs.api.events.service.StandardServiceDelayedHandler.SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportModel;
+import uk.gov.companieshouse.efs.api.submissions.model.Company;
+import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository;
 
@@ -78,38 +81,46 @@ class SameDayServiceDelayedHandlerTest {
         when(submission.getId()).thenReturn("123abd");
         when(submission.getConfirmationReference()).thenReturn("345efg");
         when(submission.getSubmittedAt()).thenReturn(delayedFrom.minusSeconds(5));
+        when(submission.getPresenter()).thenReturn(new Presenter("email"));
+        when(submission.getCompany()).thenReturn(new Company("number", "name"));
 
         // when
         testHandler.buildAndSendEmails(submissions, NOW);
 
         // then
-        verify(emailService).sendDelayedSubmissionSupportEmail(
+        verify(emailService).sendDelayedSH19SubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
                 new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(
-                        DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))))));
+                    .atZone(ZoneId.of("Europe/London"))
+                    .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT)),
+                    submission.getPresenter().getEmail(),
+                    submission.getCompany().getCompanyNumber())), SUPPORT_DELAY));
         verifyNoMoreInteractions(emailService);
     }
 
     @Test
     void buildAndSendEmailsWhenSomeDelayedForSupportAndSubmittedAtMissing() {
         // given
-        final LocalDateTime delayedFrom = NOW.minusHours(SUPPORT_DELAY);
+        final LocalDateTime delayedFrom = NOW.minusMinutes(SUPPORT_DELAY);
         final List<Submission> submissions = Collections.singletonList(submission);
 
         when(submission.getId()).thenReturn("123abd");
         when(submission.getConfirmationReference()).thenReturn("345efg");
         when(submission.getCreatedAt()).thenReturn(delayedFrom.minusSeconds(5));
+        when(submission.getPresenter()).thenReturn(new Presenter("email"));
+        when(submission.getCompany()).thenReturn(new Company("number", "name"));
 
         // when
         testHandler.buildAndSendEmails(submissions, NOW);
 
         // then
-        verify(emailService).sendDelayedSubmissionSupportEmail(
+        verify(emailService).sendDelayedSH19SubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
                 new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(
-                        DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))))));
+                    .atZone(ZoneId.of("Europe/London"))
+                    .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT)),
+                    submission.getPresenter().getEmail(),
+                    submission.getCompany().getCompanyNumber())), SUPPORT_DELAY));
         verifyNoMoreInteractions(emailService);
     }
 

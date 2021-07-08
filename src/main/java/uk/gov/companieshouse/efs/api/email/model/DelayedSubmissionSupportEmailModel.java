@@ -2,15 +2,17 @@ package uk.gov.companieshouse.efs.api.email.model;
 
 import java.util.List;
 import java.util.Objects;
-import org.apache.commons.lang3.builder.RecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class DelayedSubmissionSupportEmailModel {
     private List<DelayedSubmissionSupportModel> delayedSubmissions;
+    private int thresholdInMinutes;
 
-    public DelayedSubmissionSupportEmailModel(List<DelayedSubmissionSupportModel> delayedSubmissions) {
+    public DelayedSubmissionSupportEmailModel(
+        List<DelayedSubmissionSupportModel> delayedSubmissions, final int thresholdInMinutes) {
         this.delayedSubmissions = delayedSubmissions;
+        this.thresholdInMinutes = thresholdInMinutes;
     }
 
     public List<DelayedSubmissionSupportModel> getDelayedSubmissions() {
@@ -25,6 +27,14 @@ public class DelayedSubmissionSupportEmailModel {
         return delayedSubmissions.size();
     }
 
+    public int getThresholdInMinutes() {
+        return thresholdInMinutes;
+    }
+
+    public void setThresholdInMinutes(final int thresholdInMinutes) {
+        this.thresholdInMinutes = thresholdInMinutes;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -34,12 +44,13 @@ public class DelayedSubmissionSupportEmailModel {
             return false;
         }
         final DelayedSubmissionSupportEmailModel that = (DelayedSubmissionSupportEmailModel) o;
-        return Objects.equals(getDelayedSubmissions(), that.getDelayedSubmissions());
+        return getThresholdInMinutes() == that.getThresholdInMinutes() && Objects.equals(
+            getDelayedSubmissions(), that.getDelayedSubmissions());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDelayedSubmissions());
+        return Objects.hash(getDelayedSubmissions(), getThresholdInMinutes());
     }
 
     @Override

@@ -18,7 +18,7 @@ class DelayedSubmissionSupportEmailModelTest {
 
     @BeforeEach
     void setUp() {
-        testModel = new DelayedSubmissionSupportEmailModel(null);
+        testModel = new DelayedSubmissionSupportEmailModel(null, 0);
     }
 
     @Test
@@ -30,8 +30,15 @@ class DelayedSubmissionSupportEmailModelTest {
     @Test
     void getNumberOfDelayedSubmissions() {
         testModel.setDelayedSubmissions(
-            Collections.singletonList(new DelayedSubmissionSupportModel(null, null, null)));
+            Collections.singletonList(new DelayedSubmissionSupportModel(null, null, null,
+                null, null)));
         assertThat(testModel.getNumberOfDelayedSubmissions(), is(1));
+    }
+
+    @Test
+    void setGetThresholdInMinutes() {
+        testModel.setThresholdInMinutes(3000);
+        assertThat(testModel.getThresholdInMinutes(), is(3000));
     }
 
     @Test
@@ -43,6 +50,6 @@ class DelayedSubmissionSupportEmailModelTest {
     @Test
     void testToString() {
         assertThat(testModel.toString(),
-            is("DelayedSubmissionSupportEmailModel[delayedSubmissions=<null>]"));
+            is("DelayedSubmissionSupportEmailModel[delayedSubmissions=<null>,thresholdInMinutes=0]"));
     }
 }

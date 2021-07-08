@@ -6,8 +6,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:delayed.submission.support.mail.properties")
-@ConfigurationProperties(prefix = "delayed.sh19_sameday.submission.support.mail")
+@PropertySource("classpath:delayed.sh19.sameday.submission.support.mail.properties")
+@ConfigurationProperties(prefix = "delayed.sh19.sameday.submission.support.mail")
 public class DelayedSH19SameDaySubmissionSupportEmailConfig extends EmailConfig {
 
     private String supportEmailAddress;

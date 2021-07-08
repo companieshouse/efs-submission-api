@@ -21,7 +21,7 @@ class DelayedSubmissionSupportModelTest {
     @BeforeEach
     void setUp() {
         testModel = new DelayedSubmissionSupportModel("submissionId", "confirmationReference",
-            NOW.toString());
+            NOW.toString(), "customerEmail", "companyNumber");
     }
 
     @Test
@@ -36,14 +36,21 @@ class DelayedSubmissionSupportModelTest {
     }
 
     @Test
-    void getConfirmationReference() {
-        assertThat(testModel.getConfirmationReference(), is("confirmationReference"));
+    void setGetConfirmationReference() {
+        testModel.setConfirmationReference("expected");
+        assertThat(testModel.getConfirmationReference(), is("expected"));
     }
 
     @Test
-    void setConfirmationReference() {
-        testModel.setConfirmationReference("expected");
-        assertThat(testModel.getConfirmationReference(), is("expected"));
+    void setGetCompanyNumber() {
+        testModel.setCompanyNumber("expected");
+        assertThat(testModel.getCompanyNumber(), is("expected"));
+    }
+
+    @Test
+    void setGetCustomerEmail() {
+        testModel.setCustomerEmail("expected");
+        assertThat(testModel.getCustomerEmail(), is("expected"));
     }
 
     @Test
@@ -68,7 +75,8 @@ class DelayedSubmissionSupportModelTest {
     @Test
     void testToString() {
         assertThat(testModel.toString(),
-            is("DelayedSubmissionSupportModel[confirmationReference=confirmationReference,submissionId=submissionId,submittedAt="
-                + NOW.toString() + "]"));
+            is("DelayedSubmissionSupportModel[companyNumber=companyNumber,"
+                + "confirmationReference=confirmationReference,customerEmail=customerEmail,"
+                + "submissionId=submissionId,submittedAt=" + NOW + "]"));
     }
 }
