@@ -10,6 +10,7 @@ import static uk.gov.companieshouse.efs.api.events.service.SameDayServiceDelayed
 import static uk.gov.companieshouse.efs.api.events.service.StandardServiceDelayedHandler.SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +31,9 @@ import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository
 class SameDayServiceDelayedHandlerTest {
     private static final int SUPPORT_DELAY = 60;
     private static final LocalDateTime NOW = LocalDateTime.now();
+    static final ZoneId UTC_ZONE = ZoneId.of("UTC");
+    private static final DateTimeFormatter FORMATTER =
+        DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT).withZone(UTC_ZONE);
 
     private SameDayServiceDelayedHandler testHandler;
 
@@ -90,7 +94,7 @@ class SameDayServiceDelayedHandlerTest {
         verify(emailService).sendDelayedSH19SubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
                 new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT)),
+                    .format(FORMATTER),
                     submission.getPresenter().getEmail(),
                     submission.getCompany().getCompanyNumber())), SUPPORT_DELAY));
         verifyNoMoreInteractions(emailService);
@@ -115,7 +119,7 @@ class SameDayServiceDelayedHandlerTest {
         verify(emailService).sendDelayedSH19SubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
                 new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT)),
+                    .format(FORMATTER),
                     submission.getPresenter().getEmail(),
                     submission.getCompany().getCompanyNumber())), SUPPORT_DELAY));
         verifyNoMoreInteractions(emailService);

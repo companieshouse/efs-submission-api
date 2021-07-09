@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,9 @@ import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository
 public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerStrategy {
     static final String SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT = "dd/MM/yyyy HH:mm z";
     static final String SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT = "dd MMMM yyyy";
+    static final ZoneId UTC_ZONE = ZoneId.of("UTC");
+    private static final DateTimeFormatter FORMATTER =
+        DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT).withZone(UTC_ZONE);
 
     private SubmissionRepository repository;
     private EmailService emailService;
@@ -65,7 +69,7 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
                 submission.getConfirmationReference(),
                 Optional.ofNullable(submission.getSubmittedAt())
                     .orElseGet(submission::getCreatedAt)
-                    .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT)),
+                    .format(FORMATTER),
                 submission.getPresenter().getEmail(), submission.getCompany().getCompanyNumber()))
             .collect(Collectors.toList());
 
@@ -83,8 +87,7 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
                         submission.getPresenter().getEmail(),
                         Optional.ofNullable(submission.getSubmittedAt())
                             .orElseGet(submission::getCreatedAt)
-                            .format(DateTimeFormatter.ofPattern(
-                                SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT))))
+                            .format(FORMATTER)))
                     .collect(Collectors.groupingBy(
                         delayedSubmissionModel -> formCategoryToEmailAddressService.getEmailAddressForFormCategory(
                             delayedSubmissionModel.getFormType())));
