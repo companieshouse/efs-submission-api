@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository
 
 @Component("standardServiceDelayedSubmissionHandler")
 public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerStrategy {
-    static final ZoneId UK_ZONE = ZoneId.of("Europe/London");
     static final String SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT = "dd/MM/yyyy HH:mm z";
     static final String SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT = "dd MMMM yyyy";
 
@@ -67,7 +65,6 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
                 submission.getConfirmationReference(),
                 Optional.ofNullable(submission.getSubmittedAt())
                     .orElseGet(submission::getCreatedAt)
-                    .atZone(UK_ZONE)
                     .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT)),
                 submission.getPresenter().getEmail(), submission.getCompany().getCompanyNumber()))
             .collect(Collectors.toList());
@@ -86,7 +83,6 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
                         submission.getPresenter().getEmail(),
                         Optional.ofNullable(submission.getSubmittedAt())
                             .orElseGet(submission::getCreatedAt)
-                            .atZone(UK_ZONE)
                             .format(DateTimeFormatter.ofPattern(
                                 SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT))))
                     .collect(Collectors.groupingBy(

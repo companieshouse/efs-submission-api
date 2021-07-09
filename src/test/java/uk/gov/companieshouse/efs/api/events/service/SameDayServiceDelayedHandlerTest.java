@@ -10,7 +10,6 @@ import static uk.gov.companieshouse.efs.api.events.service.SameDayServiceDelayed
 import static uk.gov.companieshouse.efs.api.events.service.StandardServiceDelayedHandler.SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -91,7 +90,6 @@ class SameDayServiceDelayedHandlerTest {
         verify(emailService).sendDelayedSH19SubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
                 new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .atZone(ZoneId.of("Europe/London"))
                     .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT)),
                     submission.getPresenter().getEmail(),
                     submission.getCompany().getCompanyNumber())), SUPPORT_DELAY));
@@ -117,7 +115,6 @@ class SameDayServiceDelayedHandlerTest {
         verify(emailService).sendDelayedSH19SubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
                 new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .atZone(ZoneId.of("Europe/London"))
                     .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT)),
                     submission.getPresenter().getEmail(),
                     submission.getCompany().getCompanyNumber())), SUPPORT_DELAY));
