@@ -2,13 +2,15 @@ package uk.gov.companieshouse.efs.api.email.model;
 
 import java.util.List;
 import java.util.Objects;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class DelayedSubmissionBusinessEmailData {
 
     private String to;
     private String subject;
     private List<DelayedSubmissionBusinessModel> submissions;
-    private long delayInDays;
+    private int thresholdInMinutes;
 
     /**
      * Constructor.
@@ -16,13 +18,13 @@ public class DelayedSubmissionBusinessEmailData {
      * @param to            dependency
      * @param subject       dependency
      * @param submissions   dependency
-     * @param delayInDays   dependency
+     * @param thresholdInMinutes   dependency
      */
-    public DelayedSubmissionBusinessEmailData(String to, String subject, List<DelayedSubmissionBusinessModel> submissions, long delayInDays) {
+    public DelayedSubmissionBusinessEmailData(String to, String subject, List<DelayedSubmissionBusinessModel> submissions, int thresholdInMinutes) {
         this.to = to;
         this.subject = subject;
         this.submissions = submissions;
-        this.delayInDays = delayInDays;
+        this.thresholdInMinutes = thresholdInMinutes;
     }
 
     public String getTo() {
@@ -49,12 +51,12 @@ public class DelayedSubmissionBusinessEmailData {
         this.submissions = submissions;
     }
 
-    public long getDelayInDays() {
-        return delayInDays;
+    public int getThresholdInMinutes() {
+        return thresholdInMinutes;
     }
 
-    public void setDelayInDays(long delayInDays) {
-        this.delayInDays = delayInDays;
+    public void setThresholdInMinutes(int thresholdInMinutes) {
+        this.thresholdInMinutes = thresholdInMinutes;
     }
 
     @Override
@@ -66,7 +68,7 @@ public class DelayedSubmissionBusinessEmailData {
             return false;
         }
         final DelayedSubmissionBusinessEmailData that = (DelayedSubmissionBusinessEmailData) o;
-        return getDelayInDays() == that.getDelayInDays()
+        return getThresholdInMinutes() == that.getThresholdInMinutes()
                && Objects.equals(getTo(), that.getTo())
                && Objects.equals(getSubject(), that.getSubject())
                && Objects.equals(getSubmissions(), that.getSubmissions());
@@ -74,7 +76,12 @@ public class DelayedSubmissionBusinessEmailData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTo(), getSubject(), getSubmissions(), getDelayInDays());
+        return Objects.hash(getTo(), getSubject(), getSubmissions(), getThresholdInMinutes());
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
     public static Builder builder() {
@@ -86,7 +93,7 @@ public class DelayedSubmissionBusinessEmailData {
         private String to;
         private String subject;
         private List<DelayedSubmissionBusinessModel> submissions;
-        private long delayInDays;
+        private int thresholdInMinutes;
 
         public Builder withTo(String to) {
             this.to = to;
@@ -103,13 +110,13 @@ public class DelayedSubmissionBusinessEmailData {
             return this;
         }
 
-        public Builder withDelayInDays(long delayInDays) {
-            this.delayInDays = delayInDays;
+        public Builder withThresholdInMinutes(int thresholdInMinutes) {
+            this.thresholdInMinutes = thresholdInMinutes;
             return this;
         }
 
         public DelayedSubmissionBusinessEmailData build() {
-            return new DelayedSubmissionBusinessEmailData(to, subject, submissions, delayInDays);
+            return new DelayedSubmissionBusinessEmailData(to, subject, submissions, thresholdInMinutes);
         }
     }
 }

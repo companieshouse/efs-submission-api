@@ -8,13 +8,17 @@ public class InternalEmailMapperFactory {
     private final DelayedSubmissionSupportEmailMapper delayedSubmissionSupportMapper;
     private final DelayedSH19SameDaySubmissionSupportEmailMapper
         delayedSH19SameDaySubmissionSupportEmailMapper;
+    private final DelayedSH19SameDaySubmissionBusinessEmailMapper
+        delayedSH19SameDaySubmissionBusinessEmailMapper;
     private final InternalAvFailedEmailMapper internalAvFailedMapper;
     private final InternalFailedConversionEmailMapper internalFailedConversionMapper;
     private final InternalSubmissionEmailMapper internalSubmissionMapper;
     private final PaymentReportEmailMapper paymentReportMapper;
 
-    public InternalEmailMapperFactory(final DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessMapper,
+    public InternalEmailMapperFactory(
+        final DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessMapper,
         final DelayedSubmissionSupportEmailMapper delayedSubmissionSupportMapper,
+        final DelayedSH19SameDaySubmissionBusinessEmailMapper delayedSH19SameDaySubmissionBusinessEmailMapper,
         final DelayedSH19SameDaySubmissionSupportEmailMapper delayedSH19SameDaySubmissionSupportEmailMapper,
         final InternalAvFailedEmailMapper internalAvFailedMapper,
         final InternalFailedConversionEmailMapper internalFailedConversionMapper,
@@ -22,6 +26,8 @@ public class InternalEmailMapperFactory {
         final PaymentReportEmailMapper paymentReportMapper) {
         this.delayedSubmissionBusinessMapper = delayedSubmissionBusinessMapper;
         this.delayedSubmissionSupportMapper = delayedSubmissionSupportMapper;
+        this.delayedSH19SameDaySubmissionBusinessEmailMapper =
+            delayedSH19SameDaySubmissionBusinessEmailMapper;
         this.delayedSH19SameDaySubmissionSupportEmailMapper =
             delayedSH19SameDaySubmissionSupportEmailMapper;
         this.internalAvFailedMapper = internalAvFailedMapper;
@@ -36,6 +42,10 @@ public class InternalEmailMapperFactory {
 
     public DelayedSubmissionSupportEmailMapper getDelayedSubmissionSupportMapper() {
         return delayedSubmissionSupportMapper;
+    }
+
+    public DelayedSH19SameDaySubmissionBusinessEmailMapper getDelayedSH19SameDaySubmissionBusinessEmailMapper() {
+        return delayedSH19SameDaySubmissionBusinessEmailMapper;
     }
 
     public DelayedSH19SameDaySubmissionSupportEmailMapper getDelayedSH19SameDaySubmissionSupportEmailMapper() {

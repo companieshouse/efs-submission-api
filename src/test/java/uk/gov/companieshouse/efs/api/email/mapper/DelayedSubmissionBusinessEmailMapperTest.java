@@ -62,7 +62,7 @@ class DelayedSubmissionBusinessEmailMapperTest {
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
         when(delayedSubmissionBusinessEmailModel.getDelayedSubmissions()).thenReturn(Collections.singletonList(delayedSubmissionBusinessModel));
         when(delayedSubmissionBusinessEmailModel.getEmailAddress()).thenReturn("internal_RP_demo@ch.gov.uk");
-        when(delayedSubmissionBusinessEmailModel.getDelayInHours()).thenReturn(72);
+        when(delayedSubmissionBusinessEmailModel.getDelayInMinutes()).thenReturn(72*60);
 
         //when
         EmailDocument<DelayedSubmissionBusinessEmailData> actual = delayedSubmissionBusinessEmailMapper.map(delayedSubmissionBusinessEmailModel);
@@ -86,7 +86,7 @@ class DelayedSubmissionBusinessEmailMapperTest {
                                 .withTo("internal_RP_demo@ch.gov.uk")
                                 .withSubject("EFS Submission delayed submission")
                                 .withDelayedSubmissions(Collections.singletonList(delayedSubmissionBusinessModel))
-                                .withDelayInDays(3)
+                                .withThresholdInMinutes(72*60)
                                 .build())
                 .build();
     }

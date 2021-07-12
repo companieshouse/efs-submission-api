@@ -284,13 +284,14 @@ public class Config {
         final ExternalEmailMapperFactory externalEmailMapperFactory,
         final InternalEmailMapperFactory internalEmailMapperFactory) {
 
-
         return EmailMapperFactory.newBuilder()
             .withAcceptEmailMapper(externalEmailMapperFactory.getAcceptEmailMapper())
             .withConfirmationEmailMapper(externalEmailMapperFactory.getConfirmationMapper())
             .withPaymentFailedEmailMapper(externalEmailMapperFactory.getPaymentFailedMapper())
             .withDelayedSubmissionBusinessEmailMapper(
                 internalEmailMapperFactory.getDelayedSubmissionBusinessMapper())
+            .withDelayedSH19SameDaySubmissionBusinessEmailMapper(
+                internalEmailMapperFactory.getDelayedSH19SameDaySubmissionBusinessEmailMapper())
             .withDelayedSubmissionSupportEmailMapper(
                 internalEmailMapperFactory.getDelayedSubmissionSupportMapper())
             .withDelayedSH19SameDaySubmissionSupportEmailMapper(

@@ -31,5 +31,7 @@ public interface EmailService {
 
     void sendDelayedSubmissionBusinessEmail(DelayedSubmissionBusinessEmailModel emailModel);
 
+    void sendDelayedSH19SubmissionBusinessEmail(DelayedSubmissionBusinessEmailModel emailModel);
+
     void sendPaymentReportEmail(PaymentReportEmailModel emailModel);
 }

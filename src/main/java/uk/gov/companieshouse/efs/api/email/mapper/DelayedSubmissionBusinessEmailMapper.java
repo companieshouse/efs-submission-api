@@ -51,7 +51,7 @@ public class DelayedSubmissionBusinessEmailMapper {
                 .withTo(model.getEmailAddress())
                 .withSubject(config.getSubject())
                 .withDelayedSubmissions(model.getDelayedSubmissions())
-                .withDelayInDays(Duration.ofHours(model.getDelayInHours()).toDays())
+                .withThresholdInMinutes(model.getDelayInMinutes())
                 .build();
 
     }

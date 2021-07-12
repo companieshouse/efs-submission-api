@@ -23,6 +23,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
+import uk.gov.companieshouse.efs.api.email.mapper.DelayedSH19SameDaySubmissionBusinessEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSH19SameDaySubmissionSupportEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionBusinessEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionSupportEmailMapper;
@@ -159,6 +160,10 @@ class EmailServiceImplTest {
     
     @Mock
     private DelayedSH19SameDaySubmissionSupportEmailMapper delayedSH19SameDaySubmissionSupportEmailMapper;
+
+    @Mock
+    private DelayedSH19SameDaySubmissionBusinessEmailMapper
+        delayedSH19SameDaySubmissionBusinessEmailMapper;
 
     @Mock
     private DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessEmailMapper;
@@ -402,7 +407,7 @@ class EmailServiceImplTest {
     }
 
     @Test
-    void testEmailServiceSendsMessageToKafkaWhenSH19SameDaySubmissionDelayed() throws ExecutionException, InterruptedException {
+    void testEmailServiceSendsMessageToKafkaWhenSH19SameDaySubmissionDelayedForSupport() throws ExecutionException, InterruptedException {
         //given
         LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
         when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
@@ -420,6 +425,29 @@ class EmailServiceImplTest {
         verify(serializer).serialize(eq(delayedSubmissionSupportEmailDataEmailDocument), eq(schema));
         verify(producer).send(messageCaptor.capture());
         assertEquals("delayed-submission-support-email-send", messageCaptor.getValue().getTopic());
+        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
+        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+    }
+
+    @Test
+    void testEmailServiceSendsMessageToKafkaWhenSH19SameDaySubmissionDelayedForBusiness() throws ExecutionException, InterruptedException {
+        //given
+        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(delayedSubmissionBusinessEmailDataEmailDocument.getTopic()).thenReturn(
+            "delayed-submission-business-email-send");
+        when(emailMapperFactory.getDelayedSH19SameDaySubmissionBusinessEmailMapper()).thenReturn(
+            delayedSH19SameDaySubmissionBusinessEmailMapper);
+        when(delayedSH19SameDaySubmissionBusinessEmailMapper.map(any())).thenReturn(delayedSubmissionBusinessEmailDataEmailDocument);
+        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+
+        // when
+        this.emailService.sendDelayedSH19SubmissionBusinessEmail(delayedSubmissionBusinessEmailModel);
+
+        // then
+        verify(serializer).serialize(eq(delayedSubmissionBusinessEmailDataEmailDocument), eq(schema));
+        verify(producer).send(messageCaptor.capture());
+        assertEquals("delayed-submission-business-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
         assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
     }

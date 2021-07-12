@@ -37,6 +37,8 @@ class EmailMapperFactoryTest {
     @Mock
     private DelayedSH19SameDaySubmissionSupportEmailMapper delayedSH19SameDaySubmissionSupportEmailMapper;
     @Mock
+    private DelayedSH19SameDaySubmissionBusinessEmailMapper delayedSH19SameDaySubmissionBusinessEmailMapper;
+    @Mock
     private DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessEmailMapper;
     @Mock
     private PaymentReportEmailMapper paymentReportEmailMapper;
@@ -53,6 +55,8 @@ class EmailMapperFactoryTest {
             .withDelayedSubmissionSupportEmailMapper(delayedSubmissionSupportEmailMapper)
             .withDelayedSH19SameDaySubmissionSupportEmailMapper(
                 delayedSH19SameDaySubmissionSupportEmailMapper)
+            .withDelayedSH19SameDaySubmissionBusinessEmailMapper(
+                delayedSH19SameDaySubmissionBusinessEmailMapper)
             .withDelayedSubmissionBusinessEmailMapper(delayedSubmissionBusinessEmailMapper)
             .withPaymentReportEmailMapper(paymentReportEmailMapper).build();
     }
@@ -72,13 +76,6 @@ class EmailMapperFactoryTest {
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> builder.build());
 
         assertThat(exception.getMessage(), is("'confirmationEmailMapper' must not be null"));
-    }
-
-    @Test
-    void copyBuilder() {
-        final EmailMapperFactory copy = EmailMapperFactory.newBuilder(testFactory).build();
-
-        assertThat(copy, is(equalTo(testFactory)));
     }
 
     @Test

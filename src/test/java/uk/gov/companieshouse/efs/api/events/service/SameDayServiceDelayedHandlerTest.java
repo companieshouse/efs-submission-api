@@ -20,9 +20,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.efs.api.email.EmailService;
+import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
+import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
+import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportModel;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
+import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository;
@@ -42,12 +46,15 @@ class SameDayServiceDelayedHandlerTest {
     @Mock
     private EmailService emailService;
     @Mock
+    private FormCategoryToEmailAddressService formCategoryToEmailAddressService;
+    @Mock
     private Submission submission;
 
 
     @BeforeEach
     void setUp() {
-        testHandler = new SameDayServiceDelayedHandler(repository, emailService, SUPPORT_DELAY);
+        testHandler = new SameDayServiceDelayedHandler(repository, emailService,
+            formCategoryToEmailAddressService, SUPPORT_DELAY);
     }
 
     @Test
@@ -76,7 +83,7 @@ class SameDayServiceDelayedHandlerTest {
     }
 
     @Test
-    void buildAndSendEmailsWhenSomeDelayedForSupport() {
+    void buildAndSendEmailsWhenSomeDelayed() {
         // given
         final LocalDateTime delayedFrom = NOW.minusMinutes(SUPPORT_DELAY);
         final List<Submission> submissions = Collections.singletonList(submission);
@@ -86,6 +93,9 @@ class SameDayServiceDelayedHandlerTest {
         when(submission.getSubmittedAt()).thenReturn(delayedFrom.minusSeconds(5));
         when(submission.getPresenter()).thenReturn(new Presenter("email"));
         when(submission.getCompany()).thenReturn(new Company("number", "name"));
+        when(submission.getFormDetails()).thenReturn(new FormDetails(null, "SH19_SAMEDAY", null));
+        when(formCategoryToEmailAddressService.getEmailAddressForFormCategory(
+            "SH19_SAMEDAY")).thenReturn("sh19@ch.gov.uk");
 
         // when
         testHandler.buildAndSendEmails(submissions, NOW);
@@ -93,15 +103,21 @@ class SameDayServiceDelayedHandlerTest {
         // then
         verify(emailService).sendDelayedSH19SubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
-                new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(FORMATTER),
+                new DelayedSubmissionSupportModel("123abd", "345efg",
+                    delayedFrom.minusSeconds(5).format(FORMATTER),
                     submission.getPresenter().getEmail(),
                     submission.getCompany().getCompanyNumber())), SUPPORT_DELAY));
+        verify(emailService).sendDelayedSH19SubmissionBusinessEmail(
+            new DelayedSubmissionBusinessEmailModel(Collections.singletonList(
+                new DelayedSubmissionBusinessModel("345efg", "number", "SH19_SAMEDAY",
+                    submission.getPresenter().getEmail(),
+                    delayedFrom.minusSeconds(5).format(FORMATTER))), "sh19@ch.gov.uk",
+                SUPPORT_DELAY));
         verifyNoMoreInteractions(emailService);
     }
 
     @Test
-    void buildAndSendEmailsWhenSomeDelayedForSupportAndSubmittedAtMissing() {
+    void buildAndSendEmailsWhenSomeDelayedAndSubmittedAtMissing() {
         // given
         final LocalDateTime delayedFrom = NOW.minusMinutes(SUPPORT_DELAY);
         final List<Submission> submissions = Collections.singletonList(submission);
@@ -111,6 +127,9 @@ class SameDayServiceDelayedHandlerTest {
         when(submission.getCreatedAt()).thenReturn(delayedFrom.minusSeconds(5));
         when(submission.getPresenter()).thenReturn(new Presenter("email"));
         when(submission.getCompany()).thenReturn(new Company("number", "name"));
+        when(submission.getFormDetails()).thenReturn(new FormDetails(null, "SH19_SAMEDAY", null));
+        when(formCategoryToEmailAddressService.getEmailAddressForFormCategory(
+            "SH19_SAMEDAY")).thenReturn("sh19@ch.gov.uk");
 
         // when
         testHandler.buildAndSendEmails(submissions, NOW);
@@ -118,10 +137,16 @@ class SameDayServiceDelayedHandlerTest {
         // then
         verify(emailService).sendDelayedSH19SubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
-                new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(FORMATTER),
+                new DelayedSubmissionSupportModel("123abd", "345efg",
+                    delayedFrom.minusSeconds(5).format(FORMATTER),
                     submission.getPresenter().getEmail(),
                     submission.getCompany().getCompanyNumber())), SUPPORT_DELAY));
+        verify(emailService).sendDelayedSH19SubmissionBusinessEmail(
+            new DelayedSubmissionBusinessEmailModel(Collections.singletonList(
+                new DelayedSubmissionBusinessModel("345efg", "number", "SH19_SAMEDAY",
+                    submission.getPresenter().getEmail(),
+                    delayedFrom.minusSeconds(5).format(FORMATTER))), "sh19@ch.gov.uk",
+                SUPPORT_DELAY));
         verifyNoMoreInteractions(emailService);
     }
 

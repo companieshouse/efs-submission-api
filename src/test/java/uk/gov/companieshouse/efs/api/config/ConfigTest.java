@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import uk.gov.companieshouse.efs.api.email.mapper.DelayedSH19SameDaySubmissionBusinessEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSH19SameDaySubmissionSupportEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionBusinessEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionSupportEmailMapper;
@@ -61,12 +62,14 @@ class ConfigTest {
 
     @Test
     void emailMapperFactory() {
-        final ExternalAcceptEmailMapper acceptEmailMapper = new ExternalAcceptEmailMapper(null, null, null);
+        final ExternalAcceptEmailMapper acceptEmailMapper =
+            new ExternalAcceptEmailMapper(null, null, null);
         final ExternalNotificationEmailMapper confirmationMapper =
             new ExternalNotificationEmailMapper(null, null, null, null, null);
         final ExternalNotificationEmailMapper paymentFailedMapper =
             new ExternalNotificationEmailMapper(null, null, null, null, null);
-        final ExternalRejectEmailMapper rejectMapper = new ExternalRejectEmailMapper(null, null, null);
+        final ExternalRejectEmailMapper rejectMapper =
+            new ExternalRejectEmailMapper(null, null, null);
         final ExternalEmailMapperFactory externalMapperFactory =
             new ExternalEmailMapperFactory(acceptEmailMapper, confirmationMapper,
                 paymentFailedMapper, rejectMapper);
@@ -74,38 +77,52 @@ class ConfigTest {
             new DelayedSubmissionBusinessEmailMapper(null, null, null);
         final DelayedSubmissionSupportEmailMapper delayedSubmissionSupportMapper =
             new DelayedSubmissionSupportEmailMapper(null, null, null);
-        final DelayedSH19SameDaySubmissionSupportEmailMapper delayedSH19SameDaySubmissionSupportEmailMapper =
+        final DelayedSH19SameDaySubmissionSupportEmailMapper
+            delayedSH19SameDaySubmissionSupportEmailMapper =
             new DelayedSH19SameDaySubmissionSupportEmailMapper(null, null, null);
+        final DelayedSH19SameDaySubmissionBusinessEmailMapper
+            delayedSH19SameDaySubmissionBusinessEmailMapper =
+            new DelayedSH19SameDaySubmissionBusinessEmailMapper(null, null, null);
         final InternalAvFailedEmailMapper internalAvFailedMapper =
             new InternalAvFailedEmailMapper(null, null, null, null);
         final InternalFailedConversionEmailMapper internalFailedConversionMapper =
             new InternalFailedConversionEmailMapper(null, null, null, null);
         final InternalSubmissionEmailMapper internalSubmissionMapper =
             new InternalSubmissionEmailMapper(null, null, null, null, null, null);
-        final PaymentReportEmailMapper paymentReportMapper = new PaymentReportEmailMapper(null, null, null);
+        final PaymentReportEmailMapper paymentReportMapper =
+            new PaymentReportEmailMapper(null, null, null);
         final InternalEmailMapperFactory internalMapperFactory =
             new InternalEmailMapperFactory(delayedSubmissionBusinessMapper,
-                delayedSubmissionSupportMapper, delayedSH19SameDaySubmissionSupportEmailMapper,
-                internalAvFailedMapper,
-                internalFailedConversionMapper, internalSubmissionMapper,
-                paymentReportMapper);
+                delayedSubmissionSupportMapper, delayedSH19SameDaySubmissionBusinessEmailMapper,
+                delayedSH19SameDaySubmissionSupportEmailMapper, internalAvFailedMapper,
+                internalFailedConversionMapper, internalSubmissionMapper, paymentReportMapper);
 
         final EmailMapperFactory mapperFactory =
             testConfig.emailMapperFactory(externalMapperFactory, internalMapperFactory);
 
         assertThat(mapperFactory, isA(EmailMapperFactory.class));
         assertThat(mapperFactory.getAcceptEmailMapper(), isA(ExternalAcceptEmailMapper.class));
-        assertThat(mapperFactory.getConfirmationEmailMapper(), isA(ExternalNotificationEmailMapper.class));
-        assertThat(mapperFactory.getPaymentFailedEmailMapper(), isA(ExternalNotificationEmailMapper.class));
+        assertThat(mapperFactory.getConfirmationEmailMapper(),
+            isA(ExternalNotificationEmailMapper.class));
+        assertThat(mapperFactory.getPaymentFailedEmailMapper(),
+            isA(ExternalNotificationEmailMapper.class));
         assertThat(mapperFactory.getRejectEmailMapper(), isA(ExternalRejectEmailMapper.class));
-        assertThat(mapperFactory.getDelayedSubmissionBusinessEmailMapper(), isA(DelayedSubmissionBusinessEmailMapper.class));
+        assertThat(mapperFactory.getDelayedSubmissionBusinessEmailMapper(),
+            isA(DelayedSubmissionBusinessEmailMapper.class));
         assertThat(mapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper(),
             isA(DelayedSH19SameDaySubmissionSupportEmailMapper.class));
-        assertThat(mapperFactory.getDelayedSubmissionSupportEmailMapper(), isA(DelayedSubmissionSupportEmailMapper.class));
-        assertThat(mapperFactory.getInternalAvFailedEmailMapper(), isA(InternalAvFailedEmailMapper.class));
-        assertThat(mapperFactory.getInternalFailedConversionEmailMapper(), isA(InternalFailedConversionEmailMapper.class));
-        assertThat(mapperFactory.getInternalSubmissionEmailMapper(), isA(InternalSubmissionEmailMapper.class));
-        assertThat(mapperFactory.getPaymentReportEmailMapper(), isA(PaymentReportEmailMapper.class));
+        assertThat(mapperFactory.getDelayedSH19SameDaySubmissionBusinessEmailMapper(),
+            isA(DelayedSH19SameDaySubmissionBusinessEmailMapper.class));
+        assertThat(mapperFactory.getDelayedSubmissionSupportEmailMapper(),
+            isA(DelayedSubmissionSupportEmailMapper.class));
+        assertThat(mapperFactory.getInternalAvFailedEmailMapper(),
+            isA(InternalAvFailedEmailMapper.class));
+        assertThat(mapperFactory.getInternalFailedConversionEmailMapper(),
+            isA(InternalFailedConversionEmailMapper.class));
+        assertThat(mapperFactory.getInternalSubmissionEmailMapper(),
+            isA(InternalSubmissionEmailMapper.class));
+        assertThat(mapperFactory.getPaymentReportEmailMapper(),
+            isA(PaymentReportEmailMapper.class));
     }
 
 }

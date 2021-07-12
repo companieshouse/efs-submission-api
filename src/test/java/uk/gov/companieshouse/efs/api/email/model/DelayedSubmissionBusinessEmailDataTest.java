@@ -24,7 +24,7 @@ class DelayedSubmissionBusinessEmailDataTest {
     @BeforeEach
     void setUp() {
         submissions = Collections.emptyList();
-        testData = new DelayedSubmissionBusinessEmailData("to", "subject", submissions, 3L);
+        testData = new DelayedSubmissionBusinessEmailData("to", "subject", submissions, 300);
     }
 
     @Test
@@ -52,9 +52,9 @@ class DelayedSubmissionBusinessEmailDataTest {
 
     @Test
     void setGetDelayInDays() {
-        testData.setDelayInDays(30L);
+        testData.setThresholdInMinutes(30);
 
-        assertThat(testData.getDelayInDays(), is(30L));
+        assertThat(testData.getThresholdInMinutes(), is(30));
     }
 
     @Test
@@ -78,12 +78,12 @@ class DelayedSubmissionBusinessEmailDataTest {
                 .withTo("builder.to")
                 .withSubject("builder.subject")
                 .withDelayedSubmissions(submissions)
-                .withDelayInDays(55L)
+                .withThresholdInMinutes(3000)
                 .build();
 
         DelayedSubmissionBusinessEmailData expected =
             new DelayedSubmissionBusinessEmailData("builder.to", "builder.subject", submissions,
-                55L);
+                3000);
 
         assertThat(emailData, is(equalTo(expected)));
     }
