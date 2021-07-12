@@ -120,9 +120,8 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
             .is(status)
             .and(LAST_MODIFIED_AT)
             .lte(before)
-            .not()
             .and(FORM_TYPE)
-            .is("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
+            .ne("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
         LOGGER.debug(
             String.format("Found [%d] submissions with status: [%s] last modified before [%s]",
                 submissions.size(), status, before));

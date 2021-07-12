@@ -186,9 +186,8 @@ class SubmissionRepositoryImplTest {
             .is(SubmissionStatus.PROCESSING)
             .and(LAST_MODIFIED_AT)
             .lte(now)
-            .not()
             .and(FORM_TYPE)
-            .is("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
+            .ne("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
     }
 
     @Test
