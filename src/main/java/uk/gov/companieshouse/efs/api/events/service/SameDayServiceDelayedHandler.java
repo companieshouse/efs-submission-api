@@ -29,14 +29,18 @@ public class SameDayServiceDelayedHandler implements DelayedSubmissionHandlerStr
     private SubmissionRepository repository;
     private EmailService emailService;
     private int supportDelayInMinutes;
+    private String businessEmail;
 
     @Autowired
     public SameDayServiceDelayedHandler(final SubmissionRepository repository,
         final EmailService emailService,
-        @Value("${submission.sameday.support.minutes}") final int supportDelayInMinutes) {
+        @Value("${submission.sameday.support.minutes}") final int supportDelayInMinutes,
+        @Value("${internal.sharecapitalreduction.sh19.sameday.email.address}")
+        final String businessEmail) {
         this.repository = repository;
         this.emailService = emailService;
         this.supportDelayInMinutes = supportDelayInMinutes;
+        this.businessEmail = businessEmail;
     }
 
     @Override
@@ -65,7 +69,8 @@ public class SameDayServiceDelayedHandler implements DelayedSubmissionHandlerStr
 
         if (!supportModels.isEmpty()) {
             emailService.sendDelayedSH19SubmissionSupportEmail(
-                new DelayedSubmissionSupportEmailModel(supportModels, supportDelayInMinutes));
+                new DelayedSubmissionSupportEmailModel(supportModels, supportDelayInMinutes),
+                businessEmail);
         }
     }
 }
