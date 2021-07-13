@@ -118,7 +118,10 @@ public class EmailServiceImpl implements EmailService {
         final DelayedSubmissionSupportEmailData data = document.getData();
         
         data.setTo(businessEmail);
-        
+
+        LOGGER.debug(String.format(
+            "Sending delayed SH19 same day submission business email for [%d] submissions",
+            emailModel.getNumberOfDelayedSubmissions()));
         final EmailDocument<DelayedSubmissionSupportEmailData> businessCopy =
             new EmailDocument<>(document.getAppId(), document.getMessageId(),
                 document.getMessageType(), data, businessEmail,
