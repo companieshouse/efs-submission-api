@@ -6,20 +6,20 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class DelayedSubmissionSupportEmailModel {
-    private List<DelayedSubmissionSupportModel> delayedSubmissions;
+    private List<DelayedSubmissionModel> delayedSubmissions;
     private int thresholdInMinutes;
 
     public DelayedSubmissionSupportEmailModel(
-        List<DelayedSubmissionSupportModel> delayedSubmissions, final int thresholdInMinutes) {
+        List<DelayedSubmissionModel> delayedSubmissions, final int thresholdInMinutes) {
         this.delayedSubmissions = delayedSubmissions;
         this.thresholdInMinutes = thresholdInMinutes;
     }
 
-    public List<DelayedSubmissionSupportModel> getDelayedSubmissions() {
+    public List<DelayedSubmissionModel> getDelayedSubmissions() {
         return delayedSubmissions;
     }
 
-    public void setDelayedSubmissions(List<DelayedSubmissionSupportModel> delayedSubmissions) {
+    public void setDelayedSubmissions(List<DelayedSubmissionModel> delayedSubmissions) {
         this.delayedSubmissions = delayedSubmissions;
     }
 

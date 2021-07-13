@@ -15,9 +15,8 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessModel;
+import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportModel;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository;
 
@@ -64,37 +63,39 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
     public void buildAndSendEmails(final List<Submission> submissions,
         final LocalDateTime handledAt) {
         LocalDateTime businessDelay = handledAt.minusHours(businessDelayInHours);
-        List<DelayedSubmissionSupportModel> supportModels = submissions.stream()
-            .map(submission -> new DelayedSubmissionSupportModel(submission.getId(),
-                submission.getConfirmationReference(),
-                Optional.ofNullable(submission.getSubmittedAt())
-                    .orElseGet(submission::getCreatedAt)
-                    .format(FORMATTER),
-                submission.getPresenter().getEmail(), submission.getCompany().getCompanyNumber()))
+        List<DelayedSubmissionModel> supportModels = submissions.stream()
+            .map(s -> DelayedSubmissionModel.newBuilder()
+                .withSubmissionId(s.getId())
+                .withConfirmationReference(s.getConfirmationReference())
+                .withCustomerEmail(s.getPresenter().getEmail())
+                .withCompanyNumber(s.getCompany().getCompanyNumber())
+                .withSubmittedAt(Optional.ofNullable(s.getSubmittedAt())
+                    .orElseGet(s::getCreatedAt)
+                    .format(FORMATTER))
+                .build())
             .collect(Collectors.toList());
 
         if (!supportModels.isEmpty()) {
             emailService.sendDelayedSubmissionSupportEmail(
                 new DelayedSubmissionSupportEmailModel(supportModels,
                     (int) TimeUnit.HOURS.toMinutes(supportDelayInHours)));
-            Map<String, List<DelayedSubmissionBusinessModel>> delayedSubmissionBusinessModels =
-                submissions.stream()
-                    .filter(submission -> submission.getLastModifiedAt().isBefore(businessDelay))
-                    .map(submission -> new DelayedSubmissionBusinessModel(
-                        submission.getConfirmationReference(),
-                        submission.getCompany().getCompanyNumber(),
-                        submission.getFormDetails().getFormType(),
-                        submission.getPresenter().getEmail(),
-                        Optional.ofNullable(submission.getSubmittedAt())
-                            .orElseGet(submission::getCreatedAt)
-                            .format(FORMATTER)))
-                    .collect(Collectors.groupingBy(
-                        delayedSubmissionModel -> formCategoryToEmailAddressService.getEmailAddressForFormCategory(
-                            delayedSubmissionModel.getFormType())));
-            delayedSubmissionBusinessModels.forEach(
-                (key, value) -> emailService.sendDelayedSubmissionBusinessEmail(
-                    new DelayedSubmissionBusinessEmailModel(value, key,
-                        (int) TimeUnit.HOURS.toMinutes(businessDelayInHours))));
+            Map<String, List<DelayedSubmissionModel>> businessModels = submissions.stream()
+                .filter(s -> s.getLastModifiedAt().isBefore(businessDelay))
+                .map(s -> DelayedSubmissionModel.newBuilder()
+                    .withConfirmationReference(s.getConfirmationReference())
+                    .withCompanyNumber(s.getCompany().getCompanyNumber())
+                    .withFormType(s.getFormDetails().getFormType())
+                    .withCustomerEmail(s.getPresenter().getEmail())
+                    .withSubmittedAt(Optional.ofNullable(s.getSubmittedAt())
+                        .orElseGet(s::getCreatedAt)
+                        .format(FORMATTER))
+                    .build())
+                .collect(Collectors.groupingBy(
+                    m -> formCategoryToEmailAddressService.getEmailAddressForFormCategory(
+                        m.getFormType())));
+            businessModels.forEach((key, value) -> emailService.sendDelayedSubmissionBusinessEmail(
+                new DelayedSubmissionBusinessEmailModel(value, key,
+                    (int) TimeUnit.HOURS.toMinutes(businessDelayInHours))));
         }
     }
 }

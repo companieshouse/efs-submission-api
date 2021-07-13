@@ -13,9 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.efs.api.email.config.DelayedSH19SameDaySubmissionSupportEmailConfig;
+import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailData;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportModel;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
@@ -33,7 +33,7 @@ class DelayedSH19SameDaySubmissionSupportEmailMapperTest {
     @Mock
     private DelayedSubmissionSupportEmailModel model;
     @Mock
-    private DelayedSubmissionSupportModel delayedSubmissionSupportModel;
+    private DelayedSubmissionModel delayedSubmissionModel;
 
     @BeforeEach
     void setUp() {
@@ -55,7 +55,7 @@ class DelayedSH19SameDaySubmissionSupportEmailMapperTest {
         when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
         when(model.getDelayedSubmissions()).thenReturn(
-            Collections.singletonList(delayedSubmissionSupportModel));
+            Collections.singletonList(delayedSubmissionModel));
         when(model.getThresholdInMinutes()).thenReturn(60);
 
         //when
@@ -78,7 +78,7 @@ class DelayedSH19SameDaySubmissionSupportEmailMapperTest {
             .withData(DelayedSubmissionSupportEmailData.builder()
                 .withTo("test_support@ch.gov.uk")
                 .withSubject("EFS submission delay alert: Same day SH19")
-                .withDelayedSubmissions(Collections.singletonList(delayedSubmissionSupportModel))
+                .withDelayedSubmissions(Collections.singletonList(delayedSubmissionModel))
                 .withThresholdInMinutes(60)
                 .build())
             .build();

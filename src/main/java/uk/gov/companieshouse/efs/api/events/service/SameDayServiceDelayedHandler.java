@@ -14,9 +14,8 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessModel;
+import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportModel;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository;
 
@@ -34,16 +33,20 @@ public class SameDayServiceDelayedHandler implements DelayedSubmissionHandlerStr
     private EmailService emailService;
     private FormCategoryToEmailAddressService formCategoryToEmailAddressService;
     private int supportDelayInMinutes;
+    private String internalSH19SameDayEmailAddress;
 
     @Autowired
     public SameDayServiceDelayedHandler(final SubmissionRepository repository,
         final EmailService emailService,
         final FormCategoryToEmailAddressService formCategoryToEmailAddressService,
-        @Value("${submission.sameday.support.minutes}") final int supportDelayInMinutes) {
+        @Value("${submission.sameday.support.minutes}") final int supportDelayInMinutes,
+        @Value("${internal.sharecapitalreduction.sh19.sameday.email.address}")
+        final String internalSH19SameDayEmailAddress) {
         this.repository = repository;
         this.emailService = emailService;
         this.formCategoryToEmailAddressService = formCategoryToEmailAddressService;
         this.supportDelayInMinutes = supportDelayInMinutes;
+        this.internalSH19SameDayEmailAddress = internalSH19SameDayEmailAddress;
     }
 
     @Override
@@ -61,34 +64,26 @@ public class SameDayServiceDelayedHandler implements DelayedSubmissionHandlerStr
     @Override
     public void buildAndSendEmails(final List<Submission> submissions,
         final LocalDateTime handledAt) {
-        List<DelayedSubmissionSupportModel> supportModels = submissions.stream()
-            .map(submission -> new DelayedSubmissionSupportModel(submission.getId(),
-                submission.getConfirmationReference(),
-                Optional.ofNullable(submission.getSubmittedAt())
-                    .orElseGet(submission::getCreatedAt)
-                    .format(FORMATTER), submission.getPresenter().getEmail(),
-                submission.getCompany().getCompanyNumber())).collect(Collectors.toList());
-
-        if (!supportModels.isEmpty()) {
-            emailService.sendDelayedSH19SubmissionSupportEmail(
-                new DelayedSubmissionSupportEmailModel(supportModels, supportDelayInMinutes));
-        }
-
-        final String sh19email =
-            formCategoryToEmailAddressService.getEmailAddressForFormCategory(SH19_SAMEDAY);
-        List<DelayedSubmissionBusinessModel> businessModels = submissions.stream()
-            .map(submission -> new DelayedSubmissionBusinessModel(
-                submission.getConfirmationReference(), submission.getCompany().getCompanyNumber(),
-                submission.getFormDetails().getFormType(), submission.getPresenter().getEmail(),
-                Optional.ofNullable(submission.getSubmittedAt())
-                    .orElseGet(submission::getCreatedAt)
-                    .format(FORMATTER)))
+        List<DelayedSubmissionModel> models = submissions.stream()
+            .map(s -> DelayedSubmissionModel.newBuilder()
+                .withSubmissionId(s.getId())
+                .withConfirmationReference(s.getConfirmationReference())
+                .withCustomerEmail(s.getPresenter().getEmail())
+                .withCompanyNumber(s.getCompany().getCompanyNumber())
+                .withFormType(s.getFormDetails().getFormType())
+                .withSubmittedAt(Optional.ofNullable(s.getSubmittedAt())
+                    .orElseGet(s::getCreatedAt)
+                    .format(FORMATTER))
+                .build())
             .collect(Collectors.toList());
 
-        if (!businessModels.isEmpty()) {
+        if (!models.isEmpty()) {
+            emailService.sendDelayedSH19SubmissionSupportEmail(
+                new DelayedSubmissionSupportEmailModel(models, supportDelayInMinutes));
             emailService.sendDelayedSH19SubmissionBusinessEmail(
-                new DelayedSubmissionBusinessEmailModel(businessModels, sh19email,
+                new DelayedSubmissionBusinessEmailModel(models, internalSH19SameDayEmailAddress,
                     supportDelayInMinutes));
         }
+
     }
 }

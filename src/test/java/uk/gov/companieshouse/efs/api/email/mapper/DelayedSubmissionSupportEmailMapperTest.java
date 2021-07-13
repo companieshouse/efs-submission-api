@@ -6,9 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.efs.api.email.config.DelayedSubmissionSupportEmailConfig;
+import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailData;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportModel;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
@@ -43,7 +43,7 @@ class DelayedSubmissionSupportEmailMapperTest {
     private DelayedSubmissionSupportEmailModel delayedSubmissionSupportEmailModel;
 
     @Mock
-    private DelayedSubmissionSupportModel delayedSubmissionSupportModel;
+    private DelayedSubmissionModel delayedSubmissionModel;
 
     @BeforeEach
     void setUp() {
@@ -66,7 +66,8 @@ class DelayedSubmissionSupportEmailMapperTest {
 
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
 
-        when(delayedSubmissionSupportEmailModel.getDelayedSubmissions()).thenReturn(Collections.singletonList(delayedSubmissionSupportModel));
+        when(delayedSubmissionSupportEmailModel.getDelayedSubmissions()).thenReturn(Collections.singletonList(
+            delayedSubmissionModel));
         when(delayedSubmissionSupportEmailModel.getThresholdInMinutes()).thenReturn(99);
 
         //when
@@ -90,7 +91,8 @@ class DelayedSubmissionSupportEmailMapperTest {
                         DelayedSubmissionSupportEmailData.builder()
                                 .withTo("internal_RP_demo@ch.gov.uk")
                                 .withSubject("EFS Submission delayed submission")
-                                .withDelayedSubmissions(Collections.singletonList(delayedSubmissionSupportModel))
+                                .withDelayedSubmissions(Collections.singletonList(
+                                    delayedSubmissionModel))
                                 .withThresholdInMinutes(99)
                                 .build())
                 .build();

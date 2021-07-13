@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.efs.api.events.service.StandardServiceDelayedHandler.SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT;
-import static uk.gov.companieshouse.efs.api.events.service.StandardServiceDelayedHandler.SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -24,9 +23,8 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessModel;
+import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportModel;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
@@ -52,6 +50,8 @@ class StandardServiceDelayedHandlerTest {
     private FormCategoryToEmailAddressService formCategoryToEmailAddressService;
     @Mock
     private Submission submission;
+    private static final DateTimeFormatter BUSINESS_FORMATTER =
+        DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT);
 
 
     @BeforeEach
@@ -105,10 +105,8 @@ class StandardServiceDelayedHandlerTest {
         // then
         verify(emailService).sendDelayedSubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
-                new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(FORMATTER),
-                    submission.getPresenter().getEmail(),
-                    submission.getCompany().getCompanyNumber())), SUPPORT_DELAY * 60));
+                createModel(submission, submission.getFormDetails().getFormType(),
+                    delayedFrom.minusSeconds(5), FORMATTER)), SUPPORT_DELAY * 60));
         verifyNoMoreInteractions(emailService);
         verifyNoInteractions(formCategoryToEmailAddressService);
     }
@@ -132,9 +130,8 @@ class StandardServiceDelayedHandlerTest {
         // then
         verify(emailService).sendDelayedSubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
-                new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(FORMATTER),
-                    "email", "number")), SUPPORT_DELAY * 60));
+                createModel(submission, submission.getFormDetails().getFormType(),
+                    delayedFrom.minusSeconds(5), FORMATTER)), SUPPORT_DELAY * 60));
         verifyNoMoreInteractions(emailService);
         verifyNoInteractions(formCategoryToEmailAddressService);
     }
@@ -162,14 +159,14 @@ class StandardServiceDelayedHandlerTest {
         // then
         verify(emailService).sendDelayedSubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
-                new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(FORMATTER),
-                    submission.getPresenter().getEmail(),
-                    submission.getCompany().getCompanyNumber())), SUPPORT_DELAY * 60));
+                createModel(submission, submission.getFormDetails().getFormType(),
+                    delayedFrom.minusSeconds(5), FORMATTER)), SUPPORT_DELAY * 60));
         verify(emailService).sendDelayedSubmissionBusinessEmail(
-            new DelayedSubmissionBusinessEmailModel(
-                Collections.singletonList(createBusinessModel(delayedFrom, "CC01")), "cc@ch.gov.uk",
-                BUSINESS_DELAY * 60));
+            new DelayedSubmissionBusinessEmailModel(Collections.singletonList(
+                createModel(submission, submission.getFormDetails().getFormType(),
+                    delayedFrom.minusSeconds(5),
+                    DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT))),
+                "cc@ch.gov.uk", BUSINESS_DELAY * 60));
         verify(formCategoryToEmailAddressService).getEmailAddressForFormCategory("CC01");
         verifyNoMoreInteractions(emailService, formCategoryToEmailAddressService);
     }
@@ -197,14 +194,14 @@ class StandardServiceDelayedHandlerTest {
         // then
         verify(emailService).sendDelayedSubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
-                new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(FORMATTER),
-                    submission.getPresenter().getEmail(),
-                    submission.getCompany().getCompanyNumber())), SUPPORT_DELAY * 60));
+                createModel(submission, submission.getFormDetails().getFormType(),
+                    delayedFrom.minusSeconds(5), FORMATTER)), SUPPORT_DELAY * 60));
         verify(emailService).sendDelayedSubmissionBusinessEmail(
-            new DelayedSubmissionBusinessEmailModel(
-                Collections.singletonList(createBusinessModel(delayedFrom, "CC01")), "cc@ch.gov.uk",
-                BUSINESS_DELAY * 60));
+            new DelayedSubmissionBusinessEmailModel(Collections.singletonList(
+                createModel(submission, submission.getFormDetails().getFormType(),
+                    delayedFrom.minusSeconds(5),
+                    DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT))),
+                "cc@ch.gov.uk", BUSINESS_DELAY * 60));
         verify(formCategoryToEmailAddressService).getEmailAddressForFormCategory("CC01");
         verifyNoMoreInteractions(emailService, formCategoryToEmailAddressService);
     }
@@ -236,31 +233,36 @@ class StandardServiceDelayedHandlerTest {
         testHandler.buildAndSendEmails(submissions, NOW);
 
         // then
-        final DelayedSubmissionSupportModel supportModel =
-            new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                .format(FORMATTER),
-                submission.getPresenter().getEmail(), submission.getCompany().getCompanyNumber());
+        final DelayedSubmissionModel supportModel =
+            createModel(submission, submission.getFormDetails().getFormType(),
+                delayedFrom.minusSeconds(5), FORMATTER);
 
         verify(emailService).sendDelayedSubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(
                 Arrays.asList(supportModel, supportModel, supportModel), SUPPORT_DELAY * 60));
         verify(emailService).sendDelayedSubmissionBusinessEmail(
-            new DelayedSubmissionBusinessEmailModel(
-                Arrays.asList(createBusinessModel(delayedFrom, "CC01"),
-                    createBusinessModel(delayedFrom, "CC03")), "cc@ch.gov.uk", BUSINESS_DELAY * 60));
+            new DelayedSubmissionBusinessEmailModel(Arrays.asList(
+                createModel(submission, "CC01", delayedFrom.minusSeconds(5), BUSINESS_FORMATTER),
+                createModel(submission, "CC03", delayedFrom.minusSeconds(5), BUSINESS_FORMATTER)),
+                "cc@ch.gov.uk", BUSINESS_DELAY * 60));
         verify(emailService).sendDelayedSubmissionBusinessEmail(
-            new DelayedSubmissionBusinessEmailModel(
-                Collections.singletonList(createBusinessModel(delayedFrom, "RP03")), "rp@ch.gov.uk",
-                BUSINESS_DELAY * 60));
+            new DelayedSubmissionBusinessEmailModel(Collections.singletonList(
+                createModel(submission, "RP03", delayedFrom.minusSeconds(5), BUSINESS_FORMATTER)),
+                "rp@ch.gov.uk", BUSINESS_DELAY * 60));
         verify(formCategoryToEmailAddressService).getEmailAddressForFormCategory("CC01");
         verify(formCategoryToEmailAddressService).getEmailAddressForFormCategory("RP03");
         verifyNoMoreInteractions(emailService, formCategoryToEmailAddressService);
     }
 
-    private DelayedSubmissionBusinessModel createBusinessModel(final LocalDateTime delayedFrom,
-        final String formType) {
-        return new DelayedSubmissionBusinessModel("345efg", "00000007", formType, "demo@ch.gov.uk",
-            delayedFrom.minusSeconds(5)
-                .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT)));
+    private DelayedSubmissionModel createModel(final Submission submission, final String formType,
+        final LocalDateTime submittedAt, final DateTimeFormatter formatter) {
+        return DelayedSubmissionModel.newBuilder()
+            .withSubmissionId(submission.getId())
+            .withConfirmationReference(submission.getConfirmationReference())
+            .withSubmittedAt(submittedAt.format(formatter))
+            .withCustomerEmail(submission.getPresenter().getEmail())
+            .withCompanyNumber(submission.getCompany().getCompanyNumber())
+            .withFormType(formType)
+            .build();
     }
 }

@@ -8,11 +8,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class DelayedSubmissionSupportEmailData {
     private String to;
     private String subject;
-    private List<DelayedSubmissionSupportModel> delayedSubmissions;
+    private List<DelayedSubmissionModel> delayedSubmissions;
     private int thresholdInMinutes;
 
     public DelayedSubmissionSupportEmailData(String to, String subject,
-        List<DelayedSubmissionSupportModel> delayedSubmissions, final int thresholdInMinutes) {
+        List<DelayedSubmissionModel> delayedSubmissions, final int thresholdInMinutes) {
         this.to = to;
         this.subject = subject;
         this.delayedSubmissions = delayedSubmissions;
@@ -35,11 +35,11 @@ public class DelayedSubmissionSupportEmailData {
         this.subject = subject;
     }
 
-    public List<DelayedSubmissionSupportModel> getDelayedSubmissions() {
+    public List<DelayedSubmissionModel> getDelayedSubmissions() {
         return delayedSubmissions;
     }
 
-    public void setDelayedSubmissions(List<DelayedSubmissionSupportModel> delayedSubmissions) {
+    public void setDelayedSubmissions(List<DelayedSubmissionModel> delayedSubmissions) {
         this.delayedSubmissions = delayedSubmissions;
     }
 
@@ -83,7 +83,7 @@ public class DelayedSubmissionSupportEmailData {
     public static class Builder {
         private String to;
         private String subject;
-        private List<DelayedSubmissionSupportModel> delayedSubmissions;
+        private List<DelayedSubmissionModel> delayedSubmissions;
         private int thresholdInMinutes;
 
 
@@ -97,7 +97,7 @@ public class DelayedSubmissionSupportEmailData {
             return this;
         }
 
-        public Builder withDelayedSubmissions(List<DelayedSubmissionSupportModel> delayedSubmissions) {
+        public Builder withDelayedSubmissions(List<DelayedSubmissionModel> delayedSubmissions) {
             this.delayedSubmissions = delayedSubmissions;
             return this;
         }

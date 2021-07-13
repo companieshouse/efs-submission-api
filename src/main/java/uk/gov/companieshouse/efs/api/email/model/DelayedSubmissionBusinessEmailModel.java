@@ -9,22 +9,22 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class DelayedSubmissionBusinessEmailModel {
 
-    private List<DelayedSubmissionBusinessModel> delayedSubmissions;
+    private List<DelayedSubmissionModel> delayedSubmissions;
     private String emailAddress;
     private int delayInMinutes;
 
-    public DelayedSubmissionBusinessEmailModel(List<DelayedSubmissionBusinessModel> delayedSubmissions, String emailAddress,
+    public DelayedSubmissionBusinessEmailModel(List<DelayedSubmissionModel> delayedSubmissions, String emailAddress,
         int delayInMinutes) {
         this.delayedSubmissions = delayedSubmissions;
         this.emailAddress = emailAddress;
         this.delayInMinutes = delayInMinutes;
     }
 
-    public List<DelayedSubmissionBusinessModel> getDelayedSubmissions() {
+    public List<DelayedSubmissionModel> getDelayedSubmissions() {
         return delayedSubmissions;
     }
 
-    public void setDelayedSubmissions(List<DelayedSubmissionBusinessModel> delayedSubmissions) {
+    public void setDelayedSubmissions(List<DelayedSubmissionModel> delayedSubmissions) {
         this.delayedSubmissions = delayedSubmissions;
     }
 

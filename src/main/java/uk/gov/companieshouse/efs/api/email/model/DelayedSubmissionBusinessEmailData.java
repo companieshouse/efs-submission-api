@@ -9,18 +9,17 @@ public class DelayedSubmissionBusinessEmailData {
 
     private String to;
     private String subject;
-    private List<DelayedSubmissionBusinessModel> submissions;
+    private List<DelayedSubmissionModel> submissions;
     private int thresholdInMinutes;
 
     /**
      * Constructor.
-     *
-     * @param to            dependency
+     *  @param to            dependency
      * @param subject       dependency
      * @param submissions   dependency
      * @param thresholdInMinutes   dependency
      */
-    public DelayedSubmissionBusinessEmailData(String to, String subject, List<DelayedSubmissionBusinessModel> submissions, int thresholdInMinutes) {
+    public DelayedSubmissionBusinessEmailData(String to, String subject, List<DelayedSubmissionModel> submissions, int thresholdInMinutes) {
         this.to = to;
         this.subject = subject;
         this.submissions = submissions;
@@ -43,11 +42,11 @@ public class DelayedSubmissionBusinessEmailData {
         this.subject = subject;
     }
 
-    public List<DelayedSubmissionBusinessModel> getSubmissions() {
+    public List<DelayedSubmissionModel> getSubmissions() {
         return submissions;
     }
 
-    public void setSubmissions(List<DelayedSubmissionBusinessModel> submissions) {
+    public void setSubmissions(List<DelayedSubmissionModel> submissions) {
         this.submissions = submissions;
     }
 
@@ -92,7 +91,7 @@ public class DelayedSubmissionBusinessEmailData {
 
         private String to;
         private String subject;
-        private List<DelayedSubmissionBusinessModel> submissions;
+        private List<DelayedSubmissionModel> submissions;
         private int thresholdInMinutes;
 
         public Builder withTo(String to) {
@@ -105,7 +104,7 @@ public class DelayedSubmissionBusinessEmailData {
             return this;
         }
 
-        public Builder withDelayedSubmissions(List<DelayedSubmissionBusinessModel> submissions) {
+        public Builder withDelayedSubmissions(List<DelayedSubmissionModel> submissions) {
             this.submissions = submissions;
             return this;
         }

@@ -24,7 +24,6 @@ import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportModel;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
@@ -34,6 +33,7 @@ import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository
 @ExtendWith(MockitoExtension.class)
 class SameDayServiceDelayedHandlerTest {
     private static final int SUPPORT_DELAY = 60;
+    private static final String BUSINESS_EMAIL = "sh19@ch.gov.uk";
     private static final LocalDateTime NOW = LocalDateTime.now();
     static final ZoneId UTC_ZONE = ZoneId.of("UTC");
     private static final DateTimeFormatter FORMATTER =
@@ -54,7 +54,7 @@ class SameDayServiceDelayedHandlerTest {
     @BeforeEach
     void setUp() {
         testHandler = new SameDayServiceDelayedHandler(repository, emailService,
-            formCategoryToEmailAddressService, SUPPORT_DELAY);
+            formCategoryToEmailAddressService, SUPPORT_DELAY, BUSINESS_EMAIL);
     }
 
     @Test
@@ -94,8 +94,6 @@ class SameDayServiceDelayedHandlerTest {
         when(submission.getPresenter()).thenReturn(new Presenter("email"));
         when(submission.getCompany()).thenReturn(new Company("number", "name"));
         when(submission.getFormDetails()).thenReturn(new FormDetails(null, "SH19_SAMEDAY", null));
-        when(formCategoryToEmailAddressService.getEmailAddressForFormCategory(
-            "SH19_SAMEDAY")).thenReturn("sh19@ch.gov.uk");
 
         // when
         testHandler.buildAndSendEmails(submissions, NOW);
@@ -111,7 +109,7 @@ class SameDayServiceDelayedHandlerTest {
             new DelayedSubmissionBusinessEmailModel(Collections.singletonList(
                 new DelayedSubmissionBusinessModel("345efg", "number", "SH19_SAMEDAY",
                     submission.getPresenter().getEmail(),
-                    delayedFrom.minusSeconds(5).format(FORMATTER))), "sh19@ch.gov.uk",
+                    delayedFrom.minusSeconds(5).format(FORMATTER))), BUSINESS_EMAIL,
                 SUPPORT_DELAY));
         verifyNoMoreInteractions(emailService);
     }
@@ -128,8 +126,6 @@ class SameDayServiceDelayedHandlerTest {
         when(submission.getPresenter()).thenReturn(new Presenter("email"));
         when(submission.getCompany()).thenReturn(new Company("number", "name"));
         when(submission.getFormDetails()).thenReturn(new FormDetails(null, "SH19_SAMEDAY", null));
-        when(formCategoryToEmailAddressService.getEmailAddressForFormCategory(
-            "SH19_SAMEDAY")).thenReturn("sh19@ch.gov.uk");
 
         // when
         testHandler.buildAndSendEmails(submissions, NOW);
