@@ -15,7 +15,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,10 +35,7 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessModel;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportModel;
 import uk.gov.companieshouse.efs.api.email.model.InternalFailedConversionModel;
 import uk.gov.companieshouse.efs.api.events.service.exception.BarcodeException;
 import uk.gov.companieshouse.efs.api.events.service.exception.FesLoaderException;
@@ -53,7 +49,6 @@ import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
-import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
@@ -67,8 +62,7 @@ import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 class EventServiceImplTest {
 
     private static final int NUMBER_OF_PAGES = 100;
-    private static final String SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT = "dd MMMM yyyy";
-    private static final String SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT = "dd/MM/yyyy";
+    private static final LocalDateTime NOW = LocalDateTime.now();
 
     private EventServiceImpl eventService;
 
@@ -126,15 +120,28 @@ class EventServiceImplTest {
     private int supportHours = 6;
 
     private int businessHours = 12;
+    
+    private int sameDayMinutes = 60;
 
     @Mock
     private DelayedSubmissionSupportEmailModel delayedSubmissionSupportEmailModel;
+    
+    @Mock
+    private DelayedSubmissionHandlerContext delayedSubmissionHandlerContext;
+    
+    @Mock
+    private DelayedSubmissionHandlerStrategy standaryStrategy;
+
+    @Mock
+    private DelayedSubmissionHandlerStrategy sameDayStrategy;
 
     @BeforeEach
     void setUp() {
-        this.eventService = new EventServiceImpl(submissionService, formTemplateService, emailService, repository,
-            currentTimestampGenerator, 50, decisionEngine, barcodeGeneratorService, tiffDownloadService,
-            fesLoaderService, executionEngine, formCategoryToEmailAddressService, supportHours, businessHours);
+        eventService =
+            new EventServiceImpl(submissionService, formTemplateService, emailService, repository,
+                currentTimestampGenerator, 50, decisionEngine, barcodeGeneratorService,
+                tiffDownloadService, fesLoaderService, executionEngine,
+                formCategoryToEmailAddressService, delayedSubmissionHandlerContext);
     }
 
     @Test
@@ -154,13 +161,12 @@ class EventServiceImplTest {
     @Test
     void testUpdateFileConversionStatusLastFileConverted() {
         //given
-        LocalDateTime now = LocalDateTime.now();
         FileDetails details = FileDetails.builder()
                 .withFileId("abc")
                 .withConversionStatus(FileConversionStatus.QUEUED)
                 .build();
         when(repository.read(anyString())).thenReturn(submission);
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
+        when(currentTimestampGenerator.generateTimestamp()).thenReturn(NOW);
         when(submission.getFormDetails()).thenReturn(FormDetails.builder()
                 .withFileDetailsList(Collections.singletonList(details)).build());
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
@@ -191,9 +197,8 @@ class EventServiceImplTest {
                 .withFileId("abd")
                 .withConversionStatus(FileConversionStatus.QUEUED)
                 .build();
-        LocalDateTime now = LocalDateTime.now();
         when(repository.read(anyString())).thenReturn(submission);
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
+        when(currentTimestampGenerator.generateTimestamp()).thenReturn(NOW);
         when(submission.getFormDetails()).thenReturn(FormDetails.builder()
                 .withFileDetailsList(Arrays.asList(details, otherDetails)).build());
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
@@ -220,11 +225,10 @@ class EventServiceImplTest {
                 .withFileId("abc")
                 .withConversionStatus(FileConversionStatus.QUEUED)
                 .build();
-        LocalDateTime now = LocalDateTime.now();
         when(repository.read(anyString())).thenReturn(submission);
         when(submission.getFormDetails()).thenReturn(FormDetails.builder()
                 .withFileDetailsList(Collections.singletonList(details)).build());
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
+        when(currentTimestampGenerator.generateTimestamp()).thenReturn(NOW);
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
         FileConversionStatusApi fileConversionStatusApi = new FileConversionStatusApi(null, FileConversionResultStatusApi.FAILED,
                 null);
@@ -253,12 +257,11 @@ class EventServiceImplTest {
                 .withFileId("abd")
                 .withConversionStatus(FileConversionStatus.QUEUED)
                 .build();
-        LocalDateTime now = LocalDateTime.now();
         when(repository.read(anyString())).thenReturn(submission);
         when(submission.getFormDetails()).thenReturn(FormDetails.builder()
                 .withFileDetailsList(Arrays.asList(details, otherDetails)).build());
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
+        when(currentTimestampGenerator.generateTimestamp()).thenReturn(NOW);
         FileConversionStatusApi fileConversionStatusApi = new FileConversionStatusApi(null, FileConversionResultStatusApi.FAILED,
                 null);
 
@@ -286,12 +289,11 @@ class EventServiceImplTest {
                 .withFileId("abd")
                 .withConversionStatus(FileConversionStatus.QUEUED)
                 .build();
-        LocalDateTime now = LocalDateTime.now();
         when(repository.read(anyString())).thenReturn(submission);
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
         when(submission.getFormDetails()).thenReturn(FormDetails.builder()
                 .withFileDetailsList(Arrays.asList(details, otherDetails)).build());
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
+        when(currentTimestampGenerator.generateTimestamp()).thenReturn(NOW);
         FileConversionStatusApi fileConversionStatusApi = new FileConversionStatusApi(null, FileConversionResultStatusApi.FAILED,
                 null);
 
@@ -313,12 +315,11 @@ class EventServiceImplTest {
         // given
         FileDetails details = FileDetails.builder().withFileId("abc").withConversionStatus(FileConversionStatus.QUEUED)
                 .build();
-        LocalDateTime now = LocalDateTime.now();
 
         when(repository.read(anyString())).thenReturn(submission);
         when(submission.getFormDetails())
                 .thenReturn(FormDetails.builder().withFileDetailsList(Collections.singletonList(details)).build());
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
+        when(currentTimestampGenerator.generateTimestamp()).thenReturn(NOW);
         when(submission.getStatus()).thenReturn(SubmissionStatus.PROCESSING);
         FileConversionStatusApi fileConversionStatusApi = new FileConversionStatusApi(null,
                 FileConversionResultStatusApi.FAILED, null);
@@ -415,7 +416,6 @@ class EventServiceImplTest {
     @ValueSource(strings = {"N", "Y"})
     void testSubmitToFes(final String sameDayIndicator) {
         //given
-        LocalDateTime now = LocalDateTime.now();
         String convertedFileId = "1234";
         boolean sameDay = "Y".equalsIgnoreCase(sameDayIndicator);
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
@@ -423,7 +423,7 @@ class EventServiceImplTest {
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getCompany()).thenReturn(company);
-        when(submission.getSubmittedAt()).thenReturn(now);
+        when(submission.getSubmittedAt()).thenReturn(NOW);
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
@@ -439,24 +439,23 @@ class EventServiceImplTest {
         //then
         verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
         verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
-        verify(barcodeGeneratorService, times(1)).getBarcode(now);
+        verify(barcodeGeneratorService, times(1)).getBarcode(NOW);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
-                "SH01", sameDay, Collections.singletonList(new FesFileModel(null, 0)), now));
+                "SH01", sameDay, Collections.singletonList(new FesFileModel(null, 0)), NOW));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
     @Test
     void testSubmitToFesWithMappedFesDocType() {
         //given
-        LocalDateTime now = LocalDateTime.now();
         String convertedFileId = "1234";
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(submission.getId()).thenReturn("1234abcd");
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getCompany()).thenReturn(company);
-        when(submission.getSubmittedAt()).thenReturn(now);
+        when(submission.getSubmittedAt()).thenReturn(NOW);
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
@@ -471,24 +470,23 @@ class EventServiceImplTest {
         //then
         verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
         verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
-        verify(barcodeGeneratorService, times(1)).getBarcode(now);
+        verify(barcodeGeneratorService, times(1)).getBarcode(NOW);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
-                "FES-DOC-TYPE", false, Collections.singletonList(new FesFileModel(null, 0)), now));
+                "FES-DOC-TYPE", false, Collections.singletonList(new FesFileModel(null, 0)), NOW));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
     @Test
     void testSubmitToFesWhenNoSubmittedAtDate() {
         //given
-        LocalDateTime now = LocalDateTime.now();
         String convertedFileId = "1234";
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(submission.getId()).thenReturn("1234abcd");
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getCompany()).thenReturn(company);
-        when(submission.getCreatedAt()).thenReturn(now);
+        when(submission.getCreatedAt()).thenReturn(NOW);
         when(submission.getSubmittedAt()).thenReturn(null);
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
@@ -504,10 +502,10 @@ class EventServiceImplTest {
         //then
         verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
         verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
-        verify(barcodeGeneratorService, times(1)).getBarcode(now);
+        verify(barcodeGeneratorService, times(1)).getBarcode(NOW);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
-                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), now));
+                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), NOW));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -515,7 +513,6 @@ class EventServiceImplTest {
     @Test
     void testGetBarcodeException() {
         //given
-        LocalDateTime now = LocalDateTime.now();
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(barcodeGeneratorService.getBarcode(any())).thenThrow(BarcodeException.class);
@@ -530,7 +527,6 @@ class EventServiceImplTest {
     @Test
     void testTiffDownloadException() {
         //given
-        LocalDateTime now = LocalDateTime.now();
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getId()).thenReturn("1234abcd");
         when(submission.getFormDetails()).thenReturn(formDetails);
@@ -554,7 +550,6 @@ class EventServiceImplTest {
     @Test
     void formTemplateMissing() {
         //given
-        LocalDateTime now = LocalDateTime.now();
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getId()).thenReturn("1234abcd");
         when(submission.getFormDetails()).thenReturn(formDetails);
@@ -574,7 +569,6 @@ class EventServiceImplTest {
     @Test
     void testHandlesFesLoaderException() {
         //given
-        LocalDateTime now = LocalDateTime.now();
         String convertedFileId = "1234";
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
@@ -635,7 +629,6 @@ class EventServiceImplTest {
     @Test
     void testHandlesMultipleSubmissionsWhenOneFailsWithBarcodeException() {
         // given
-        LocalDateTime now = LocalDateTime.now();
         String convertedFileId = "1234";
 
         when(repository.findByStatus(any(), anyInt())).thenReturn(getSubmissionList());
@@ -650,7 +643,7 @@ class EventServiceImplTest {
             new FormTemplateApi("SH01", "formName", "category", "", false, true, null, false, null));
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
 
-        when(submission.getSubmittedAt()).thenReturn(now);
+        when(submission.getSubmittedAt()).thenReturn(NOW);
         when(submission.getCompany()).thenReturn(company);
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
@@ -665,19 +658,18 @@ class EventServiceImplTest {
         verify(tiffDownloadService, times(1)).downloadTiffFile(convertedFileId);
         verify(fesLoaderService, times(1)).insertSubmission(
                 new FesLoaderModel("Y123XYZ", "abc", "1223456", "SH01", false,
-                    Collections.singletonList(new FesFileModel(null, 0)), now));
+                    Collections.singletonList(new FesFileModel(null, 0)), NOW));
         verify(submissionService, times(1)).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
     @Test
     void testControllerDoesNotCallBarcodeServiceAgainIfSubmissionAlreadyHasBarcode() {
         //given
-        LocalDateTime now = LocalDateTime.now();
         String convertedFileId = "1234";
         when(submission.getId()).thenReturn("1234abcd");
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
-        when(submission.getSubmittedAt()).thenReturn(now);
+        when(submission.getSubmittedAt()).thenReturn(NOW);
         when(submission.getCompany()).thenReturn(company);
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
@@ -699,7 +691,7 @@ class EventServiceImplTest {
         verifyNoInteractions(barcodeGeneratorService);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y9999999", "abc", "1223456",
-                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), now));
+                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), NOW));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -719,144 +711,32 @@ class EventServiceImplTest {
     }
 
     @Test
-    void testHandleNoDelayedSubmissions(){
+    void handleDelayedStandardSubmissions() {
         // given
-        LocalDateTime now = LocalDateTime.now();
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
-        when(repository.findDelayedSubmissions(eq(SubmissionStatus.PROCESSING),any())).thenReturn(Collections.emptyList());
+        when(currentTimestampGenerator.generateTimestamp()).thenReturn(NOW);
+        when(delayedSubmissionHandlerContext.getStrategy(
+            DelayedSubmissionHandlerContext.ServiceLevel.STANDARD)).thenReturn(standaryStrategy);
 
         // when
-        eventService.handleDelayedSubmissions();
+        eventService.handleDelayedSubmissions(DelayedSubmissionHandlerContext.ServiceLevel.STANDARD);
 
-        // then
-        verify(currentTimestampGenerator).generateTimestamp();
-        verify(repository).findDelayedSubmissions(SubmissionStatus.PROCESSING, now.minusHours(supportHours));
+        verify(standaryStrategy).buildAndSendEmails(Collections.emptyList(), NOW);
+        verifyNoInteractions(sameDayStrategy);
     }
 
     @Test
-    void testHandleDelayedSubmissionsSendSupportNotification(){
+    void handleDelayedSameDaySubmissions() {
         // given
-        LocalDateTime now = LocalDateTime.now();
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
-        when(repository.findDelayedSubmissions(eq(SubmissionStatus.PROCESSING),any())).thenReturn(Collections.singletonList(submission));
-        when(submission.getId()).thenReturn("123abd");
-        when(submission.getConfirmationReference()).thenReturn("345efg");
-        when(submission.getLastModifiedAt()).thenReturn(now.minusHours(supportHours));
-        when(submission.getSubmittedAt()).thenReturn(now.minusHours(supportHours).minusSeconds(5));
+        when(currentTimestampGenerator.generateTimestamp()).thenReturn(NOW);
+        when(delayedSubmissionHandlerContext.getStrategy(
+            DelayedSubmissionHandlerContext.ServiceLevel.SAMEDAY)).thenReturn(sameDayStrategy);
 
         // when
-        eventService.handleDelayedSubmissions();
-
-        // then
-        verify(currentTimestampGenerator).generateTimestamp();
-        verify(repository).findDelayedSubmissions(SubmissionStatus.PROCESSING, now.minusHours(supportHours));
-        verify(emailService).sendDelayedSubmissionSupportEmail(new DelayedSubmissionSupportEmailModel(Collections.singletonList(new DelayedSubmissionSupportModel("123abd", "345efg", now.minusHours(supportHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))))));
-        verify(emailService, times(0)).sendDelayedSubmissionBusinessEmail(any(DelayedSubmissionBusinessEmailModel.class));
-    }
-
-    @Test
-    void testHandleDelayedSubmissionsSendSupportNotificationSubmittedAtMissing(){
-        // given
-        LocalDateTime now = LocalDateTime.now();
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
-        when(repository.findDelayedSubmissions(eq(SubmissionStatus.PROCESSING),any())).thenReturn(Collections.singletonList(submission));
-        when(submission.getId()).thenReturn("123abd");
-        when(submission.getConfirmationReference()).thenReturn("345efg");
-        when(submission.getLastModifiedAt()).thenReturn(now.minusHours(supportHours));
-        when(submission.getCreatedAt()).thenReturn(now.minusHours(supportHours).minusSeconds(5));
-
-        // when
-        eventService.handleDelayedSubmissions();
-
-        // then
-        verify(currentTimestampGenerator).generateTimestamp();
-        verify(repository).findDelayedSubmissions(SubmissionStatus.PROCESSING, now.minusHours(supportHours));
-        verify(emailService).sendDelayedSubmissionSupportEmail(new DelayedSubmissionSupportEmailModel(Collections.singletonList(new DelayedSubmissionSupportModel("123abd", "345efg", now.minusHours(supportHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))))));
-        verify(emailService, times(0)).sendDelayedSubmissionBusinessEmail(any(DelayedSubmissionBusinessEmailModel.class));
-    }
-
-    @Test
-    void testHandleDelayedSubmissionsSendBusinessNotification() {
-        //given
-        LocalDateTime now = LocalDateTime.now();
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
-        when(repository.findDelayedSubmissions(eq(SubmissionStatus.PROCESSING),any())).thenReturn(Collections.singletonList(submission));
-        when(submission.getId()).thenReturn("123abd");
-        when(submission.getConfirmationReference()).thenReturn("345efg");
-        when(submission.getCompany()).thenReturn(new Company("12345678", "ACME"));
-        when(submission.getFormDetails()).thenReturn(FormDetails.builder().withFormType("CC01").build());
-        when(submission.getPresenter()).thenReturn(new Presenter("demo@ch.gov.uk"));
-        when(submission.getLastModifiedAt()).thenReturn(now.minusHours(businessHours).minusSeconds(1));
-        when(submission.getSubmittedAt()).thenReturn(now.minusHours(businessHours).minusSeconds(5));
-        when(formCategoryToEmailAddressService.getEmailAddressForFormCategory("CC01")).thenReturn("cc@ch.gov.uk");
-
-        // when
-        eventService.handleDelayedSubmissions();
-
-        // then
-        verify(currentTimestampGenerator).generateTimestamp();
-        verify(repository).findDelayedSubmissions(SubmissionStatus.PROCESSING, now.minusHours(supportHours));
-        verify(emailService).sendDelayedSubmissionSupportEmail(new DelayedSubmissionSupportEmailModel(Collections.singletonList(new DelayedSubmissionSupportModel("123abd", "345efg", now.minusHours(businessHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))))));
-        verify(emailService).sendDelayedSubmissionBusinessEmail(new DelayedSubmissionBusinessEmailModel(Collections.singletonList(new DelayedSubmissionBusinessModel("345efg", "12345678", "CC01", "demo@ch.gov.uk", now.minusHours(businessHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT)))), "cc@ch.gov.uk", businessHours));
-        verify(formCategoryToEmailAddressService).getEmailAddressForFormCategory("CC01");
-    }
-
-    @Test
-    void testHandleDelayedSubmissionsSendBusinessNotificationSubmittedAtMissing() {
-        //given
-        LocalDateTime now = LocalDateTime.now();
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
-        when(repository.findDelayedSubmissions(eq(SubmissionStatus.PROCESSING),any())).thenReturn(Collections.singletonList(submission));
-        when(submission.getId()).thenReturn("123abd");
-        when(submission.getConfirmationReference()).thenReturn("345efg");
-        when(submission.getCompany()).thenReturn(new Company("12345678", "ACME"));
-        when(submission.getFormDetails()).thenReturn(FormDetails.builder().withFormType("CC01").build());
-        when(submission.getPresenter()).thenReturn(new Presenter("demo@ch.gov.uk"));
-        when(submission.getLastModifiedAt()).thenReturn(now.minusHours(businessHours).minusSeconds(1));
-        when(submission.getCreatedAt()).thenReturn(now.minusHours(businessHours).minusSeconds(5));
-        when(formCategoryToEmailAddressService.getEmailAddressForFormCategory("CC01")).thenReturn("cc@ch.gov.uk");
-
-        // when
-        eventService.handleDelayedSubmissions();
-
-        // then
-        verify(currentTimestampGenerator).generateTimestamp();
-        verify(repository).findDelayedSubmissions(SubmissionStatus.PROCESSING, now.minusHours(supportHours));
-        verify(emailService).sendDelayedSubmissionSupportEmail(new DelayedSubmissionSupportEmailModel(Collections.singletonList(new DelayedSubmissionSupportModel("123abd", "345efg", now.minusHours(businessHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))))));
-        verify(emailService).sendDelayedSubmissionBusinessEmail(new DelayedSubmissionBusinessEmailModel(Collections.singletonList(new DelayedSubmissionBusinessModel("345efg", "12345678", "CC01", "demo@ch.gov.uk", now.minusHours(businessHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT)))), "cc@ch.gov.uk", businessHours));
-        verify(formCategoryToEmailAddressService).getEmailAddressForFormCategory("CC01");
-    }
-
-    @Test
-    void testHandleDelayedSubmissionsSendBusinessNotificationToMultipleUnitsIfDifferentSubmissionCategories() {
-        //given
-        LocalDateTime now = LocalDateTime.now();
-        when(currentTimestampGenerator.generateTimestamp()).thenReturn(now);
-        when(repository.findDelayedSubmissions(eq(SubmissionStatus.PROCESSING),any())).thenReturn(Arrays.asList(submission, submission, submission));
-        when(submission.getId()).thenReturn("123abd");
-        when(submission.getConfirmationReference()).thenReturn("345efg");
-        when(submission.getCompany()).thenReturn(new Company("12345678", "ACME"));
-        when(submission.getFormDetails()).thenReturn(FormDetails.builder().withFormType("CC01").build())
-                .thenReturn(FormDetails.builder().withFormType("RP03").build())
-                .thenReturn(FormDetails.builder().withFormType("CC03").build());
-        when(submission.getPresenter()).thenReturn(new Presenter("demo@ch.gov.uk"));
-        when(submission.getLastModifiedAt()).thenReturn(now.minusHours(businessHours).minusSeconds(1));
-        when(submission.getSubmittedAt()).thenReturn(now.minusHours(businessHours).minusSeconds(5));
-        when(formCategoryToEmailAddressService.getEmailAddressForFormCategory("CC01")).thenReturn("cc@ch.gov.uk");
-        when(formCategoryToEmailAddressService.getEmailAddressForFormCategory("CC03")).thenReturn("cc@ch.gov.uk");
-        when(formCategoryToEmailAddressService.getEmailAddressForFormCategory("RP03")).thenReturn("rp@ch.gov.uk");
-
-        // when
-        eventService.handleDelayedSubmissions();
-
-        // then
-        verify(currentTimestampGenerator).generateTimestamp();
-        verify(repository).findDelayedSubmissions(SubmissionStatus.PROCESSING, now.minusHours(supportHours));
-        verify(emailService, times(1)).sendDelayedSubmissionSupportEmail(new DelayedSubmissionSupportEmailModel(Arrays.asList(new DelayedSubmissionSupportModel("123abd", "345efg", now.minusHours(businessHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))), new DelayedSubmissionSupportModel("123abd", "345efg", now.minusHours(businessHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))), new DelayedSubmissionSupportModel("123abd", "345efg", now.minusHours(businessHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))))));
-        verify(emailService, times(1)).sendDelayedSubmissionBusinessEmail(new DelayedSubmissionBusinessEmailModel(Arrays.asList(new DelayedSubmissionBusinessModel("345efg", "12345678", "CC01", "demo@ch.gov.uk", now.minusHours(businessHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT))), new DelayedSubmissionBusinessModel("345efg", "12345678", "CC03", "demo@ch.gov.uk", now.minusHours(businessHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT)))), "cc@ch.gov.uk", businessHours));
-        verify(emailService, times(1)).sendDelayedSubmissionBusinessEmail(new DelayedSubmissionBusinessEmailModel(Collections.singletonList(new DelayedSubmissionBusinessModel("345efg", "12345678", "RP03", "demo@ch.gov.uk", now.minusHours(businessHours).minusSeconds(5).format(DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT)))), "rp@ch.gov.uk", businessHours));
-        verify(formCategoryToEmailAddressService).getEmailAddressForFormCategory("CC01");
-        verify(formCategoryToEmailAddressService).getEmailAddressForFormCategory("RP03");
+        eventService.handleDelayedSubmissions(DelayedSubmissionHandlerContext.ServiceLevel.SAMEDAY);
+        
+        verify(sameDayStrategy).findDelayedSubmissions(NOW);
+        verify(sameDayStrategy).buildAndSendEmails(Collections.emptyList(), NOW);
+        verifyNoInteractions(standaryStrategy);
     }
 
     private List<Submission> getSubmissionList() {

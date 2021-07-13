@@ -104,6 +104,13 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public void sendDelayedSH19SubmissionSupportEmail(DelayedSubmissionSupportEmailModel emailModel) {
+        LOGGER.debug(String.format("Sending delayed SH19 same day submission support email for [%d] submissions",
+                emailModel.getNumberOfDelayedSubmissions()));
+        sendMessage(this.emailMapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper().map(emailModel));
+    }
+
+    @Override
     public void sendDelayedSubmissionBusinessEmail(DelayedSubmissionBusinessEmailModel emailModel) {
         LOGGER.debug(String.format("Sending delayed submission business email for [%d] submissions",
                 emailModel.getNumberOfDelayedSubmissions()));

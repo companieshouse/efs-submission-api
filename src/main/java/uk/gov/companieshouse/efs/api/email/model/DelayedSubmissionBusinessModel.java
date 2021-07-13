@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.efs.api.email.model;
 
 import java.util.Objects;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class DelayedSubmissionBusinessModel {
 
@@ -89,4 +91,10 @@ public class DelayedSubmissionBusinessModel {
             .hash(getConfirmationReference(), getCompanyNumber(), getFormType(), getEmail(),
                 getSubmissionDate());
     }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
 }

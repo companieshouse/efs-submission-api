@@ -48,6 +48,7 @@ public class DelayedSubmissionSupportEmailMapper {
                 .withTo(config.getSupportEmailAddress())
                 .withSubject(config.getSubject())
                 .withDelayedSubmissions(model.getDelayedSubmissions())
+                .withThresholdInMinutes(model.getThresholdInMinutes())
                 .build();
     }
 }

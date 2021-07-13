@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,7 @@ import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 class SubmissionRepositoryImplTest {
 
     private static final String ID = "_id";
+    private static final String FORM_TYPE = "form.form_type";
     private static final String FORM_BARCODE = "form.barcode";
     private static final String STATUS = "status";
     private static final String SUBMISSIONS_COLLECTION = "submissions";
@@ -180,20 +182,46 @@ class SubmissionRepositoryImplTest {
         repository.findDelayedSubmissions(SubmissionStatus.PROCESSING, now);
 
         //then
-        verify(template).find(
-            Query.query(Criteria.where("status").is(SubmissionStatus.PROCESSING).and("last_modified_at").lte(now)),
-            Submission.class, SUBMISSIONS_COLLECTION);
+        verify(template).find(Query.query(Criteria.where("status")
+            .is(SubmissionStatus.PROCESSING)
+            .and(LAST_MODIFIED_AT)
+            .lte(now)
+            .and(FORM_TYPE)
+            .ne("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
+    }
+
+    @Test
+    void findDelayedSameDaySubmissions() {
+        //given
+        LocalDateTime delayedFrom = LocalDateTime.now();
+        final EnumSet<SubmissionStatus> statuses =
+            EnumSet.of(SubmissionStatus.PROCESSING, SubmissionStatus.READY_TO_SUBMIT);
+
+        //when
+        repository.findDelayedSameDaySubmissions(statuses, delayedFrom);
+
+        //then
+        verify(template).find(Query.query(Criteria.where("status")
+            .in(statuses)
+            .and("submitted_at")
+            .lte(delayedFrom)
+            .and(FORM_TYPE)
+            .is("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
     }
 
     @Test
     void findSuccessfulPaidSubmissions() {
         //when
-        repository.findPaidSubmissions(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES, START_DATE, END_DATE);
+        repository.findPaidSubmissions(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES, START_DATE,
+            END_DATE);
 
         //then
-        verify(template).find(Query.query(
-            Criteria.where(STATUS).in(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES).and(SUBMITTED_AT)
-                .gte(START_DATE).lt(END_DATE).and(FEE_ON_SUBMISSION).exists(true)), Submission.class,
-            SUBMISSIONS_COLLECTION);
+        verify(template).find(Query.query(Criteria.where(STATUS)
+            .in(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES)
+            .and(SUBMITTED_AT)
+            .gte(START_DATE)
+            .lt(END_DATE)
+            .and(FEE_ON_SUBMISSION)
+            .exists(true)), Submission.class, SUBMISSIONS_COLLECTION);
     }
 }

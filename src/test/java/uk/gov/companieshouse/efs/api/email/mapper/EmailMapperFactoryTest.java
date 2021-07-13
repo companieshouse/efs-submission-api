@@ -35,6 +35,8 @@ class EmailMapperFactoryTest {
     @Mock
     private DelayedSubmissionSupportEmailMapper delayedSubmissionSupportEmailMapper;
     @Mock
+    private DelayedSH19SameDaySubmissionSupportEmailMapper delayedSH19SameDaySubmissionSupportEmailMapper;
+    @Mock
     private DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessEmailMapper;
     @Mock
     private PaymentReportEmailMapper paymentReportEmailMapper;
@@ -49,6 +51,8 @@ class EmailMapperFactoryTest {
             .withInternalFailedConversionEmailMapper(internalFailedConversionEmailMapper)
             .withInternalSubmissionEmailMapper(internalSubmissionEmailMapper)
             .withDelayedSubmissionSupportEmailMapper(delayedSubmissionSupportEmailMapper)
+            .withDelayedSH19SameDaySubmissionSupportEmailMapper(
+                delayedSH19SameDaySubmissionSupportEmailMapper)
             .withDelayedSubmissionBusinessEmailMapper(delayedSubmissionBusinessEmailMapper)
             .withPaymentReportEmailMapper(paymentReportEmailMapper).build();
     }

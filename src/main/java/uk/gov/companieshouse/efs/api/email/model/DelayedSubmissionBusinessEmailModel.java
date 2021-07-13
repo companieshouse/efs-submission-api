@@ -2,17 +2,22 @@ package uk.gov.companieshouse.efs.api.email.model;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class DelayedSubmissionBusinessEmailModel {
 
     private List<DelayedSubmissionBusinessModel> delayedSubmissions;
     private String emailAddress;
-    private int delayInHours;
+    private int delayInMinutes;
 
-    public DelayedSubmissionBusinessEmailModel(List<DelayedSubmissionBusinessModel> delayedSubmissions, String emailAddress, int delayInHours) {
+    public DelayedSubmissionBusinessEmailModel(List<DelayedSubmissionBusinessModel> delayedSubmissions, String emailAddress,
+        int delayInMinutes) {
         this.delayedSubmissions = delayedSubmissions;
         this.emailAddress = emailAddress;
-        this.delayInHours = delayInHours;
+        this.delayInMinutes = delayInMinutes;
     }
 
     public List<DelayedSubmissionBusinessModel> getDelayedSubmissions() {
@@ -32,15 +37,23 @@ public class DelayedSubmissionBusinessEmailModel {
     }
 
     public int getNumberOfDelayedSubmissions() {
-        return this.delayedSubmissions.size();
+        return Optional.ofNullable(delayedSubmissions).map(List::size).orElse(0);
+    }
+
+    public int getDelayInMinutes() {
+        return delayInMinutes;
+    }
+
+    public void setDelayInMinutes(final int delayInMinutes) {
+        this.delayInMinutes = delayInMinutes;
     }
 
     public int getDelayInHours() {
-        return delayInHours;
+        return (int) TimeUnit.MINUTES.toHours(delayInMinutes);
     }
 
     public void setDelayInHours(int delayInHours) {
-        this.delayInHours = delayInHours;
+        this.delayInMinutes = (int) TimeUnit.HOURS.toMinutes(delayInHours);
     }
 
     @Override
@@ -52,13 +65,19 @@ public class DelayedSubmissionBusinessEmailModel {
             return false;
         }
         final DelayedSubmissionBusinessEmailModel that = (DelayedSubmissionBusinessEmailModel) o;
-        return getDelayInHours() == that.getDelayInHours() && Objects
-            .equals(getDelayedSubmissions(), that.getDelayedSubmissions()) && Objects
-                   .equals(getEmailAddress(), that.getEmailAddress());
+        return getDelayInMinutes() == that.getDelayInMinutes() && Objects.equals(
+            getDelayedSubmissions(), that.getDelayedSubmissions()) && Objects.equals(
+            getEmailAddress(), that.getEmailAddress());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDelayedSubmissions(), getEmailAddress(), getDelayInHours());
+        return Objects.hash(getDelayedSubmissions(), getEmailAddress(), getDelayInMinutes());
     }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
 }

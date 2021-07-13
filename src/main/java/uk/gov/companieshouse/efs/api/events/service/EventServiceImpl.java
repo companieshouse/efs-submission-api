@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +17,6 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportModel;
 import uk.gov.companieshouse.efs.api.email.model.InternalFailedConversionModel;
 import uk.gov.companieshouse.efs.api.events.service.exception.BarcodeException;
 import uk.gov.companieshouse.efs.api.events.service.exception.FesLoaderException;
@@ -46,12 +41,14 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 public class EventServiceImpl implements EventService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
-    private static final String SUBMISSION_NOT_FOUND_MESSAGE = "Could not locate submission with id: [%s]";
-    private static final String FILE_NOT_FOUND_MESSAGE = "Could not locate file with id [%s] on submission with id: [%s]";
-    private static final String SUBMISSION_INCORRECT_STATE_MESSAGE = "Submission status for [%s] wasn't [%s], couldn't update";
-    private static final String FILE_INCORRECT_STATE_MESSAGE = "Status for file with id [%s] wasn't [%s] on submission with id [%s], couldn't update";
-    private static final String SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT = "dd MMMM yyyy";
-    private static final String SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT = "dd/MM/yyyy";
+    private static final String SUBMISSION_NOT_FOUND_MESSAGE =
+        "Could not locate submission with id: [%s]";
+    private static final String FILE_NOT_FOUND_MESSAGE =
+        "Could not locate file with id [%s] on submission with id: [%s]";
+    private static final String SUBMISSION_INCORRECT_STATE_MESSAGE =
+        "Submission status for [%s] wasn't [%s], couldn't update";
+    private static final String FILE_INCORRECT_STATE_MESSAGE =
+        "Status for file with id [%s] wasn't [%s] on submission with id [%s], couldn't update";
 
     private SubmissionService submissionService;
     private FormTemplateService formTemplateService;
@@ -65,16 +62,17 @@ public class EventServiceImpl implements EventService {
     private FesLoaderService fesLoaderService;
     private ExecutionEngine executionEngine;
     private FormCategoryToEmailAddressService formCategoryToEmailAddressService;
-    private int supportDelayInHours;
-    private int businessDelayInHours;
+    private DelayedSubmissionHandlerContext delayedSubmissionHandlerContext;
 
     @Autowired
-    public EventServiceImpl(SubmissionService submissionService, final FormTemplateService formTemplateService,
-        EmailService emailService, SubmissionRepository repository, CurrentTimestampGenerator currentTimestampGenerator,
-        @Value("${max.queue.messages}") int maxQueuedMessages, DecisionEngine decisionEngine, BarcodeGeneratorService barcodeGeneratorService, TiffDownloadService tiffDownloadService,
-        FesLoaderService fesLoaderService, ExecutionEngine executionEngine, FormCategoryToEmailAddressService formCategoryToEmailAddressService,
-        @Value("${submission.processing.support.hours}") int supportDelayInHours,
-        @Value("${submission.processing.business.hours}") int businessDelayInHours) {
+    public EventServiceImpl(SubmissionService submissionService,
+        final FormTemplateService formTemplateService, EmailService emailService,
+        SubmissionRepository repository, CurrentTimestampGenerator currentTimestampGenerator,
+        @Value("${max.queue.messages}") int maxQueuedMessages, DecisionEngine decisionEngine,
+        BarcodeGeneratorService barcodeGeneratorService, TiffDownloadService tiffDownloadService,
+        FesLoaderService fesLoaderService, ExecutionEngine executionEngine,
+        FormCategoryToEmailAddressService formCategoryToEmailAddressService,
+        DelayedSubmissionHandlerContext delayedSubmissionHandlerContext) {
         this.submissionService = submissionService;
         this.formTemplateService = formTemplateService;
         this.emailService = emailService;
@@ -87,8 +85,7 @@ public class EventServiceImpl implements EventService {
         this.fesLoaderService = fesLoaderService;
         this.executionEngine = executionEngine;
         this.formCategoryToEmailAddressService = formCategoryToEmailAddressService;
-        this.supportDelayInHours = supportDelayInHours;
-        this.businessDelayInHours = businessDelayInHours;
+        this.delayedSubmissionHandlerContext = delayedSubmissionHandlerContext;
     }
 
     @Override
@@ -207,48 +204,25 @@ public class EventServiceImpl implements EventService {
                     "Inserted submission details into FES DB for submission [%s], form [%s], same-day [%s]",
                     submission.getId(), fesDocType, formTemplate.isSameDay() ? "Y" : "N"));
 
-                submissionService.updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
+                submissionService.updateSubmissionStatus(submission.getId(),
+                    SubmissionStatus.SENT_TO_FES);
 
             }
             catch (SubmissionIncorrectStateException | BarcodeException | TiffDownloadException | FesLoaderException | InvalidTiffException ex) {
-                LOGGER.errorContext(submission.getId(), "Unable to submit to fes" +
-                        ex.getMessage(), ex, null);
+                LOGGER.errorContext(submission.getId(), "Unable to submit to fes" + ex.getMessage(),
+                    ex, null);
             }
         });
     }
 
     @Override
-    public void handleDelayedSubmissions() {
-        LocalDateTime now = currentTimestampGenerator.generateTimestamp();
-        LocalDateTime supportDelay = now.minusHours(supportDelayInHours);
-        LocalDateTime businessDelay = now.minusHours(businessDelayInHours);
-        List<Submission> delayedSubmissions = repository.findDelayedSubmissions(SubmissionStatus.PROCESSING, supportDelay);
+    public void handleDelayedSubmissions(final DelayedSubmissionHandlerContext.ServiceLevel serviceLevel) {
+        final LocalDateTime handledAt = currentTimestampGenerator.generateTimestamp();
+        final DelayedSubmissionHandlerStrategy strategy =
+            delayedSubmissionHandlerContext.getStrategy(serviceLevel);
+        final List<Submission> delayedSubmissions = strategy.findDelayedSubmissions(handledAt);
 
-        List<DelayedSubmissionSupportModel> delayedSubmissionSupportModels =
-                delayedSubmissions.stream()
-                        .map(submission -> new DelayedSubmissionSupportModel(
-                                submission.getId(),
-                                submission.getConfirmationReference(),
-                                Optional.ofNullable(submission.getSubmittedAt())
-                                        .orElseGet(submission::getCreatedAt)
-                                        .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_SUPPORT_EMAIL_DATE_FORMAT))))
-                        .collect(Collectors.toList());
-        if (!delayedSubmissionSupportModels.isEmpty()) {
-            emailService.sendDelayedSubmissionSupportEmail(new DelayedSubmissionSupportEmailModel(delayedSubmissionSupportModels));
-            Map<String, List<DelayedSubmissionBusinessModel>> delayedSubmissionBusinessModels =
-                    delayedSubmissions.stream()
-                            .filter(submission -> submission.getLastModifiedAt().isBefore(businessDelay))
-                            .map(submission -> new DelayedSubmissionBusinessModel(
-                                    submission.getConfirmationReference(),
-                                    submission.getCompany().getCompanyNumber(),
-                                    submission.getFormDetails().getFormType(),
-                                    submission.getPresenter().getEmail(),
-                                    Optional.ofNullable(submission.getSubmittedAt())
-                                            .orElseGet(submission::getCreatedAt)
-                                            .format(DateTimeFormatter.ofPattern(SUBMITTED_AT_BUSINESS_EMAIL_DATE_FORMAT))))
-                            .collect(Collectors.groupingBy(delayedSubmissionModel -> formCategoryToEmailAddressService.getEmailAddressForFormCategory(delayedSubmissionModel.getFormType())));
-            delayedSubmissionBusinessModels.forEach((key, value) -> emailService.sendDelayedSubmissionBusinessEmail(new DelayedSubmissionBusinessEmailModel(value, key, businessDelayInHours)));
-        }
+        strategy.buildAndSendEmails(delayedSubmissions, handledAt);
     }
 
     private boolean areAllFilesConvertedOrFailed(List<FileDetails> fileDetails) {

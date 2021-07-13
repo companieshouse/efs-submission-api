@@ -23,6 +23,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
+import uk.gov.companieshouse.efs.api.email.mapper.DelayedSH19SameDaySubmissionSupportEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionBusinessEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionSupportEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.EmailMapperFactory;
@@ -155,9 +156,13 @@ class EmailServiceImplTest {
 
     @Mock
     private DelayedSubmissionSupportEmailMapper delayedSubmissionSupportEmailMapper;
+    
+    @Mock
+    private DelayedSH19SameDaySubmissionSupportEmailMapper delayedSH19SameDaySubmissionSupportEmailMapper;
 
     @Mock
     private DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessEmailMapper;
+    
     @Mock
     private PaymentReportEmailMapper paymentReportEmailMapper;
 
@@ -387,6 +392,29 @@ class EmailServiceImplTest {
 
         // when
         this.emailService.sendDelayedSubmissionSupportEmail(delayedSubmissionSupportEmailModel);
+
+        // then
+        verify(serializer).serialize(eq(delayedSubmissionSupportEmailDataEmailDocument), eq(schema));
+        verify(producer).send(messageCaptor.capture());
+        assertEquals("delayed-submission-support-email-send", messageCaptor.getValue().getTopic());
+        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
+        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+    }
+
+    @Test
+    void testEmailServiceSendsMessageToKafkaWhenSH19SameDaySubmissionDelayed() throws ExecutionException, InterruptedException {
+        //given
+        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(delayedSubmissionSupportEmailDataEmailDocument.getTopic()).thenReturn(
+            "delayed-submission-support-email-send");
+        when(emailMapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper()).thenReturn(
+            delayedSH19SameDaySubmissionSupportEmailMapper);
+        when(delayedSH19SameDaySubmissionSupportEmailMapper.map(any())).thenReturn(delayedSubmissionSupportEmailDataEmailDocument);
+        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+
+        // when
+        this.emailService.sendDelayedSH19SubmissionSupportEmail(delayedSubmissionSupportEmailModel);
 
         // then
         verify(serializer).serialize(eq(delayedSubmissionSupportEmailDataEmailDocument), eq(schema));

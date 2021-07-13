@@ -67,6 +67,7 @@ class DelayedSubmissionSupportEmailMapperTest {
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
 
         when(delayedSubmissionSupportEmailModel.getDelayedSubmissions()).thenReturn(Collections.singletonList(delayedSubmissionSupportModel));
+        when(delayedSubmissionSupportEmailModel.getThresholdInMinutes()).thenReturn(99);
 
         //when
         EmailDocument<DelayedSubmissionSupportEmailData> actual = delayedSubmissionSupportEmailMapper.map(delayedSubmissionSupportEmailModel);
@@ -90,6 +91,7 @@ class DelayedSubmissionSupportEmailMapperTest {
                                 .withTo("internal_RP_demo@ch.gov.uk")
                                 .withSubject("EFS Submission delayed submission")
                                 .withDelayedSubmissions(Collections.singletonList(delayedSubmissionSupportModel))
+                                .withThresholdInMinutes(99)
                                 .build())
                 .build();
     }

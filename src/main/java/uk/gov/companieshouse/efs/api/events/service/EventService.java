@@ -15,5 +15,5 @@ public interface EventService {
 
     void updateConversionFileStatus(String submissionId, String fileId, FileConversionStatusApi fileConversionStatusApi);
 
-    void handleDelayedSubmissions();
+    void handleDelayedSubmissions(final DelayedSubmissionHandlerContext.ServiceLevel serviceLevel);
 }
