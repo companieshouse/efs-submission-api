@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -162,7 +163,9 @@ class EmailServiceImplTest {
 
     @Mock
     private DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessEmailMapper;
-    
+    @Mock
+    private DelayedSubmissionSupportEmailData document;
+
     @Mock
     private PaymentReportEmailMapper paymentReportEmailMapper;
 
@@ -408,20 +411,26 @@ class EmailServiceImplTest {
         when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(delayedSubmissionSupportEmailDataEmailDocument.getTopic()).thenReturn(
             "delayed-submission-support-email-send");
+        when(delayedSubmissionSupportEmailDataEmailDocument.getData()).thenReturn(document);
         when(emailMapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper()).thenReturn(
             delayedSH19SameDaySubmissionSupportEmailMapper);
         when(delayedSH19SameDaySubmissionSupportEmailMapper.map(any())).thenReturn(delayedSubmissionSupportEmailDataEmailDocument);
         when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
 
         // when
-        this.emailService.sendDelayedSH19SubmissionSupportEmail(delayedSubmissionSupportEmailModel);
+        this.emailService.sendDelayedSH19SubmissionSupportEmail(delayedSubmissionSupportEmailModel, "businessEmail");
 
         // then
         verify(serializer).serialize(eq(delayedSubmissionSupportEmailDataEmailDocument), eq(schema));
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("delayed-submission-support-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(document).setTo("businessEmail");
+        verify(producer, times(2)).send(messageCaptor.capture());
+        for (int i = 0; i < 2; ++i) {
+            assertEquals("delayed-submission-support-email-send",
+                messageCaptor.getAllValues().get(i).getTopic());
+            assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC),
+                messageCaptor.getAllValues().get(i).getTimestamp());
+            assertArrayEquals("Hello".getBytes(), messageCaptor.getAllValues().get(i).getValue());
+        }
     }
 
     @Test

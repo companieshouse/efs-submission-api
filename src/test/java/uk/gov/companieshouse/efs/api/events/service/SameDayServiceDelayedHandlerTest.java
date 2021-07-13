@@ -30,6 +30,7 @@ import uk.gov.companieshouse.efs.api.submissions.repository.SubmissionRepository
 @ExtendWith(MockitoExtension.class)
 class SameDayServiceDelayedHandlerTest {
     private static final int SUPPORT_DELAY = 60;
+    private static final String BUSINESS_EMAIL = "sha19@ch.gov.uk";
     private static final LocalDateTime NOW = LocalDateTime.now();
     static final ZoneId UTC_ZONE = ZoneId.of("UTC");
     private static final DateTimeFormatter FORMATTER =
@@ -47,7 +48,8 @@ class SameDayServiceDelayedHandlerTest {
 
     @BeforeEach
     void setUp() {
-        testHandler = new SameDayServiceDelayedHandler(repository, emailService, SUPPORT_DELAY);
+        testHandler = new SameDayServiceDelayedHandler(repository, emailService, SUPPORT_DELAY,
+            BUSINESS_EMAIL);
     }
 
     @Test
@@ -93,10 +95,10 @@ class SameDayServiceDelayedHandlerTest {
         // then
         verify(emailService).sendDelayedSH19SubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
-                new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(FORMATTER),
+                new DelayedSubmissionSupportModel("123abd", "345efg",
+                    delayedFrom.minusSeconds(5).format(FORMATTER),
                     submission.getPresenter().getEmail(),
-                    submission.getCompany().getCompanyNumber())), SUPPORT_DELAY));
+                    submission.getCompany().getCompanyNumber())), SUPPORT_DELAY), BUSINESS_EMAIL);
         verifyNoMoreInteractions(emailService);
     }
 
@@ -118,10 +120,10 @@ class SameDayServiceDelayedHandlerTest {
         // then
         verify(emailService).sendDelayedSH19SubmissionSupportEmail(
             new DelayedSubmissionSupportEmailModel(Collections.singletonList(
-                new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(FORMATTER),
+                new DelayedSubmissionSupportModel("123abd", "345efg",
+                    delayedFrom.minusSeconds(5).format(FORMATTER),
                     submission.getPresenter().getEmail(),
-                    submission.getCompany().getCompanyNumber())), SUPPORT_DELAY));
+                    submission.getCompany().getCompanyNumber())), SUPPORT_DELAY), BUSINESS_EMAIL);
         verifyNoMoreInteractions(emailService);
     }
 

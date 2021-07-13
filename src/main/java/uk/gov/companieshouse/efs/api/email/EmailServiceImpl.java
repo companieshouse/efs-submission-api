@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
 import uk.gov.companieshouse.efs.api.email.mapper.EmailMapperFactory;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
+import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailData;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.email.model.ExternalAcceptEmailModel;
@@ -104,10 +105,28 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendDelayedSH19SubmissionSupportEmail(DelayedSubmissionSupportEmailModel emailModel) {
-        LOGGER.debug(String.format("Sending delayed SH19 same day submission support email for [%d] submissions",
-                emailModel.getNumberOfDelayedSubmissions()));
-        sendMessage(this.emailMapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper().map(emailModel));
+    public void sendDelayedSH19SubmissionSupportEmail(DelayedSubmissionSupportEmailModel emailModel,
+        String businessEmail) {
+        LOGGER.debug(String.format(
+            "Sending delayed SH19 same day submission support email for [%d] submissions",
+            emailModel.getNumberOfDelayedSubmissions()));
+        final EmailDocument<DelayedSubmissionSupportEmailData> document =
+            this.emailMapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper()
+                .map(emailModel);
+        sendMessage(document);
+        
+        final DelayedSubmissionSupportEmailData data = document.getData();
+        
+        data.setTo(businessEmail);
+
+        LOGGER.debug(String.format(
+            "Sending delayed SH19 same day submission business email for [%d] submissions",
+            emailModel.getNumberOfDelayedSubmissions()));
+        final EmailDocument<DelayedSubmissionSupportEmailData> businessCopy =
+            new EmailDocument<>(document.getAppId(), document.getMessageId(),
+                document.getMessageType(), data, businessEmail,
+                document.getCreatedAt(), document.getTopic());
+        sendMessage(businessCopy);
     }
 
     @Override
