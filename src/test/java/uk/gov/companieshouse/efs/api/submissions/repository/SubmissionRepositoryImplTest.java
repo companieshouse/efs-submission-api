@@ -165,6 +165,7 @@ class SubmissionRepositoryImplTest {
     @Test
     void testUpdateBarcode() {
         //when
+        when(timestampGenerator.generateTimestamp()).thenReturn(this.localDateTime);
         repository.updateBarcode(SUBMISSION_ID, BARCODE);
 
         //then

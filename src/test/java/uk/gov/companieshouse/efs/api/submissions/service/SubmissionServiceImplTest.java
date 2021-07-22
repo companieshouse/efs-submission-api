@@ -70,6 +70,7 @@ class SubmissionServiceImplTest {
     public static final String EXPECTED_UPDATE_ERROR_MSG =
         "Submission status for [123] wasn't in [OPEN, PAYMENT_REQUIRED, PAYMENT_RECEIVED, "
             + "PAYMENT_FAILED], couldn't update";
+    private static final LocalDateTime NOW = LocalDateTime.now();
 
     private SubmissionService submissionService;
 
@@ -119,6 +120,7 @@ class SubmissionServiceImplTest {
         PresenterApi presenterApi = mock(PresenterApi.class);
         Presenter presenter = mock(Presenter.class);
         when(presenterMapper.map(presenterApi)).thenReturn(presenter);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         submissionService.createSubmission(presenterApi);
@@ -509,9 +511,8 @@ class SubmissionServiceImplTest {
         when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
-        LocalDateTime now = LocalDateTime.now();
-        when(timestampGenerator.generateTimestamp()).thenReturn(now.minusSeconds(1L))
-            .thenReturn(now);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW.minusSeconds(1L))
+            .thenReturn(NOW);
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
 
@@ -520,8 +521,8 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator, times(2)).generateTimestamp();
         verify(submissionRepository).updateSubmission(submission);
         verify(submission).setStatus(SubmissionStatus.SUBMITTED);
-        verify(submission).setSubmittedAt(now.minusSeconds(1L));
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setSubmittedAt(NOW.minusSeconds(1L));
+        verify(submission).setLastModifiedAt(NOW);
         verify(validator).validate(submission);
         verify(emailService).sendExternalConfirmation(
             new ExternalNotificationEmailModel(submission));
@@ -535,13 +536,10 @@ class SubmissionServiceImplTest {
 
         expectSubmissionWithPaymentSession(SubmissionStatus.OPEN, sessionApi);
         when(submission.getFeeOnSubmission()).thenReturn("1");
+        when(submission.getSubmittedAt()).thenReturn(NOW);
         when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(submissionRepository.read(anyString())).thenReturn(submission);
-
-        final LocalDateTime now = LocalDateTime.now();
-
-        when(timestampGenerator.generateTimestamp()).thenReturn(now);
-
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
 
@@ -552,7 +550,7 @@ class SubmissionServiceImplTest {
         verify(submissionRepository).updateSubmission(submission);
         verify(validator).validate(submission);
         verifyNoInteractions(emailService);
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setLastModifiedAt(NOW);
     }
 
     @Test
@@ -570,10 +568,8 @@ class SubmissionServiceImplTest {
             .thenReturn(SubmissionStatus.SUBMITTED);
         when(submissionRepository.read(anyString())).thenReturn(submission);
 
-        final LocalDateTime now = LocalDateTime.now();
-
-        when(timestampGenerator.generateTimestamp()).thenReturn(now.minusSeconds(1))
-            .thenReturn(now);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW.minusSeconds(1))
+            .thenReturn(NOW);
 
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
@@ -584,7 +580,7 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator, times(2)).generateTimestamp();
         verify(submissionRepository).updateSubmission(submission);
         verify(validator).validate(submission);
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setLastModifiedAt(NOW);
         verify(emailService).sendExternalConfirmation(
             new ExternalNotificationEmailModel(submission));
     }
@@ -601,10 +597,7 @@ class SubmissionServiceImplTest {
         when(submission.getFeeOnSubmission()).thenReturn("1");
         when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(submissionRepository.read(anyString())).thenReturn(submission);
-
-        final LocalDateTime now = LocalDateTime.now();
-
-        when(timestampGenerator.generateTimestamp()).thenReturn(now);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
@@ -615,7 +608,7 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator).generateTimestamp();
         verify(submissionRepository).updateSubmission(submission);
         verify(validator).validate(submission);
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setLastModifiedAt(NOW);
         verifyNoInteractions(emailService);
     }
 
@@ -631,10 +624,7 @@ class SubmissionServiceImplTest {
         when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
-
-        final LocalDateTime now = LocalDateTime.now();
-
-        when(timestampGenerator.generateTimestamp()).thenReturn(now);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
@@ -645,7 +635,7 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator).generateTimestamp();
         verify(submissionRepository).updateSubmission(submission);
         verify(validator).validate(submission);
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setLastModifiedAt(NOW);
         verifyNoInteractions(emailService);
     }
 
@@ -662,11 +652,8 @@ class SubmissionServiceImplTest {
             .thenReturn(SubmissionStatus.PAYMENT_RECEIVED)
             .thenReturn(SubmissionStatus.SUBMITTED); // after progressSubmissionStatus() call
         when(submissionRepository.read(anyString())).thenReturn(submission);
-
-        final LocalDateTime now = LocalDateTime.now();
-
-        when(timestampGenerator.generateTimestamp()).thenReturn(now.minusSeconds(1L))
-            .thenReturn(now);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW.minusSeconds(1L))
+            .thenReturn(NOW);
 
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
@@ -675,10 +662,10 @@ class SubmissionServiceImplTest {
         assertEquals(SUBMISSION_ID, actual.getId());
         verify(timestampGenerator, times(2)).generateTimestamp();
         verify(submission).setStatus(SubmissionStatus.SUBMITTED);
-        verify(submission).setSubmittedAt(now.minusSeconds(1L));
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setSubmittedAt(NOW.minusSeconds(1L));
+        verify(submission).setLastModifiedAt(NOW);
         verify(submissionRepository).updateSubmission(submission);
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setLastModifiedAt(NOW);
         verify(validator).validate(submission);
         verify(emailService).sendExternalConfirmation(
             new ExternalNotificationEmailModel(submission));
@@ -691,10 +678,7 @@ class SubmissionServiceImplTest {
         when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(submission.getStatus()).thenReturn(SubmissionStatus.PAYMENT_FAILED);
         when(submissionRepository.read(anyString())).thenReturn(submission);
-
-        final LocalDateTime now = LocalDateTime.now();
-
-        when(timestampGenerator.generateTimestamp()).thenReturn(now);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
@@ -704,7 +688,7 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator).generateTimestamp();
         verify(submission, never()).setStatus(any(SubmissionStatus.class));
         verify(submissionRepository).updateSubmission(submission);
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setLastModifiedAt(NOW);
         verify(validator).validate(submission);
         verify(emailService).sendExternalPaymentFailedNotification(
             new ExternalNotificationEmailModel(submission));
@@ -761,8 +745,7 @@ class SubmissionServiceImplTest {
     @Test
     void testUpdateSubmissionQueued() {
         // given
-        LocalDateTime now = LocalDateTime.now();
-        when(timestampGenerator.generateTimestamp()).thenReturn(now);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
@@ -821,8 +804,12 @@ class SubmissionServiceImplTest {
 
     @Test
     void testUpdateSubmission() {
+        // given
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
+        
         // when
         submissionService.updateSubmission(submission);
+
         // then
         verify(timestampGenerator).generateTimestamp();
         verify(submissionRepository).updateSubmission(submission);
@@ -864,7 +851,6 @@ class SubmissionServiceImplTest {
         final PaymentClose paymentClose = new PaymentClose(SESSION_ID, PaymentClose.Status.FAILED);
         final SessionApi paySession =
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
-        LocalDateTime now = LocalDateTime.now();
 
         expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_FAILED, paySession);
         when(submissionRepository.read(SUBMISSION_ID)).thenReturn(submission);
@@ -888,12 +874,11 @@ class SubmissionServiceImplTest {
         final PaymentClose paymentClose = new PaymentClose(SESSION_ID, PaymentClose.Status.PAID);
         final SessionApi paySession =
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
-        LocalDateTime now = LocalDateTime.now();
 
         expectSubmissionWithPaymentSession(SubmissionStatus.OPEN, paySession);
         when(submissionRepository.read(SUBMISSION_ID)).thenReturn(submission);
         when(submission.getId()).thenReturn(SUBMISSION_ID);
-        when(timestampGenerator.generateTimestamp()).thenReturn(now);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         final SubmissionResponseApi actual =
@@ -905,7 +890,7 @@ class SubmissionServiceImplTest {
             is(STATUS_PAID));
         verify(submission).setStatus(SubmissionStatus.PAYMENT_RECEIVED);
         verify(timestampGenerator).generateTimestamp();
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setLastModifiedAt(NOW);
         verifyNoMoreInteractions(submission, emailService);
 
     }
@@ -916,12 +901,11 @@ class SubmissionServiceImplTest {
         final PaymentClose paymentClose = new PaymentClose(SESSION_ID, PaymentClose.Status.FAILED);
         final SessionApi paySession =
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
-        LocalDateTime now = LocalDateTime.now();
 
         expectSubmissionWithPaymentSession(SubmissionStatus.OPEN, paySession);
         when(submissionRepository.read(SUBMISSION_ID)).thenReturn(submission);
         when(submission.getId()).thenReturn(SUBMISSION_ID);
-        when(timestampGenerator.generateTimestamp()).thenReturn(now);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         final SubmissionResponseApi actual =
@@ -933,7 +917,7 @@ class SubmissionServiceImplTest {
             is(STATUS_FAILED));
         verify(submission).setStatus(SubmissionStatus.OPEN);
         verify(timestampGenerator).generateTimestamp();
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setLastModifiedAt(NOW);
         verifyNoMoreInteractions(submission, emailService);
     }
 
@@ -965,16 +949,15 @@ class SubmissionServiceImplTest {
         final PaymentClose paymentClose = new PaymentClose(SESSION_ID, PaymentClose.Status.PAID);
         SessionApi sessionApi =
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
-        LocalDateTime now = LocalDateTime.now();
 
         expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_REQUIRED, sessionApi);
+        when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(submission.getStatus()).thenReturn(SubmissionStatus.PAYMENT_REQUIRED)
             .thenReturn(SubmissionStatus.PAYMENT_REQUIRED)
             .thenReturn(SubmissionStatus.PAYMENT_REQUIRED)
             .thenReturn(SubmissionStatus.SUBMITTED);
         when(submissionRepository.read(SUBMISSION_ID)).thenReturn(submission);
-        when(timestampGenerator.generateTimestamp()).thenReturn(now.minusSeconds(1L))
-            .thenReturn(now);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         final SubmissionResponseApi actual =
@@ -982,10 +965,10 @@ class SubmissionServiceImplTest {
 
         assertThat(actual.getId(), is(SUBMISSION_ID));
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(), is(STATUS_PAID));
-        verify(timestampGenerator, times(2)).generateTimestamp();
+        verify(timestampGenerator).generateTimestamp();
         verify(submission).setStatus(SubmissionStatus.SUBMITTED);
-        verify(submission).setSubmittedAt(now.minusSeconds(1L));
-        verify(submission).setLastModifiedAt(now);
+        verify(submission).setSubmittedAt(NOW);
+        verify(submission).setLastModifiedAt(NOW);
         verify(submissionRepository).updateSubmission(submission);
     }
 
@@ -998,6 +981,8 @@ class SubmissionServiceImplTest {
 
         expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_REQUIRED, sessionApi);
         when(submissionRepository.read(anyString())).thenReturn(submission);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
+
 
         // when
         final SubmissionResponseApi actual =
@@ -1019,6 +1004,7 @@ class SubmissionServiceImplTest {
 
         expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_REQUIRED, sessionApi);
         when(submissionRepository.read(anyString())).thenReturn(submission);
+        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         final SubmissionResponseApi actual =
@@ -1029,6 +1015,7 @@ class SubmissionServiceImplTest {
         verify(submission).setStatus(SubmissionStatus.PAYMENT_FAILED);
         verify(submissionRepository).read(SUBMISSION_ID);
         verify(submissionRepository).updateSubmission(submission);
+        verify(timestampGenerator).generateTimestamp();
     }
 
     @Test

@@ -53,6 +53,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
     public static final String SUBMISSION_STATUS_MSG =
         "Updated submission status to %s for submission with id: [%s] at [%s]";
+    public static final String SUBMITTED_STATUS_MSG =
+        "Updated status SUBMITTED at [%s] for submission with id: [%s]";
 
     private SubmissionRepository submissionRepository;
     private SubmissionMapper submissionMapper;
