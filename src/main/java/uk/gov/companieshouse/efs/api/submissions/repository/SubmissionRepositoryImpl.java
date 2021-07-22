@@ -80,7 +80,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
             new Update().set(STATUS, submissionStatus).set(LAST_MODIFIED_AT, lastModified),
             String.class, SUBMISSIONS_COLLECTION);
         LOGGER.debug(String.format("Updated submission status [%s] at [%s]", submissionStatus,
-            DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
+            formatZoned(lastModified)));
     }
 
     @Override
@@ -98,8 +98,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
             new Update().set(STATUS, fesSubmissionStatus).set(LAST_MODIFIED_AT, lastModified),
             String.class, SUBMISSIONS_COLLECTION);
         LOGGER.debug(String.format("Updated submission status [%s] for barcode [%s] at [%s]",
-            fesSubmissionStatus, barcode,
-            DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
+            fesSubmissionStatus, barcode, formatZoned(lastModified)));
     }
 
     @Override
@@ -120,7 +119,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
             new Update().set(BARCODE, barcode).set(LAST_MODIFIED_AT, lastModified), String.class,
             SUBMISSIONS_COLLECTION);
         LOGGER.debug(String.format("Updated submission barcode to [%s] at [%s]", barcode,
-            DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
+            formatZoned(lastModified)));
     }
 
     @Override
@@ -169,6 +168,10 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
             .format("Found [%d] paid submissions with statuses: [%s] and submitted [%s] and [%s] (exclusive)",
                 submissions.size(), statuses, startDate.toString(), endDate.toString()));
         return submissions;
+    }
+
+    private String formatZoned(final LocalDateTime timestamp) {
+        return DateTimeFormatter.ISO_DATE_TIME.format(timestamp.atZone(ZoneId.systemDefault()));
     }
 
 }

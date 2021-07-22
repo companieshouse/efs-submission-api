@@ -1,13 +1,8 @@
 package uk.gov.companieshouse.efs.api.util;
 
 import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.logging.Logger;
 
 /**
  * Instances of this class are responsible for generating a timestamp for to represent the current date and time.
