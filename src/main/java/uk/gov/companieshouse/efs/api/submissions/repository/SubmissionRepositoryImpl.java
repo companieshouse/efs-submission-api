@@ -5,8 +5,6 @@ import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.P
 import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.PROCESSING;
 import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.READY_TO_SUBMIT;
 import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.REJECTED;
-import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER;
-import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.REJECTED_BY_VIRUS_SCAN;
 import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.SENT_TO_FES;
 import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.SUBMITTED;
 
@@ -14,6 +12,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -48,8 +48,6 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
         Sets.immutableEnumSet(SUBMITTED, PROCESSING, PROCESSED_BY_EMAIL, READY_TO_SUBMIT, ACCEPTED, REJECTED,
             SENT_TO_FES);
 
-    public static final ImmutableSet<SubmissionStatus> FAILED_STATUSES =
-        Sets.immutableEnumSet(REJECTED_BY_DOCUMENT_CONVERTER, REJECTED_BY_VIRUS_SCAN);
     public SubmissionRepositoryImpl(MongoTemplate mongoTemplate, CurrentTimestampGenerator timestampGenerator) {
         this.template = mongoTemplate;
         this.timestampGenerator = timestampGenerator;
@@ -76,9 +74,13 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
     @Override
     public void updateSubmissionStatus(String id, SubmissionStatus submissionStatus) {
-        template.updateFirst(Query.query(Criteria.where(ID).is(id)),
-                new Update().set(STATUS, submissionStatus).set(LAST_MODIFIED_AT, timestampGenerator.generateTimestamp()), String.class, SUBMISSIONS_COLLECTION);
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
 
+        template.updateFirst(Query.query(Criteria.where(ID).is(id)),
+            new Update().set(STATUS, submissionStatus).set(LAST_MODIFIED_AT, lastModified),
+            String.class, SUBMISSIONS_COLLECTION);
+        LOGGER.debug(String.format("Updated submission status [%s] at [%s]", submissionStatus,
+            DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
     }
 
     @Override
@@ -88,10 +90,16 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
     @Override
     public void updateSubmissionStatusByBarcode(String barcode, FesSubmissionStatus fesSubmissionStatus) {
-        LOGGER.debug(String.format("Updating submission status [%s] for barcode [%s]", fesSubmissionStatus, barcode));
+        LOGGER.debug(
+            String.format("Updating submission status [%s] for barcode [%s]", fesSubmissionStatus,
+                barcode));
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
         template.updateFirst(Query.query(Criteria.where(BARCODE).is(barcode)),
-                new Update().set(STATUS, fesSubmissionStatus).set(LAST_MODIFIED_AT, timestampGenerator.generateTimestamp()), String.class, SUBMISSIONS_COLLECTION);
-        LOGGER.debug(String.format("Updated submission status [%s] for barcode [%s]", fesSubmissionStatus, barcode));
+            new Update().set(STATUS, fesSubmissionStatus).set(LAST_MODIFIED_AT, lastModified),
+            String.class, SUBMISSIONS_COLLECTION);
+        LOGGER.debug(String.format("Updated submission status [%s] for barcode [%s] at [%s]",
+            fesSubmissionStatus, barcode,
+            DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
     }
 
     @Override
@@ -107,8 +115,12 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
     @Override
     public void updateBarcode(String id, String barcode) {
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
         template.updateFirst(Query.query(Criteria.where(ID).is(id)),
-                new Update().set(BARCODE, barcode).set(LAST_MODIFIED_AT, timestampGenerator.generateTimestamp()), String.class, SUBMISSIONS_COLLECTION);
+            new Update().set(BARCODE, barcode).set(LAST_MODIFIED_AT, lastModified), String.class,
+            SUBMISSIONS_COLLECTION);
+        LOGGER.debug(String.format("Updated submission barcode to [%s] at [%s]", barcode,
+            DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
     }
 
     @Override
