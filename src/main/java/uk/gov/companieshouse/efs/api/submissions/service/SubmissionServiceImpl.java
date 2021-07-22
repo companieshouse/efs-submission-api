@@ -3,6 +3,8 @@ package uk.gov.companieshouse.efs.api.submissions.service;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +52,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
     public static final String SUBMISSION_STATUS_MSG =
-        "Updated submission status to %s for submission with id: [%s]";
+        "Updated submission status to %s for submission with id: [%s] at [%s]";
 
     private SubmissionRepository submissionRepository;
     private SubmissionMapper submissionMapper;
@@ -107,7 +109,10 @@ public class SubmissionServiceImpl implements SubmissionService {
         Submission submission = Submission.builder().withConfirmationReference(confirmRef).withPresenter(presenter)
                 .withStatus(SubmissionStatus.OPEN).withCreatedAt(timestamp).withLastModifiedAt(timestamp).build();
         submissionRepository.create(submission);
-        LOGGER.debug(String.format("Successfully created a submission with email: [%s] and id: [%s]", presenterApi.getEmail(), submission.getId()));
+        LOGGER.debug(
+            String.format("Successfully created a submission with email: [%s] and id: [%s] at [%s]",
+                presenterApi.getEmail(), submission.getId(),
+                DateTimeFormatter.ISO_INSTANT.format(timestamp.atZone(ZoneId.of("UTC")))));
         return new SubmissionResponseApi(submission.getId());
     }
 
@@ -195,13 +200,17 @@ public class SubmissionServiceImpl implements SubmissionService {
             default:
                 return new SubmissionResponseApi(id);
         }
+        
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
+        
         if (resultStatus == SubmissionStatus.SUBMITTED) {
-            submission.setSubmittedAt(timestampGenerator.generateTimestamp());
+            submission.setSubmittedAt(lastModified);
         }
         submission.setStatus(resultStatus);
-        submission.setLastModifiedAt(timestampGenerator.generateTimestamp());
+        submission.setLastModifiedAt(lastModified);
         submissionRepository.updateSubmission(submission);
-        LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, resultStatus, submission.getId()));
+        LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, resultStatus, submission.getId(),
+            DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
 
         return new SubmissionResponseApi(id);
     }
@@ -275,8 +284,9 @@ public class SubmissionServiceImpl implements SubmissionService {
                     setAsSubmitted(submission);
                 } else if (anySessionWithStatus(paymentSessions, PaymentTemplate.Status.PENDING)) {
                     submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
-                    LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, status,
-                        submission.getId()));
+                    LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, status, submission.getId(),
+                        DateTimeFormatter.ISO_INSTANT.format(
+                            submission.getSubmittedAt().atZone(ZoneId.of("UTC")))));
                 }
                 break;
             case PAYMENT_RECEIVED:
@@ -292,9 +302,11 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     private void setAsSubmitted(final Submission submission) {
         submission.setStatus(SubmissionStatus.SUBMITTED);
-        submission.setSubmittedAt(timestampGenerator.generateTimestamp());
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
+        submission.setSubmittedAt(lastModified);
         LOGGER.debug(
-            String.format(SUBMISSION_STATUS_MSG, SubmissionStatus.SUBMITTED, submission.getId()));
+            String.format(SUBMISSION_STATUS_MSG, SubmissionStatus.SUBMITTED, submission.getId(),
+                DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
     }
 
     private boolean anySessionWithStatus(final SessionListApi paymentSessions,
@@ -317,7 +329,10 @@ public class SubmissionServiceImpl implements SubmissionService {
             "Attempting to update submission status to PROCESSING for submission with id: [%s]",
             submission.getId()));
         submissionRepository.updateSubmission(submission);
-        LOGGER.debug(String.format("Updated submission status to PROCESSING for submission with id: [%s]", submission.getId()));
+        LOGGER.debug(String.format(
+            "Updated submission status to PROCESSING for submission with id: [%s] at [%s]",
+            submission.getId(),
+            DateTimeFormatter.ISO_INSTANT.format(timestamp.atZone(ZoneId.of("UTC")))));
         return new SubmissionResponseApi(submission.getId());
     }
 
@@ -356,9 +371,11 @@ public class SubmissionServiceImpl implements SubmissionService {
     public void updateSubmission(Submission submission) {
         LOGGER.debug(
             String.format("Attempting to update submission with id: [%s]", submission.getId()));
-        submission.setLastModifiedAt(timestampGenerator.generateTimestamp());
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
+        submission.setLastModifiedAt(lastModified);
         submissionRepository.updateSubmission(submission);
-        LOGGER.debug(String.format("Updated submission with id: [%s]", submission.getId()));
+        LOGGER.debug(String.format("Updated submission with id: [%s] at [%s]", submission.getId(),
+            DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
     }
 
 
