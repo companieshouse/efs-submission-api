@@ -4,19 +4,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
-
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import uk.gov.companieshouse.efs.api.email.config.ExternalAcceptedEmailConfig;
+import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.email.model.ExternalAcceptEmailData;
 import uk.gov.companieshouse.efs.api.email.model.ExternalAcceptEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
-import uk.gov.companieshouse.efs.api.email.config.ExternalAcceptedEmailConfig;
 import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
@@ -35,7 +35,7 @@ class ExternalAcceptEmailMapperTest {
     private IdentifierGeneratable idGenerator;
 
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     @Mock
     private Submission submission;
@@ -67,7 +67,8 @@ class ExternalAcceptEmailMapperTest {
         when(config.getMessageType()).thenReturn("efs_submission_external_accept");
         when(config.getTopic()).thenReturn("email-send");
         when(idGenerator.generateId()).thenReturn("123");
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.toInstant(
+            ZoneOffset.UTC));
 
         when(submission.getCompany()).thenReturn(company);
         when(company.getCompanyNumber()).thenReturn("12345678");

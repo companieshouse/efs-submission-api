@@ -1,5 +1,12 @@
 package uk.gov.companieshouse.efs.api.submissions.mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,13 +17,6 @@ import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.FileListApi;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FileDetailsMapperTest {
@@ -44,7 +44,7 @@ class FileDetailsMapperTest {
     @Test
     void testFileDetailsMapperMapsFileDetailsRequestEntityToDataEntity() {
         //given
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
         when(timestampGenerator.generateTimestamp()).thenReturn(now);
         when(fileListApi.getFiles()).thenReturn(Collections.singletonList(file));
         when(file.getFileId()).thenReturn(FILE_ID);
@@ -58,7 +58,8 @@ class FileDetailsMapperTest {
         assertEquals(Collections.singletonList(expectedFileDetails(now)), actual);
     }
 
-    private FileDetails expectedFileDetails(LocalDateTime now) {
-        return new FileDetails(FILE_ID, FILE_NAME, FILE_SIZE, null, FileConversionStatus.WAITING, null, now);
+    private FileDetails expectedFileDetails(Instant now) {
+        return new FileDetails(FILE_ID, FILE_NAME, FILE_SIZE, null, FileConversionStatus.WAITING, null, now.atZone(
+            ZoneId.of("UTC")).toLocalDateTime());
     }
 }

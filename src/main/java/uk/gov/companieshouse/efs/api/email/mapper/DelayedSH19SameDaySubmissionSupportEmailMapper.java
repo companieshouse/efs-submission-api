@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.email.config.DelayedSH19SameDaySubmissionSupportEmailConfig;
@@ -14,18 +15,17 @@ import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 public class DelayedSH19SameDaySubmissionSupportEmailMapper {
     private DelayedSH19SameDaySubmissionSupportEmailConfig config;
     private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     /**
      * Constructor.
-     *
-     * @param config             dependency
+     *  @param config             dependency
      * @param idGenerator        dependency
      * @param timestampGenerator dependency
      */
     public DelayedSH19SameDaySubmissionSupportEmailMapper(
         DelayedSH19SameDaySubmissionSupportEmailConfig config, IdentifierGeneratable idGenerator,
-        TimestampGenerator<LocalDateTime> timestampGenerator) {
+        TimestampGenerator<Instant> timestampGenerator) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;
@@ -40,7 +40,7 @@ public class DelayedSH19SameDaySubmissionSupportEmailMapper {
             .withEmailTemplateAppId(config.getAppId())
             .withEmailTemplateMessageType(config.getMessageType())
             .withData(fromDelayedSubmissions(model))
-            .withCreatedAt(timestampGenerator.generateTimestamp()
+            .withCreatedAt(timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime()
                 .format(DateTimeFormatter.ofPattern(config.getDateFormat())))
             .build();
     }

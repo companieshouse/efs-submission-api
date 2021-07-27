@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.efs.api.email;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.concurrent.ExecutionException;
@@ -32,7 +33,7 @@ public class EmailServiceImpl implements EmailService {
     private EmailSerialiser serializer;
     private Schema schema;
     private EmailMapperFactory emailMapperFactory;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
@@ -47,7 +48,7 @@ public class EmailServiceImpl implements EmailService {
      */
     @Autowired
     public EmailServiceImpl(CHKafkaProducer producer, EmailSerialiser serializer, Schema schema,
-            EmailMapperFactory emailMapperFactory, TimestampGenerator<LocalDateTime> timestampGenerator) {
+            EmailMapperFactory emailMapperFactory, TimestampGenerator<Instant> timestampGenerator) {
         this.producer = producer;
         this.serializer = serializer;
         this.schema = schema;
@@ -145,7 +146,7 @@ public class EmailServiceImpl implements EmailService {
     private void sendMessage(EmailDocument<?> document) {
         Message result = new Message();
         result.setTopic(document.getTopic());
-        result.setTimestamp(timestampGenerator.generateTimestamp().toEpochSecond(ZoneOffset.UTC));
+        result.setTimestamp(timestampGenerator.generateTimestamp().getEpochSecond());
         try {
             result.setValue(serializer.serialize(document, schema));
             producer.send(result);

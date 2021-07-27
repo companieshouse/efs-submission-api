@@ -8,8 +8,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.EnumSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,11 +57,11 @@ class SubmissionRepositoryImplTest {
     @Mock
     private Submission submission;
 
-    private LocalDateTime localDateTime;
+    private Instant nowUTC;
 
     @BeforeEach
     void setUp() {
-        this.localDateTime = LocalDateTime.now();
+        this.nowUTC = Instant.now();
         repository = new SubmissionRepositoryImpl(template, timestampGenerator);
     }
 
@@ -87,12 +89,15 @@ class SubmissionRepositoryImplTest {
     void testUpdateSubmissionStatus() {
         // given
         SubmissionStatus status = SubmissionStatus.SUBMITTED;
-        when(timestampGenerator.generateTimestamp()).thenReturn(this.localDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(this.nowUTC);
+        
         // when
         repository.updateSubmissionStatus(SUBMISSION_ID, status);
+        
         // then
         verify(template).updateFirst(Query.query(Criteria.where("_id").is(SUBMISSION_ID)),
-                new Update().set("status", SubmissionStatus.SUBMITTED).set("last_modified_at", localDateTime), String.class, SUBMISSIONS_COLLECTION);
+                new Update().set("status", SubmissionStatus.SUBMITTED).set("last_modified_at",
+                    nowUTC.atZone(ZoneId.of("UTC")).toLocalDateTime()), String.class, SUBMISSIONS_COLLECTION);
     }
 
     @Test
@@ -150,7 +155,7 @@ class SubmissionRepositoryImplTest {
     @Test
     void testUpdateSubmissionStatusByBarcode() {
         // given
-        when(timestampGenerator.generateTimestamp()).thenReturn(localDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(nowUTC);
         FesSubmissionStatus status = FesSubmissionStatus.ACCEPTED;
 
         // when
@@ -158,19 +163,21 @@ class SubmissionRepositoryImplTest {
 
         // then
         verify(template).updateFirst(Query.query(Criteria.where("form.barcode").is(BARCODE)),
-                new Update().set("status", status).set("last_modified_at", localDateTime), String.class, SUBMISSIONS_COLLECTION);
+                new Update().set("status", status).set("last_modified_at", nowUTC.atZone(ZoneId.of("UTC")).toLocalDateTime()), String.class, SUBMISSIONS_COLLECTION);
 
     }
 
     @Test
     void testUpdateBarcode() {
         //when
-        when(timestampGenerator.generateTimestamp()).thenReturn(this.localDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(this.nowUTC);
+        
         repository.updateBarcode(SUBMISSION_ID, BARCODE);
 
         //then
         verify(template).updateFirst(Query.query(Criteria.where(ID).is(SUBMISSION_ID)),
-            new Update().set(FORM_BARCODE, BARCODE).set(LAST_MODIFIED_AT, timestampGenerator.generateTimestamp()),
+            new Update().set(FORM_BARCODE, BARCODE).set(LAST_MODIFIED_AT, nowUTC.atZone(
+                ZoneId.of("UTC")).toLocalDateTime()),
             String.class, SUBMISSIONS_COLLECTION);
     }
 

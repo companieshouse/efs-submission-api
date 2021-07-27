@@ -68,7 +68,7 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
             .map(submission -> new DelayedSubmissionSupportModel(submission.getId(),
                 submission.getConfirmationReference(),
                 Optional.ofNullable(submission.getSubmittedAt())
-                    .orElseGet(submission::getCreatedAt)
+                    .orElse(submission.getCreatedAt())
                     .format(FORMATTER),
                 submission.getPresenter().getEmail(), submission.getCompany().getCompanyNumber()))
             .collect(Collectors.toList());
@@ -86,7 +86,7 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
                         submission.getFormDetails().getFormType(),
                         submission.getPresenter().getEmail(),
                         Optional.ofNullable(submission.getSubmittedAt())
-                            .orElseGet(submission::getCreatedAt)
+                            .orElse(submission.getCreatedAt())
                             .format(FORMATTER)))
                     .collect(Collectors.groupingBy(
                         delayedSubmissionModel -> formCategoryToEmailAddressService.getEmailAddressForFormCategory(

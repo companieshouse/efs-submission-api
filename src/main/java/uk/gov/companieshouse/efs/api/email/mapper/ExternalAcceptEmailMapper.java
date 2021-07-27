@@ -1,7 +1,10 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.email.config.ExternalAcceptedEmailConfig;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
@@ -14,9 +17,9 @@ import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 public class ExternalAcceptEmailMapper {
     private ExternalAcceptedEmailConfig config;
     private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
-    public ExternalAcceptEmailMapper(ExternalAcceptedEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator) {
+    public ExternalAcceptEmailMapper(ExternalAcceptedEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<Instant> timestampGenerator) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;
@@ -30,12 +33,12 @@ public class ExternalAcceptEmailMapper {
                 .withEmailTemplateAppId(config.getAppId())
                 .withEmailTemplateMessageType(config.getMessageType())
                 .withData(fromSubmission(model))
-                .withCreatedAt(timestampGenerator.generateTimestamp()
+                .withCreatedAt(timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime()
                         .format(DateTimeFormatter.ofPattern(config.getDateFormat()))).build();
     }
 
     private ExternalAcceptEmailData fromSubmission(ExternalAcceptEmailModel model) {
-        LocalDateTime submittedAt = model.getSubmission().getSubmittedAt() == null ? model.getSubmission().getCreatedAt() : model.getSubmission().getSubmittedAt();
+        LocalDateTime submittedAt = Optional.ofNullable(model.getSubmission().getSubmittedAt()).orElse(Optional.ofNullable(model.getSubmission().getCreatedAt()).map(i -> i.atZone(ZoneId.of("UTC")).toLocalDateTime()).orElse(null));
         return ExternalAcceptEmailData.builder()
                 .withTo(model.getSubmission().getPresenter().getEmail())
                 .withSubject(config.getSubject())

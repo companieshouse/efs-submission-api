@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +43,7 @@ class ExternalNotificationEmailMapperTest {
     private IdentifierGeneratable idGenerator;
 
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     @Mock
     private Submission submission;
@@ -80,7 +82,8 @@ class ExternalNotificationEmailMapperTest {
     void mapSubmissionDataToConfirmationEmailModel() {
         //given
         LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.toInstant(
+            ZoneOffset.UTC));
 
         when(config.getSubject()).thenReturn("Your document has been submitted");
         when(config.getAppId()).thenReturn("efs-submission-api.efs_submission_confirmation");

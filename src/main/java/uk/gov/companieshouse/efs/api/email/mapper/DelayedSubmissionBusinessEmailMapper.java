@@ -1,7 +1,8 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ public class DelayedSubmissionBusinessEmailMapper {
 
     private DelayedSubmissionBusinessEmailConfig config;
     private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     /**
      * Constructor.
@@ -27,7 +28,7 @@ public class DelayedSubmissionBusinessEmailMapper {
      * @param timestampGenerator    dependency
      */
     @Autowired
-    public DelayedSubmissionBusinessEmailMapper(DelayedSubmissionBusinessEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator) {
+    public DelayedSubmissionBusinessEmailMapper(DelayedSubmissionBusinessEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<Instant> timestampGenerator) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;
@@ -41,7 +42,7 @@ public class DelayedSubmissionBusinessEmailMapper {
                 .withEmailTemplateAppId(config.getAppId())
                 .withEmailTemplateMessageType(config.getMessageType())
                 .withData(fromDelayedSubmissions(model))
-                .withCreatedAt(timestampGenerator.generateTimestamp()
+                .withCreatedAt(timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime()
                         .format(DateTimeFormatter.ofPattern(config.getDateFormat()))).build();
 
     }

@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
@@ -15,19 +16,18 @@ import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 public class InternalAvFailedEmailMapper {
     private InternalFailedAvEmailConfig config;
     private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
     private FormCategoryToEmailAddressService emailAddressService;
 
     /**
      * Constructor.
-     *
-     * @param config                dependency
+     *  @param config                dependency
      * @param idGenerator           dependency
      * @param timestampGenerator    dependency
      * @param emailAddressService   dependency
      */
     public InternalAvFailedEmailMapper(InternalFailedAvEmailConfig config, IdentifierGeneratable idGenerator,
-                                       TimestampGenerator<LocalDateTime> timestampGenerator,
+                                       TimestampGenerator<Instant> timestampGenerator,
                                        FormCategoryToEmailAddressService emailAddressService) {
         this.config = config;
         this.idGenerator = idGenerator;
@@ -50,7 +50,7 @@ public class InternalAvFailedEmailMapper {
                 .withEmailTemplateAppId(config.getAppId())
                 .withEmailTemplateMessageType(config.getMessageType())
                 .withData(fromSubmission(model, emailAddress))
-                .withCreatedAt(timestampGenerator.generateTimestamp()
+                .withCreatedAt(timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime()
                         .format(DateTimeFormatter.ofPattern(config.getDateFormat()))).build();
     }
 

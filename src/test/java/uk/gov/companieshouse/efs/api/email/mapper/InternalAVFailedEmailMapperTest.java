@@ -5,8 +5,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneOffset;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +40,7 @@ class InternalAVFailedEmailMapperTest {
     private IdentifierGeneratable idGenerator;
 
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     @Mock
     private Submission submission;
@@ -75,7 +77,8 @@ class InternalAVFailedEmailMapperTest {
         when(config.getMessageType()).thenReturn("efs_submission_internal");
         when(config.getTopic()).thenReturn("email-send");
         when(idGenerator.generateId()).thenReturn("123");
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.toInstant(
+            ZoneOffset.UTC));
 
         when(submission.getCompany()).thenReturn(company);
         when(company.getCompanyNumber()).thenReturn("12345678");

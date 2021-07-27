@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
@@ -65,7 +66,7 @@ class EmailServiceImplTest {
     private EmailServiceImpl emailService;
 
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     @Mock
     private CHKafkaProducer producer;
@@ -168,17 +169,19 @@ class EmailServiceImplTest {
 
     @Mock
     private PaymentReportEmailMapper paymentReportEmailMapper;
+    private LocalDateTime createAtLocalDateTime;
 
     @BeforeEach
     void setUp() {
         this.emailService = new EmailServiceImpl(producer, serializer, schema, emailMapperFactory, timestampGenerator);
+        
+        createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.toInstant(ZoneOffset.UTC));
     }
 
     @Test
     void testEmailServiceSendsMessageToKafkaWhenSubmissionAccepted() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(externalAcceptEmailDocument.getTopic()).thenReturn("external-email-send");
         when(emailMapperFactory.getAcceptEmailMapper()).thenReturn(acceptEmailMapper);
         when(acceptEmailMapper.map(any())).thenReturn(externalAcceptEmailDocument);
@@ -200,8 +203,6 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaWhenSubmissionRejected() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(externalRejectEmailDocument.getTopic()).thenReturn("external-email-send");
         when(emailMapperFactory.getRejectEmailMapper()).thenReturn(rejectEmailMapper);
         when(rejectEmailMapper.map(any())).thenReturn(externalRejectEmailDocument);
@@ -223,8 +224,6 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaWhenSubmissionHasInfectedFiles() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(internalAVFailedEmailDocument.getTopic()).thenReturn("internal-email-send");
         when(emailMapperFactory.getInternalAvFailedEmailMapper()).thenReturn(internalAVFailedEmailMapper);
         when(internalAVFailedEmailMapper.map(any())).thenReturn(internalAVFailedEmailDocument);
@@ -246,8 +245,6 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaWhenFilesFailConversion() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(internalFailedConversionEmailDocument.getTopic()).thenReturn("internal-email-send");
         when(emailMapperFactory.getInternalFailedConversionEmailMapper()).thenReturn(internalFailedConversionEmailMapper);
         when(internalFailedConversionEmailMapper.map(any())).thenReturn(internalFailedConversionEmailDocument);
@@ -270,8 +267,6 @@ class EmailServiceImplTest {
     void testEmailServiceThrowsEmailServiceExceptionWhenProducerThrowsExecutionException()
             throws ExecutionException, InterruptedException {
         // given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(internalAVFailedEmailDocument.getTopic()).thenReturn("internal-email-send");
         when(emailMapperFactory.getInternalAvFailedEmailMapper()).thenReturn(internalAVFailedEmailMapper);
         when(internalAVFailedEmailMapper.map(any())).thenReturn(internalAVFailedEmailDocument);
@@ -293,8 +288,6 @@ class EmailServiceImplTest {
     void testEmailServiceThrowsEmailServiceExceptionWhenProducerThrowsInterruptedException()
             throws ExecutionException, InterruptedException {
         // given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(internalAVFailedEmailDocument.getTopic()).thenReturn("internal-email-send");
         when(emailMapperFactory.getInternalAvFailedEmailMapper()).thenReturn(internalAVFailedEmailMapper);
         when(internalAVFailedEmailMapper.map(any())).thenReturn(internalAVFailedEmailDocument);
@@ -314,8 +307,6 @@ class EmailServiceImplTest {
     @Test
     void testSendExternalConfirmation() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(externalNotificationEmailDocument.getTopic()).thenReturn("confirm-email-send");
         when(externalNotificationEmailModel.getSubmission()).thenReturn(submission);
         when(submission.getId()).thenReturn("123");
@@ -338,8 +329,6 @@ class EmailServiceImplTest {
     @Test
     void testSendExternalPaymentFailedNotification() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(externalNotificationEmailDocument.getTopic()).thenReturn("notification-email-send");
         when(externalNotificationEmailModel.getSubmission()).thenReturn(submission);
         when(submission.getId()).thenReturn("123");
@@ -362,8 +351,6 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaWhenSubmissionNotFesEnabled() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(internalSubmissionEmailDocument.getTopic()).thenReturn("internal-email-send");
         when(emailMapperFactory.getInternalSubmissionEmailMapper()).thenReturn(internalSubmissionEmailMapper);
         when(internalSubmissionEmailMapper.map(any())).thenReturn(internalSubmissionEmailDocument);
@@ -386,8 +373,6 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaWhenSubmissionDelayed() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(delayedSubmissionSupportEmailDataEmailDocument.getTopic()).thenReturn("delayed-submission-support-email-send");
         when(emailMapperFactory.getDelayedSubmissionSupportEmailMapper()).thenReturn(delayedSubmissionSupportEmailMapper);
         when(delayedSubmissionSupportEmailMapper.map(any())).thenReturn(delayedSubmissionSupportEmailDataEmailDocument);
@@ -407,8 +392,6 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaWhenSH19SameDaySubmissionDelayed() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(delayedSubmissionSupportEmailDataEmailDocument.getTopic()).thenReturn(
             "delayed-submission-support-email-send");
         when(delayedSubmissionSupportEmailDataEmailDocument.getData()).thenReturn(document);
@@ -436,8 +419,6 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaWhenSubmissionVeryDelayed() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(delayedSubmissionBusinessEmailDataEmailDocument.getTopic()).thenReturn("delayed-submission-business-email-send");
         when(emailMapperFactory.getDelayedSubmissionBusinessEmailMapper()).thenReturn(delayedSubmissionBusinessEmailMapper);
         when(delayedSubmissionBusinessEmailMapper.map(any())).thenReturn(delayedSubmissionBusinessEmailDataEmailDocument);
@@ -457,8 +438,6 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaWhenPaymentReportRequested() throws ExecutionException, InterruptedException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
         when(paymentReportEmailDocument.getTopic()).thenReturn("external-email-send");
         when(emailMapperFactory.getPaymentReportEmailMapper()).thenReturn(paymentReportEmailMapper);
         when(paymentReportEmailMapper.map(any())).thenReturn(paymentReportEmailDocument);

@@ -7,7 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -79,7 +80,7 @@ class DecisionEngineTest {
     void testDecisionEngineReturnsNotCleanIfAllFilesScannedOneFileNotClean() {
         //given
         FileDetails fileDetails = getExpectedFileDetailsWaiting();
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
         when(apiClient.details(anyString())).thenReturn(new FileTransferApiClientDetailsResponse("abc", HttpStatus.OK, "infected"));
         when(submission.getFormDetails()).thenReturn(FormDetails.builder()
                 .withFileDetailsList(Collections.singletonList(fileDetails))
@@ -91,7 +92,7 @@ class DecisionEngineTest {
 
         //then
         assertEquals(1, actual.get(DecisionResult.NOT_CLEAN).size());
-        assertEquals(now, fileDetails.getLastModifiedAt());
+        assertEquals(now, fileDetails.getLastModifiedAt().atZone(ZoneId.of("UTC")).toInstant());
         assertEquals(FileConversionStatus.FAILED_AV, fileDetails.getConversionStatus());
         verify(timestampGenerator).generateTimestamp();
         verify(apiClient).details("abc");
@@ -126,7 +127,7 @@ class DecisionEngineTest {
     void testDecisionEngineReturnsFesEnabledIfFormTypeEnabledInFes() {
         //given
         FileDetails fileDetails = getExpectedFileDetailsWaiting();
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
         when(apiClient.details(anyString())).thenReturn(new FileTransferApiClientDetailsResponse("abc", HttpStatus.OK, "clean"));
         when(submission.getFormDetails()).thenReturn(FormDetails.builder()
                 .withFileDetailsList(Collections.singletonList(fileDetails))
@@ -148,7 +149,7 @@ class DecisionEngineTest {
 
         //then
         assertEquals(1, actual.get(DecisionResult.FES_ENABLED).size());
-        assertEquals(now, fileDetails.getLastModifiedAt());
+        assertEquals(now, fileDetails.getLastModifiedAt().atZone(ZoneId.of("UTC")).toInstant());
         assertEquals(FileConversionStatus.CLEAN_AV, fileDetails.getConversionStatus());
         verify(timestampGenerator).generateTimestamp();
         verify(apiClient).details("abc");
@@ -160,7 +161,7 @@ class DecisionEngineTest {
     void testDecisionEngineReturnsNotFesEnabledIfFormTypeDisabledInFes() {
         //given
         FileDetails fileDetails = getExpectedFileDetailsWaiting();
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
         when(apiClient.details(anyString())).thenReturn(new FileTransferApiClientDetailsResponse("abc", HttpStatus.OK, "clean"));
         when(submission.getFormDetails()).thenReturn(FormDetails.builder()
                 .withFileDetailsList(Collections.singletonList(fileDetails))
@@ -181,7 +182,7 @@ class DecisionEngineTest {
 
         //then
         assertEquals(1, actual.get(DecisionResult.NOT_FES_ENABLED).size());
-        assertEquals(now, fileDetails.getLastModifiedAt());
+        assertEquals(now, fileDetails.getLastModifiedAt().atZone(ZoneId.of("UTC")).toInstant());
         assertEquals(FileConversionStatus.CLEAN_AV, fileDetails.getConversionStatus());
         verify(timestampGenerator).generateTimestamp();
         verify(apiClient).details("abc");
@@ -193,7 +194,7 @@ class DecisionEngineTest {
     void testDecisionEngineReturnsFormTypeDoesNotExistIfFormUnhandled() {
         //given
         FileDetails fileDetails = getExpectedFileDetailsWaiting();
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
         when(apiClient.details(anyString())).thenReturn(new FileTransferApiClientDetailsResponse("abc", HttpStatus.OK, "clean"));
         when(submission.getFormDetails()).thenReturn(FormDetails.builder()
                 .withFileDetailsList(Collections.singletonList(fileDetails))
@@ -208,7 +209,7 @@ class DecisionEngineTest {
 
         //then
         assertEquals(1, actual.get(DecisionResult.FORM_TYPE_DOES_NOT_EXIST).size());
-        assertEquals(now, fileDetails.getLastModifiedAt());
+        assertEquals(now, fileDetails.getLastModifiedAt().atZone(ZoneId.of("UTC")).toInstant());
         assertEquals(FileConversionStatus.CLEAN_AV, fileDetails.getConversionStatus());
         verify(timestampGenerator).generateTimestamp();
         verify(apiClient).details("abc");

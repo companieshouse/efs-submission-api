@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +40,7 @@ class InternalFailedConversionEmailMapperTest {
     private IdentifierGeneratable idGenerator;
 
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     @Mock
     private Submission submission;
@@ -73,8 +75,8 @@ class InternalFailedConversionEmailMapperTest {
         when(config.getMessageType()).thenReturn("efs_submission_internal_failed_conversion");
         when(config.getTopic()).thenReturn("email-send");
         when(idGenerator.generateId()).thenReturn("123");
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.toInstant(
+            ZoneOffset.UTC));
         when(submission.getCompany()).thenReturn(company);
         when(company.getCompanyNumber()).thenReturn("12345678");
         when(company.getCompanyName()).thenReturn("ABC Co Ltd");

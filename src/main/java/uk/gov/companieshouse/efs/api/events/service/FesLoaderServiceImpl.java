@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -91,7 +92,7 @@ public class FesLoaderServiceImpl implements FesLoaderService {
         long nextBatchId = batchDao.getNextBatchId();
         LOGGER.debug("next batch id " + nextBatchId);
 
-        LocalDateTime currentDate = timestampGenerator.generateTimestamp();
+        LocalDateTime currentDate = timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
         String formattedCurrentDate = currentDate.format(DateTimeFormatter.ofPattern("yyMMdd"));
         String batchNamePrefix = String.format("EFS_%s", formattedCurrentDate);
         LOGGER.debug("Prefix " + batchNamePrefix);

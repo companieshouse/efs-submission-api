@@ -1,11 +1,19 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.config.DelayedSubmissionBusinessEmailConfig;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailData;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
@@ -13,15 +21,6 @@ import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessModel;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
-
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DelayedSubmissionBusinessEmailMapperTest {
@@ -35,7 +34,7 @@ class DelayedSubmissionBusinessEmailMapperTest {
     private IdentifierGeneratable idGenerator;
 
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     @Mock
     private DelayedSubmissionBusinessEmailModel delayedSubmissionBusinessEmailModel;
@@ -58,7 +57,7 @@ class DelayedSubmissionBusinessEmailMapperTest {
         when(config.getMessageType()).thenReturn("efs_submission_delayed_submission_business");
         when(config.getTopic()).thenReturn("email-send");
         when(idGenerator.generateId()).thenReturn("123");
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.atZone(ZoneId.of("UTC")).toInstant());
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
         when(delayedSubmissionBusinessEmailModel.getDelayedSubmissions()).thenReturn(Collections.singletonList(delayedSubmissionBusinessModel));
         when(delayedSubmissionBusinessEmailModel.getEmailAddress()).thenReturn("internal_RP_demo@ch.gov.uk");

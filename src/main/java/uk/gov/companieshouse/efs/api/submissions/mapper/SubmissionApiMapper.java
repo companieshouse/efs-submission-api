@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.efs.api.submissions.mapper;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ public class SubmissionApiMapper {
 
     public Submission map(SubmissionApi submission) {
         return new Submission(submission.getId(), submission.getConfirmationReference(),
-            submission.getCreatedAt(), submission.getSubmittedAt(), submission.getLastModifiedAt(),
+            submission.getCreatedAt().atZone(ZoneId.of("UTC")).toInstant(), submission.getSubmittedAt(), submission.getLastModifiedAt(),
             mapCompany(submission.getCompany()), mapPresenter(submission.getPresenter()),
             submission.getStatus(), submission.getPaymentSessions(),
             submission.getSubmissionForm() == null ? null : mapForm(submission.getSubmissionForm()),

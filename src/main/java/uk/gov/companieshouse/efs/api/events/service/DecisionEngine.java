@@ -1,14 +1,13 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.efs.api.events.service.model.Decision;
 import uk.gov.companieshouse.efs.api.events.service.model.DecisionResult;
@@ -87,13 +86,13 @@ public class DecisionEngine {
                     response.getHttpStatus(), fileDetails.getFileId(), submissionId), null, debug);
         } else if (AV_FAILED.equals(response.getFileStatus())) {
             fileDetails.setConversionStatus(FileConversionStatus.FAILED_AV);
-            fileDetails.setLastModifiedAt(timestampGenerator.generateTimestamp());
+            fileDetails.setLastModifiedAt(timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime());
             decision.addInfectedFile(fileDetails.getFileName());
             decision.setChanged(true);
             decision.incrementNumberOfDecisions();
         } else if (AV_CLEAN.equals(response.getFileStatus())) {
             fileDetails.setConversionStatus(FileConversionStatus.CLEAN_AV);
-            fileDetails.setLastModifiedAt(timestampGenerator.generateTimestamp());
+            fileDetails.setLastModifiedAt(timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime());
             decision.setChanged(true);
             decision.incrementNumberOfDecisions();
         }

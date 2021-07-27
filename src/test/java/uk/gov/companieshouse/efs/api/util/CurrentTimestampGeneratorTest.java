@@ -4,9 +4,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,23 +20,23 @@ class CurrentTimestampGeneratorTest {
     
     private Logger logger;
     private Clock clock;
-    private LocalDateTime nowUTC;
+    private Instant nowUTC;
 
     @BeforeEach
     void setUp() {
         logger =  LoggerFactory.getLogger(CurrentTimestampGeneratorTest.class.getSimpleName());
 
-        nowUTC = LocalDateTime.now(Clock.systemUTC());
-        
+        nowUTC = Instant.now();
         // set fixed clock that always returns nowUTC
-        clock = Clock.fixed(nowUTC.toInstant(ZoneOffset.UTC), ZoneId.of("UTC"));
+        clock = Clock.fixed(nowUTC, ZoneId.of("UTC"));
+        
         this.timestampGenerator = new CurrentTimestampGenerator(clock);
     }
 
     @Test
     void generateTimestampReturnsUTC() {
         //when
-        LocalDateTime actual = this.timestampGenerator.generateTimestamp();
+        Instant actual = this.timestampGenerator.generateTimestamp();
 
         //then
         assertThat(actual, is(nowUTC));

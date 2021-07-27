@@ -1,9 +1,9 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import com.google.common.base.Strings;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.email.config.ExternalRejectedEmailConfig;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
@@ -16,9 +16,9 @@ import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 public class ExternalRejectEmailMapper {
     private ExternalRejectedEmailConfig config;
     private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
-    public ExternalRejectEmailMapper(ExternalRejectedEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator) {
+    public ExternalRejectEmailMapper(ExternalRejectedEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<Instant> timestampGenerator) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;
@@ -32,7 +32,7 @@ public class ExternalRejectEmailMapper {
                 .withEmailTemplateAppId(config.getAppId())
                 .withEmailTemplateMessageType(config.getMessageType())
                 .withData(fromSubmission(model))
-                .withCreatedAt(timestampGenerator.generateTimestamp()
+                .withCreatedAt(timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime()
                         .format(DateTimeFormatter.ofPattern(config.getDateFormat()))).build();
     }
 

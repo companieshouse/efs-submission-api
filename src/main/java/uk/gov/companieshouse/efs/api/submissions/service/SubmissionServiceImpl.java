@@ -104,7 +104,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     public SubmissionResponseApi createSubmission(PresenterApi presenterApi) {
         LOGGER.debug(String.format("Attempting to create a submission with email: [%s]", presenterApi.getEmail()));
         Presenter presenter = presenterMapper.map(presenterApi);
-        LocalDateTime timestamp = timestampGenerator.generateTimestamp();
+        LocalDateTime timestamp = timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
         String confirmRef = confirmationReferenceGenerator.generateId();
         Submission submission = Submission.builder().withConfirmationReference(confirmRef).withPresenter(presenter)
                 .withStatus(SubmissionStatus.OPEN).withCreatedAt(timestamp).withLastModifiedAt(timestamp).build();
@@ -200,7 +200,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                 return new SubmissionResponseApi(id);
         }
         
-        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
         
         if (resultStatus == SubmissionStatus.SUBMITTED) {
             submission.setSubmittedAt(lastModified);
@@ -300,7 +300,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     private void setAsSubmitted(final Submission submission) {
         submission.setStatus(SubmissionStatus.SUBMITTED);
-        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
         submission.setSubmittedAt(lastModified);
         LOGGER.debug(
             String.format(SUBMISSION_STATUS_MSG, SubmissionStatus.SUBMITTED, submission.getId(),
@@ -318,7 +318,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionResponseApi updateSubmissionQueued(Submission submission) {
         submission.setStatus(SubmissionStatus.PROCESSING);
-        LocalDateTime timestamp = timestampGenerator.generateTimestamp();
+        LocalDateTime timestamp = timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
         submission.setLastModifiedAt(timestamp);
         submission.getFormDetails()
             .getFileDetailsList()
@@ -372,7 +372,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     public void updateSubmission(Submission submission) {
         LOGGER.debug(
             String.format("Attempting to update submission with id: [%s]", submission.getId()));
-        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
         submission.setLastModifiedAt(lastModified);
         submissionRepository.updateSubmission(submission);
         LOGGER.debug(String.format("Updated submission with id: [%s] at [%s]", submission.getId(),

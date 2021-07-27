@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,11 +18,11 @@ public class InternalFailedConversionEmailMapper {
 
     private InternalFailedConversionEmailConfig config;
     private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
     private FormCategoryToEmailAddressService emailAddressService;
 
     @Autowired
-    public InternalFailedConversionEmailMapper(InternalFailedConversionEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator, FormCategoryToEmailAddressService emailAddressService) {
+    public InternalFailedConversionEmailMapper(InternalFailedConversionEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<Instant> timestampGenerator, FormCategoryToEmailAddressService emailAddressService) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;
@@ -37,7 +38,7 @@ public class InternalFailedConversionEmailMapper {
                 .withEmailTemplateAppId(config.getAppId())
                 .withEmailTemplateMessageType(config.getMessageType())
                 .withData(fromSubmission(model, emailAddress))
-                .withCreatedAt(timestampGenerator.generateTimestamp()
+                .withCreatedAt(timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime()
                         .format(DateTimeFormatter.ofPattern(config.getDateFormat()))).build();
     }
 

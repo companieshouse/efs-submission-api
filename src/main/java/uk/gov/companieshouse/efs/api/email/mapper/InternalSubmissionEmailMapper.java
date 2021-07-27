@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Component;
@@ -23,13 +24,13 @@ public class InternalSubmissionEmailMapper {
 
     private InternalSubmissionEmailConfig internalSubmissionEmailConfig;
     private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
     private FormCategoryToEmailAddressService emailAddressService;
     private CategoryTemplateService categoryTemplateService;
     private FormTemplateService formTemplateService;
 
     public InternalSubmissionEmailMapper(InternalSubmissionEmailConfig internalSubmissionEmailConfig, IdentifierGeneratable idGenerator,
-                                         TimestampGenerator<LocalDateTime> timestampGenerator,
+                                         TimestampGenerator<Instant> timestampGenerator,
                                          FormCategoryToEmailAddressService emailAddressService,
                                          CategoryTemplateService categoryTemplateService,
                                          FormTemplateService formTemplateService) {
@@ -63,7 +64,7 @@ public class InternalSubmissionEmailMapper {
                 .withEmailTemplateAppId(internalSubmissionEmailConfig.getAppId())
                 .withEmailTemplateMessageType(internalSubmissionEmailConfig.getMessageType())
                 .withData(fromSubmission(model, emailAddress))
-                .withCreatedAt(timestampGenerator.generateTimestamp()
+                .withCreatedAt(timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime()
                         .format(DateTimeFormatter.ofPattern(internalSubmissionEmailConfig.getDateFormat()))).build();
     }
 

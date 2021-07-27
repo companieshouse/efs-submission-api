@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +103,7 @@ public class EventServiceImpl implements EventService {
     public void updateConversionFileStatus(String submissionId, String fileId, FileConversionStatusApi fileConversionStatus) {
 
         Submission submission = getSubmission(submissionId, fileId);
-        LocalDateTime now = currentTimestampGenerator.generateTimestamp();
+        LocalDateTime now = currentTimestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
 
         submission.getFormDetails().getFileDetailsList().stream()
                 .filter(file -> fileId.equals(file.getFileId()))
@@ -165,7 +166,7 @@ public class EventServiceImpl implements EventService {
                 // generate barcode
                 String barcode = submission.getFormDetails().getBarcode();
 
-                LocalDateTime submittedAt = submission.getSubmittedAt() == null ? submission.getCreatedAt() : submission.getSubmittedAt();
+                LocalDateTime submittedAt = Optional.ofNullable(submission.getSubmittedAt()).orElse(submission.getCreatedAt());
 
                 if (barcode == null) {
                     barcode = barcodeGeneratorService.getBarcode(submittedAt);
@@ -217,7 +218,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void handleDelayedSubmissions(final DelayedSubmissionHandlerContext.ServiceLevel serviceLevel) {
-        final LocalDateTime handledAt = currentTimestampGenerator.generateTimestamp();
+        final LocalDateTime handledAt = currentTimestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
         final DelayedSubmissionHandlerStrategy strategy =
             delayedSubmissionHandlerContext.getStrategy(serviceLevel);
         final List<Submission> delayedSubmissions = strategy.findDelayedSubmissions(handledAt);

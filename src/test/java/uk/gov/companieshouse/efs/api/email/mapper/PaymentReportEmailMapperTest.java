@@ -6,8 +6,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneOffset;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +32,7 @@ class PaymentReportEmailMapperTest {
     @Mock
     private IdentifierGeneratable idGenerator;
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
     @Mock
     private PaymentReportEmailModel model;
 
@@ -95,7 +97,8 @@ class PaymentReportEmailMapperTest {
         }
         when(config.getFinanceEmailAddress()).thenReturn("internal_demo@ch.gov.uk");
         when(idGenerator.generateId()).thenReturn("123");
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.toInstant(
+            ZoneOffset.UTC));
 
         when(model.getFileLink()).thenReturn("file-link");
         if (StringUtils.equals("scottish", reportType)) {

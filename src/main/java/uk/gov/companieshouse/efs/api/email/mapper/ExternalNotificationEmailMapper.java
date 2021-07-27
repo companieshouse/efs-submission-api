@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,12 +22,12 @@ public class ExternalNotificationEmailMapper {
 
     private NotificationConfig config;
     private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
     private CategoryTemplateService categoryTemplateService;
     private FormTemplateService formTemplateService;
 
     public ExternalNotificationEmailMapper(NotificationConfig config,
-        IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator,
+        IdentifierGeneratable idGenerator, TimestampGenerator<Instant> timestampGenerator,
         final CategoryTemplateService categoryTemplateService,
         final FormTemplateService formTemplateService) {
         this.config = config;
@@ -44,7 +45,7 @@ public class ExternalNotificationEmailMapper {
                 .withEmailTemplateAppId(config.getAppId())
                 .withEmailTemplateMessageType(config.getMessageType())
                 .withData(fromSubmission(model))
-                .withCreatedAt(timestampGenerator.generateTimestamp()
+                .withCreatedAt(timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime()
                         .format(DateTimeFormatter.ofPattern(config.getDateFormat()))).build();
     }
 

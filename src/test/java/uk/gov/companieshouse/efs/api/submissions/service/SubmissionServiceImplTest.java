@@ -16,7 +16,9 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -70,7 +72,7 @@ class SubmissionServiceImplTest {
     public static final String EXPECTED_UPDATE_ERROR_MSG =
         "Submission status for [123] wasn't in [OPEN, PAYMENT_REQUIRED, PAYMENT_RECEIVED, "
             + "PAYMENT_FAILED], couldn't update";
-    private static final LocalDateTime NOW = LocalDateTime.now();
+    private static final Instant NOW = Instant.now();
 
     private SubmissionService submissionService;
 
@@ -521,8 +523,8 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator, times(2)).generateTimestamp();
         verify(submissionRepository).updateSubmission(submission);
         verify(submission).setStatus(SubmissionStatus.SUBMITTED);
-        verify(submission).setSubmittedAt(NOW.minusSeconds(1L));
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setSubmittedAt(toLocal(NOW.minusSeconds(1L)));
+        verify(submission).setLastModifiedAt(toLocal(NOW));
         verify(validator).validate(submission);
         verify(emailService).sendExternalConfirmation(
             new ExternalNotificationEmailModel(submission));
@@ -536,7 +538,7 @@ class SubmissionServiceImplTest {
 
         expectSubmissionWithPaymentSession(SubmissionStatus.OPEN, sessionApi);
         when(submission.getFeeOnSubmission()).thenReturn("1");
-        when(submission.getSubmittedAt()).thenReturn(NOW);
+        when(submission.getSubmittedAt()).thenReturn(toLocal(NOW));
         when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(submissionRepository.read(anyString())).thenReturn(submission);
         when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
@@ -550,7 +552,7 @@ class SubmissionServiceImplTest {
         verify(submissionRepository).updateSubmission(submission);
         verify(validator).validate(submission);
         verifyNoInteractions(emailService);
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setLastModifiedAt(toLocal(NOW));
     }
 
     @Test
@@ -580,7 +582,7 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator, times(2)).generateTimestamp();
         verify(submissionRepository).updateSubmission(submission);
         verify(validator).validate(submission);
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setLastModifiedAt(toLocal(NOW));
         verify(emailService).sendExternalConfirmation(
             new ExternalNotificationEmailModel(submission));
     }
@@ -608,7 +610,7 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator).generateTimestamp();
         verify(submissionRepository).updateSubmission(submission);
         verify(validator).validate(submission);
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setLastModifiedAt(toLocal(NOW));
         verifyNoInteractions(emailService);
     }
 
@@ -635,7 +637,7 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator).generateTimestamp();
         verify(submissionRepository).updateSubmission(submission);
         verify(validator).validate(submission);
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setLastModifiedAt(toLocal(NOW));
         verifyNoInteractions(emailService);
     }
 
@@ -662,10 +664,10 @@ class SubmissionServiceImplTest {
         assertEquals(SUBMISSION_ID, actual.getId());
         verify(timestampGenerator, times(2)).generateTimestamp();
         verify(submission).setStatus(SubmissionStatus.SUBMITTED);
-        verify(submission).setSubmittedAt(NOW.minusSeconds(1L));
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setSubmittedAt(toLocal(NOW.minusSeconds(1L)));
+        verify(submission).setLastModifiedAt(toLocal(NOW));
         verify(submissionRepository).updateSubmission(submission);
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setLastModifiedAt(toLocal(NOW));
         verify(validator).validate(submission);
         verify(emailService).sendExternalConfirmation(
             new ExternalNotificationEmailModel(submission));
@@ -688,7 +690,7 @@ class SubmissionServiceImplTest {
         verify(timestampGenerator).generateTimestamp();
         verify(submission, never()).setStatus(any(SubmissionStatus.class));
         verify(submissionRepository).updateSubmission(submission);
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setLastModifiedAt(toLocal(NOW));
         verify(validator).validate(submission);
         verify(emailService).sendExternalPaymentFailedNotification(
             new ExternalNotificationEmailModel(submission));
@@ -890,7 +892,7 @@ class SubmissionServiceImplTest {
             is(STATUS_PAID));
         verify(submission).setStatus(SubmissionStatus.PAYMENT_RECEIVED);
         verify(timestampGenerator).generateTimestamp();
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setLastModifiedAt(toLocal(NOW));
         verifyNoMoreInteractions(submission, emailService);
 
     }
@@ -917,7 +919,7 @@ class SubmissionServiceImplTest {
             is(STATUS_FAILED));
         verify(submission).setStatus(SubmissionStatus.OPEN);
         verify(timestampGenerator).generateTimestamp();
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setLastModifiedAt(toLocal(NOW));
         verifyNoMoreInteractions(submission, emailService);
     }
 
@@ -967,8 +969,8 @@ class SubmissionServiceImplTest {
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(), is(STATUS_PAID));
         verify(timestampGenerator).generateTimestamp();
         verify(submission).setStatus(SubmissionStatus.SUBMITTED);
-        verify(submission).setSubmittedAt(NOW);
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submission).setSubmittedAt(toLocal(NOW));
+        verify(submission).setLastModifiedAt(toLocal(NOW));
         verify(submissionRepository).updateSubmission(submission);
     }
 
@@ -1045,5 +1047,9 @@ class SubmissionServiceImplTest {
 
         when(submission.getStatus()).thenReturn(submissionStatus);
         when(submission.getPaymentSessions()).thenReturn(sessionListApi);
+    }
+    
+    private static LocalDateTime toLocal(final Instant instant) {
+        return instant.atZone(ZoneId.of("UTC")).toLocalDateTime();
     }
 }

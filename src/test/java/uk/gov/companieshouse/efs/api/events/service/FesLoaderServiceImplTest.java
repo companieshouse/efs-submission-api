@@ -8,10 +8,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Collections;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +26,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
-
 import uk.gov.companieshouse.efs.api.events.service.exception.FesLoaderException;
 import uk.gov.companieshouse.efs.api.events.service.fesloader.BatchDao;
 import uk.gov.companieshouse.efs.api.events.service.fesloader.EnvelopeDao;
@@ -84,7 +85,7 @@ class FesLoaderServiceImplTest {
     void testInsertSubmission(final String sameDayIndicator) throws IOException {
 
         // given
-        LocalDateTime someDate = LocalDateTime.of(2020, Month.MAY, 1, 12, 0);
+        Instant someDate = LocalDateTime.of(2020, Month.MAY, 1, 12, 0).toInstant(ZoneOffset.UTC);
 
         FesFileModel myTiff =
                 new FesFileModel(IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("Hello World.tiff")), 4);
@@ -107,7 +108,7 @@ class FesLoaderServiceImplTest {
         // then
         verify(batchDao).getNextBatchId();
         verify(batchDao).getBatchNameId("EFS_200501");
-        verify(batchDao).insertBatch(eq(321L), eq("EFS_200501_0432"), eq(someDate));
+        verify(batchDao).insertBatch(eq(321L), eq("EFS_200501_0432"), eq(someDate.atZone(ZoneId.of("UTC")).toLocalDateTime()));
 
         verify(envelopeDao).getNextEnvelopeId();
         verify(envelopeDao).insertEnvelope(ENVELOPE_ID, BATCH_ID);

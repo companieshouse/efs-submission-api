@@ -4,7 +4,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.time.Clock;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -262,7 +262,7 @@ public class Config {
     @Bean("confirmationEmailMapper")
     ExternalNotificationEmailMapper confirmationEmailMapper(
         final ExternalConfirmationEmailConfig externalConfirmationEmailConfig,
-        final TimestampGenerator<LocalDateTime> timestampGenerator,
+        final TimestampGenerator<Instant> timestampGenerator,
         final CategoryTemplateService categoryTemplateService,
         final FormTemplateService formTemplateService, final IdentifierGeneratable idGenerator) {
         return new ExternalNotificationEmailMapper(externalConfirmationEmailConfig, idGenerator,
@@ -272,7 +272,7 @@ public class Config {
     @Bean("paymentFailedEmailMapper")
     ExternalNotificationEmailMapper paymentFailedEmailMapper(
         final ExternalPaymentFailedEmailConfig externalPaymentFailedEmailConfig,
-        final TimestampGenerator<LocalDateTime> timestampGenerator,
+        final TimestampGenerator<Instant> timestampGenerator,
         final CategoryTemplateService categoryTemplateService,
         final FormTemplateService formTemplateService, final IdentifierGeneratable idGenerator) {
         return new ExternalNotificationEmailMapper(externalPaymentFailedEmailConfig, idGenerator,

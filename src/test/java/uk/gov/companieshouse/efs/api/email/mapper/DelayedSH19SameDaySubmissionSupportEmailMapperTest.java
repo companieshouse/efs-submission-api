@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +31,7 @@ class DelayedSH19SameDaySubmissionSupportEmailMapperTest {
     @Mock
     private IdentifierGeneratable idGenerator;
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
     @Mock
     private DelayedSubmissionSupportEmailModel model;
     @Mock
@@ -52,7 +54,8 @@ class DelayedSH19SameDaySubmissionSupportEmailMapperTest {
         when(config.getTopic()).thenReturn("email-send");
         when(config.getSupportEmailAddress()).thenReturn("test_support@ch.gov.uk");
         when(idGenerator.generateId()).thenReturn("123");
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.toInstant(
+            ZoneOffset.UTC));
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
         when(model.getDelayedSubmissions()).thenReturn(
             Collections.singletonList(delayedSubmissionSupportModel));

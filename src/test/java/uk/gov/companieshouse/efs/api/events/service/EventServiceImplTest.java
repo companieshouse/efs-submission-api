@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,7 +13,9 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,7 +63,7 @@ import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 class EventServiceImplTest {
 
     private static final int NUMBER_OF_PAGES = 100;
-    private static final LocalDateTime NOW = LocalDateTime.now();
+    private static final Instant NOW = Instant.now();
 
     private EventServiceImpl eventService;
 
@@ -423,7 +424,7 @@ class EventServiceImplTest {
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getCompany()).thenReturn(company);
-        when(submission.getSubmittedAt()).thenReturn(NOW);
+        when(submission.getSubmittedAt()).thenReturn(toLocal(NOW));
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
@@ -439,10 +440,10 @@ class EventServiceImplTest {
         //then
         verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
         verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
-        verify(barcodeGeneratorService, times(1)).getBarcode(NOW);
+        verify(barcodeGeneratorService, times(1)).getBarcode(toLocal(NOW));
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
-                "SH01", sameDay, Collections.singletonList(new FesFileModel(null, 0)), NOW));
+                "SH01", sameDay, Collections.singletonList(new FesFileModel(null, 0)), toLocal(NOW)));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -455,7 +456,7 @@ class EventServiceImplTest {
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getCompany()).thenReturn(company);
-        when(submission.getSubmittedAt()).thenReturn(NOW);
+        when(submission.getSubmittedAt()).thenReturn(toLocal(NOW));
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
@@ -470,10 +471,10 @@ class EventServiceImplTest {
         //then
         verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
         verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
-        verify(barcodeGeneratorService, times(1)).getBarcode(NOW);
+        verify(barcodeGeneratorService, times(1)).getBarcode(toLocal(NOW));
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
-                "FES-DOC-TYPE", false, Collections.singletonList(new FesFileModel(null, 0)), NOW));
+                "FES-DOC-TYPE", false, Collections.singletonList(new FesFileModel(null, 0)), toLocal(NOW)));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -486,7 +487,7 @@ class EventServiceImplTest {
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getCompany()).thenReturn(company);
-        when(submission.getCreatedAt()).thenReturn(NOW);
+        when(submission.getCreatedAt()).thenReturn(toLocal(NOW));
         when(submission.getSubmittedAt()).thenReturn(null);
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
@@ -502,10 +503,10 @@ class EventServiceImplTest {
         //then
         verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
         verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
-        verify(barcodeGeneratorService, times(1)).getBarcode(NOW);
+        verify(barcodeGeneratorService, times(1)).getBarcode(toLocal(NOW));
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
-                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), NOW));
+                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), toLocal(NOW)));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -643,7 +644,7 @@ class EventServiceImplTest {
             new FormTemplateApi("SH01", "formName", "category", "", false, true, null, false, null));
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
 
-        when(submission.getSubmittedAt()).thenReturn(NOW);
+        when(submission.getSubmittedAt()).thenReturn(toLocal(NOW));
         when(submission.getCompany()).thenReturn(company);
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
@@ -658,7 +659,7 @@ class EventServiceImplTest {
         verify(tiffDownloadService, times(1)).downloadTiffFile(convertedFileId);
         verify(fesLoaderService, times(1)).insertSubmission(
                 new FesLoaderModel("Y123XYZ", "abc", "1223456", "SH01", false,
-                    Collections.singletonList(new FesFileModel(null, 0)), NOW));
+                    Collections.singletonList(new FesFileModel(null, 0)), toLocal(NOW)));
         verify(submissionService, times(1)).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -669,7 +670,7 @@ class EventServiceImplTest {
         when(submission.getId()).thenReturn("1234abcd");
         when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
-        when(submission.getSubmittedAt()).thenReturn(NOW);
+        when(submission.getSubmittedAt()).thenReturn(toLocal(NOW));
         when(submission.getCompany()).thenReturn(company);
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
@@ -691,7 +692,7 @@ class EventServiceImplTest {
         verifyNoInteractions(barcodeGeneratorService);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y9999999", "abc", "1223456",
-                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), NOW));
+                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), toLocal(NOW)));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
     }
 
@@ -720,7 +721,7 @@ class EventServiceImplTest {
         // when
         eventService.handleDelayedSubmissions(DelayedSubmissionHandlerContext.ServiceLevel.STANDARD);
 
-        verify(standaryStrategy).buildAndSendEmails(Collections.emptyList(), NOW);
+        verify(standaryStrategy).buildAndSendEmails(Collections.emptyList(), toLocal(NOW));
         verifyNoInteractions(sameDayStrategy);
     }
 
@@ -734,8 +735,8 @@ class EventServiceImplTest {
         // when
         eventService.handleDelayedSubmissions(DelayedSubmissionHandlerContext.ServiceLevel.SAMEDAY);
         
-        verify(sameDayStrategy).findDelayedSubmissions(NOW);
-        verify(sameDayStrategy).buildAndSendEmails(Collections.emptyList(), NOW);
+        verify(sameDayStrategy).findDelayedSubmissions(toLocal(NOW));
+        verify(sameDayStrategy).buildAndSendEmails(Collections.emptyList(), toLocal(NOW));
         verifyNoInteractions(standaryStrategy);
     }
 
@@ -744,5 +745,9 @@ class EventServiceImplTest {
         submissions.add(submission);
         submissions.add(failedSubmission);
         return submissions;
+    }
+    
+    private static LocalDateTime toLocal(final Instant instant) {
+        return instant.atZone(ZoneId.of("UTC")).toLocalDateTime();
     }
 }

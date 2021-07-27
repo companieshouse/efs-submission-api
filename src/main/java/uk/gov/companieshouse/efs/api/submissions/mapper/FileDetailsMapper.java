@@ -1,11 +1,10 @@
 package uk.gov.companieshouse.efs.api.submissions.mapper;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.FileListApi;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
@@ -30,7 +29,7 @@ public class FileDetailsMapper {
                         null,
                         FileConversionStatus.WAITING,
                         null,
-                        currentTimestampGenerator.generateTimestamp())).collect(Collectors.toList());
+                        currentTimestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime())).collect(Collectors.toList());
     }
 
 }

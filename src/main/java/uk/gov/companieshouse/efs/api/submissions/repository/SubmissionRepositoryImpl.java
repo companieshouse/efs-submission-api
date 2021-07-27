@@ -74,7 +74,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
     @Override
     public void updateSubmissionStatus(String id, SubmissionStatus submissionStatus) {
-        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
 
         template.updateFirst(Query.query(Criteria.where(ID).is(id)),
             new Update().set(STATUS, submissionStatus).set(LAST_MODIFIED_AT, lastModified),
@@ -93,7 +93,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
         LOGGER.debug(
             String.format("Updating submission status [%s] for barcode [%s]", fesSubmissionStatus,
                 barcode));
-        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
         template.updateFirst(Query.query(Criteria.where(BARCODE).is(barcode)),
             new Update().set(STATUS, fesSubmissionStatus).set(LAST_MODIFIED_AT, lastModified),
             String.class, SUBMISSIONS_COLLECTION);
@@ -114,7 +114,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
 
     @Override
     public void updateBarcode(String id, String barcode) {
-        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
+        final LocalDateTime lastModified = timestampGenerator.generateTimestamp().atZone(ZoneId.of("UTC")).toLocalDateTime();
         template.updateFirst(Query.query(Criteria.where(ID).is(id)),
             new Update().set(BARCODE, barcode).set(LAST_MODIFIED_AT, lastModified), String.class,
             SUBMISSIONS_COLLECTION);

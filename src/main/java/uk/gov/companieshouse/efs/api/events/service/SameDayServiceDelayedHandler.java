@@ -62,7 +62,7 @@ public class SameDayServiceDelayedHandler implements DelayedSubmissionHandlerStr
             .map(submission -> new DelayedSubmissionSupportModel(submission.getId(),
                 submission.getConfirmationReference(),
                 Optional.ofNullable(submission.getSubmittedAt())
-                    .orElseGet(submission::getCreatedAt)
+                    .orElse(submission.getCreatedAt())
                     .format(FORMATTER), submission.getPresenter().getEmail(),
                 submission.getCompany().getCompanyNumber()))
             .collect(Collectors.toList());

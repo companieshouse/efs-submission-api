@@ -5,8 +5,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneOffset;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +48,7 @@ class InternalSubmissionEmailMapperTest {
     private IdentifierGeneratable idGenerator;
 
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     @Mock
     private InternalSubmissionEmailModel model;
@@ -99,7 +101,8 @@ class InternalSubmissionEmailMapperTest {
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
 
         when(idGenerator.generateId()).thenReturn("123");
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.toInstant(
+            ZoneOffset.UTC));
 
         when(model.getEmailFileDetailsList()).thenReturn(Collections.singletonList(emailFileDetails));
         when(emailFileDetails.getFileLink()).thenReturn("/file/link");
@@ -156,7 +159,7 @@ class InternalSubmissionEmailMapperTest {
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
 
         when(idGenerator.generateId()).thenReturn("123");
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.toInstant(ZoneOffset.UTC));
 
         when(model.getEmailFileDetailsList()).thenReturn(Collections.singletonList(emailFileDetails));
         when(emailFileDetails.getFileLink()).thenReturn("/file/link");
@@ -215,7 +218,7 @@ class InternalSubmissionEmailMapperTest {
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
 
         when(idGenerator.generateId()).thenReturn("123");
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.toInstant(ZoneOffset.UTC));
 
         when(model.getEmailFileDetailsList()).thenReturn(Collections.singletonList(emailFileDetails));
         when(emailFileDetails.getFileLink()).thenReturn("/file/link");

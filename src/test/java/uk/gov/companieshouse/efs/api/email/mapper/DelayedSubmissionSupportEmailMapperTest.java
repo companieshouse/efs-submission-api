@@ -1,5 +1,14 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,14 +23,6 @@ import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class DelayedSubmissionSupportEmailMapperTest {
 
@@ -34,7 +35,7 @@ class DelayedSubmissionSupportEmailMapperTest {
     private IdentifierGeneratable idGenerator;
 
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private TimestampGenerator<Instant> timestampGenerator;
 
     @Mock
     private Submission submission;
@@ -62,7 +63,7 @@ class DelayedSubmissionSupportEmailMapperTest {
         when(config.getTopic()).thenReturn("email-send");
         when(config.getSupportEmailAddress()).thenReturn("internal_RP_demo@ch.gov.uk");
         when(idGenerator.generateId()).thenReturn("123");
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
+        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime.atZone(ZoneId.of("UTC")).toInstant());
 
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
 

@@ -1,9 +1,12 @@
 package uk.gov.companieshouse.efs.api.submissions.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -19,7 +22,7 @@ public class Submission {
     @Field("confirmation_reference")
     private String confirmationReference;
     @Field("created_at")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
     @Field("submitted_at")
     private LocalDateTime submittedAt;
     @Field("last_modified_at")
@@ -38,7 +41,7 @@ public class Submission {
     @Field("fee_on_submission")
     private String feeOnSubmission;
 
-    public Submission(String id, String confirmationReference, LocalDateTime createdAt,
+    public Submission(String id, String confirmationReference, Instant createdAt,
                       LocalDateTime submittedAt, LocalDateTime lastModifiedAt, Company company,
                       Presenter presenter, SubmissionStatus status, SessionListApi paymentSessions,
                       FormDetails formDetails, List<RejectReason> chipsRejectReasons,
@@ -75,10 +78,12 @@ public class Submission {
     }
 
     public LocalDateTime getCreatedAt() {
-        return createdAt;
+        return Optional.ofNullable(createdAt)
+            .map(i -> i.atZone(ZoneId.of("UTC")).toLocalDateTime())
+            .orElse(null);
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -169,7 +174,7 @@ public class Submission {
     public static class Builder {
         private String id;
         private String confirmationReference;
-        private LocalDateTime createdAt;
+        private Instant createdAt;
         private LocalDateTime submittedAt;
         private LocalDateTime lastModifiedAt;
         private Company company;
@@ -192,6 +197,11 @@ public class Submission {
         }
 
         public Builder withCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt.atZone(ZoneId.of("UTC")).toInstant();
+            return this;
+        }
+
+        public Builder withCreatedAt(Instant createdAt) {
             this.createdAt = createdAt;
             return this;
         }
