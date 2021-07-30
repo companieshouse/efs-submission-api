@@ -1,0 +1,75 @@
+[{
+  "_id": {
+    "$oid": "60d5ba22f2e47251a74bb39c"
+  },
+  "confirmation_reference": "zgek 7woo uim3 askz",
+  "created_at": {
+    "$date": "2021-06-25T11:12:33.954Z"
+  },
+  "submitted_at": {
+    "$date": "2021-07-12T11:13:03.554Z"
+  },
+  "last_modified_at": {
+    "$date": "2021-06-24T11:13:03.554Z"
+  },
+  "company": {
+    "company_number": "00006400",
+    "company_name": "THE GIRLS' DAY SCHOOL TRUST"
+  },
+  "presenter": {
+    "email": "demo@ch.gov.uk"
+  },
+  "status": "PROCESSING",
+  "form": {
+    "form_type": "SH19_SAMEDAY",
+    "file_details": [
+      {
+        "file_id": "36a57e7d-057f-4b9b-b4a2-30c33cc23d96",
+        "file_name": "test_form.pdf",
+        "file_size": 23610,
+        "conversion_status": "WAITING",
+        "last_modified_at": {
+          "$date": "2021-06-25T11:12:59.918Z"
+        }
+      }
+    ]
+  },
+  "_class": "uk.gov.companieshouse.efs.api.submissions.model.Submission"
+},{
+  "_id": {
+    "$oid": "60d5ba41f2e47251a74bb39d"
+  },
+  "confirmation_reference": "9z6m 86g8 xq4y 8xt9",
+  "created_at": {
+    "$date": "2021-06-25T11:13:05.988Z"
+  },
+  "submitted_at": {
+    "$date": "2021-07-12T14:00:26.058Z"
+  },
+  "last_modified_at": {
+    "$date": "2021-06-24T11:13:26.058Z"
+  },
+  "company": {
+    "company_number": "00006400",
+    "company_name": "THE GIRLS' DAY SCHOOL TRUST"
+  },
+  "presenter": {
+    "email": "demo@ch.gov.uk"
+  },
+  "status": "PROCESSING",
+  "form": {
+    "form_type": "SH19_SAMEDAY",
+    "file_details": [
+      {
+        "file_id": "42599321-32db-4924-ab93-b5812935142b",
+        "file_name": "test_form.pdf",
+        "file_size": 23610,
+        "conversion_status": "WAITING",
+        "last_modified_at": {
+          "$date": "2021-06-25T11:13:22.858Z"
+        }
+      }
+    ]
+  },
+  "_class": "uk.gov.companieshouse.efs.api.submissions.model.Submission"
+}]
