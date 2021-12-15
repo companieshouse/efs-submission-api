@@ -25,7 +25,9 @@
         <api-helper-java.version>1.1.0-rc1</api-helper-java.version>
         <rest-service-common-library.version>0.0.3</rest-service-common-library.version>
         <environment-reader-library.version>1.3.2</environment-reader-library.version>
-        <structured-logging.version>1.9.3</structured-logging.version>
+        <!-- Logging -->
+        <log4j-bom.version>2.16.0</log4j-bom.version>
+        <structured-logging.version>1.9.10</structured-logging.version>
         <avro.version>1.8.1</avro.version>
         <ch-kafka.version>1.4.4</ch-kafka.version>
         <kafka-models.version>1.0.12</kafka-models.version>
@@ -61,6 +63,15 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Fix for CVE-2021-44228 -->
+            <!-- Required until v2.5.8 springframework & v2.6.2 springboot -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
