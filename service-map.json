@@ -16,6 +16,7 @@
     "file-transfer-api,CALLS_LAMBDA",
     "efs_submissions,GETS_DATA_FROM",
     "FES-db,SENDS_DATA_TO",
+    "efs-document-processor-queue,SENDS_DATA_TO",
     "chs-notification-api,INTEGRATES_WITH"
   ]
 }
