@@ -3,7 +3,6 @@
   "name": "efs-submission-api",
   "description": "Service that handles upload a document submissions and processes them by email or through FES depending on form type",
   "owned_by": "Thundercats",
-  "calls_via": "Eric",
   "documentation": "https://companieshouse.atlassian.net/wiki/spaces/S5/pages/2324627570/Support+Documentation+-+Upload+a+Document+Service",
   "git_repo": "https://github.com/companieshouse/efs-submission-api",
   "specification": "https://github.com/companieshouse/efs-submission-api/blob/master/spec/swagger.json",
