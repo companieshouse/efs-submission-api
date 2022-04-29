@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -68,8 +69,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     private EmailService emailService;
     private Validator<Submission> validator;
     public static final ImmutableSet<SubmissionStatus> UPDATABLE_STATUSES =
-        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED,
-            SubmissionStatus.PAYMENT_RECEIVED, SubmissionStatus.PAYMENT_FAILED);
+        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED,
+            SubmissionStatus.SUBMITTED);
 
     @Autowired
     public SubmissionServiceImpl(SubmissionRepository submissionRepository,
@@ -183,36 +184,32 @@ public class SubmissionServiceImpl implements SubmissionService {
         final PaymentClose paymentClose) {
         final Submission submission = getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
         final SubmissionStatus status = submission.getStatus();
-        SubmissionStatus resultStatus;
+        SubmissionStatus resultStatus = status;
 
         setPaymentSessionStatus(submission, paymentClose);
-        LOGGER.debug(String.format("Updating submission status %s for submission with id: [%s]",
-            status, submission.getId()));
-        switch (status) {
-            case OPEN:
-                resultStatus = !paymentClose.isPaid()
-                    ? SubmissionStatus.OPEN
-                    : SubmissionStatus.PAYMENT_RECEIVED;
-                break;
-            case PAYMENT_REQUIRED:
-                resultStatus = !paymentClose.isPaid()
-                    ? SubmissionStatus.PAYMENT_FAILED
-                    : SubmissionStatus.SUBMITTED;
-                break;
-            default:
+        LOGGER.debug(String.format("Updating submission status %s for submission with id: [%s]", status, submission.getId()));
+
+        if (SubmissionStatus.PAYMENT_REQUIRED.equals(submission.getStatus())) {
+
+            if (paymentClose.isPaid()) {
+                resultStatus = SubmissionStatus.SUBMITTED;
+            } else if (paymentClose.isFailed()){
+                resultStatus = SubmissionStatus.PAYMENT_FAILED;
+            } else {
                 return new SubmissionResponseApi(id);
+            }
+
+            final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
+
+            if (resultStatus == SubmissionStatus.SUBMITTED) {
+                submission.setSubmittedAt(lastModified);
+            }
+            submission.setStatus(resultStatus);
+            submission.setLastModifiedAt(lastModified);
+            submissionRepository.updateSubmission(submission);
+            LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, resultStatus, submission.getId(),
+                DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
         }
-        
-        final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
-        
-        if (resultStatus == SubmissionStatus.SUBMITTED) {
-            submission.setSubmittedAt(lastModified);
-        }
-        submission.setStatus(resultStatus);
-        submission.setLastModifiedAt(lastModified);
-        submissionRepository.updateSubmission(submission);
-        LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, resultStatus, submission.getId(),
-            DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
 
         return new SubmissionResponseApi(id);
     }
@@ -256,50 +253,27 @@ public class SubmissionServiceImpl implements SubmissionService {
             throw ve;
         }
 
-        progressSubmissionStatus(submission);
-        updateSubmission(submission);
-        LOGGER.debug(String.format("Successfully completed submission for id: [%s]", id));
+        if (submission.getFeeOnSubmission() == null) {
 
-        final SubmissionStatus status = submission.getStatus();
+            progressSubmissionStatusToSubmitted(submission);
 
-        if (submission.getFeeOnSubmission() == null || status == SubmissionStatus.SUBMITTED) {
+            updateSubmission(submission);
+            LOGGER.debug(String.format("Successfully completed submission for id: [%s]", id));
+
+            submission = getSubmissionWithCheckedStatus(id, ImmutableSet.of(SubmissionStatus.SUBMITTED));
+
             emailService.sendExternalConfirmation(new ExternalNotificationEmailModel(submission));
-        }
-        if (status == SubmissionStatus.PAYMENT_FAILED) {
-            emailService.sendExternalPaymentFailedNotification(
-                new ExternalNotificationEmailModel(submission));
         }
 
         return new SubmissionResponseApi(id);
     }
 
-    private void progressSubmissionStatus(final Submission submission) {
-        final SessionListApi paymentSessions = submission.getPaymentSessions();
+    private void progressSubmissionStatusToSubmitted(final Submission submission) {
         final SubmissionStatus status = submission.getStatus();
 
         LOGGER.debug(String.format("Updating submission status %s for submission with id: [%s]",
             status, submission.getId()));
-        switch (status) {
-            case OPEN:
-                if (submission.getFeeOnSubmission() == null || anySessionWithStatus(paymentSessions,
-                    PaymentTemplate.Status.PAID)) {
-                    setAsSubmitted(submission);
-                } else if (anySessionWithStatus(paymentSessions, PaymentTemplate.Status.PENDING)) {
-                    submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
-                    LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, status, submission.getId(),
-                        DateTimeFormatter.ISO_INSTANT.format(
-                            submission.getSubmittedAt().atZone(ZoneId.of("UTC")))));
-                }
-                break;
-            case PAYMENT_RECEIVED:
-                if (anySessionWithStatus(paymentSessions, PaymentTemplate.Status.PAID)) {
-                    setAsSubmitted(submission);
-                }
-                break;
-            default:
-                // intentionally empty
-                break;
-        }
+        setAsSubmitted(submission);
     }
 
     private void setAsSubmitted(final Submission submission) {
@@ -309,14 +283,6 @@ public class SubmissionServiceImpl implements SubmissionService {
         LOGGER.debug(
             String.format(SUBMISSION_STATUS_MSG, SubmissionStatus.SUBMITTED, submission.getId(),
                 DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
-    }
-
-    private boolean anySessionWithStatus(final SessionListApi paymentSessions,
-        final PaymentTemplate.Status status) {
-        return Optional.ofNullable(paymentSessions)
-            .orElseGet(SessionListApi::new)
-            .stream()
-            .anyMatch(s -> StringUtils.equals(status.toString(), s.getSessionStatus()));
     }
 
     @Override

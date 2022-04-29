@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -68,8 +69,8 @@ class SubmissionServiceImplTest {
     private static final String STATUS_FAILED = PaymentClose.Status.FAILED.toString();
     private static final String STATUS_CANCELLED = PaymentClose.Status.CANCELLED.toString();
     public static final String EXPECTED_UPDATE_ERROR_MSG =
-        "Submission status for [123] wasn't in [OPEN, PAYMENT_REQUIRED, PAYMENT_RECEIVED, "
-            + "PAYMENT_FAILED], couldn't update";
+        "Submission status for [123] wasn't in [OPEN, PAYMENT_REQUIRED, "
+            + "PAYMENT_FAILED, SUBMITTED], couldn't update";
     private static final LocalDateTime NOW = LocalDateTime.now();
 
     private SubmissionService submissionService;
@@ -451,7 +452,7 @@ class SubmissionServiceImplTest {
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PAID.toString());
         SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
 
-        when(submission.getStatus()).thenReturn(SubmissionStatus.PAYMENT_RECEIVED);
+        when(submission.getStatus()).thenReturn(SubmissionStatus.PAYMENT_REQUIRED);
         when(submissionRepository.read(anyString())).thenReturn(submission);
 
         // when
@@ -509,7 +510,7 @@ class SubmissionServiceImplTest {
     void testCompleteSubmissionWhenNoFee() throws SubmissionValidationException {
         // given
         when(submission.getId()).thenReturn(SUBMISSION_ID);
-        when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
+        when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN).thenReturn(SubmissionStatus.SUBMITTED);
         when(submissionRepository.read(anyString())).thenReturn(submission);
         when(timestampGenerator.generateTimestamp()).thenReturn(NOW.minusSeconds(1L))
             .thenReturn(NOW);
@@ -534,105 +535,41 @@ class SubmissionServiceImplTest {
         SessionApi sessionApi =
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
 
-        expectSubmissionWithPaymentSession(SubmissionStatus.OPEN, sessionApi);
         when(submission.getFeeOnSubmission()).thenReturn("1");
-        when(submission.getSubmittedAt()).thenReturn(NOW);
-        when(submission.getId()).thenReturn(SUBMISSION_ID);
+        when(submission.getStatus()).thenReturn(SubmissionStatus.PAYMENT_REQUIRED);
         when(submissionRepository.read(anyString())).thenReturn(submission);
-        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
-        // when
-        SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
-
-        // then
-        assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submission).setStatus(SubmissionStatus.PAYMENT_REQUIRED);
-        verify(timestampGenerator).generateTimestamp();
-        verify(submissionRepository).updateSubmission(submission);
-        verify(validator).validate(submission);
-        verifyNoInteractions(emailService);
-        verify(submission).setLastModifiedAt(NOW);
-    }
-
-    @Test
-    void testCompleteSubmissionWhenPaidBeforePaymentPatch() throws SubmissionValidationException {
-        // given
-        // PAID session here for test coverage purposes only
-        SessionApi sessionApi =
-            new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PAID.toString());
-
-        expectSubmissionWithPaymentSession(SubmissionStatus.OPEN, sessionApi);
-        when(submission.getFeeOnSubmission()).thenReturn("1");
-        when(submission.getId()).thenReturn(SUBMISSION_ID);
-        when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN)
-            .thenReturn(SubmissionStatus.OPEN)
-            .thenReturn(SubmissionStatus.SUBMITTED);
-        when(submissionRepository.read(anyString())).thenReturn(submission);
-
-        when(timestampGenerator.generateTimestamp()).thenReturn(NOW.minusSeconds(1))
-            .thenReturn(NOW);
-
-        // when
-        SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
-
-        // then
-        assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submission).setStatus(SubmissionStatus.SUBMITTED);
-        verify(timestampGenerator, times(2)).generateTimestamp();
-        verify(submissionRepository).updateSubmission(submission);
-        verify(validator).validate(submission);
-        verify(submission).setLastModifiedAt(NOW);
-        verify(emailService).sendExternalConfirmation(
-            new ExternalNotificationEmailModel(submission));
-    }
-
-    @Test
-    void testCompleteSubmissionWhenFailedAndPaymentReceived() throws SubmissionValidationException {
-        // given
-        // FAILED session here for test coverage purposes only
-        SessionApi sessionApi =
-            new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.FAILED.toString());
-        SessionListApi sessionListApi = new SessionListApi(Collections.singletonList(sessionApi));
-
-        expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_RECEIVED, sessionApi);
-        when(submission.getFeeOnSubmission()).thenReturn("1");
-        when(submission.getId()).thenReturn(SUBMISSION_ID);
-        when(submissionRepository.read(anyString())).thenReturn(submission);
-        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
-
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
         verify(submission, never()).setStatus(any(SubmissionStatus.class));
-        verify(timestampGenerator).generateTimestamp();
-        verify(submissionRepository).updateSubmission(submission);
+        verifyNoInteractions(timestampGenerator);
+        verify(submissionRepository, never()).updateSubmission(submission);
         verify(validator).validate(submission);
-        verify(submission).setLastModifiedAt(NOW);
         verifyNoInteractions(emailService);
     }
 
     @Test
-    void testCompleteSubmissionWhenFailedAndOpen() throws SubmissionValidationException {
+    void testCompleteSubmissionWhenNoFeeAndNotSubmitted() throws SubmissionValidationException {
         // given
         // FAILED session here for test coverage purposes only
         SessionApi sessionApi =
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.FAILED.toString());
 
-        expectSubmissionWithPaymentSession(SubmissionStatus.OPEN, sessionApi);
-        when(submission.getFeeOnSubmission()).thenReturn("1");
         when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
         when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
-        SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
+        SubmissionIncorrectStateException exception =
+            assertThrows(SubmissionIncorrectStateException.class, () -> submissionService.completeSubmission(SUBMISSION_ID));
+        assertEquals("Submission status for [123] wasn't in [SUBMITTED], couldn't update", exception.getMessage());
 
         // then
-        assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submission, never()).setStatus(any(SubmissionStatus.class));
-        verify(timestampGenerator).generateTimestamp();
+        verify(submission).setStatus(SubmissionStatus.SUBMITTED);
+        verify(timestampGenerator, times(2)).generateTimestamp();
         verify(submissionRepository).updateSubmission(submission);
         verify(validator).validate(submission);
         verify(submission).setLastModifiedAt(NOW);
@@ -645,53 +582,35 @@ class SubmissionServiceImplTest {
         SessionApi sessionApi =
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PAID.toString());
 
-        expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_RECEIVED, sessionApi);
         when(submission.getFeeOnSubmission()).thenReturn("1");
-        when(submission.getId()).thenReturn(SUBMISSION_ID);
-        when(submission.getStatus()).thenReturn(SubmissionStatus.PAYMENT_RECEIVED)
-            .thenReturn(SubmissionStatus.PAYMENT_RECEIVED)
-            .thenReturn(SubmissionStatus.SUBMITTED); // after progressSubmissionStatus() call
+        when(submission.getStatus()).thenReturn(SubmissionStatus.SUBMITTED);
         when(submissionRepository.read(anyString())).thenReturn(submission);
-        when(timestampGenerator.generateTimestamp()).thenReturn(NOW.minusSeconds(1L))
-            .thenReturn(NOW);
 
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(timestampGenerator, times(2)).generateTimestamp();
-        verify(submission).setStatus(SubmissionStatus.SUBMITTED);
-        verify(submission).setSubmittedAt(NOW.minusSeconds(1L));
-        verify(submission).setLastModifiedAt(NOW);
-        verify(submissionRepository).updateSubmission(submission);
-        verify(submission).setLastModifiedAt(NOW);
         verify(validator).validate(submission);
-        verify(emailService).sendExternalConfirmation(
-            new ExternalNotificationEmailModel(submission));
+        verifyNoInteractions(timestampGenerator);
     }
 
     @Test
     void testCompleteSubmissionWhenFailedAfterPaymentPatch() throws SubmissionValidationException {
         // given
         when(submission.getFeeOnSubmission()).thenReturn("1");
-        when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(submission.getStatus()).thenReturn(SubmissionStatus.PAYMENT_FAILED);
         when(submissionRepository.read(anyString())).thenReturn(submission);
-        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(timestampGenerator).generateTimestamp();
         verify(submission, never()).setStatus(any(SubmissionStatus.class));
-        verify(submissionRepository).updateSubmission(submission);
-        verify(submission).setLastModifiedAt(NOW);
+        verifyNoMoreInteractions(submissionRepository);
         verify(validator).validate(submission);
-        verify(emailService).sendExternalPaymentFailedNotification(
-            new ExternalNotificationEmailModel(submission));
+        verifyNoInteractions(emailService);
     }
 
     @Test
@@ -729,7 +648,7 @@ class SubmissionServiceImplTest {
     @Test
     void testCompleteSubmissionIncorrectState() {
         // given
-        when(submission.getStatus()).thenReturn(SubmissionStatus.SUBMITTED);
+        when(submission.getStatus()).thenReturn(SubmissionStatus.REJECTED_BY_VIRUS_SCAN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
 
         // when
@@ -875,7 +794,7 @@ class SubmissionServiceImplTest {
         final SessionApi paySession =
             new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
 
-        expectSubmissionWithPaymentSession(SubmissionStatus.OPEN, paySession);
+        expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_REQUIRED, paySession);
         when(submissionRepository.read(SUBMISSION_ID)).thenReturn(submission);
         when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
@@ -888,10 +807,10 @@ class SubmissionServiceImplTest {
         assertEquals(SUBMISSION_ID, actual.getId());
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(),
             is(STATUS_PAID));
-        verify(submission).setStatus(SubmissionStatus.PAYMENT_RECEIVED);
+        verify(submission).setStatus(SubmissionStatus.SUBMITTED);
         verify(timestampGenerator).generateTimestamp();
         verify(submission).setLastModifiedAt(NOW);
-        verifyNoMoreInteractions(submission, emailService);
+        verifyNoMoreInteractions(emailService);
 
     }
 
@@ -905,7 +824,6 @@ class SubmissionServiceImplTest {
         expectSubmissionWithPaymentSession(SubmissionStatus.OPEN, paySession);
         when(submissionRepository.read(SUBMISSION_ID)).thenReturn(submission);
         when(submission.getId()).thenReturn(SUBMISSION_ID);
-        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         final SubmissionResponseApi actual =
@@ -915,9 +833,6 @@ class SubmissionServiceImplTest {
         assertEquals(SUBMISSION_ID, actual.getId());
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(),
             is(STATUS_FAILED));
-        verify(submission).setStatus(SubmissionStatus.OPEN);
-        verify(timestampGenerator).generateTimestamp();
-        verify(submission).setLastModifiedAt(NOW);
         verifyNoMoreInteractions(submission, emailService);
     }
 
@@ -1004,7 +919,6 @@ class SubmissionServiceImplTest {
 
         expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_REQUIRED, sessionApi);
         when(submissionRepository.read(anyString())).thenReturn(submission);
-        when(timestampGenerator.generateTimestamp()).thenReturn(NOW);
 
         // when
         final SubmissionResponseApi actual =
@@ -1012,10 +926,10 @@ class SubmissionServiceImplTest {
 
         assertThat(actual.getId(), is(SUBMISSION_ID));
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(), is(STATUS_CANCELLED));
-        verify(submission).setStatus(SubmissionStatus.PAYMENT_FAILED);
+        verify(submission, never()).setStatus(any(SubmissionStatus.class));
         verify(submissionRepository).read(SUBMISSION_ID);
-        verify(submissionRepository).updateSubmission(submission);
-        verify(timestampGenerator).generateTimestamp();
+        verifyNoMoreInteractions(submissionRepository);
+        verifyNoInteractions(timestampGenerator);
     }
 
     @Test
@@ -1034,6 +948,25 @@ class SubmissionServiceImplTest {
 
         assertThat(actual.getId(), is(SUBMISSION_ID));
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(), is(STATUS_FAILED));
+        verify(submission, never()).setStatus(any(SubmissionStatus.class));
+        verifyNoMoreInteractions(submissionRepository);
+    }
+
+    @Test
+    void updateSubmissionWithPaymentOutcomeWhenPaymentError() {
+        // given
+        final PaymentClose paymentClose = new PaymentClose(SESSION_ID, PaymentClose.Status.ERROR);
+        SessionApi sessionApi =
+            new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
+
+        expectSubmissionWithPaymentSession(SubmissionStatus.PAYMENT_REQUIRED, sessionApi);
+        when(submissionRepository.read(anyString())).thenReturn(submission);
+
+        // when
+        final SubmissionResponseApi actual =
+            submissionService.updateSubmissionWithPaymentOutcome(SUBMISSION_ID, paymentClose);
+
+        assertThat(actual.getId(), is(SUBMISSION_ID));
         verify(submission, never()).setStatus(any(SubmissionStatus.class));
         verifyNoMoreInteractions(submissionRepository);
     }

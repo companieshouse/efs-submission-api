@@ -481,6 +481,7 @@ class PaymentControllerTest {
 
         when(service.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(paymentClose.isPaid()).thenReturn(false);
+        when(paymentClose.isFailed()).thenReturn(true);
         when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(
             submissionResponse);
 

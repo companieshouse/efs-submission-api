@@ -46,9 +46,10 @@ import uk.gov.companieshouse.logging.Logger;
 @RestController
 @RequestMapping("/efs-submission-api/submission/")
 public class PaymentController {
+    //TODO can the payment ever update a status? if not, can we remove failed from list?
+    //TODO test if open is a valid status
     private static final ImmutableSet<SubmissionStatus> VALID_STATUSES =
-        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED,
-            SubmissionStatus.PAYMENT_RECEIVED, SubmissionStatus.PAYMENT_FAILED);
+        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED);
 
     private final Logger logger;
 
@@ -163,7 +164,7 @@ public class PaymentController {
                         emailService.sendExternalConfirmation(new ExternalNotificationEmailModel(
                             submissionApiMapper.map(submission)));
 
-                    } else {
+                    } else if (paymentClose.isFailed()){
                         emailService.sendExternalPaymentFailedNotification(
                             new ExternalNotificationEmailModel(
                                 submissionApiMapper.map(submission)));
