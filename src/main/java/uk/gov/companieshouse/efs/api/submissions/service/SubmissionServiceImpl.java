@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -189,7 +188,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         setPaymentSessionStatus(submission, paymentClose);
         LOGGER.debug(String.format("Updating submission status %s for submission with id: [%s]", status, submission.getId()));
 
-        if (SubmissionStatus.PAYMENT_REQUIRED.equals(submission.getStatus())) {
+        if (SubmissionStatus.PAYMENT_REQUIRED == submission.getStatus()) {
 
             if (paymentClose.isPaid()) {
                 resultStatus = SubmissionStatus.SUBMITTED;

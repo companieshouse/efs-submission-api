@@ -339,14 +339,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <skipTests>${skipTests}</skipTests>
+                    <skipTests>${skip.unit.tests}</skipTests>
                     <skipITs>${skip.integration.tests}</skipITs>
                     <includes>
                         <include>**/*ITest.java</include>
                     </includes>
-                    <excludes>
-                        <exclude>**/FesControllerITest.java</exclude>
-                    </excludes>
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>

@@ -2,11 +2,8 @@ package uk.gov.companieshouse.efs.api.submissions.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -14,16 +11,14 @@ import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
-import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
-import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionIncorrectStateException;
-import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNotFoundException;
 import uk.gov.companieshouse.efs.api.submissions.validator.exception.SubmissionValidationException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,12 +44,11 @@ class PendSubmissionControllerTest {
         this.pendStatusController = new PendStatusController(service);
     }
 
-    @ParameterizedTest
-    @EnumSource(value = SubmissionStatus.class, names = {"OPEN", "PAYMENT_REQUIRED"})
-    void testPendSubmission(SubmissionStatus status) {
+    @Test
+    void testPendSubmissionOpen() {
         //given
         when(service.readSubmission(any())).thenReturn(submissionApi);
-        when(submissionApi.getStatus()).thenReturn(status);
+        when(submissionApi.getStatus()).thenReturn(SubmissionStatus.OPEN);
 
         when(response.getId()).thenReturn(SUBMISSION_ID);
         when(service.updateSubmissionStatus(SUBMISSION_ID, SubmissionStatus.PAYMENT_REQUIRED)).thenReturn(response);
@@ -64,8 +58,24 @@ class PendSubmissionControllerTest {
 
         //then
         assertEquals(SUBMISSION_ID, actual.getBody().getId());
+
         assertEquals(HttpStatus.OK, actual.getStatusCode());
         verify(service).updateSubmissionStatus(SUBMISSION_ID, SubmissionStatus.PAYMENT_REQUIRED);
+    }
+
+    @Test
+    void testPendSubmissionPaymentRequired() {
+        //given
+        when(service.readSubmission(any())).thenReturn(submissionApi);
+        when(submissionApi.getStatus()).thenReturn(SubmissionStatus.PAYMENT_REQUIRED);
+
+        //when
+        ResponseEntity<SubmissionResponseApi> actual = pendStatusController.submitPendingPaymentStatus(SUBMISSION_ID, request);
+
+        //then
+        assertNull(actual.getBody());
+        assertEquals(HttpStatus.OK, actual.getStatusCode());
+        verifyNoMoreInteractions(service);
     }
 
     @Test

@@ -22,7 +22,7 @@ public class PendStatusController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
-    ImmutableSet<SubmissionStatus> PENDABLE_STATUSES
+    private static final ImmutableSet<SubmissionStatus> PENDABLE_STATUSES
         = ImmutableSet.of(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED);
 
     private SubmissionService submissionService;
@@ -42,11 +42,12 @@ public class PendStatusController {
             return ResponseEntity.notFound().build();
         }
 
-        //Only update the status if it is coming from OPEN. No need to update when already PAYMENT_REQUIRED.
         if (PENDABLE_STATUSES.contains(submission.getStatus())) {
-            SubmissionResponseApi submissionResponseApi
-                = submissionService.updateSubmissionStatus(id, SubmissionStatus.PAYMENT_REQUIRED);
-            LOGGER.debug("Updated submission status to PAYMENT_REQUIRED.");
+            SubmissionResponseApi submissionResponseApi = null;
+            if (submission.getStatus() != SubmissionStatus.PAYMENT_REQUIRED) {
+                submissionResponseApi = submissionService.updateSubmissionStatus(id, SubmissionStatus.PAYMENT_REQUIRED);
+                LOGGER.debug("Updated submission status to PAYMENT_REQUIRED.");
+            }
             return ResponseEntity.ok(submissionResponseApi);
         }
 

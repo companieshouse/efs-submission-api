@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.efs.api.events.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
@@ -15,17 +18,12 @@ import uk.gov.companieshouse.efs.api.BaseIntegrationTest;
 import uk.gov.companieshouse.efs.api.submissions.model.RejectReason;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.concurrent.ExecutionException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class
-FesControllerITest extends BaseIntegrationTest {
+class FesControllerITest extends BaseIntegrationTest {
 
     private static final String SUBMISSION_ID = "1234abcd5678defa9012bcde";
     private static final String SUBMISSION_COLLECTION_NAME = "submissions";
