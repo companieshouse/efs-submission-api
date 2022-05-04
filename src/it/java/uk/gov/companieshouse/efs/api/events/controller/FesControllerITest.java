@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.efs.api.events.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
@@ -14,10 +17,6 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.BaseIntegrationTest;
 import uk.gov.companieshouse.efs.api.submissions.model.RejectReason;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -47,8 +47,7 @@ import uk.gov.companieshouse.logging.Logger;
 @RequestMapping("/efs-submission-api/submission/")
 public class PaymentController {
     private static final ImmutableSet<SubmissionStatus> VALID_STATUSES =
-        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED,
-            SubmissionStatus.PAYMENT_RECEIVED, SubmissionStatus.PAYMENT_FAILED);
+        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED);
 
     private final Logger logger;
 
@@ -163,7 +162,7 @@ public class PaymentController {
                         emailService.sendExternalConfirmation(new ExternalNotificationEmailModel(
                             submissionApiMapper.map(submission)));
 
-                    } else {
+                    } else if (paymentClose.isFailed()){
                         emailService.sendExternalPaymentFailedNotification(
                             new ExternalNotificationEmailModel(
                                 submissionApiMapper.map(submission)));
