@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -44,11 +46,12 @@ class PendSubmissionControllerTest {
         this.pendStatusController = new PendStatusController(service);
     }
 
-    @Test
-    void testPendSubmissionOpen() {
+    @ParameterizedTest
+    @EnumSource(value=SubmissionStatus.class, names={"OPEN", "PAYMENT_FAILED"})
+    void testPendSubmission(SubmissionStatus status) {
         //given
         when(service.readSubmission(any())).thenReturn(submissionApi);
-        when(submissionApi.getStatus()).thenReturn(SubmissionStatus.OPEN);
+        when(submissionApi.getStatus()).thenReturn(status);
 
         when(response.getId()).thenReturn(SUBMISSION_ID);
         when(service.updateSubmissionStatus(SUBMISSION_ID, SubmissionStatus.PAYMENT_REQUIRED)).thenReturn(response);

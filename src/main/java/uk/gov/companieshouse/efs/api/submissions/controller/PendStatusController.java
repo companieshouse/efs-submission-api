@@ -23,7 +23,7 @@ public class PendStatusController {
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
     private static final ImmutableSet<SubmissionStatus> PENDABLE_STATUSES
-        = ImmutableSet.of(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED);
+        = ImmutableSet.of(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED);
 
     private SubmissionService submissionService;
 
