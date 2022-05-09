@@ -69,6 +69,10 @@ class SubmissionServiceImplTest {
     private static final String STATUS_CANCELLED = PaymentClose.Status.CANCELLED.toString();
     public static final String EXPECTED_UPDATE_ERROR_MSG =
         "Submission status for [123] wasn't in [OPEN, PAYMENT_REQUIRED, "
+            + "PAYMENT_FAILED], couldn't update";
+
+    public static final String EXPECTED_COMPLETE_ERROR_MSG =
+        "Submission status for [123] wasn't in [OPEN, PAYMENT_REQUIRED, "
             + "PAYMENT_FAILED, SUBMITTED], couldn't update";
     private static final LocalDateTime NOW = LocalDateTime.now();
 
@@ -655,7 +659,7 @@ class SubmissionServiceImplTest {
 
         // then
         SubmissionIncorrectStateException ex = assertThrows(SubmissionIncorrectStateException.class, actual);
-        assertEquals(EXPECTED_UPDATE_ERROR_MSG, ex.getMessage());
+        assertEquals(EXPECTED_COMPLETE_ERROR_MSG, ex.getMessage());
         verifyNoInteractions(validator);
         verifyNoInteractions(emailService);
     }

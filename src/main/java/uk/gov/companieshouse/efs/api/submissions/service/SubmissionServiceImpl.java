@@ -68,8 +68,11 @@ public class SubmissionServiceImpl implements SubmissionService {
     private EmailService emailService;
     private Validator<Submission> validator;
     public static final ImmutableSet<SubmissionStatus> UPDATABLE_STATUSES =
-        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED,
-            SubmissionStatus.SUBMITTED);
+        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED);
+
+    public static final ImmutableSet<SubmissionStatus> VALIDATABLE_STATUSES =
+    Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED,
+        SubmissionStatus.SUBMITTED);
 
     @Autowired
     public SubmissionServiceImpl(SubmissionRepository submissionRepository,
@@ -237,7 +240,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         LOGGER.debug(String.format("Attempting to complete submission for id: [%s]", id));
 
-        Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
+        Submission submission = this.getSubmissionWithCheckedStatus(id, VALIDATABLE_STATUSES);
 
         // check submission mandatory fields (validator)
         try {
