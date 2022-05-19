@@ -16,7 +16,7 @@ public class InternalFailedConversionEmailData {
     private String subject;
     private List<String> failedToConvert;
 
-    public InternalFailedConversionEmailData() {
+    private InternalFailedConversionEmailData() {
         // no direct instantiation
     }
 
