@@ -16,7 +16,7 @@ public class InternalAvFailedEmailData {
     private String subject;
     private List<String> infectedFiles;
 
-    public InternalAvFailedEmailData() {
+    private InternalAvFailedEmailData() {
         // no direct instantiation
     }
 
