@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -27,6 +27,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.TransactionTimedOutException;
 import uk.gov.companieshouse.api.model.efs.events.FileConversionResultStatusApi;
 import uk.gov.companieshouse.api.model.efs.events.FileConversionStatusApi;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
@@ -116,12 +117,6 @@ class EventServiceImplTest {
 
     @Mock
     private FormCategoryToEmailAddressService formCategoryToEmailAddressService;
-
-    private int supportHours = 6;
-
-    private int businessHours = 12;
-    
-    private int sameDayMinutes = 60;
 
     @Mock
     private DelayedSubmissionSupportEmailModel delayedSubmissionSupportEmailModel;
@@ -693,6 +688,41 @@ class EventServiceImplTest {
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y9999999", "abc", "1223456",
                 "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), NOW));
         verify(submissionService).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
+    }
+
+    @Test
+    void handleFesDatasourceTransactionTimeout() {
+        //given
+        String convertedFileId = "1234";
+        when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
+        when(submission.getId()).thenReturn("1234abcd");
+        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(submission.getFormDetails()).thenReturn(formDetails);
+        when(submission.getCompany()).thenReturn(company);
+        when(submission.getSubmittedAt()).thenReturn(NOW);
+        when(company.getCompanyName()).thenReturn("abc");
+        when(company.getCompanyNumber()).thenReturn("1223456");
+        when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
+        when(formDetails.getFormType()).thenReturn("SH01");
+        when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
+        when(formTemplateService.getFormTemplate("SH01")).thenReturn(
+                new FormTemplateApi("SH01", "formName", "category", "", false, true, null, false,
+                        null));
+        doThrow(new FesLoaderException("stub exception"), new TransactionTimedOutException("stub timeout")).when(
+                fesLoaderService).insertSubmission(any(FesLoaderModel.class));
+
+        //when
+        eventService.submitToFes();
+
+        //then
+        verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
+        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(barcodeGeneratorService, times(1)).getBarcode(NOW);
+        verify(tiffDownloadService).downloadTiffFile(convertedFileId);
+        verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
+                "SH01", false, Collections.singletonList(new FesFileModel(null, 0)), NOW));
+        verify(submissionService, never()).updateSubmissionStatus(submission.getId(), SubmissionStatus.SENT_TO_FES);
+        verifyNoMoreInteractions(submissionService, tiffDownloadService, fesLoaderService, repository);
     }
 
     @Test

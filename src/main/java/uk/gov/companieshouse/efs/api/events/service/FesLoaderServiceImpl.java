@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionTimedOutException;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.companieshouse.efs.api.events.service.exception.FesLoaderException;
 import uk.gov.companieshouse.efs.api.events.service.fesloader.BatchDao;
@@ -48,9 +49,9 @@ public class FesLoaderServiceImpl implements FesLoaderService {
     }
 
     @Override
-    @Transactional("fesTransactionManager")
+    @Transactional(value = "fesTransactionManager", label = {"FES", "EFS insert"},
+            timeoutString = "${fes.datasource.transaction.timeout:10}")
     public void insertSubmission(FesLoaderModel model) {
-
         try {
             LOGGER.debug(String.format("Inserting records into FES DB for submission with barcode [%s]", model.getBarcode()));
             long nextBatchId = insertBatchRecord();
@@ -61,8 +62,10 @@ public class FesLoaderServiceImpl implements FesLoaderService {
                 insertFormRecord(model, envelopeId, imageId, file.getNumberOfPages());
             });
             LOGGER.debug(String.format("Inserted records into FES DB for submission with barcode [%s]", model.getBarcode()));
-        } catch (DataAccessException ex) {
-            throw new FesLoaderException(String.format("Error inserting submission - message [%s]", ex.getMessage()), ex);
+        }
+        catch (DataAccessException | TransactionTimedOutException ex) {
+            throw new FesLoaderException(String.format("Error inserting submission - message [%s]", ex.getMessage()),
+                    ex);
         }
     }
 
