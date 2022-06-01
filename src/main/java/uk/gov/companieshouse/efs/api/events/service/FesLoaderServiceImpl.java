@@ -2,11 +2,14 @@ package uk.gov.companieshouse.efs.api.events.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionTimedOutException;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StopWatch;
 import uk.gov.companieshouse.efs.api.events.service.exception.FesLoaderException;
 import uk.gov.companieshouse.efs.api.events.service.fesloader.BatchDao;
 import uk.gov.companieshouse.efs.api.events.service.fesloader.EnvelopeDao;
@@ -22,6 +25,8 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 public class FesLoaderServiceImpl implements FesLoaderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
+    private static final String FES_INSERT_TIMER_TASK_NAME = "FES_INSERT_TRANSACTION";
+    public static final String DURATION_FORMAT = "m'm':s's':S'ms'";
 
     private BatchDao batchDao;
     private EnvelopeDao envelopeDao;
@@ -52,8 +57,12 @@ public class FesLoaderServiceImpl implements FesLoaderService {
     @Transactional(value = "fesTransactionManager", label = {"FES", "EFS insert"},
             timeoutString = "${fes.datasource.transaction.timeout:10}")
     public void insertSubmission(FesLoaderModel model) {
+        StopWatch timer = new StopWatch(getClass().getSimpleName());
+
         try {
             LOGGER.debug(String.format("Inserting records into FES DB for submission with barcode [%s]", model.getBarcode()));
+            timer.start(FES_INSERT_TIMER_TASK_NAME);
+
             long nextBatchId = insertBatchRecord();
             long envelopeId = insertEnvelopeRecord(nextBatchId);
             // image - batch ID (also used in form update)
@@ -61,11 +70,20 @@ public class FesLoaderServiceImpl implements FesLoaderService {
                 long imageId = insertImageRecord(file.getTiffFile());
                 insertFormRecord(model, envelopeId, imageId, file.getNumberOfPages());
             });
-            LOGGER.debug(String.format("Inserted records into FES DB for submission with barcode [%s]", model.getBarcode()));
-        }
-        catch (DataAccessException | TransactionTimedOutException ex) {
-            throw new FesLoaderException(String.format("Error inserting submission - message [%s]", ex.getMessage()),
-                    ex);
+
+            timer.stop();
+            final String timeToInsertAsString = DurationFormatUtils.formatDuration(
+                    timer.getTotalTimeMillis(), DURATION_FORMAT);
+            LOGGER.debug(String.format(
+                    "Inserted records into FES DB for submission with barcode [%s] in %s",
+                    model.getBarcode(),
+                    timeToInsertAsString));
+        } catch (DataAccessException | TransactionTimedOutException ex) {
+            throw new FesLoaderException(String.format("Error inserting submission - message [%s]", ex.getMessage()), ex);
+        } finally {
+            if (timer.isRunning()) {
+                timer.stop();
+            }
         }
     }
 
