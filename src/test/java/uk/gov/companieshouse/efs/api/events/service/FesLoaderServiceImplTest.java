@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collections;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
-
+import org.springframework.transaction.TransactionTimedOutException;
 import uk.gov.companieshouse.efs.api.events.service.exception.FesLoaderException;
 import uk.gov.companieshouse.efs.api.events.service.fesloader.BatchDao;
 import uk.gov.companieshouse.efs.api.events.service.fesloader.EnvelopeDao;
@@ -107,7 +106,7 @@ class FesLoaderServiceImplTest {
         // then
         verify(batchDao).getNextBatchId();
         verify(batchDao).getBatchNameId("EFS_200501");
-        verify(batchDao).insertBatch(eq(321L), eq("EFS_200501_0432"), eq(someDate));
+        verify(batchDao).insertBatch(321L, "EFS_200501_0432", someDate);
 
         verify(envelopeDao).getNextEnvelopeId();
         verify(envelopeDao).insertEnvelope(ENVELOPE_ID, BATCH_ID);
@@ -134,6 +133,19 @@ class FesLoaderServiceImplTest {
         //then
         FesLoaderException exception = assertThrows(FesLoaderException.class, actual);
         assertEquals("Error inserting submission - message [oops]", exception.getMessage());
+    }
+
+    @Test
+    void testInsertSubmissionThrowsFesLoadExceptionIfDatasourceTransactionTimesOut() {
+        //given
+        when(batchDao.getNextBatchId()).thenThrow(new TransactionTimedOutException("stub timeout"));
+
+        //when
+        Executable actual = () -> fesLoaderService.insertSubmission(model);
+
+        //then
+        FesLoaderException exception = assertThrows(FesLoaderException.class, actual);
+        assertEquals("Error inserting submission - message [stub timeout]", exception.getMessage());
     }
 
 }

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionTimedOutException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 import uk.gov.companieshouse.efs.api.events.service.exception.FesLoaderException;
@@ -53,7 +54,8 @@ public class FesLoaderServiceImpl implements FesLoaderService {
     }
 
     @Override
-    @Transactional("fesTransactionManager")
+    @Transactional(value = "fesTransactionManager", label = {"FES", "EFS insert"},
+            timeoutString = "${fes.datasource.transaction.timeout:10}")
     public void insertSubmission(FesLoaderModel model) {
         StopWatch timer = new StopWatch(getClass().getSimpleName());
 
@@ -76,7 +78,7 @@ public class FesLoaderServiceImpl implements FesLoaderService {
                     "Inserted records into FES DB for submission with barcode [%s] in %s",
                     model.getBarcode(),
                     timeToInsertAsString));
-        } catch (DataAccessException ex) {
+        } catch (DataAccessException | TransactionTimedOutException ex) {
             throw new FesLoaderException(String.format("Error inserting submission - message [%s]", ex.getMessage()), ex);
         } finally {
             if (timer.isRunning()) {
