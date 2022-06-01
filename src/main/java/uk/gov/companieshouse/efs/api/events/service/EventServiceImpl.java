@@ -15,7 +15,6 @@ import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
-import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
 import uk.gov.companieshouse.efs.api.email.model.InternalFailedConversionModel;
 import uk.gov.companieshouse.efs.api.events.service.exception.BarcodeException;
@@ -61,7 +60,6 @@ public class EventServiceImpl implements EventService {
     private TiffDownloadService tiffDownloadService;
     private FesLoaderService fesLoaderService;
     private ExecutionEngine executionEngine;
-    private FormCategoryToEmailAddressService formCategoryToEmailAddressService;
     private DelayedSubmissionHandlerContext delayedSubmissionHandlerContext;
 
     @Autowired
@@ -70,9 +68,7 @@ public class EventServiceImpl implements EventService {
         SubmissionRepository repository, CurrentTimestampGenerator currentTimestampGenerator,
         @Value("${max.queue.messages}") int maxQueuedMessages, DecisionEngine decisionEngine,
         BarcodeGeneratorService barcodeGeneratorService, TiffDownloadService tiffDownloadService,
-        FesLoaderService fesLoaderService, ExecutionEngine executionEngine,
-        FormCategoryToEmailAddressService formCategoryToEmailAddressService,
-        DelayedSubmissionHandlerContext delayedSubmissionHandlerContext) {
+        FesLoaderService fesLoaderService, ExecutionEngine executionEngine, DelayedSubmissionHandlerContext delayedSubmissionHandlerContext) {
         this.submissionService = submissionService;
         this.formTemplateService = formTemplateService;
         this.emailService = emailService;
@@ -84,13 +80,12 @@ public class EventServiceImpl implements EventService {
         this.tiffDownloadService = tiffDownloadService;
         this.fesLoaderService = fesLoaderService;
         this.executionEngine = executionEngine;
-        this.formCategoryToEmailAddressService = formCategoryToEmailAddressService;
         this.delayedSubmissionHandlerContext = delayedSubmissionHandlerContext;
     }
 
     @Override
     public List<Submission> findSubmissionsByStatus(SubmissionStatus status) {
-        return repository.findByStatus(status, maxQueuedMessages);
+        return repository.findByStatusOrderByPriority(status, maxQueuedMessages);
     }
 
     @Override
@@ -138,8 +133,6 @@ public class EventServiceImpl implements EventService {
                                             .map(FileDetails::getFileName).collect(Collectors.toList()));
                     emailService.sendInternalFailedConversion(internalFailedConversionModel);
                 } catch (EmailServiceException ex) {
-                    Map<String, Object> debug = new HashMap<>();
-                    debug.put("submissionId", submissionId);
                     LOGGER.errorContext(submissionId,
                             "Failed to send failed conversion email for submission",
                             null, null);

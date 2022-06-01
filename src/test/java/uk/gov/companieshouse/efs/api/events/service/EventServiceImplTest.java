@@ -1,12 +1,13 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,7 +34,6 @@ import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
-import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.InternalFailedConversionModel;
@@ -115,15 +115,6 @@ class EventServiceImplTest {
     private ExecutionEngine executionEngine;
 
     @Mock
-    private FormCategoryToEmailAddressService formCategoryToEmailAddressService;
-
-    private int supportHours = 6;
-
-    private int businessHours = 12;
-    
-    private int sameDayMinutes = 60;
-
-    @Mock
     private DelayedSubmissionSupportEmailModel delayedSubmissionSupportEmailModel;
     
     @Mock
@@ -140,22 +131,20 @@ class EventServiceImplTest {
         eventService =
             new EventServiceImpl(submissionService, formTemplateService, emailService, repository,
                 currentTimestampGenerator, 50, decisionEngine, barcodeGeneratorService,
-                tiffDownloadService, fesLoaderService, executionEngine,
-                formCategoryToEmailAddressService, delayedSubmissionHandlerContext);
+                tiffDownloadService, fesLoaderService, executionEngine, delayedSubmissionHandlerContext);
     }
 
     @Test
     void testEventServiceReturnsSubmittedSubmissionsFromRepository() {
         //given
         List<Submission> expectedSubmissions = Collections.singletonList(submission);
-        when(repository.findByStatus(SubmissionStatus.SUBMITTED, 50)).thenReturn(expectedSubmissions);
+        when(repository.findByStatusOrderByPriority(SubmissionStatus.SUBMITTED, 50)).thenReturn(expectedSubmissions);
 
         //when
         List<Submission> actual = eventService.findSubmissionsByStatus(SubmissionStatus.SUBMITTED);
 
         //then
-        assertEquals(expectedSubmissions, actual);
-        verify(repository).findByStatus(SubmissionStatus.SUBMITTED, 50);
+        assertThat(actual, is(expectedSubmissions));
     }
 
     @Test
@@ -420,7 +409,7 @@ class EventServiceImplTest {
         boolean sameDay = "Y".equalsIgnoreCase(sameDayIndicator);
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(submission.getId()).thenReturn("1234abcd");
-        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getCompany()).thenReturn(company);
         when(submission.getSubmittedAt()).thenReturn(NOW);
@@ -438,7 +427,7 @@ class EventServiceImplTest {
 
         //then
         verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
-        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(repository).findByStatusOrderByPriority(SubmissionStatus.READY_TO_SUBMIT, 50);
         verify(barcodeGeneratorService, times(1)).getBarcode(NOW);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
@@ -452,7 +441,7 @@ class EventServiceImplTest {
         String convertedFileId = "1234";
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(submission.getId()).thenReturn("1234abcd");
-        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getCompany()).thenReturn(company);
         when(submission.getSubmittedAt()).thenReturn(NOW);
@@ -469,7 +458,7 @@ class EventServiceImplTest {
 
         //then
         verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
-        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(repository).findByStatusOrderByPriority(SubmissionStatus.READY_TO_SUBMIT, 50);
         verify(barcodeGeneratorService, times(1)).getBarcode(NOW);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
@@ -483,7 +472,7 @@ class EventServiceImplTest {
         String convertedFileId = "1234";
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
         when(submission.getId()).thenReturn("1234abcd");
-        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getCompany()).thenReturn(company);
         when(submission.getCreatedAt()).thenReturn(NOW);
@@ -501,7 +490,7 @@ class EventServiceImplTest {
 
         //then
         verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
-        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(repository).findByStatusOrderByPriority(SubmissionStatus.READY_TO_SUBMIT, 50);
         verify(barcodeGeneratorService, times(1)).getBarcode(NOW);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y123XYZ", "abc", "1223456",
@@ -513,7 +502,7 @@ class EventServiceImplTest {
     @Test
     void testGetBarcodeException() {
         //given
-        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(barcodeGeneratorService.getBarcode(any())).thenThrow(BarcodeException.class);
 
@@ -527,7 +516,7 @@ class EventServiceImplTest {
     @Test
     void testTiffDownloadException() {
         //given
-        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getId()).thenReturn("1234abcd");
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn("SH01");
@@ -541,7 +530,7 @@ class EventServiceImplTest {
         eventService.submitToFes();
 
         //then
-        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(repository).findByStatusOrderByPriority(SubmissionStatus.READY_TO_SUBMIT, 50);
         verify(submissionService).updateSubmissionBarcode(submission.getId(), "Y123XYZ");
         verifyNoInteractions(fesLoaderService);
         verifyNoMoreInteractions(submissionService);
@@ -550,7 +539,7 @@ class EventServiceImplTest {
     @Test
     void formTemplateMissing() {
         //given
-        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getId()).thenReturn("1234abcd");
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFormType()).thenReturn("SH01");
@@ -560,7 +549,7 @@ class EventServiceImplTest {
         eventService.submitToFes();
 
         //then
-        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(repository).findByStatusOrderByPriority(SubmissionStatus.READY_TO_SUBMIT, 50);
         verify(submissionService).updateSubmissionBarcode(submission.getId(), "Y123XYZ");
         verifyNoInteractions(fesLoaderService, tiffDownloadService);
         verifyNoMoreInteractions(submissionService);
@@ -571,7 +560,7 @@ class EventServiceImplTest {
         //given
         String convertedFileId = "1234";
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
-        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
 
         when(submission.getCompany()).thenReturn(company);
@@ -592,7 +581,7 @@ class EventServiceImplTest {
         eventService.submitToFes();
 
         // then
-        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(repository).findByStatusOrderByPriority(SubmissionStatus.READY_TO_SUBMIT, 50);
         verify(submissionService).updateSubmissionBarcode(submission.getId(), "Y123XYZ");
         verify(fesLoaderService).insertSubmission(any());
         verifyNoMoreInteractions(submissionService);
@@ -610,7 +599,7 @@ class EventServiceImplTest {
             new FormTemplateApi("SH01", "formName", "category", "", false, true, null, false, null));
         when(fileDetails.getConvertedFileId()).thenReturn(convertedFileId);
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ");
-        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getCompany()).thenReturn(company);
         when(company.getCompanyName()).thenReturn("abc");
         when(company.getCompanyNumber()).thenReturn("1223456");
@@ -620,7 +609,7 @@ class EventServiceImplTest {
         eventService.submitToFes();
 
         // then
-        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(repository).findByStatusOrderByPriority(SubmissionStatus.READY_TO_SUBMIT, 50);
         verify(submissionService).updateSubmissionBarcode("1234abcd", "Y123XYZ");
         verify(fesLoaderService).insertSubmission(any());
         verifyNoMoreInteractions(submissionService);
@@ -631,7 +620,7 @@ class EventServiceImplTest {
         // given
         String convertedFileId = "1234";
 
-        when(repository.findByStatus(any(), anyInt())).thenReturn(getSubmissionList());
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(getSubmissionList());
         when(submission.getId()).thenReturn("1234abcd");
         when(barcodeGeneratorService.getBarcode(any())).thenReturn("Y123XYZ").thenThrow(BarcodeException.class);
 
@@ -652,7 +641,7 @@ class EventServiceImplTest {
         eventService.submitToFes();
 
         // then
-        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(repository).findByStatusOrderByPriority(SubmissionStatus.READY_TO_SUBMIT, 50);
         verify(barcodeGeneratorService, times(2)).getBarcode(any());
         verify(submissionService, times(1)).updateSubmissionBarcode("1234abcd", "Y123XYZ");
         verify(tiffDownloadService, times(1)).downloadTiffFile(convertedFileId);
@@ -667,7 +656,7 @@ class EventServiceImplTest {
         //given
         String convertedFileId = "1234";
         when(submission.getId()).thenReturn("1234abcd");
-        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(submission.getSubmittedAt()).thenReturn(NOW);
         when(submission.getCompany()).thenReturn(company);
@@ -687,7 +676,7 @@ class EventServiceImplTest {
 
         //then
         verify(submissionService, times(0)).updateSubmissionBarcode(any(), any());
-        verify(repository).findByStatus(SubmissionStatus.READY_TO_SUBMIT, 50);
+        verify(repository).findByStatusOrderByPriority(SubmissionStatus.READY_TO_SUBMIT, 50);
         verifyNoInteractions(barcodeGeneratorService);
         verify(tiffDownloadService).downloadTiffFile(convertedFileId);
         verify(fesLoaderService).insertSubmission(new FesLoaderModel("Y9999999", "abc", "1223456",
@@ -698,14 +687,14 @@ class EventServiceImplTest {
     @Test
     void testProcessSubmissions() {
         //given
-        when(repository.findByStatus(any(), anyInt())).thenReturn(Collections.singletonList(submission));
+        when(repository.findByStatusOrderByPriority(any(), anyInt())).thenReturn(Collections.singletonList(submission));
         when(decisionEngine.evaluateSubmissions(any())).thenReturn(Collections.singletonMap(DecisionResult.FES_ENABLED, Collections.singletonList(decision)));
 
         //when
         eventService.processFiles();
 
         //then
-        verify(repository).findByStatus(SubmissionStatus.SUBMITTED, 50);
+        verify(repository).findByStatusOrderByPriority(SubmissionStatus.SUBMITTED, 50);
         verify(decisionEngine).evaluateSubmissions(Collections.singletonList(submission));
         verify(executionEngine).execute(Collections.singletonMap(DecisionResult.FES_ENABLED, Collections.singletonList(decision)));
     }

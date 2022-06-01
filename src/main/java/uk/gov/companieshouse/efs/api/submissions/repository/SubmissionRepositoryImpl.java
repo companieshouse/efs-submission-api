@@ -17,6 +17,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -37,8 +41,10 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
     private static final String BARCODE = "form.barcode";
     private static final String FORM_TYPE = "form.form_type";
     private static final String LAST_MODIFIED_AT = "last_modified_at";
+    private static final String CREATED_AT = "created_at";
     private static final String SUBMITTED_AT = "submitted_at";
     private static final String FEE_ON_SUBMISSION = "fee_on_submission";
+    private static final Pattern SAMEDAY_FORM_PATTERN = Pattern.compile("SAMEDAY$");
     private MongoTemplate template;
     private CurrentTimestampGenerator timestampGenerator;
     private static final String SUBMISSIONS_COLLECTION = "submissions";
@@ -53,12 +59,35 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
         this.timestampGenerator = timestampGenerator;
     }
 
+    /**
+     * Find submissions by status, with 'SAMEDAY' forms prioritised.<br/>
+     * Implemented as two queries for convenience to avoid complex aggregation operations.<br/>
+     * A better solution would involve adding a { same_day: boolean } document field from computing
+     * {@code $gt: [ { $indexOfCP: [ '$form.form_type', 'SAMEDAY' ] }, 0] }<br/>
+     * i.e. boolean of form.form_type field contains substring 'SAMEDAY', then sorting by same_day descending
+     * @param status submission status to match
+     * @param maxBatchSize max. number of entities to return in all
+     * @return collection of matching entities ordered by ('SAMEDAY' DESC, created/submitted timestamp ASC)
+     */
     @Override
-    public List<Submission> findByStatus(SubmissionStatus status, int maxQueueCount) {
+    public List<Submission> findByStatusOrderByPriority(final SubmissionStatus status, final int maxBatchSize) {
         LOGGER.debug(String.format("Fetching submissions with status: [%s]", status));
-        List<Submission> submissions = template.find(Query.query(Criteria.where(STATUS).is(status)).limit(maxQueueCount), Submission.class, SUBMISSIONS_COLLECTION);
-        LOGGER.debug(String.format("Found [%d] submissions with status: [%s]", submissions.size(), status));
-        return submissions;
+        final Sort createdOrder = Sort.by(Sort.Direction.ASC, CREATED_AT);
+        List<Submission> samedayList = template.find(
+                Query.query(Criteria.where(STATUS).is(status).and(FORM_TYPE).regex(SAMEDAY_FORM_PATTERN))
+                        .with(createdOrder).limit(maxBatchSize), Submission.class, SUBMISSIONS_COLLECTION);
+        LOGGER.debug(String.format("Found [%d] SAMEDAY submissions with status: [%s]", samedayList.size(), status));
+        List<Submission> nonSamedayList = template.find(
+                Query.query(Criteria.where(STATUS).is(status).and(FORM_TYPE).not().regex(SAMEDAY_FORM_PATTERN))
+                        .with(createdOrder).limit(maxBatchSize - samedayList.size()), Submission.class,
+                SUBMISSIONS_COLLECTION);
+        LOGGER.debug(
+                String.format("Found [%d] non-SAMEDAY submissions with status: [%s]", nonSamedayList.size(), status));
+        final List<Submission> priorityList =
+                Stream.concat(samedayList.stream(), nonSamedayList.stream()).collect(Collectors.toList());
+        LOGGER.debug(String.format("Found in all [%d] submissions with status: [%s]", priorityList.size(), status));
+
+        return priorityList;
     }
 
     @Override
@@ -167,7 +196,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
                 .exists(true)), Submission.class, SUBMISSIONS_COLLECTION);
         LOGGER.debug(String
             .format("Found [%d] paid submissions with statuses: [%s] and submitted [%s] and [%s] (exclusive)",
-                submissions.size(), statuses, startDate.toString(), endDate.toString()));
+                submissions.size(), statuses, startDate, endDate));
         return submissions;
     }
 
