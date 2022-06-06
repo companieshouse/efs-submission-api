@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
 import java.util.Optional;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -42,7 +43,8 @@ public class ConfirmAuthorisedController {
         @RequestBody ConfirmAuthorisedApi confirmAuthorised, BindingResult result) {
 
         if (result.hasErrors()) {
-            String message = Optional.ofNullable(result.getFieldError()).map(e -> e.getDefaultMessage())
+            String message = Optional.ofNullable(result.getFieldError())
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .orElse(confirmAuthorised.getConfirmAuthorised().toString());
             LOGGER.info(String.format("Presenter must confirm authorisation: %s", message));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

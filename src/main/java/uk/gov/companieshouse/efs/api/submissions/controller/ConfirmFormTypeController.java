@@ -1,8 +1,9 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
+import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.gov.companieshouse.api.model.efs.submissions.FormTypeApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
@@ -45,7 +45,10 @@ public class ConfirmFormTypeController {
             @RequestBody @Valid @NotNull FormTypeApi formType, BindingResult result) {
 
         if (result.hasErrors()) {
-            LOGGER.info(String.format("Form type details are invalid: %s", result.getFieldError().getDefaultMessage()));
+            String message = Optional.ofNullable(result.getFieldError())
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .orElse(formType.getFormType());
+            LOGGER.info(String.format("Form type details are invalid: %s", message));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
