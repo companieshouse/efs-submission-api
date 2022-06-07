@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.efs.api.fes.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,6 +9,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.CoreMatchers.is;
 
 import java.util.Collections;
 
@@ -14,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -21,6 +26,7 @@ import uk.gov.companieshouse.api.model.efs.fes.FesSubmissionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
+import uk.gov.companieshouse.efs.api.email.model.ExternalAcceptEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.ExternalRejectEmailModel;
 import uk.gov.companieshouse.efs.api.fes.service.exception.ChipsServiceException;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
@@ -37,6 +43,15 @@ class FesServiceImplTest {
     private FesService fesService;
 
     @Mock
+    private Submission submission;
+
+    @Captor
+    private ArgumentCaptor<ExternalAcceptEmailModel> acceptEmailCaptor;
+
+    @Captor
+    private ArgumentCaptor<ExternalRejectEmailModel> rejectEmailCaptor;
+
+    @Mock
     private SubmissionService submissionService;
 
     @Mock
@@ -47,9 +62,6 @@ class FesServiceImplTest {
 
     @Mock
     private SubmissionRepository repository;
-
-    @Mock
-    private Submission submission;
 
     @Mock
     private FormDetails formDetails;
@@ -72,8 +84,11 @@ class FesServiceImplTest {
 
         //then
         verify(repository).readByBarcode(BARCODE);
-        verify(emailService).sendExternalAccept(any());
-        verify(submissionService).updateSubmission(submission);
+        verify(emailService).sendExternalAccept(acceptEmailCaptor.capture());
+        Submission expected = acceptEmailCaptor.getValue().getSubmission();
+        assertThat(expected.getStatus(), is(equalTo(SubmissionStatus.ACCEPTED)));
+        assertThat(expected.getChipsRejectReasons(), is(empty()));
+        verify(submissionService).updateSubmission(expected);
     }
 
     @Test
@@ -89,9 +104,11 @@ class FesServiceImplTest {
         //then
         verify(repository).readByBarcode(BARCODE);
         verify(chipsService).getRejectReasons("123");
-        verify(emailService).sendExternalReject(
-                new ExternalRejectEmailModel(submission, Collections.singletonList("test Reasons")));
-        verify(submissionService).updateSubmission(submission);
+        verify(emailService).sendExternalReject(rejectEmailCaptor.capture());
+        Submission expected = rejectEmailCaptor.getValue().getSubmission();
+        assertThat(expected.getStatus(), is(equalTo(SubmissionStatus.REJECTED)));
+        assertThat(expected.getChipsRejectReasons(), contains(new RejectReason("test Reasons")));
+        verify(submissionService).updateSubmission(expected);
     }
 
     @Test
@@ -109,9 +126,11 @@ class FesServiceImplTest {
 
         //then
         verify(chipsService).getRejectReasons("123");
-        verify(submission).setChipsRejectReasons(Collections.singletonList(new RejectReason("test Reasons")));
-        verify(emailService).sendExternalReject(
-                new ExternalRejectEmailModel(submission, Collections.singletonList("test Reasons")));
+        verify(emailService).sendExternalReject(rejectEmailCaptor.capture());
+        Submission expected = rejectEmailCaptor.getValue().getSubmission();
+        assertThat(expected.getStatus(), is(equalTo(SubmissionStatus.REJECTED)));
+        assertThat(expected.getChipsRejectReasons(), contains(new RejectReason("test Reasons")));
+        verify(submissionService).updateSubmission(expected);
     }
 
     @Test
@@ -126,8 +145,11 @@ class FesServiceImplTest {
 
         //then
         verify(chipsService).getRejectReasons("123");
-        verify(submission).setChipsRejectReasons(Collections.emptyList());
-        verify(emailService).sendExternalReject(new ExternalRejectEmailModel(submission, Collections.emptyList()));
+        verify(emailService).sendExternalReject(rejectEmailCaptor.capture());
+        Submission expected = rejectEmailCaptor.getValue().getSubmission();
+        assertThat(expected.getStatus(), is(equalTo(SubmissionStatus.REJECTED)));
+        assertThat(expected.getChipsRejectReasons(), is(empty()));
+        verify(submissionService).updateSubmission(expected);
     }
 
     @Test

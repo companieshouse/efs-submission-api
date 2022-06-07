@@ -1,13 +1,13 @@
 package uk.gov.companieshouse.efs.api.submissions.service;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
@@ -42,13 +42,22 @@ import uk.gov.companieshouse.efs.api.submissions.validator.Validator;
 import uk.gov.companieshouse.efs.api.submissions.validator.exception.SubmissionValidationException;
 import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -77,6 +86,9 @@ class SubmissionServiceImplTest {
     private static final LocalDateTime NOW = LocalDateTime.now();
 
     private SubmissionService submissionService;
+
+    @Captor
+    private ArgumentCaptor<Submission> submissionCaptor;
 
     @Mock
     private SubmissionMapper submissionMapper;
@@ -151,7 +163,7 @@ class SubmissionServiceImplTest {
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
         verify(companyMapper).map(companyApi);
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(argThat(s-> s.getCompany().equals(company)));
     }
 
     @Test
@@ -198,7 +210,10 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(submissionCaptor.capture());
+        Submission updateSubmission = submissionCaptor.getValue();
+        assertThat(updateSubmission.getFeeOnSubmission(), is(equalTo(submission.getFeeOnSubmission())));
+        assertThat(updateSubmission.getFormDetails().getFormType(), is(equalTo(formApi.getFormType())));
     }
 
     @Test
@@ -215,10 +230,62 @@ class SubmissionServiceImplTest {
 
         // then
         assertThat(actual.getId(), is(SUBMISSION_ID));
-        verify(submissionRepository).updateSubmission(submission);
-        verify(submission, never()).setFeeOnSubmission(anyString());
+        verify(submissionRepository).updateSubmission(submissionCaptor.capture());
+        Submission expected = submissionCaptor.getValue();
+        assertThat(expected.getFeeOnSubmission(), is(nullValue()));
+        assertThat(expected.getFormDetails().getFormType(), is(nullValue()));
         verifyNoInteractions(formTemplateService, paymentTemplateService);
     }
+
+    private static Stream<FormTypeApi> provideScenariosForUpdateSubmissionWithForm() {
+        return Stream.of(new FormTypeApi(), new FormTypeApi("abc"));
+    }
+    @ParameterizedTest
+    @MethodSource("provideScenariosForUpdateSubmissionWithForm")
+    void testUpdateSubmissionWithFormScenarios(FormTypeApi formType) {
+        // given
+        when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
+        when(submissionRepository.read(anyString())).thenReturn(submission);
+        when(submission.getFormDetails()).thenReturn(formDetails);
+        when(formDetails.getFormType()).thenReturn(formType.getFormType());
+
+        // when
+        SubmissionResponseApi actual = submissionService.updateSubmissionWithForm(SUBMISSION_ID, formType);
+
+        // then
+        assertThat(actual.getId(), is(SUBMISSION_ID));
+        verify(submissionRepository).updateSubmission(submissionCaptor.capture());
+        Submission expected = submissionCaptor.getValue();
+        if (formType.getFormType()==null) {
+            assertThat(expected.getFeeOnSubmission(), is(nullValue()));
+            assertThat(expected.getFormDetails().getFormType(), is(nullValue()));
+        }
+        else{
+            assertThat(expected.getFeeOnSubmission(), is(equalTo(submission.getFeeOnSubmission())));
+            assertThat(expected.getFormDetails().getFormType(), is(equalTo(formType.getFormType())));
+            verify(formTemplateService).getFormTemplate(formType.getFormType());
+        }
+        verifyNoInteractions(paymentTemplateService);
+        verifyNoMoreInteractions(formTemplateService, paymentTemplateService);
+    }
+
+    @Test
+    void  testUpdateSubmissionWithFormWhenFormDetailsNull() {
+        FormTypeApi formApi = mock(FormTypeApi.class);
+        when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
+        when(submissionRepository.read(anyString())).thenReturn(submission);
+        when(submission.getFormDetails()).thenReturn(null);
+        when(formApi.getFormType()).thenReturn("abc");
+
+        // when
+        SubmissionResponseApi actual = submissionService.updateSubmissionWithForm(SUBMISSION_ID, formApi);
+
+        // then
+        assertThat(actual.getId(), is(SUBMISSION_ID));
+        verify(submissionRepository).updateSubmission(argThat(s-> s.getFormDetails().getFormType().equals("abc")));
+        verify(formTemplateService).getFormTemplate("abc");
+    }
+
 
     @Test
     void testUpdateSubmissionWithFormWhenFormTypeNotFound() {
@@ -236,10 +303,11 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submissionRepository).updateSubmission(submission);
-        verify(submission, never()).setFeeOnSubmission(anyString());
+        verify(formTemplateService).getFormTemplate(FORM_TYPE);
+        verify(submissionRepository).updateSubmission(argThat(s-> s.getFeeOnSubmission() == null));
         verifyNoInteractions(paymentTemplateService);
     }
+
 
     @Test
     void testUpdateSubmissionWithFormWhenPaymentChargeNull() {
@@ -259,8 +327,7 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submissionRepository).updateSubmission(submission);
-        verify(submission, never()).setFeeOnSubmission(anyString());
+        verify(submissionRepository).updateSubmission(argThat(s-> s.getFeeOnSubmission() == null));
         verifyNoInteractions(paymentTemplateService);
     }
 
@@ -284,8 +351,7 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submissionRepository).updateSubmission(submission);
-        verify(submission, never()).setFeeOnSubmission(anyString());
+        verify(submissionRepository).updateSubmission(argThat(s-> s.getFeeOnSubmission() == null));
     }
 
     @Test
@@ -311,8 +377,7 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submissionRepository).updateSubmission(submission);
-        verify(submission).setFeeOnSubmission(PAYMENT_CHARGE);
+        verify(submissionRepository).updateSubmission(argThat(s-> PAYMENT_CHARGE.equals(s.getFeeOnSubmission())));
     }
 
     @Test
@@ -328,7 +393,7 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(argThat(s->s.getFormDetails().equals(formDetails)));
     }
 
     @Test
@@ -375,7 +440,7 @@ class SubmissionServiceImplTest {
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
         verify(fileDetailsMapper).map(fileListApi);
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(argThat(s->s.getFormDetails().getFileDetailsList().equals(fileDetailsList)));
     }
 
     @Test
@@ -394,7 +459,7 @@ class SubmissionServiceImplTest {
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
         verify(fileDetailsMapper).map(fileListApi);
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(argThat(s->s.getFormDetails().equals(formDetails)));
     }
 
     @Test
@@ -444,8 +509,9 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submission).setPaymentSessions(sessionListApi);
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(submissionCaptor.capture());
+        Submission expected = submissionCaptor.getValue();
+        assertThat(expected.getPaymentSessions(), is(sessionListApi));
     }
 
     @Test
@@ -464,9 +530,10 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submission).setPaymentSessions(sessionListApi);
-        verify(submission, never()).setStatus(any(SubmissionStatus.class));
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(submissionCaptor.capture());
+        Submission expected = submissionCaptor.getValue();
+        assertThat(expected.getPaymentSessions(), is(sessionListApi));
+        assertThat(expected.getStatus(), is(SubmissionStatus.PAYMENT_REQUIRED));
     }
 
     @Test
@@ -523,10 +590,12 @@ class SubmissionServiceImplTest {
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
         verify(timestampGenerator, times(2)).generateTimestamp();
-        verify(submissionRepository).updateSubmission(submission);
-        verify(submission).setStatus(SubmissionStatus.SUBMITTED);
-        verify(submission).setSubmittedAt(NOW.minusSeconds(1L));
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submissionRepository).updateSubmission(submissionCaptor.capture());
+        Submission expected = submissionCaptor.getValue();
+        assertThat(expected.getStatus(), is(SubmissionStatus.SUBMITTED));
+        assertThat(expected.getSubmittedAt(), is(NOW.minusSeconds(1L)));
+        assertThat(expected.getLastModifiedAt(), is(NOW));
+
         verify(validator).validate(submission);
         verify(emailService).sendExternalConfirmation(
             new ExternalNotificationEmailModel(submission));
@@ -546,9 +615,8 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submission, never()).setStatus(any(SubmissionStatus.class));
+        verify(submissionRepository, never()).updateSubmission(any(Submission.class));
         verifyNoInteractions(timestampGenerator);
-        verify(submissionRepository, never()).updateSubmission(submission);
         verify(validator).validate(submission);
         verifyNoInteractions(emailService);
     }
@@ -571,11 +639,12 @@ class SubmissionServiceImplTest {
         assertEquals("Submission status for [123] wasn't in [SUBMITTED], couldn't update", exception.getMessage());
 
         // then
-        verify(submission).setStatus(SubmissionStatus.SUBMITTED);
         verify(timestampGenerator, times(2)).generateTimestamp();
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(submissionCaptor.capture());
+        Submission updateSubmission = submissionCaptor.getValue();
+        assertThat(updateSubmission.getStatus(), is(SubmissionStatus.SUBMITTED));
+        assertThat(updateSubmission.getLastModifiedAt(), is(NOW));
         verify(validator).validate(submission);
-        verify(submission).setLastModifiedAt(NOW);
         verifyNoInteractions(emailService);
     }
 
@@ -610,7 +679,7 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submission, never()).setStatus(any(SubmissionStatus.class));
+        verify(submissionRepository, never()).updateSubmission(any(Submission.class));
         verifyNoMoreInteractions(submissionRepository);
         verify(validator).validate(submission);
         verifyNoInteractions(emailService);
@@ -676,7 +745,11 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(submissionCaptor.capture());
+        Submission updateSubmission = submissionCaptor.getValue();
+        assertThat(updateSubmission.getStatus(), is(SubmissionStatus.PROCESSING));
+        assertThat(updateSubmission.getLastModifiedAt(), is(NOW));
+
     }
 
     @Test
@@ -734,7 +807,7 @@ class SubmissionServiceImplTest {
 
         // then
         verify(timestampGenerator).generateTimestamp();
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(argThat(s->s.getLastModifiedAt().equals(NOW)));
     }
 
     @Test
@@ -746,7 +819,7 @@ class SubmissionServiceImplTest {
         SubmissionResponseApi actual = submissionService.updateSubmissionConfirmAuthorised(SUBMISSION_ID, true);
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(argThat(s->s.getConfirmAuthorised().equals(Boolean.TRUE)));
     }
 
     @Test
@@ -810,9 +883,11 @@ class SubmissionServiceImplTest {
         assertEquals(SUBMISSION_ID, actual.getId());
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(),
             is(STATUS_PAID));
-        verify(submission).setStatus(SubmissionStatus.SUBMITTED);
         verify(timestampGenerator).generateTimestamp();
-        verify(submission).setLastModifiedAt(NOW);
+        verify(submissionRepository).updateSubmission(submissionCaptor.capture());
+        Submission updateSubmission = submissionCaptor.getValue();
+        assertThat(updateSubmission.getStatus(), is(SubmissionStatus.SUBMITTED));
+        assertThat(updateSubmission.getLastModifiedAt(), is(NOW));
         verifyNoMoreInteractions(emailService);
 
     }
@@ -884,10 +959,11 @@ class SubmissionServiceImplTest {
         assertThat(actual.getId(), is(SUBMISSION_ID));
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(), is(STATUS_PAID));
         verify(timestampGenerator).generateTimestamp();
-        verify(submission).setStatus(SubmissionStatus.SUBMITTED);
-        verify(submission).setSubmittedAt(NOW);
-        verify(submission).setLastModifiedAt(NOW);
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(submissionCaptor.capture());
+        Submission updateSubmission = submissionCaptor.getValue();
+        assertThat(updateSubmission.getStatus(), is(SubmissionStatus.SUBMITTED));
+        assertThat(updateSubmission.getSubmittedAt(), is(NOW));
+        assertThat(updateSubmission.getLastModifiedAt(), is(NOW));
     }
 
     @Test
@@ -908,9 +984,8 @@ class SubmissionServiceImplTest {
 
         assertThat(actual.getId(), is(SUBMISSION_ID));
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(), is(STATUS_FAILED));
-        verify(submission).setStatus(SubmissionStatus.PAYMENT_FAILED);
         verify(submissionRepository).read(SUBMISSION_ID);
-        verify(submissionRepository).updateSubmission(submission);
+        verify(submissionRepository).updateSubmission(argThat(s->s.getStatus() == SubmissionStatus.PAYMENT_FAILED));
     }
 
     @Test
@@ -929,7 +1004,7 @@ class SubmissionServiceImplTest {
 
         assertThat(actual.getId(), is(SUBMISSION_ID));
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(), is(STATUS_CANCELLED));
-        verify(submission, never()).setStatus(any(SubmissionStatus.class));
+        verify(submissionRepository, never()).updateSubmission(any(Submission.class));
         verify(submissionRepository).read(SUBMISSION_ID);
         verifyNoMoreInteractions(submissionRepository);
         verifyNoInteractions(timestampGenerator);
@@ -951,7 +1026,7 @@ class SubmissionServiceImplTest {
 
         assertThat(actual.getId(), is(SUBMISSION_ID));
         assertThat(submission.getPaymentSessions().get(0).getSessionStatus(), is(STATUS_FAILED));
-        verify(submission, never()).setStatus(any(SubmissionStatus.class));
+        verify(submissionRepository, never()).updateSubmission(any(Submission.class));
         verifyNoMoreInteractions(submissionRepository);
     }
 
@@ -970,7 +1045,7 @@ class SubmissionServiceImplTest {
             submissionService.updateSubmissionWithPaymentOutcome(SUBMISSION_ID, paymentClose);
 
         assertThat(actual.getId(), is(SUBMISSION_ID));
-        verify(submission, never()).setStatus(any(SubmissionStatus.class));
+        verify(submissionRepository, never()).updateSubmission(any(Submission.class));
         verifyNoMoreInteractions(submissionRepository);
     }
 

@@ -1,14 +1,17 @@
 package uk.gov.companieshouse.efs.api.submissions.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import javax.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
+
+import javax.persistence.Id;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 @Document(collection = "submissions")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -38,218 +41,161 @@ public class Submission {
     @Field("fee_on_submission")
     private String feeOnSubmission;
 
-    public Submission(String id, String confirmationReference, LocalDateTime createdAt,
-                      LocalDateTime submittedAt, LocalDateTime lastModifiedAt, Company company,
-                      Presenter presenter, SubmissionStatus status, SessionListApi paymentSessions,
-                      FormDetails formDetails, List<RejectReason> chipsRejectReasons,
-                      Boolean confirmAuthorised, String feeOnSubmission) {
-        this.id = id;
-        this.confirmationReference = confirmationReference;
-        this.createdAt = createdAt;
-        this.submittedAt = submittedAt;
-        this.lastModifiedAt = lastModifiedAt;
-        this.company = company;
-        this.presenter = presenter;
-        this.status = status;
-        this.paymentSessions = paymentSessions;
-        this.formDetails = formDetails;
-        this.chipsRejectReasons = chipsRejectReasons;
-        this.confirmAuthorised = confirmAuthorised;
-        this.feeOnSubmission = feeOnSubmission;
+    private Submission() {
+        // no direct instantiation
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getConfirmationReference() {
         return confirmationReference;
-    }
-
-    public void setConfirmationReference(final String confirmationReference) {
-        this.confirmationReference = confirmationReference;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getSubmittedAt() {
         return submittedAt;
-    }
-
-    public void setSubmittedAt(LocalDateTime submittedAt) {
-        this.submittedAt = submittedAt;
     }
 
     public LocalDateTime getLastModifiedAt() {
         return lastModifiedAt;
     }
 
-    public void setLastModifiedAt(LocalDateTime lastModifiedAt) {
-        this.lastModifiedAt = lastModifiedAt;
-    }
-
     public Company getCompany() {
         return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
     }
 
     public Presenter getPresenter() {
         return presenter;
     }
 
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
-    }
-
     public SubmissionStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(SubmissionStatus status) {
-        this.status = status;
     }
 
     public SessionListApi getPaymentSessions() {
         return paymentSessions;
     }
 
-    public void setPaymentSessions(final SessionListApi paymentSessions) {
-        this.paymentSessions = new SessionListApi(paymentSessions);
-    }
-
     public FormDetails getFormDetails() {
         return formDetails;
-    }
-
-    public void setFormDetails(FormDetails formDetails) {
-        this.formDetails = formDetails;
     }
 
     public List<RejectReason> getChipsRejectReasons() {
         return chipsRejectReasons;
     }
 
-    public void setChipsRejectReasons(List<RejectReason> chipsRejectReasons) {
-        this.chipsRejectReasons = chipsRejectReasons;
-    }
-
     public Boolean getConfirmAuthorised() {
         return confirmAuthorised;
-    }
-
-    public void setConfirmAuthorised(final Boolean confirmAuthorised) {
-        this.confirmAuthorised = confirmAuthorised;
     }
 
     public String getFeeOnSubmission() {
         return feeOnSubmission;
     }
 
-    public void setFeeOnSubmission(final String feeOnSubmission) {
-        this.feeOnSubmission = feeOnSubmission;
-    }
-
     public static Builder builder() {
         return new Builder();
     }
 
+    public static Builder builder(Submission copy) {
+
+        return new Builder().withId(copy.getId())
+                .withConfirmationReference(copy.getConfirmationReference())
+                .withCreatedAt(copy.getCreatedAt())
+                .withSubmittedAt(copy.getSubmittedAt())
+                .withLastModifiedAt(copy.getLastModifiedAt())
+                .withCompany(copy.getCompany())
+                .withPresenter(copy.getPresenter())
+                .withStatus(copy.getStatus())
+                .withPaymentSessions(copy.getPaymentSessions())
+                .withFormDetails(copy.getFormDetails())
+                .withChipsRejectReasons(copy.getChipsRejectReasons())
+                .withConfirmAuthorised(copy.getConfirmAuthorised())
+                .withFeeOnSubmission(copy.getFeeOnSubmission());
+    }
+
     public static class Builder {
-        private String id;
-        private String confirmationReference;
-        private LocalDateTime createdAt;
-        private LocalDateTime submittedAt;
-        private LocalDateTime lastModifiedAt;
-        private Company company;
-        private Presenter presenter;
-        private SubmissionStatus status;
-        private SessionListApi paymentSessions;
-        private FormDetails formDetails;
-        private List<RejectReason> chipsRejectReasons;
-        private Boolean confirmAuthorised;
-        private String feeOnSubmission;
+        private final List<Consumer<Submission>> buildSteps;
 
-        public Builder withId(String id) {
-            this.id = id;
+        public Builder() {
+            buildSteps = new ArrayList<>();
+        }
+
+        public Submission.Builder withId(String id) {
+            buildSteps.add(data -> data.id = id);
             return this;
         }
 
-        public Builder withConfirmationReference(String confirmationReference) {
-            this.confirmationReference = confirmationReference;
+        public Submission.Builder withConfirmationReference(String confirmationReference) {
+            buildSteps.add(data -> data.confirmationReference = confirmationReference);
             return this;
         }
 
-        public Builder withCreatedAt(LocalDateTime createdAt) {
-            this.createdAt = createdAt;
+        public Submission.Builder withCreatedAt(LocalDateTime createdAt) {
+            buildSteps.add(data -> data.createdAt = createdAt);
             return this;
         }
 
-        public Builder withSubmittedAt(LocalDateTime submittedAt) {
-            this.submittedAt = submittedAt;
+        public Submission.Builder withSubmittedAt(LocalDateTime submittedAt) {
+            buildSteps.add(data -> data.submittedAt = submittedAt);
             return this;
         }
 
-        public Builder withLastModifiedAt(LocalDateTime lastModifiedAt) {
-            this.lastModifiedAt = lastModifiedAt;
+        public Submission.Builder withLastModifiedAt(LocalDateTime lastModifiedAt) {
+            buildSteps.add(data -> data.lastModifiedAt = lastModifiedAt);
             return this;
         }
 
-        public Builder withCompany(Company company) {
-            this.company = company;
+        public Submission.Builder withCompany(Company company) {
+            buildSteps.add(data -> data.company = company);
             return this;
         }
 
-        public Builder withPresenter(Presenter presenter) {
-            this.presenter = presenter;
+        public Submission.Builder withPresenter(Presenter presenter) {
+            buildSteps.add(data -> data.presenter = presenter);
             return this;
         }
 
-        public Builder withStatus(SubmissionStatus status) {
-            this.status = status;
+        public Submission.Builder withStatus(SubmissionStatus status) {
+            buildSteps.add(data -> data.status = status);
             return this;
         }
 
-        public Builder withPaymentSessions(SessionListApi paymentSessions) {
-            this.paymentSessions = new SessionListApi(paymentSessions);
+        public Submission.Builder withPaymentSessions(SessionListApi paymentSessions) {
+            buildSteps.add(data -> data.paymentSessions = paymentSessions);
             return this;
         }
 
-        public Builder withFormDetails(FormDetails formDetails) {
-            this.formDetails = formDetails;
+        public Submission.Builder withFormDetails(FormDetails formDetails) {
+            buildSteps.add(data -> data.formDetails = formDetails);
             return this;
         }
 
-        public Builder withChipsRejectReasons(List<RejectReason> chipsRejectReasons) {
-            this.chipsRejectReasons = chipsRejectReasons;
+        public Submission.Builder withChipsRejectReasons(List<RejectReason> chipsRejectReasons) {
+            buildSteps.add(data -> data.chipsRejectReasons = chipsRejectReasons);
             return this;
         }
 
-        public Builder withConfirmAuthorised(Boolean confirmAuthorised) {
-            this.confirmAuthorised = confirmAuthorised;
+        public Submission.Builder withConfirmAuthorised(Boolean confirmAuthorised) {
+            buildSteps.add(data -> data.confirmAuthorised = confirmAuthorised);
             return this;
         }
 
-        public Builder withFeeOnSubmission(String feeOnSubmission) {
-            this.feeOnSubmission = feeOnSubmission;
+        public Submission.Builder withFeeOnSubmission(String feeOnSubmission) {
+            buildSteps.add(data -> data.feeOnSubmission = feeOnSubmission);
             return this;
         }
 
         public Submission build() {
-            return new Submission(id, confirmationReference, createdAt, submittedAt, lastModifiedAt,
-                company, presenter, status, paymentSessions, formDetails, chipsRejectReasons,
-                confirmAuthorised, feeOnSubmission);
+            final Submission data = new Submission();
+
+            buildSteps.forEach(step -> step.accept(data));
+
+            return data;
         }
     }
 

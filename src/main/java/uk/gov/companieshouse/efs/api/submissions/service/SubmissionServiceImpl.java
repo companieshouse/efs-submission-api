@@ -124,9 +124,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionResponseApi updateSubmissionWithCompany(String id, CompanyApi companyApi) {
         LOGGER.debug(String.format("Attempting to update company details for submission with id: [%s]", id));
-        Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
-        submission.setCompany(companyMapper.map(companyApi));
-        submissionRepository.updateSubmission(submission);
+        Submission updatedSubmission = Submission.builder(this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES)).withCompany(companyMapper.map(companyApi)).build();
+        submissionRepository.updateSubmission(updatedSubmission);
         LOGGER.debug(String.format("Successfully updated company details for submission with id: [%s]", id));
         return new SubmissionResponseApi(id);
     }
@@ -143,9 +142,8 @@ public class SubmissionServiceImpl implements SubmissionService {
             formDetails.setFormType(formType);
         }
         LOGGER.debug(String.format("Attempting to update fee for submission with id: [%s]", id));
-        submission.setFeeOnSubmission(getPaymentCharge(formType));
-        submission.setFormDetails(formDetails);
-        submissionRepository.updateSubmission(submission);
+        Submission updatedSubmission = Submission.builder(submission).withFeeOnSubmission(getPaymentCharge(formType)).withFormDetails(formDetails).build();
+        submissionRepository.updateSubmission(updatedSubmission);
         LOGGER.debug(String.format("Successfully updated form type for submission with id: [%s]", id));
         return new SubmissionResponseApi(id);
     }
@@ -153,15 +151,14 @@ public class SubmissionServiceImpl implements SubmissionService {
     @Override
     public SubmissionResponseApi updateSubmissionWithFileDetails(String id, FileListApi fileListApi) {
         LOGGER.debug(String.format("Attempting to update file details for submission with id: [%s]", id));
-        Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
-        FormDetails formDetails = submission.getFormDetails();
+        FormDetails formDetails = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES).getFormDetails();
         if (formDetails == null) {
             formDetails = FormDetails.builder().withFileDetailsList(fileDetailsMapper.map(fileListApi)).build();
         } else {
             formDetails.setFileDetailsList(fileDetailsMapper.map(fileListApi));
         }
-        submission.setFormDetails(formDetails);
-        submissionRepository.updateSubmission(submission);
+        Submission updatedSubmission = Submission.builder(this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES)).withFormDetails(formDetails).build();
+        submissionRepository.updateSubmission(updatedSubmission);
         LOGGER.debug(String.format("Successfully updated file details for submission with id: [%s]", id));
 
         return new SubmissionResponseApi(id);
@@ -173,10 +170,8 @@ public class SubmissionServiceImpl implements SubmissionService {
         LOGGER.debug(
             String.format("Attempting to update payment sessions for submission with id: [%s]",
                 id));
-        Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
-
-        submission.setPaymentSessions(paymentSessions);
-        submissionRepository.updateSubmission(submission);
+        Submission updatedSubmission = Submission.builder(this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES)).withPaymentSessions(paymentSessions).build();
+        submissionRepository.updateSubmission(updatedSubmission);
 
         return new SubmissionResponseApi(id);
     }
@@ -202,13 +197,13 @@ public class SubmissionServiceImpl implements SubmissionService {
             }
 
             final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
-
+            Submission updatedSubmission;
+            Submission.Builder builder = Submission.builder(submission).withStatus(resultStatus).withLastModifiedAt(lastModified);
             if (resultStatus == SubmissionStatus.SUBMITTED) {
-                submission.setSubmittedAt(lastModified);
+                builder = builder.withSubmittedAt(lastModified);
             }
-            submission.setStatus(resultStatus);
-            submission.setLastModifiedAt(lastModified);
-            submissionRepository.updateSubmission(submission);
+            updatedSubmission = builder.build();
+            submissionRepository.updateSubmission(updatedSubmission);
             LOGGER.debug(String.format(SUBMISSION_STATUS_MSG, resultStatus, submission.getId(),
                 DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
         }
@@ -257,9 +252,9 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         if (submission.getFeeOnSubmission() == null) {
 
-            progressSubmissionStatusToSubmitted(submission);
+            Submission updatedSubmission = progressSubmissionStatusToSubmitted(submission);
 
-            updateSubmission(submission);
+            updateSubmission(updatedSubmission);
             LOGGER.debug(String.format("Successfully completed submission for id: [%s]", id));
 
             submission = getSubmissionWithCheckedStatus(id, ImmutableSet.of(SubmissionStatus.SUBMITTED));
@@ -270,35 +265,34 @@ public class SubmissionServiceImpl implements SubmissionService {
         return new SubmissionResponseApi(id);
     }
 
-    private void progressSubmissionStatusToSubmitted(final Submission submission) {
+    private Submission progressSubmissionStatusToSubmitted(final Submission submission) {
         final SubmissionStatus status = submission.getStatus();
 
         LOGGER.debug(String.format("Updating submission status %s for submission with id: [%s]",
             status, submission.getId()));
-        setAsSubmitted(submission);
+        return updateAsSubmitted(submission);
     }
 
-    private void setAsSubmitted(final Submission submission) {
-        submission.setStatus(SubmissionStatus.SUBMITTED);
+    private Submission updateAsSubmitted(final Submission submission) {
         final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
-        submission.setSubmittedAt(lastModified);
+        Submission updatedSubmission = Submission.builder(submission).withStatus(SubmissionStatus.SUBMITTED).withSubmittedAt(lastModified).build();
         LOGGER.debug(
-            String.format(SUBMISSION_STATUS_MSG, SubmissionStatus.SUBMITTED, submission.getId(),
+            String.format(SUBMISSION_STATUS_MSG, SubmissionStatus.SUBMITTED, updatedSubmission.getId(),
                 DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
+        return updatedSubmission;
     }
 
     @Override
     public SubmissionResponseApi updateSubmissionQueued(Submission submission) {
-        submission.setStatus(SubmissionStatus.PROCESSING);
         LocalDateTime timestamp = timestampGenerator.generateTimestamp();
-        submission.setLastModifiedAt(timestamp);
-        submission.getFormDetails()
+        Submission updatedSubmission = Submission.builder(submission).withStatus(SubmissionStatus.PROCESSING).withLastModifiedAt(timestamp).build();
+        updatedSubmission.getFormDetails()
             .getFileDetailsList()
             .forEach(fileDetails -> this.handleFile(fileDetails, timestamp));
         LOGGER.debug(String.format(
             "Attempting to update submission status to PROCESSING for submission with id: [%s]",
             submission.getId()));
-        submissionRepository.updateSubmission(submission);
+        submissionRepository.updateSubmission(updatedSubmission);
         LOGGER.debug(String.format(
             "Updated submission status to PROCESSING for submission with id: [%s] at [%s]",
             submission.getId(),
@@ -331,8 +325,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     public SubmissionResponseApi updateSubmissionConfirmAuthorised(final String id, final Boolean confirmAuthorised) {
         LOGGER.debug(String.format("Attempting to update authorised for submission with id: [%s]", id));
         Submission submission = this.getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
-        submission.setConfirmAuthorised(confirmAuthorised);
-        submissionRepository.updateSubmission(submission);
+        Submission updatedSubmission = Submission.builder(submission).withConfirmAuthorised(confirmAuthorised).build();
+        submissionRepository.updateSubmission(updatedSubmission);
         LOGGER.debug(String.format("Successfully updated confirm authorised for submission with id: [%s]", id));
         return new SubmissionResponseApi(id);
     }
@@ -342,8 +336,8 @@ public class SubmissionServiceImpl implements SubmissionService {
         LOGGER.debug(
             String.format("Attempting to update submission with id: [%s]", submission.getId()));
         final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
-        submission.setLastModifiedAt(lastModified);
-        submissionRepository.updateSubmission(submission);
+        Submission updatedSubmission = Submission.builder(submission).withLastModifiedAt(lastModified).build();
+        submissionRepository.updateSubmission(updatedSubmission);
         LOGGER.debug(String.format("Updated submission with id: [%s] at [%s]", submission.getId(),
             DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
     }

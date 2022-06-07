@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -180,8 +180,7 @@ class EventServiceImplTest {
         assertEquals(FileConversionStatus.CONVERTED, details.getConversionStatus());
         assertEquals(NUMBER_OF_PAGES, details.getNumberOfPages());
         assertEquals("999", details.getConvertedFileId());
-        verify(submission).setStatus(SubmissionStatus.READY_TO_SUBMIT);
-        verify(repository).updateSubmission(submission);
+        verify(repository).updateSubmission(argThat(s->s.getStatus().equals(SubmissionStatus.READY_TO_SUBMIT)));
         verify(currentTimestampGenerator).generateTimestamp();
         verifyNoInteractions(emailService);
     }
@@ -212,8 +211,7 @@ class EventServiceImplTest {
         assertEquals(FileConversionStatus.CONVERTED, otherDetails.getConversionStatus());
         assertEquals(NUMBER_OF_PAGES, otherDetails.getNumberOfPages());
         assertEquals("999", otherDetails.getConvertedFileId());
-        verify(submission, times(0)).setStatus(SubmissionStatus.READY_TO_SUBMIT);
-        verify(repository).updateSubmission(submission);
+        verify(repository).updateSubmission(argThat(s->s.getStatus().equals(SubmissionStatus.PROCESSING)));
         verify(currentTimestampGenerator).generateTimestamp();
         verifyNoInteractions(emailService);
     }
@@ -240,8 +238,7 @@ class EventServiceImplTest {
         assertEquals(FileConversionStatus.FAILED, details.getConversionStatus());
         assertNull(details.getConvertedFileId());
         assertNull(details.getNumberOfPages());
-        verify(submission).setStatus(SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER);
-        verify(repository).updateSubmission(submission);
+        verify(repository).updateSubmission(argThat(s->s.getStatus().equals(SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER)));
         verify(emailService).sendInternalFailedConversion(any(InternalFailedConversionModel.class));
         verify(currentTimestampGenerator).generateTimestamp();
     }
@@ -272,8 +269,7 @@ class EventServiceImplTest {
         assertEquals(FileConversionStatus.FAILED, otherDetails.getConversionStatus());
         assertNull(details.getNumberOfPages());
         assertNull(details.getConvertedFileId());
-        verify(submission).setStatus(SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER);
-        verify(repository).updateSubmission(submission);
+        verify(repository).updateSubmission(argThat(s->s.getStatus().equals(SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER)));
         verify(emailService).sendInternalFailedConversion(any(InternalFailedConversionModel.class));
         verify(currentTimestampGenerator).generateTimestamp();
     }
@@ -304,8 +300,7 @@ class EventServiceImplTest {
         assertEquals(FileConversionStatus.FAILED, otherDetails.getConversionStatus());
         assertNull(details.getNumberOfPages());
         assertNull(details.getConvertedFileId());
-        verify(submission, times(0)).setStatus(any());
-        verify(repository).updateSubmission(submission);
+        verify(repository).updateSubmission(argThat(s->s.getStatus().equals(SubmissionStatus.PROCESSING)));
         verifyNoInteractions(emailService);
         verify(currentTimestampGenerator).generateTimestamp();
     }
@@ -332,8 +327,7 @@ class EventServiceImplTest {
         assertEquals(FileConversionStatus.FAILED, details.getConversionStatus());
         assertNull(details.getNumberOfPages());
         assertNull(details.getConvertedFileId());
-        verify(submission).setStatus(SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER);
-        verify(repository).updateSubmission(submission);
+        verify(repository).updateSubmission(argThat(s->s.getStatus().equals(SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER)));
         verify(emailService).sendInternalFailedConversion(any(InternalFailedConversionModel.class));
         verify(currentTimestampGenerator).generateTimestamp();
     }
