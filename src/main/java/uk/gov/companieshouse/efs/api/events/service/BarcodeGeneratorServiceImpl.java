@@ -2,13 +2,13 @@ package uk.gov.companieshouse.efs.api.events.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
 import uk.gov.companieshouse.efs.api.events.service.exception.BarcodeException;
 import uk.gov.companieshouse.efs.api.events.service.model.BarcodeRequest;
 import uk.gov.companieshouse.efs.api.events.service.model.BarcodeResponse;
@@ -38,12 +38,16 @@ public class BarcodeGeneratorServiceImpl implements BarcodeGeneratorService {
         request.setDateReceived(Integer.parseInt(dateReceivedConversion));
 
         try {
-            BarcodeResponse response = template
-                    .postForEntity(barcodeGeneratorServiceUrl, request, BarcodeResponse.class).getBody();
-            if (!response.getBarcode().startsWith("Y")) {
-                throw new BarcodeException(String.format("Error generating barcode - generated barcode [%s] not valid for EFS", response.getBarcode()));
+            String barcode = Optional.ofNullable(
+                            template.postForEntity(barcodeGeneratorServiceUrl, request, BarcodeResponse.class))
+                    .map(HttpEntity::getBody)
+                    .map(BarcodeResponse::getBarcode)
+                    .orElseThrow(() -> new BarcodeException("No content in response from Barcode service"));
+            if (!barcode.startsWith("Y")) {
+                throw new BarcodeException(
+                        String.format("Error generating barcode - generated barcode [%s] not valid for EFS", barcode));
             }
-            return response.getBarcode();
+            return barcode;
         } catch (RestClientException ex) {
             throw new BarcodeException(String.format("Error generating barcode - message [%s]", ex.getMessage()), ex);
         }

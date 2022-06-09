@@ -96,4 +96,34 @@ class BarcodeGeneratorServiceImplTest {
                 + INCORRECT_BARCODE + "] not valid for EFS", exception.getMessage());
     }
 
+    @Test
+    void testBarcodeResponseBodyIsNull() {
+        //given
+        ResponseEntity<BarcodeResponse> response = ResponseEntity.ok(null);
+        when(restTemplate.postForEntity(eq(BARCODE_GENERATOR_SERVICE_URL), isA(BarcodeRequest.class),
+                eq(BarcodeResponse.class))).thenReturn(response);
+        LocalDateTime now = LocalDateTime.now();
+
+        //when
+        BarcodeException exception = assertThrows(BarcodeException.class, () -> testService.getBarcode(now));
+
+        //then
+        assertThat(exception.getMessage(), is("No content in response from Barcode service"));
+    }
+    @Test
+    void testBarcodeResponseBodyBarcodeIsNull() {
+        //given
+        BarcodeResponse barcodeResponse = new BarcodeResponse();
+        barcodeResponse.setBarcode(null);
+        ResponseEntity<BarcodeResponse> response = ResponseEntity.ok(barcodeResponse);
+        when(restTemplate.postForEntity(eq(BARCODE_GENERATOR_SERVICE_URL), isA(BarcodeRequest.class),
+                eq(BarcodeResponse.class))).thenReturn(response);
+        LocalDateTime now = LocalDateTime.now();
+
+        //when
+        BarcodeException exception = assertThrows(BarcodeException.class, () -> testService.getBarcode(now));
+
+        //then
+        assertThat(exception.getMessage(), is("No content in response from Barcode service"));
+    }
 }

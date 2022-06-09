@@ -3,14 +3,19 @@ package uk.gov.companieshouse.efs.api.submissions.repository;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +28,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import uk.gov.companieshouse.api.model.efs.fes.FesSubmissionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
+import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 
@@ -92,19 +98,32 @@ class SubmissionRepositoryImplTest {
         repository.updateSubmissionStatus(SUBMISSION_ID, status);
         // then
         verify(template).updateFirst(Query.query(Criteria.where("_id").is(SUBMISSION_ID)),
-                new Update().set("status", SubmissionStatus.SUBMITTED).set("last_modified_at", localDateTime), String.class, SUBMISSIONS_COLLECTION);
+                new Update().set("status", SubmissionStatus.SUBMITTED).set("last_modified_at", localDateTime),
+                String.class, SUBMISSIONS_COLLECTION);
     }
 
     @Test
-    void testFindByStatus() {
-        // given
+    void findByStatusOrderByPriority() {
         SubmissionStatus status = SubmissionStatus.SUBMITTED;
-        int maxQueueCount = 50;
-        // when
-        repository.findByStatus(status, maxQueueCount);
-        // then
-        verify(template).find(Query.query(Criteria.where("status").is(status)).limit(maxQueueCount), Submission.class,
-                SUBMISSIONS_COLLECTION);
+        final int maxBatchCount = 5;
+        final Submission sameDay = createTestSubmission("SAMEDAY");
+        final Submission ordinary = createTestSubmission("QUOTIDIAN");
+        final int sameDayCount = 3;
+
+        when(template.find(any(Query.class), eq(Submission.class), anyString())).thenReturn(
+                        Collections.nCopies(sameDayCount, sameDay))
+                .thenReturn(Collections.nCopies(maxBatchCount - sameDayCount, ordinary));
+
+        final List<Submission> priorityList = repository.findByStatusOrderByPriority(status, maxBatchCount);
+
+        assertThat(priorityList, contains(sameDay, sameDay, sameDay, ordinary, ordinary)); // sameDay occurs before ordinary
+        verify(template).find(argThat((Query q) -> q.getLimit() == maxBatchCount), eq(Submission.class), anyString());
+        verify(template).find(argThat((Query q) -> q.getLimit() == maxBatchCount - sameDayCount), eq(Submission.class), anyString());
+    }
+
+    private Submission createTestSubmission(final String formType) {
+        return new Submission.Builder().withFormDetails(new FormDetails(null, formType, null))
+                .build();
     }
 
     @Test
@@ -144,7 +163,7 @@ class SubmissionRepositoryImplTest {
         // then
         assertThat(barcode, is(nullValue()));
         verify(template).findOne(Query.query(Criteria.where("form.barcode").is(BARCODE)), Submission.class,
-            SUBMISSIONS_COLLECTION);
+                SUBMISSIONS_COLLECTION);
     }
 
     @Test
@@ -158,7 +177,8 @@ class SubmissionRepositoryImplTest {
 
         // then
         verify(template).updateFirst(Query.query(Criteria.where("form.barcode").is(BARCODE)),
-                new Update().set("status", status).set("last_modified_at", localDateTime), String.class, SUBMISSIONS_COLLECTION);
+                new Update().set("status", status).set("last_modified_at", localDateTime), String.class,
+                SUBMISSIONS_COLLECTION);
 
     }
 
@@ -170,8 +190,8 @@ class SubmissionRepositoryImplTest {
 
         //then
         verify(template).updateFirst(Query.query(Criteria.where(ID).is(SUBMISSION_ID)),
-            new Update().set(FORM_BARCODE, BARCODE).set(LAST_MODIFIED_AT, timestampGenerator.generateTimestamp()),
-            String.class, SUBMISSIONS_COLLECTION);
+                new Update().set(FORM_BARCODE, BARCODE).set(LAST_MODIFIED_AT, timestampGenerator.generateTimestamp()),
+                String.class, SUBMISSIONS_COLLECTION);
     }
 
     @Test
@@ -184,11 +204,11 @@ class SubmissionRepositoryImplTest {
 
         //then
         verify(template).find(Query.query(Criteria.where("status")
-            .is(SubmissionStatus.PROCESSING)
-            .and(LAST_MODIFIED_AT)
-            .lte(now)
-            .and(FORM_TYPE)
-            .ne("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
+                .is(SubmissionStatus.PROCESSING)
+                .and(LAST_MODIFIED_AT)
+                .lte(now)
+                .and(FORM_TYPE)
+                .ne("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
     }
 
     @Test
@@ -196,33 +216,32 @@ class SubmissionRepositoryImplTest {
         //given
         LocalDateTime delayedFrom = LocalDateTime.now();
         final EnumSet<SubmissionStatus> statuses =
-            EnumSet.of(SubmissionStatus.PROCESSING, SubmissionStatus.READY_TO_SUBMIT);
+                EnumSet.of(SubmissionStatus.PROCESSING, SubmissionStatus.READY_TO_SUBMIT);
 
         //when
         repository.findDelayedSameDaySubmissions(statuses, delayedFrom);
 
         //then
         verify(template).find(Query.query(Criteria.where("status")
-            .in(statuses)
-            .and("submitted_at")
-            .lte(delayedFrom)
-            .and(FORM_TYPE)
-            .is("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
+                .in(statuses)
+                .and("submitted_at")
+                .lte(delayedFrom)
+                .and(FORM_TYPE)
+                .is("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
     }
 
     @Test
     void findSuccessfulPaidSubmissions() {
         //when
-        repository.findPaidSubmissions(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES, START_DATE,
-            END_DATE);
+        repository.findPaidSubmissions(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES, START_DATE, END_DATE);
 
         //then
         verify(template).find(Query.query(Criteria.where(STATUS)
-            .in(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES)
-            .and(SUBMITTED_AT)
-            .gte(START_DATE)
-            .lt(END_DATE)
-            .and(FEE_ON_SUBMISSION)
-            .exists(true)), Submission.class, SUBMISSIONS_COLLECTION);
+                .in(SubmissionRepositoryImpl.SUCCESSFUL_STATUSES)
+                .and(SUBMITTED_AT)
+                .gte(START_DATE)
+                .lt(END_DATE)
+                .and(FEE_ON_SUBMISSION)
+                .exists(true)), Submission.class, SUBMISSIONS_COLLECTION);
     }
 }

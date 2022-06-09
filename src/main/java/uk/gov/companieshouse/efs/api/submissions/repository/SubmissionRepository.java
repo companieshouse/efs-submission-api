@@ -10,7 +10,7 @@ import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 
 public interface SubmissionRepository {
 
-    List<Submission> findByStatus(SubmissionStatus status, int maxQueueCount);
+    List<Submission> findByStatusOrderByPriority(SubmissionStatus status, int maxBatchSize);
 
     Submission read(String id);
 
