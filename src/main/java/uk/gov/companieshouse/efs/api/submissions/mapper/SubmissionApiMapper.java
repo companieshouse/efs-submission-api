@@ -34,7 +34,7 @@ public class SubmissionApiMapper {
                 .withStatus(submission.getStatus())
                 .withPaymentSessions(submission.getPaymentSessions())
                 .withFormDetails(mapForm(submission.getSubmissionForm()))
-                .withChipsRejectReasons(mapRejectReasonList(submission.getRejectReasons()))
+                .withChipsRejectReasons(submission.getRejectReasons() == null ? null : mapRejectReasonList(submission.getRejectReasons()))
                 .withConfirmAuthorised(submission.getConfirmAuthorised())
                 .withFeeOnSubmission(submission.getFeeOnSubmission()).build();
     }
