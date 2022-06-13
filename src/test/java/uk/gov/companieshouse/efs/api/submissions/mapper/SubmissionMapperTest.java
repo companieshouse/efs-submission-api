@@ -94,10 +94,10 @@ class SubmissionMapperTest {
         //given
         LocalDateTime now = LocalDateTime.now();
         Submission submission = submissionDataEntity(now);
-        submission.setChipsRejectReasons(Collections.singletonList(new RejectReason(REJECT_REASON)));
+        Submission updatedSubmission = Submission.builder(submission).withChipsRejectReasons(Collections.singletonList(new RejectReason(REJECT_REASON))).build();
 
         //when
-        SubmissionApi actual = mapper.map(submission);
+        SubmissionApi actual = mapper.map(updatedSubmission);
         System.out.println("expect=" + ReflectionToStringBuilder.toString(expectedSubmissionApiWithRejectReasons(now), RecursiveToStringStyle.MULTI_LINE_STYLE));
         System.out.println("actual=" + ReflectionToStringBuilder.toString(actual, RecursiveToStringStyle.MULTI_LINE_STYLE));
 

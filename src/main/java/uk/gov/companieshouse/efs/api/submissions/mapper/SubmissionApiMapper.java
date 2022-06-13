@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.efs.api.submissions.mapper;
 
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,15 +23,20 @@ import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 public class SubmissionApiMapper {
 
     public Submission map(SubmissionApi submission) {
-        return new Submission(submission.getId(), submission.getConfirmationReference(),
-            submission.getCreatedAt(), submission.getSubmittedAt(), submission.getLastModifiedAt(),
-            mapCompany(submission.getCompany()), mapPresenter(submission.getPresenter()),
-            submission.getStatus(), submission.getPaymentSessions(),
-            submission.getSubmissionForm() == null ? null : mapForm(submission.getSubmissionForm()),
-            submission.getRejectReasons() == null
-                ? null
-                : mapRejectReasonList(submission.getRejectReasons()),
-            submission.getConfirmAuthorised(), submission.getFeeOnSubmission());
+        return Submission.builder()
+                .withId(submission.getId())
+                .withConfirmationReference(submission.getConfirmationReference())
+                .withCreatedAt(submission.getCreatedAt())
+                .withSubmittedAt(submission.getSubmittedAt())
+                .withLastModifiedAt(submission.getLastModifiedAt())
+                .withCompany(mapCompany(submission.getCompany()))
+                .withPresenter(mapPresenter(submission.getPresenter()))
+                .withStatus(submission.getStatus())
+                .withPaymentSessions(submission.getPaymentSessions())
+                .withFormDetails(mapForm(submission.getSubmissionForm()))
+                .withChipsRejectReasons(submission.getRejectReasons() == null ? null : mapRejectReasonList(submission.getRejectReasons()))
+                .withConfirmAuthorised(submission.getConfirmAuthorised())
+                .withFeeOnSubmission(submission.getFeeOnSubmission()).build();
     }
 
     private FormDetails mapForm(SubmissionFormApi submissionForm) {

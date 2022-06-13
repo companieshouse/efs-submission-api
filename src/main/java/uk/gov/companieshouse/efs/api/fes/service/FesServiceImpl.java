@@ -70,18 +70,17 @@ public class FesServiceImpl implements FesService {
         }
 
         // update submission status
-        submission.setStatus(SubmissionStatus.valueOf(status.toString()));
+        Submission updatedSubmission = Submission.builder(submission).withStatus(SubmissionStatus.valueOf(status.toString())).build();
 
         //send Email
         try {
             if (status.equals(FesSubmissionStatus.REJECTED)) {
                 List<String> rejectReasons = getRejectReasons(barcode, submission.getId());
-                submission.setChipsRejectReasons(
-                        rejectReasons.stream().map(RejectReason::new).collect(Collectors.toList()));
+                updatedSubmission = Submission.builder(updatedSubmission).withChipsRejectReasons(rejectReasons.stream().map(RejectReason::new).collect(Collectors.toList())).build();
 
-                emailService.sendExternalReject(new ExternalRejectEmailModel(submission, rejectReasons));
+                emailService.sendExternalReject(new ExternalRejectEmailModel(updatedSubmission, rejectReasons));
             } else {
-                emailService.sendExternalAccept(new ExternalAcceptEmailModel(submission));
+                emailService.sendExternalAccept(new ExternalAcceptEmailModel(updatedSubmission));
             }
         } catch (EmailServiceException ex) {
             Map<String, Object> debug = new HashMap<>();
@@ -93,7 +92,7 @@ public class FesServiceImpl implements FesService {
                     null, debug);
         }
 
-        submissionService.updateSubmission(submission);
+        submissionService.updateSubmission(updatedSubmission);
     }
 
     private List<String> getRejectReasons(String barcode, String submissionId) {

@@ -108,7 +108,7 @@ public class EventServiceImpl implements EventService {
                     file.setLastModifiedAt(now);
                 });
 
-        submission.setLastModifiedAt(now);
+        Submission updatedSubmission = Submission.builder(submission).withLastModifiedAt(now).build();
 
         // have all files been converted or failed
         if (areAllFilesConvertedOrFailed(submission.getFormDetails().getFileDetailsList())) {
@@ -118,10 +118,10 @@ public class EventServiceImpl implements EventService {
 
             if (allConverted) {
                 // set status to be READY_TO_SUBMIT
-                submission.setStatus(SubmissionStatus.READY_TO_SUBMIT);
+                updatedSubmission = Submission.builder(submission).withStatus(SubmissionStatus.READY_TO_SUBMIT).build();
             } else {
                 // set status to be REJECTED_BY_DOCUMENT_CONVERTER
-                submission.setStatus(SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER);
+                updatedSubmission = Submission.builder(submission).withStatus(SubmissionStatus.REJECTED_BY_DOCUMENT_CONVERTER).build();
 
                 try {
 
@@ -147,7 +147,7 @@ public class EventServiceImpl implements EventService {
             fileConversionStatus.getConvertedFileId(), fileConversionStatus.getConversionStatus(),
             submission.getStatus()));
 
-        repository.updateSubmission(submission);
+        repository.updateSubmission(updatedSubmission);
     }
 
     @Override
