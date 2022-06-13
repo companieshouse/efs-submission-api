@@ -3,6 +3,7 @@ package uk.gov.companieshouse.efs.api.submissions.mapper;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.refEq;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -94,5 +95,14 @@ class SubmissionApiMapperTest {
         System.out.println("expect=" + ReflectionToStringBuilder.toString(mappedSubmission, RecursiveToStringStyle.MULTI_LINE_STYLE));
         System.out.println("actual=" + ReflectionToStringBuilder.toString(submission, RecursiveToStringStyle.MULTI_LINE_STYLE));
         assertThat(mappedSubmission, is(equalTo(submission)));
+    }
+
+    @Test
+    void mapNullRejectReasons() {
+        submissionApi.setRejectReasons(null);
+
+        final Submission mappedSubmission = testMapper.map(submissionApi);
+
+        assertThat(mappedSubmission.getChipsRejectReasons(), is(nullValue()));
     }
 }
