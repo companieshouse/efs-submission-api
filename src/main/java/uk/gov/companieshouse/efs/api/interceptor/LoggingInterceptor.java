@@ -4,8 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.RequestLogger;
 
@@ -13,7 +13,7 @@ import uk.gov.companieshouse.logging.util.RequestLogger;
  * This class manages the logging of the start request and end request.
  */
 @Component
-public class LoggingInterceptor extends HandlerInterceptorAdapter implements RequestLogger {
+public class LoggingInterceptor implements HandlerInterceptor, RequestLogger {
     private Logger logger;
 
     /**
