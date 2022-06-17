@@ -37,6 +37,10 @@ public class FormTemplate {
     @Id
     private String formType;
 
+    @JsonProperty("order_index")
+    @Field
+    private Integer orderIndex;
+
     @JsonProperty("form_name")
     @Field
     private String formName;
@@ -71,6 +75,10 @@ public class FormTemplate {
 
     public String getFormType() {
         return formType;
+    }
+
+    public Integer getOrderIndex() {
+        return orderIndex;
     }
 
     public String getFormName() {
@@ -114,26 +122,30 @@ public class FormTemplate {
             return false;
         }
         final FormTemplate that = (FormTemplate) o;
-        return isAuthenticationRequired() == that.isAuthenticationRequired()
-            && isFesEnabled() == that.isFesEnabled() && isSameDay() == that.isSameDay()
-            && Objects.equals(getFormType(), that.getFormType()) && Objects.equals(getFormName(),
-            that.getFormName()) && Objects.equals(getFormCategory(), that.getFormCategory())
-            && Objects.equals(getFee(), that.getFee()) && Objects.equals(getFesDocType(),
-            that.getFesDocType()) && Objects.equals(getMessageTextIdList(),
-            that.getMessageTextIdList());
+        return isAuthenticationRequired() == that.isAuthenticationRequired() &&
+                isFesEnabled() == that.isFesEnabled() &&
+                isSameDay() == that.isSameDay() &&
+                Objects.equals(getFormType(), that.getFormType()) &&
+                Objects.equals(getOrderIndex(), that.getOrderIndex()) &&
+                Objects.equals(getFormName(), that.getFormName()) &&
+                Objects.equals(getFormCategory(), that.getFormCategory()) &&
+                Objects.equals(getFee(), that.getFee()) &&
+                Objects.equals(getFesDocType(), that.getFesDocType()) &&
+                Objects.equals(getMessageTextIdList(), that.getMessageTextIdList());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFormType(), getFormName(), getFormCategory(), getFee(),
-            isAuthenticationRequired(), isFesEnabled(), getFesDocType(), isSameDay(),
-            getMessageTextIdList());
+        return Objects.hash(getFormType(), getOrderIndex(), getFormName(), getFormCategory(),
+                getFee(), isAuthenticationRequired(), isFesEnabled(), getFesDocType(), isSameDay(),
+                getMessageTextIdList());
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("formType", getFormType())
+                .append("orderIndex", getOrderIndex())
                 .append("formName", getFormName())
                 .append("formCategory", getFormCategory())
                 .append("fee", getFee())
@@ -158,6 +170,11 @@ public class FormTemplate {
         
         public FormTemplate.Builder withFormType(final String formType) {
             buildSteps.add(data -> data.formType = formType);
+            return this;
+        }
+
+        public FormTemplate.Builder withOrderIndex(final Integer orderIndex) {
+            buildSteps.add(data -> data.orderIndex = orderIndex);
             return this;
         }
         

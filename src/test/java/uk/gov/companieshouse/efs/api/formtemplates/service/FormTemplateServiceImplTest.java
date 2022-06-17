@@ -125,7 +125,7 @@ class FormTemplateServiceImplTest {
         List<FormTemplate> listForm = new ArrayList<>();
         listForm.add(mappedForm);
 
-        when(formRepository.findByFormCategory(categoryId)).thenReturn(listForm);
+        when(formRepository.findByFormCategoryOrderByOrderIndex(categoryId)).thenReturn(listForm);
         when(mapper.map(anyList())).thenReturn(formList);
 
         //when

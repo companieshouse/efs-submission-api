@@ -50,7 +50,7 @@ public class CategoryTemplateServiceImpl implements CategoryTemplateService {
 
     @Override
     public CategoryTemplateListApi getCategoryTemplatesByCategory(final String id) {
-        final List<CategoryTemplate> byParent = repository.findByParent(id);
+        final List<CategoryTemplate> byParent = repository.findByParentOrderByOrderIndex(id);
         return mapper.map(byParent);
     }
 

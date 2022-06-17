@@ -24,6 +24,7 @@ class FormTemplateTest {
     void setUp() {
         testFormTemplate = FormTemplate.builder()
             .withFormType("CC01")
+            .withOrderIndex(1)
             .withFormName("Form01")
             .withFormCategory("CC")
             .withFee("100")
@@ -40,6 +41,7 @@ class FormTemplateTest {
     void formTemplate() {
 
         assertThat(testFormTemplate.getFormType(), is("CC01"));
+        assertThat(testFormTemplate.getOrderIndex(), is(1));
         assertThat(testFormTemplate.getFormName(), is("Form01"));
         assertThat(testFormTemplate.getFormCategory(), is("CC"));
         assertThat(testFormTemplate.getFee(), is("100"));
@@ -59,7 +61,7 @@ class FormTemplateTest {
     void toStringTest() {
         assertThat(testFormTemplate.toString(), Matchers.is(
                 //@formatter:off
-                "FormTemplate[formType=CC01,formName=Form01,formCategory=CC,fee=100,"
+                "FormTemplate[formType=CC01,orderIndex=1,formName=Form01,formCategory=CC,fee=100,"
                     + "isAuthenticationRequired=true,isFesEnabled=true,fesDocType=FES," 
                     + "sameDay=true,messageTextIdList=[1, 2, 3]]"
                 //@formatter:on

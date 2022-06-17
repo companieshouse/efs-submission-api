@@ -11,8 +11,9 @@ public interface CategoryTemplateRepository extends MongoRepository<CategoryTemp
 
     /**
      * Finds all form categories by parent category.
+     * Applies ordering by optional property 'orderIndex'.
      *
      * @return List&lt;CategoryTemplate&gt;
      */
-    List<CategoryTemplate> findByParent(String category);
+    List<CategoryTemplate> findByParentOrderByOrderIndex(String category);
 }               
