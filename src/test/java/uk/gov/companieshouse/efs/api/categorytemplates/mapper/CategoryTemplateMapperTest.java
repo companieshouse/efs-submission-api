@@ -45,19 +45,23 @@ class CategoryTemplateMapperTest {
     }
 
     private CategoryTemplate getCategory() {
-        return new CategoryTemplate("MA", "New Incorporation",
-                "", "", null);
+        final CategoryTemplate category =
+                new CategoryTemplate("MA", 1, "New Incorporation", "", "", null);
+
+        category.setGuidanceTexts(Collections.singletonList(3000));
+
+        return category;
     }
 
     private CategoryTemplateListApi expectedList() {
         CategoryTemplateApi element = new CategoryTemplateApi("MA", "New Incorporation", "", "",
-                Collections.emptyList());
+                Collections.singletonList(3000));
         return new CategoryTemplateListApi(Collections.singletonList(element));
     }
 
     private CategoryTemplateApi expectedSingle() {
         CategoryTemplateApi element = new CategoryTemplateApi("MA", "New Incorporation", "", "",
-                Collections.emptyList());
+                Collections.singletonList(3000));
         return new CategoryTemplateApi(element);
     }
 }

@@ -11,10 +11,11 @@ public interface FormTemplateRepository extends MongoRepository<FormTemplate, St
 
     /**
      * Finds all form template details by category.
+     * Applies ordering by optional property 'orderIndex'.
      *
      * @return List&lt;FormTemplate&gt;
      */
-    List<FormTemplate> findByFormCategory(String category);
+    List<FormTemplate> findByFormCategoryOrderByOrderIndex(String category);
 
 }
 

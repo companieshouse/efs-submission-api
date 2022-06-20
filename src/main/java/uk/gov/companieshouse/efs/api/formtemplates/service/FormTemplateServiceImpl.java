@@ -46,7 +46,7 @@ public class FormTemplateServiceImpl implements FormTemplateService {
 
     @Override
     public FormTemplateListApi getFormTemplatesByCategory(final String id) {
-        final List<FormTemplate> byCategory = repository.findByFormCategory(id);
+        final List<FormTemplate> byCategory = repository.findByFormCategoryOrderByOrderIndex(id);
         return mapper.map(byCategory);
     }
 }

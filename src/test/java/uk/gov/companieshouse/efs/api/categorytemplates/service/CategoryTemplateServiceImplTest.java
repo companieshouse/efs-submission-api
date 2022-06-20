@@ -79,7 +79,7 @@ class CategoryTemplateServiceImplTest {
 
         //given
         String categoryId = "CC01";
-        CategoryTemplate category = new CategoryTemplate(categoryId, "CatCat", null, null, null);
+        CategoryTemplate category = new CategoryTemplate(categoryId, 1, "CatCat", null, null, null);
         CategoryTemplateApi mappedCategory = new CategoryTemplateApi(categoryId, "CatCat", null, null, null);
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
@@ -112,12 +112,13 @@ class CategoryTemplateServiceImplTest {
 
         //given
         String categoryId = "CC01";
-        CategoryTemplate mappedCategory = new CategoryTemplate(categoryId, "CatCat", null, null, null);
+        CategoryTemplate mappedCategory = new CategoryTemplate(categoryId, 1, "CatCat", null, null,
+                null);
 
         List<CategoryTemplate> listCategory = new ArrayList<>();
         listCategory.add(mappedCategory);
 
-        when(categoryRepository.findByParent(categoryId)).thenReturn(listCategory);
+        when(categoryRepository.findByParentOrderByOrderIndex(categoryId)).thenReturn(listCategory);
         when(mapper.map(anyList())).thenReturn(categoryList);
 
         //when
@@ -157,7 +158,7 @@ class CategoryTemplateServiceImplTest {
     void getTopLevelCategoryWhenParentIsSelf() {
         // given
         final CategoryTemplate category =
-            new CategoryTemplate("SELF_PARENT", "parent is self", "SELF_PARENT", null, null);
+            new CategoryTemplate("SELF_PARENT", 0, "parent is self", "SELF_PARENT", null, null);
 
         when(categoryRepository.findById(category.getCategoryType())).thenReturn(
             Optional.of(category));
