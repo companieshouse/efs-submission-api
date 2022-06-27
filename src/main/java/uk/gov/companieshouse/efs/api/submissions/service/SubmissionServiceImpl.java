@@ -181,12 +181,12 @@ public class SubmissionServiceImpl implements SubmissionService {
         final PaymentClose paymentClose) {
         final Submission submission = getSubmissionWithCheckedStatus(id, UPDATABLE_STATUSES);
         final SubmissionStatus status = submission.getStatus();
-        SubmissionStatus resultStatus = status;
 
         setPaymentSessionStatus(submission, paymentClose);
         LOGGER.debug(String.format("Updating submission status %s for submission with id: [%s]", status, submission.getId()));
 
         if (SubmissionStatus.PAYMENT_REQUIRED == submission.getStatus()) {
+            SubmissionStatus resultStatus;
 
             if (paymentClose.isPaid()) {
                 resultStatus = SubmissionStatus.SUBMITTED;

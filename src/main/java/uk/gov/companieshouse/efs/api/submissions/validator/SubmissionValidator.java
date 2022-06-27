@@ -27,6 +27,7 @@ public class SubmissionValidator extends ValidatorImpl<Submission> implements Va
         this.logger = logger;
     }
 
+    @Override
     public void validate(Submission input) throws SubmissionValidationException {
 
         logger.infoContext(input.getId(), "About to validate submission", null);
