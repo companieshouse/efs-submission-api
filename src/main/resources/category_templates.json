@@ -4,183 +4,226 @@
   "parent" : ""
 }, {
   "_id" : "INS",
+  "orderIndex": 1,
   "categoryName" : "Insolvency",
   "parent" : ""
 }, {
   "_id": "SH",
+  "orderIndex": 2,
   "categoryName": "Share capital",
   "categoryHint": "SH forms, statement by directors and solvency statement",
   "parent": "",
   "guidanceTexts": [0]
 }, {
   "_id" : "RP",
+  "orderIndex": 3,
   "categoryName" : "Registrar's powers",
   "categoryHint" : "RP forms",
   "parent" : ""
 }, {
   "_id" : "CC",
+  "orderIndex": 4,
   "categoryName" : "Change of constitution",
   "categoryHint" : "CC forms, articles and resolutions",
   "parent" : ""
 }, {
   "_id" : "SLP",
+  "orderIndex": 5,
   "categoryName" : "Scottish limited partnership",
   "categoryHint" : "SLP forms",
   "parent" : ""
 }, {
   "_id" : "SQP",
+  "orderIndex": 6,
   "categoryName" : "Scottish qualifying partnership",
   "categoryHint" : "SQP forms",
   "parent" : ""
 }, {
   "_id" : "CIGA2000",
+  "orderIndex": 1,
   "categoryName" : "Corporate Insolvency and Governance Act 2000",
   "parent" : "INS"
 }, {
   "_id" : "IA1986",
+  "orderIndex": 2,
   "categoryName" : "Insolvency Act 1986",
   "parent" : "INS"
 }, {
-  "_id" : "IA1986_CVAM",
-  "categoryName" : "Company voluntary arrangement and moratoria ",
-  "parent" : "IA1986"
-}, {
-  "_id" : "IA1986_ADM",
-  "categoryName" : "In administration",
-  "parent" : "IA1986"
-}, {
-  "_id" : "IA1986_REC",
-  "categoryName" : "Receivership",
-  "parent" : "IA1986"
-}, {
-  "_id" : "IA1986_LIQ",
-  "categoryName" : "Liquidation",
-  "parent" : "IA1986"
-}, {
-  "_id" : "IA1986_NOD",
-  "categoryName" : "Notice of disclaimer ",
-  "parent" : "IA1986"
-}, {
   "_id" : "INSEW2016",
+  "orderIndex": 3,
   "categoryName" : "Insolvency (England and Wales Rules 2016)",
   "parent" : "INS"
 }, {
-  "_id" : "INSEW2016_CVAM",
-  "categoryName" : "Company voluntary arrangement moratorium",
-  "parent" : "INSEW2016"
-}, {
-  "_id" : "INSEW2016_CVA",
-  "categoryName" : "Company voluntary arrangement",
-  "parent" : "INSEW2016"
-}, {
-  "_id" : "INSEW2016_ADM",
-  "categoryName" : "In administration",
-  "parent" : "INSEW2016"
-}, {
-  "_id" : "INSEW2016_REC",
-  "categoryName" : "Receivership",
-  "parent" : "INSEW2016"
-}, {
-  "_id" : "INSEW2016_VL",
-  "categoryName" : "Members' voluntary liquidation (MVL) and creditors' voluntary liquidation (CVL)",
-  "parent" : "INSEW2016"
-}, {
-  "_id" : "INSEW2016_WU",
-  "categoryName" : "Winding up by the court",
-  "parent" : "INSEW2016"
-}, {
-  "_id" : "INSEW2016_COM",
-  "categoryName" : "Committees",
-  "parent" : "INSEW2016"
-}, {
-  "_id" : "INSEW2016_EXP",
-  "categoryName" : "Exempting property",
-  "parent" : "INSEW2016"
-}, {
   "_id" : "INSSC2018",
+  "orderIndex": 4,
   "categoryName" : "Insolvency (Scotland Rules 2018)",
   "parent" : "INS"
 }, {
-  "_id" : "INSSC2018_ADM",
-  "categoryName" : "In administration",
-  "parent" : "INSSC2018"
-}, {
-  "_id" : "INSSC2018_COM",
-  "categoryName" : "Committees",
-  "parent" : "INSSC2018"
-}, {
-  "_id" : "INSSC2018_CVA",
-  "categoryName" : "Company voluntary arrangement",
-  "parent" : "INSSC2018"
-}, {
-  "_id" : "INSSC2018_CVAM",
-  "categoryName" : "Company voluntary arrangement moratorium",
-  "parent" : "INSSC2018"
-}, {
-  "_id" : "INSSC2018_EXP",
-  "categoryName" : "Exempting property",
-  "parent" : "INSSC2018"
-}, {
-  "_id" : "INSSC2018_VL",
-  "categoryName" : "Members' voluntary liquidation (MVL) and creditors' voluntary liquidation (CVL)",
-  "parent" : "INSSC2018"
-}, {
-  "_id" : "INSSC2018_REC",
-  "categoryName" : "Receivership",
-  "parent" : "INSSC2018"
-}, {
-  "_id" : "INSSC2018_WU",
-  "categoryName" : "Winding up by the court",
-  "parent" : "INSSC2018"
-}, {
   "_id" : "INIO1989",
+  "orderIndex": 5,
   "categoryName" : "The Insolvency Northern Ireland Order 1989",
   "parent" : "INS"
 }, {
-  "_id" : "INIO1989_CVAM",
-  "categoryName" : "Company voluntary arrangement and moratoria ",
-  "parent" : "INIO1989"
-}, {
-  "_id" : "INIO1989_ADM",
-  "categoryName" : "In administration",
-  "parent" : "INIO1989"
-}, {
-  "_id" : "INIO1989_REC",
-  "categoryName" : "Receivership",
-  "parent" : "INIO1989"
-}, {
-  "_id" : "INIO1989_LIQ",
-  "categoryName" : "Liquidation",
-  "parent" : "INIO1989"
-}, {
   "_id" : "OCR2009",
+  "orderIndex": 6,
   "categoryName" : "Overseas Companies Regulations 2009",
   "parent" : "INS"
 }, {
   "_id" : "LLPR2009",
+  "orderIndex": 7,
   "categoryName" : "Limited Liability Partnerships Regulations 2009",
   "parent" : "INS"
 }, {
   "_id" : "INS_RES",
+  "orderIndex": 8,
   "categoryName" : "Resolutions",
   "parent" : "INS"
 }, {
   "_id" : "INSCROA",
+  "orderIndex": 9,
   "categoryName" : "Change a company’s registered office address",
   "parent" : "INS"
 }, {
+  "_id" : "IA1986_CVAM",
+  "orderIndex": 1,
+  "categoryName" : "Company voluntary arrangement and moratoria ",
+  "parent" : "IA1986"
+}, {
+  "_id" : "IA1986_ADM",
+  "orderIndex": 2,
+  "categoryName" : "In administration",
+  "parent" : "IA1986"
+}, {
+  "_id" : "IA1986_REC",
+  "orderIndex": 3,
+  "categoryName" : "Receivership",
+  "parent" : "IA1986"
+}, {
+  "_id" : "IA1986_LIQ",
+  "orderIndex": 4,
+  "categoryName" : "Liquidation",
+  "parent" : "IA1986"
+}, {
+  "_id" : "IA1986_NOD",
+  "orderIndex": 5,
+  "categoryName" : "Notice of disclaimer ",
+  "parent" : "IA1986"
+}, {
+  "_id" : "INSEW2016_CVAM",
+  "orderIndex": 1,
+  "categoryName" : "Company voluntary arrangement moratorium",
+  "parent" : "INSEW2016"
+}, {
+  "_id" : "INSEW2016_CVA",
+  "orderIndex": 2,
+  "categoryName" : "Company voluntary arrangement",
+  "parent" : "INSEW2016"
+}, {
+  "_id" : "INSEW2016_ADM",
+  "orderIndex": 3,
+  "categoryName" : "In administration",
+  "parent" : "INSEW2016"
+}, {
+  "_id" : "INSEW2016_REC",
+  "orderIndex": 4,
+  "categoryName" : "Receivership",
+  "parent" : "INSEW2016"
+}, {
+  "_id" : "INSEW2016_VL",
+  "orderIndex": 5,
+  "categoryName" : "Members' voluntary liquidation (MVL) and creditors' voluntary liquidation (CVL)",
+  "parent" : "INSEW2016"
+}, {
+  "_id" : "INSEW2016_WU",
+  "orderIndex": 6,
+  "categoryName" : "Winding up by the court",
+  "parent" : "INSEW2016"
+}, {
+  "_id" : "INSEW2016_COM",
+  "orderIndex": 7,
+  "categoryName" : "Committees",
+  "parent" : "INSEW2016"
+}, {
+  "_id" : "INSEW2016_EXP",
+  "orderIndex": 8,
+  "categoryName" : "Exempting property",
+  "parent" : "INSEW2016"
+}, {
+  "_id" : "INSSC2018_ADM",
+  "orderIndex": 1,
+  "categoryName" : "In administration",
+  "parent" : "INSSC2018"
+}, {
+  "_id" : "INSSC2018_COM",
+  "orderIndex": 2,
+  "categoryName" : "Committees",
+  "parent" : "INSSC2018"
+}, {
+  "_id" : "INSSC2018_CVA",
+  "orderIndex": 3,
+  "categoryName" : "Company voluntary arrangement",
+  "parent" : "INSSC2018"
+}, {
+  "_id" : "INSSC2018_CVAM",
+  "orderIndex": 4,
+  "categoryName" : "Company voluntary arrangement moratorium",
+  "parent" : "INSSC2018"
+}, {
+  "_id" : "INSSC2018_EXP",
+  "orderIndex": 5,
+  "categoryName" : "Exempting property",
+  "parent" : "INSSC2018"
+}, {
+  "_id" : "INSSC2018_VL",
+  "orderIndex": 6,
+  "categoryName" : "Members' voluntary liquidation (MVL) and creditors' voluntary liquidation (CVL)",
+  "parent" : "INSSC2018"
+}, {
+  "_id" : "INSSC2018_REC",
+  "orderIndex": 7,
+  "categoryName" : "Receivership",
+  "parent" : "INSSC2018"
+}, {
+  "_id" : "INSSC2018_WU",
+  "orderIndex": 8,
+  "categoryName" : "Winding up by the court",
+  "parent" : "INSSC2018"
+}, {
+  "_id" : "INIO1989_CVAM",
+  "orderIndex": 1,
+  "categoryName" : "Company voluntary arrangement and moratoria ",
+  "parent" : "INIO1989"
+}, {
+  "_id" : "INIO1989_ADM",
+  "orderIndex": 2,
+  "categoryName" : "In administration",
+  "parent" : "INIO1989"
+}, {
+  "_id" : "INIO1989_REC",
+  "orderIndex": 3,
+  "categoryName" : "Receivership",
+  "parent" : "INIO1989"
+}, {
+  "_id" : "INIO1989_LIQ",
+  "orderIndex": 4,
+  "categoryName" : "Liquidation",
+  "parent" : "INIO1989"
+}, {
   "_id": "SH-RED",
+  "orderIndex": 1,
   "categoryName": "Reduction of capital documents",
   "categoryHint": "Form SH19, solvency statement, statement by directors and resolution",
   "parent": "SH",
   "guidanceTexts": [0]
 }, {
   "_id": "SH-RED-SAMEDAY",
+  "orderIndex": 1,
   "categoryName": "Dummy category for SH19_SAMEDAY",
   "categoryHint": "parent is self to exclude from category hierarchy",
   "parent": "SH-RED-SAMEDAY"
 },{
   "_id": "SH-OTHER",
+  "orderIndex": 2,
   "categoryName": "Other share capital documents",
   "categoryHint": "Form SH02, SH04, SH05, SH06, SH07, SH08, SH09, SH10, SH11, SH12, SH13, SH14, SH15, SH16, SH17 and resolution",
   "parent": "SH"
