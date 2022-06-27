@@ -2427,6 +2427,7 @@
   "_id" : "WU01(Scot)",
   "formName" : "WU01 (Scot) - Notice of a court order in a winding up",
   "formCategory" : "INSSC2018_WU",
+  "orderIndex": 1,
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true
@@ -2434,6 +2435,7 @@
   "_id" : "WU02(Scot)",
   "formName" : "WU02 (Scot) - Notice of order of appointment of a provisional liquidator",
   "formCategory" : "INSSC2018_WU",
+  "orderIndex": 2,
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true
@@ -2441,6 +2443,7 @@
   "_id" : "WU03(Scot)",
   "formName" : "WU03 (Scot) - Notice of termination of appointment of provisional liquidator",
   "formCategory" : "INSSC2018_WU",
+  "orderIndex": 3,
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true
@@ -2448,6 +2451,7 @@
   "_id" : "WU15(Scot)",
   "formName" : "WU15 (Scot) - Notice of the final account prior to the dissolution",
   "formCategory" : "INSSC2018_WU",
+  "orderIndex": 4,
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true
@@ -2455,6 +2459,7 @@
   "_id" : "WU16(Scot)",
   "formName" : "WU16 (Scot) - Early dissolution of a Scottish company in a winding up by the court",
   "formCategory" : "INSSC2018_WU",
+  "orderIndex": 5,
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true
@@ -2462,6 +2467,7 @@
   "_id" : "WU17(Scot)",
   "formName" : "WU17 (Scot) - Defer the dissolution of a Scottish company in a winding up by the court",
   "formCategory" : "INSSC2018_WU",
+  "orderIndex": 6,
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true
@@ -2469,6 +2475,7 @@
   "_id" : "WU18(Scot)",
   "formName" : "WU18 (Scot) - Notice of a court order staying or sisting proceedings in a winding up order by the court",
   "formCategory" : "INSSC2018_WU",
+  "orderIndex": 7,
   "fee" : "",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true
@@ -3347,6 +3354,7 @@
   "_id" : "SH19_SAMEDAY",
   "formName" : "SH19 - Statement of capital when reducing capital in a company",
   "formCategory" : "SH-RED-SAMEDAY",
+  "orderIndex": 1,
   "fee" : "SH19_SAMEDAY",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
