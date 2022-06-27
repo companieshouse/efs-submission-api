@@ -190,7 +190,7 @@ class EmailServiceImplTest {
         this.emailService.sendExternalAccept(externalAcceptEmailModel);
 
         // then
-        verify(serializer).serialize(eq(externalAcceptEmailDocument), eq(schema));
+        verify(serializer).serialize(externalAcceptEmailDocument, schema);
         verify(producer).send(messageCaptor.capture());
         assertEquals("external-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
@@ -213,7 +213,7 @@ class EmailServiceImplTest {
         this.emailService.sendExternalReject(externalRejectEmailModel);
 
         // then
-        verify(serializer).serialize(eq(externalRejectEmailDocument), eq(schema));
+        verify(serializer).serialize(externalRejectEmailDocument, schema);
         verify(producer).send(messageCaptor.capture());
         assertEquals("external-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
@@ -236,7 +236,7 @@ class EmailServiceImplTest {
         this.emailService.sendInternalFailedAV(internalAVFailedEmailModel);
 
         // then
-        verify(serializer).serialize(eq(internalAVFailedEmailDocument), eq(schema));
+        verify(serializer).serialize(internalAVFailedEmailDocument, schema);
         verify(producer).send(messageCaptor.capture());
         assertEquals("internal-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
@@ -259,7 +259,7 @@ class EmailServiceImplTest {
         this.emailService.sendInternalFailedConversion(internalFailedConversionModel);
 
         // then
-        verify(serializer).serialize(eq(internalFailedConversionEmailDocument), eq(schema));
+        verify(serializer).serialize(internalFailedConversionEmailDocument, schema);
         verify(producer).send(messageCaptor.capture());
         assertEquals("internal-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
@@ -328,7 +328,7 @@ class EmailServiceImplTest {
 
         //then
         verify(notificationEmailMapper).map(externalNotificationEmailModel);
-        verify(serializer).serialize(eq(externalNotificationEmailDocument), eq(schema));
+        verify(serializer).serialize(externalNotificationEmailDocument, schema);
         verify(producer).send(messageCaptor.capture());
         assertEquals("confirm-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
@@ -352,7 +352,7 @@ class EmailServiceImplTest {
 
         //then
         verify(notificationEmailMapper).map(externalNotificationEmailModel);
-        verify(serializer).serialize(eq(externalNotificationEmailDocument), eq(schema));
+        verify(serializer).serialize(externalNotificationEmailDocument, schema);
         verify(producer).send(messageCaptor.capture());
         assertEquals("notification-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
@@ -375,7 +375,7 @@ class EmailServiceImplTest {
         this.emailService.sendInternalSubmission(internalSubmissionEmailModel);
 
         // then
-        verify(serializer).serialize(eq(internalSubmissionEmailDocument), eq(schema));
+        verify(serializer).serialize(internalSubmissionEmailDocument, schema);
         verify(producer).send(messageCaptor.capture());
         assertEquals("internal-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
@@ -397,7 +397,7 @@ class EmailServiceImplTest {
         this.emailService.sendDelayedSubmissionSupportEmail(delayedSubmissionSupportEmailModel);
 
         // then
-        verify(serializer).serialize(eq(delayedSubmissionSupportEmailDataEmailDocument), eq(schema));
+        verify(serializer).serialize(delayedSubmissionSupportEmailDataEmailDocument, schema);
         verify(producer).send(messageCaptor.capture());
         assertEquals("delayed-submission-support-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
@@ -421,7 +421,7 @@ class EmailServiceImplTest {
         this.emailService.sendDelayedSH19SubmissionSupportEmail(delayedSubmissionSupportEmailModel, "businessEmail");
 
         // then
-        verify(serializer).serialize(eq(delayedSubmissionSupportEmailDataEmailDocument), eq(schema));
+        verify(serializer).serialize(delayedSubmissionSupportEmailDataEmailDocument, schema);
         verify(document).setTo("businessEmail");
         verify(producer, times(2)).send(messageCaptor.capture());
         for (int i = 0; i < 2; ++i) {
@@ -447,7 +447,7 @@ class EmailServiceImplTest {
         this.emailService.sendDelayedSubmissionBusinessEmail(delayedSubmissionBusinessEmailModel);
 
         // then
-        verify(serializer).serialize(eq(delayedSubmissionBusinessEmailDataEmailDocument), eq(schema));
+        verify(serializer).serialize(delayedSubmissionBusinessEmailDataEmailDocument, schema);
         verify(producer).send(messageCaptor.capture());
         assertEquals("delayed-submission-business-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
@@ -468,7 +468,7 @@ class EmailServiceImplTest {
         this.emailService.sendPaymentReportEmail(paymentReportEmailModel);
 
         // then
-        verify(serializer).serialize(eq(paymentReportEmailDocument), eq(schema));
+        verify(serializer).serialize(paymentReportEmailDocument, schema);
         verify(producer).send(messageCaptor.capture());
         assertEquals("external-email-send", messageCaptor.getValue().getTopic());
         assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());

@@ -153,7 +153,7 @@ class DecisionEngineTest {
         verify(timestampGenerator).generateTimestamp();
         verify(apiClient).details("abc");
         verify(submissionService).updateSubmission(submission);
-        verify(formTemplateRepository).findById(eq("AD01"));
+        verify(formTemplateRepository).findById("AD01");
     }
 
     @Test
@@ -186,7 +186,7 @@ class DecisionEngineTest {
         verify(timestampGenerator).generateTimestamp();
         verify(apiClient).details("abc");
         verify(submissionService).updateSubmission(submission);
-        verify(formTemplateRepository).findById(eq("AD01"));
+        verify(formTemplateRepository).findById("AD01");
     }
 
     @Test
@@ -213,7 +213,7 @@ class DecisionEngineTest {
         verify(timestampGenerator).generateTimestamp();
         verify(apiClient).details("abc");
         verify(submissionService).updateSubmission(submission);
-        verify(formTemplateRepository).findById(eq("AD01"));
+        verify(formTemplateRepository).findById("AD01");
     }
 
     @Test

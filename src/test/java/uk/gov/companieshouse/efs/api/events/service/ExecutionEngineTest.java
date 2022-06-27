@@ -145,7 +145,7 @@ class ExecutionEngineTest {
 
         // then
         verify(submissionService).updateSubmissionStatus("123", SubmissionStatus.PROCESSED_BY_EMAIL);
-        verify(emailService).sendInternalSubmission(eq(new InternalSubmissionEmailModel(submission, Collections.singletonList(new EmailFileDetails(fileDetails, "http://chs-dev.internal:4001")))));
+        verify(emailService).sendInternalSubmission(new InternalSubmissionEmailModel(submission, Collections.singletonList(new EmailFileDetails(fileDetails, "http://chs-dev.internal:4001"))));
         verify(s3ClientService).generateFileLink("abc123", BUCKET_NAME);
         verifyNoInteractions(messageService);
     }
