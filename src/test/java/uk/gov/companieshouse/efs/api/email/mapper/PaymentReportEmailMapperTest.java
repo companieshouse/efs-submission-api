@@ -10,8 +10,9 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.efs.api.email.config.PaymentReportEmailConfig;
@@ -39,44 +40,17 @@ class PaymentReportEmailMapperTest {
         testMapper = new PaymentReportEmailMapper(config, idGenerator, timestampGenerator);
     }
 
-    @Test
-    void mapFinanceEmail() {
+    @ParameterizedTest(name = "Report type: {0}")
+    @ValueSource(strings = {"", "scottish", "specCap"})
+    void mapPaymentEmail(String reportType) {
         // given
-        expectEmailContent("");
+        expectEmailContent(reportType);
 
         // when
         EmailDocument<PaymentReportEmailData> actual = testMapper.map(model);
 
         // then
-        assertThat(actual, is(equalTo(expectedPaymentReportEmailDocument(""))));
-        verify(idGenerator).generateId();
-        verify(timestampGenerator).generateTimestamp();
-    }
-
-    @Test
-    void mapScottishEmail() {
-        // given
-        expectEmailContent("scottish");
-
-        // when
-        EmailDocument<PaymentReportEmailData> actual = testMapper.map(model);
-
-        // then
-        assertThat(actual, is(equalTo(expectedPaymentReportEmailDocument("scottish"))));
-        verify(idGenerator).generateId();
-        verify(timestampGenerator).generateTimestamp();
-    }
-
-    @Test
-    void mapSpecialCapitalEmail() {
-        // given
-        expectEmailContent("specCap");
-
-        // when
-        EmailDocument<PaymentReportEmailData> actual = testMapper.map(model);
-
-        // then
-        assertThat(actual, is(equalTo(expectedPaymentReportEmailDocument("specCap"))));
+        assertThat(actual, is(equalTo(expectedPaymentReportEmailDocument(reportType))));
         verify(idGenerator).generateId();
         verify(timestampGenerator).generateTimestamp();
     }

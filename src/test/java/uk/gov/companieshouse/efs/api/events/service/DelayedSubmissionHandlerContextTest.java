@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
 class DelayedSubmissionHandlerContextTest {
@@ -22,6 +23,8 @@ class DelayedSubmissionHandlerContextTest {
     private StandardServiceDelayedHandler standard;
     @Mock
     private SameDayServiceDelayedHandler sameday;
+    @Mock
+    private Logger logger;
 
     private Set<DelayedSubmissionHandlerStrategy> implementations;
 
@@ -32,7 +35,7 @@ class DelayedSubmissionHandlerContextTest {
         when(sameday.getServiceLevel()).thenReturn(
             DelayedSubmissionHandlerContext.ServiceLevel.SAMEDAY);
         implementations = new HashSet<>(Arrays.asList(standard, sameday));
-        testContext = new DelayedSubmissionHandlerContext(implementations);
+        testContext = new DelayedSubmissionHandlerContext(implementations, logger);
     }
 
     @Test
