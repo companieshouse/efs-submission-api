@@ -23,7 +23,7 @@ public class DelayedSubmissionHandlerContext {
         final Set<DelayedSubmissionHandlerStrategy> implementationSet,
         final Logger logger) {
         this.logger = logger;
-        implementationSet.forEach(s -> logger.info(s.getServiceLevel() + "," + s));
+        implementationSet.forEach(s -> this.logger.info(s.getServiceLevel() + "," + s));
         this.strategyImplementations = implementationSet.stream()
             .collect(Collectors.toMap(DelayedSubmissionHandlerStrategy::getServiceLevel,
                 Function.identity()));
