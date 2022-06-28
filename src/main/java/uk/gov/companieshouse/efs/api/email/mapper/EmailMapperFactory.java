@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailData;
 
 public class EmailMapperFactory {
     private ExternalNotificationEmailMapper confirmationEmailMapper;
