@@ -1,6 +1,10 @@
 package uk.gov.companieshouse.efs.api.email.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
+import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailData;
 
 public class EmailMapperFactory {
     private ExternalNotificationEmailMapper confirmationEmailMapper;
@@ -19,40 +23,9 @@ public class EmailMapperFactory {
         // intentionally blank
     }
 
-    private EmailMapperFactory(final Builder builder) {
-        confirmationEmailMapper = builder.confirmationEmailMapper;
-        paymentFailedEmailMapper = builder.paymentFailedEmailMapper;
-        acceptEmailMapper = builder.acceptEmailMapper;
-        rejectEmailMapper = builder.rejectEmailMapper;
-        internalAvFailedEmailMapper = builder.internalAvFailedEmailMapper;
-        internalFailedConversionEmailMapper = builder.internalFailedConversionEmailMapper;
-        internalSubmissionEmailMapper = builder.internalSubmissionEmailMapper;
-        delayedSubmissionSupportEmailMapper = builder.delayedSubmissionSupportEmailMapper;
-        delayedSH19SameDaySubmissionSupportEmailMapper = builder.delayedSH19SameDaySubmissionSupportEmailMapper;
-        delayedSubmissionBusinessEmailMapper = builder.delayedSubmissionBusinessEmailMapper;
-        paymentReportEmailMapper = builder.paymentReportEmailMapper;
-    }
 
     public static Builder newBuilder() {
-        return new Builder();
-    }
-
-    public static Builder newBuilder(final EmailMapperFactory copy) {
-        Builder builder = new Builder();
-        builder.confirmationEmailMapper = copy.getConfirmationEmailMapper();
-        builder.paymentFailedEmailMapper = copy.getPaymentFailedEmailMapper();
-        builder.acceptEmailMapper = copy.getAcceptEmailMapper();
-        builder.rejectEmailMapper = copy.getRejectEmailMapper();
-        builder.internalAvFailedEmailMapper = copy.getInternalAvFailedEmailMapper();
-        builder.internalFailedConversionEmailMapper = copy.getInternalFailedConversionEmailMapper();
-        builder.internalSubmissionEmailMapper = copy.getInternalSubmissionEmailMapper();
-        builder.delayedSubmissionSupportEmailMapper = copy.getDelayedSubmissionSupportEmailMapper();
-        builder.delayedSH19SameDaySubmissionSupportEmailMapper =
-            copy.getDelayedSH19SameDaySubmissionSupportEmailMapper();
-        builder.delayedSubmissionBusinessEmailMapper =
-            copy.getDelayedSubmissionBusinessEmailMapper();
-        builder.paymentReportEmailMapper = copy.getPaymentReportEmailMapper();
-        return builder;
+        return new EmailMapperFactory.Builder();
     }
 
     public ExternalNotificationEmailMapper getConfirmationEmailMapper() {
@@ -103,21 +76,13 @@ public class EmailMapperFactory {
      * {@code EmailMapperFactory} builder static inner class.
      */
     public static final class Builder {
-        private ExternalNotificationEmailMapper confirmationEmailMapper;
-        private ExternalNotificationEmailMapper paymentFailedEmailMapper;
-        private ExternalAcceptEmailMapper acceptEmailMapper;
-        private ExternalRejectEmailMapper rejectEmailMapper;
-        private InternalAvFailedEmailMapper internalAvFailedEmailMapper;
-        private InternalFailedConversionEmailMapper internalFailedConversionEmailMapper;
-        private InternalSubmissionEmailMapper internalSubmissionEmailMapper;
-        private DelayedSubmissionSupportEmailMapper delayedSubmissionSupportEmailMapper;
-        private DelayedSH19SameDaySubmissionSupportEmailMapper
-            delayedSH19SameDaySubmissionSupportEmailMapper;
-        private DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessEmailMapper;
-        private PaymentReportEmailMapper paymentReportEmailMapper;
+
+        private final List<Consumer<EmailMapperFactory>> buildSteps;
 
         private Builder() {
+            this.buildSteps = new ArrayList<>();
         }
+
         
         /**
          * Sets the {@code confirmationEmailMapper} and returns a reference to this Builder so 
@@ -127,7 +92,7 @@ public class EmailMapperFactory {
          * @return a reference to this Builder
          */
         public Builder withConfirmationEmailMapper(final ExternalNotificationEmailMapper confirmationEmailMapper) {
-            this.confirmationEmailMapper = confirmationEmailMapper;
+            buildSteps.add(data -> data.confirmationEmailMapper = confirmationEmailMapper);
             return this;
         }
 
@@ -140,7 +105,7 @@ public class EmailMapperFactory {
          */
         public Builder withPaymentFailedEmailMapper(
             final ExternalNotificationEmailMapper paymentFailedEmailMapper) {
-            this.paymentFailedEmailMapper = paymentFailedEmailMapper;
+            buildSteps.add(data -> data.paymentFailedEmailMapper = paymentFailedEmailMapper);
             return this;
         }
 
@@ -152,7 +117,7 @@ public class EmailMapperFactory {
          * @return a reference to this Builder
          */
         public Builder withAcceptEmailMapper(final ExternalAcceptEmailMapper acceptEmailMapper) {
-            this.acceptEmailMapper = acceptEmailMapper;
+            buildSteps.add(data -> data.acceptEmailMapper = acceptEmailMapper);
             return this;
         }
 
@@ -163,7 +128,7 @@ public class EmailMapperFactory {
          * @return a reference to this Builder
          */
         public Builder withRejectEmailMapper(final ExternalRejectEmailMapper rejectEmailMapper) {
-            this.rejectEmailMapper = rejectEmailMapper;
+            buildSteps.add(data -> data.rejectEmailMapper = rejectEmailMapper);
             return this;
         }
 
@@ -174,7 +139,7 @@ public class EmailMapperFactory {
          * @return a reference to this Builder
          */
         public Builder withInternalAvFailedEmailMapper(final InternalAvFailedEmailMapper internalAvFailedEmailMapper) {
-            this.internalAvFailedEmailMapper = internalAvFailedEmailMapper;
+            buildSteps.add(data -> data.internalAvFailedEmailMapper = internalAvFailedEmailMapper);
             return this;
         }
 
@@ -186,7 +151,7 @@ public class EmailMapperFactory {
          */
         public Builder withInternalFailedConversionEmailMapper(
             final InternalFailedConversionEmailMapper internalFailedConversionEmailMapper) {
-            this.internalFailedConversionEmailMapper = internalFailedConversionEmailMapper;
+            buildSteps.add(data -> data.internalFailedConversionEmailMapper = internalFailedConversionEmailMapper);
             return this;
         }
 
@@ -198,7 +163,7 @@ public class EmailMapperFactory {
          */
         public Builder withInternalSubmissionEmailMapper(
             final InternalSubmissionEmailMapper internalSubmissionEmailMapper) {
-            this.internalSubmissionEmailMapper = internalSubmissionEmailMapper;
+            buildSteps.add(data -> data.internalSubmissionEmailMapper = internalSubmissionEmailMapper);
             return this;
         }
 
@@ -210,7 +175,7 @@ public class EmailMapperFactory {
          */
         public Builder withDelayedSubmissionSupportEmailMapper(
             final DelayedSubmissionSupportEmailMapper delayedSubmissionSupportEmailMapper) {
-            this.delayedSubmissionSupportEmailMapper = delayedSubmissionSupportEmailMapper;
+            buildSteps.add(data -> data.delayedSubmissionSupportEmailMapper = delayedSubmissionSupportEmailMapper);
             return this;
         }
 
@@ -222,7 +187,7 @@ public class EmailMapperFactory {
          */
         public Builder withDelayedSH19SameDaySubmissionSupportEmailMapper(
             final DelayedSH19SameDaySubmissionSupportEmailMapper delayedSH19SameDaySubmissionSupportEmailMapper) {
-            this.delayedSH19SameDaySubmissionSupportEmailMapper = delayedSH19SameDaySubmissionSupportEmailMapper;
+            buildSteps.add(data -> data.delayedSH19SameDaySubmissionSupportEmailMapper = delayedSH19SameDaySubmissionSupportEmailMapper);
             return this;
         }
 
@@ -234,7 +199,7 @@ public class EmailMapperFactory {
          */
         public Builder withDelayedSubmissionBusinessEmailMapper(
             final DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessEmailMapper) {
-            this.delayedSubmissionBusinessEmailMapper = delayedSubmissionBusinessEmailMapper;
+            buildSteps.add(data -> data.delayedSubmissionBusinessEmailMapper = delayedSubmissionBusinessEmailMapper);
             return this;
         }
 
@@ -245,7 +210,7 @@ public class EmailMapperFactory {
          * @return a reference to this Builder
          */
         public Builder withPaymentReportEmailMapper(final PaymentReportEmailMapper paymentReportEmailMapper) {
-            this.paymentReportEmailMapper = paymentReportEmailMapper;
+            buildSteps.add(data -> data.paymentReportEmailMapper = paymentReportEmailMapper);
             return this;
         }
 
@@ -255,31 +220,14 @@ public class EmailMapperFactory {
          * @return a {@code EmailMapperFactory} built with parameters of this {@code EmailMapperFactory.Builder}
          */
         public EmailMapperFactory build() {
-            checkNotNull(this.acceptEmailMapper, "'acceptEmailMapper' must not be null");
-            checkNotNull(this.confirmationEmailMapper,
-                "'confirmationEmailMapper' must not be null");
-            checkNotNull(this.paymentFailedEmailMapper,
-                "'paymentFailedEmailMapper' must not be null");
-            checkNotNull(this.delayedSubmissionBusinessEmailMapper,
-                "'delayedSubmissionBusinessEmailMapper' must not be null");
-            checkNotNull(this.delayedSubmissionSupportEmailMapper, "'delayedSubmissionSupportEmailMapper' must not be null");
-            checkNotNull(this.delayedSH19SameDaySubmissionSupportEmailMapper,
-                "'this.delayedSH19SameDaySubmissionSupportEmailMapper' must not be null");
-            checkNotNull(this.internalAvFailedEmailMapper, "'internalAVFailedEmailMapper' must not be null");
-            checkNotNull(this.internalFailedConversionEmailMapper, "'internalFailedConversionEmailMapper' must not be null");
-            checkNotNull(this.internalSubmissionEmailMapper, "'internalSubmissionEmailMapper' must not be null");
-            checkNotNull(this.paymentReportEmailMapper, "'paymentReportEmailMapper' must not be null");
-            checkNotNull(this.rejectEmailMapper, "'rejectEmailMapper' must not be null");
+            EmailMapperFactory data = new EmailMapperFactory();
 
-            return new EmailMapperFactory(this);
+            buildSteps.forEach(step -> step.accept(data));
+
+            return data;
         }
 
-        private static <T> T checkNotNull(T t, String msg) {
-            if (t == null) {
-                throw new IllegalArgumentException(msg);
-            }
-            return t;
-        }
+
     }
 
     @Override

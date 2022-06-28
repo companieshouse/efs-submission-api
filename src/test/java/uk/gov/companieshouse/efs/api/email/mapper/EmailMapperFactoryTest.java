@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -55,30 +56,6 @@ class EmailMapperFactoryTest {
                 delayedSH19SameDaySubmissionSupportEmailMapper)
             .withDelayedSubmissionBusinessEmailMapper(delayedSubmissionBusinessEmailMapper)
             .withPaymentReportEmailMapper(paymentReportEmailMapper).build();
-    }
-
-    @Test
-    void buildWhenConfirmationMapperNull() {
-        final EmailMapperFactory.Builder builder =
-            EmailMapperFactory.newBuilder().withAcceptEmailMapper(acceptEmailMapper)
-                .withPaymentFailedEmailMapper(paymentFailedEmailMapper)
-                .withRejectEmailMapper(rejectEmailMapper).withInternalAvFailedEmailMapper(internalAVFailedEmailMapper)
-                .withInternalFailedConversionEmailMapper(internalFailedConversionEmailMapper)
-                .withInternalSubmissionEmailMapper(internalSubmissionEmailMapper)
-                .withDelayedSubmissionSupportEmailMapper(delayedSubmissionSupportEmailMapper)
-                .withDelayedSubmissionBusinessEmailMapper(delayedSubmissionBusinessEmailMapper)
-                .withPaymentReportEmailMapper(paymentReportEmailMapper);
-
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> builder.build());
-
-        assertThat(exception.getMessage(), is("'confirmationEmailMapper' must not be null"));
-    }
-
-    @Test
-    void copyBuilder() {
-        final EmailMapperFactory copy = EmailMapperFactory.newBuilder(testFactory).build();
-
-        assertThat(copy, is(equalTo(testFactory)));
     }
 
     @Test
