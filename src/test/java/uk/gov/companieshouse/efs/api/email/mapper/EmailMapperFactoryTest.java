@@ -58,6 +58,23 @@ class EmailMapperFactoryTest {
     }
 
     @Test
+    void buildWhenConfirmationMapperNull() {
+        final EmailMapperFactory.Builder builder =
+                EmailMapperFactory.newBuilder().withAcceptEmailMapper(acceptEmailMapper)
+                        .withPaymentFailedEmailMapper(paymentFailedEmailMapper)
+                        .withRejectEmailMapper(rejectEmailMapper).withInternalAvFailedEmailMapper(internalAVFailedEmailMapper)
+                        .withInternalFailedConversionEmailMapper(internalFailedConversionEmailMapper)
+                        .withInternalSubmissionEmailMapper(internalSubmissionEmailMapper)
+                        .withDelayedSubmissionSupportEmailMapper(delayedSubmissionSupportEmailMapper)
+                        .withDelayedSubmissionBusinessEmailMapper(delayedSubmissionBusinessEmailMapper)
+                        .withPaymentReportEmailMapper(paymentReportEmailMapper);
+
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> builder.build());
+
+        assertThat(exception.getMessage(), is("'confirmationEmailMapper' must not be null"));
+    }
+
+    @Test
     void equalsAndHashCode() {
         EqualsVerifier.forClass(EmailMapperFactory.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
     }

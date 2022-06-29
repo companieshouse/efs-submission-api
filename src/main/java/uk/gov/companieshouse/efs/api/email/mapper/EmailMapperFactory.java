@@ -223,7 +223,34 @@ public class EmailMapperFactory {
 
             buildSteps.forEach(step -> step.accept(data));
 
+            validate(data);
             return data;
+        }
+
+        public void validate(EmailMapperFactory data) {
+            checkNotNull(data.getAcceptEmailMapper(), "acceptEmailMapper");
+            checkNotNull(data.getConfirmationEmailMapper(),
+                    "confirmationEmailMapper");
+            checkNotNull(data.getPaymentFailedEmailMapper(),
+                    "paymentFailedEmailMapper");
+            checkNotNull(data.getDelayedSubmissionBusinessEmailMapper(),
+                    "delayedSubmissionBusinessEmailMapper");
+            checkNotNull(data.getDelayedSubmissionSupportEmailMapper(), "delayedSubmissionSupportEmailMapper");
+            checkNotNull(data.getDelayedSH19SameDaySubmissionSupportEmailMapper(),
+                    "delayedSH19SameDaySubmissionSupportEmailMapper");
+            checkNotNull(data.getInternalAvFailedEmailMapper(), "internalAVFailedEmailMapper");
+            checkNotNull(data.getInternalFailedConversionEmailMapper(), "internalFailedConversionEmailMapper");
+            checkNotNull(data.getInternalSubmissionEmailMapper(), "internalSubmissionEmailMapper");
+            checkNotNull(data.getPaymentReportEmailMapper(), "paymentReportEmailMapper");
+            checkNotNull(data.getRejectEmailMapper(), "rejectEmailMapper");
+        }
+
+        private static <T> T checkNotNull(T t, String fieldName) {
+            if (t == null) {
+                String msg = String.format("'%s' must not be null", fieldName);
+                throw new IllegalArgumentException(msg);
+            }
+            return t;
         }
 
 
