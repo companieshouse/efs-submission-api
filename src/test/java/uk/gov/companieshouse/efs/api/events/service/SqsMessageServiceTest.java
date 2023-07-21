@@ -53,7 +53,8 @@ class SqsMessageServiceTest {
                                 null,
                                 null,
                                 Collections.singletonList(
-                                        new FileDetails("1234-5678-9012-3456", "out.txt", 5L, null, null, null, null)
+                                        new FileDetails("1234-5678-9012-3456", "out.txt", 5L, "Inc component",
+                                                null, null, null, null)
                                 )
                         )
                 ).build();
@@ -64,8 +65,8 @@ class SqsMessageServiceTest {
                                 null,
                                 null,
                                 Arrays.asList(
-                                        new FileDetails("1234-5678-9012-3457", "1.txt", 5L, null, null, null, null),
-                                        new FileDetails("1234-5678-9012-3458", "2.txt", 6L, null, null, null, null)
+                                        new FileDetails("1234-5678-9012-3457", "1.txt", 5L, "Inc component", null, null, null, null),
+                                        new FileDetails("1234-5678-9012-3458", "2.txt", 6L, "Inc component", null, null, null, null)
                                 )
                         )
                 ).build();

@@ -18,6 +18,9 @@ public class FileDetails {
     @Field("file_size")
     private Long fileSize;
 
+    @Field("incorporation_component")
+    private String incorporationComponent;
+
     @Field("converted_file_id")
     private String convertedFileId;
 
@@ -30,11 +33,13 @@ public class FileDetails {
     @Field("last_modified_at")
     private LocalDateTime lastModifiedAt;
 
-    public FileDetails(String fileId, String fileName, Long fileSize, String convertedFileId, FileConversionStatus conversionStatus,
-            Integer numberOfPages, LocalDateTime lastModifiedAt) {
+    public FileDetails(String fileId, String fileName, Long fileSize, String incorporationComponent,
+                       String convertedFileId, FileConversionStatus conversionStatus,
+                       Integer numberOfPages, LocalDateTime lastModifiedAt) {
         this.fileId = fileId;
         this.fileName = fileName;
         this.fileSize = fileSize;
+        this.incorporationComponent = incorporationComponent;
         this.convertedFileId = convertedFileId;
         this.conversionStatus = conversionStatus;
         this.numberOfPages = numberOfPages;
@@ -63,6 +68,14 @@ public class FileDetails {
 
     public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
+    }
+
+    public String getIncorporationComponent() {
+        return incorporationComponent;
+    }
+
+    public void setIncorporationComponent(String incorporationComponent) {
+        this.incorporationComponent = incorporationComponent;
     }
 
     public String getConvertedFileId() {
@@ -129,6 +142,7 @@ public class FileDetails {
         private String fileId;
         private String fileName;
         private Long fileSize;
+        private String incorporationComponent;
         private String convertedFileId;
         private FileConversionStatus conversionStatus;
         private Integer numberOfPages;
@@ -149,6 +163,10 @@ public class FileDetails {
             return this;
         }
 
+        public Builder withIncorporationComponent(String incorporationComponent) {
+            this.incorporationComponent = incorporationComponent;
+            return this;
+        }
         public Builder withConvertedFileId(String convertedFileId) {
             this.convertedFileId = convertedFileId;
             return this;
@@ -170,7 +188,7 @@ public class FileDetails {
         }
 
         public FileDetails build() {
-            return new FileDetails(fileId, fileName, fileSize, convertedFileId, conversionStatus, numberOfPages,
+            return new FileDetails(fileId, fileName, fileSize, incorporationComponent, convertedFileId, conversionStatus, numberOfPages,
                     lastModifiedAt);
         }
     }

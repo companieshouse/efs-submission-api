@@ -56,7 +56,7 @@ public class SubmissionApiMapper {
     private FileDetails mapFileDetails(final FileDetailApi details) {
         return Optional.ofNullable(details)
             .map(d -> new FileDetails(details.getFileId(), details.getFileName(),
-                details.getFileSize(), details.getConvertedFileId(), details.getConversionStatus(),
+                details.getFileSize(), details.getIncorporationComponent(), details.getConvertedFileId(), details.getConversionStatus(),
                 details.getNumberOfPages(), details.getLastModifiedAt()))
             .orElse(null);
     }

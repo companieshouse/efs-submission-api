@@ -122,6 +122,7 @@ class SubmissionMapperTest {
                                 .withFileId(FILE_ID)
                                 .withFileName(FILENAME)
                                 .withFileSize(FILE_SIZE)
+                                .withIncorporationComponent("Inc component")
                                 .withConvertedFileId(CONVERTED_FILE_ID)
                                 .withConversionStatus(FileConversionStatus.CONVERTED)
                                 .withLastModifiedAt(now)
@@ -138,7 +139,7 @@ class SubmissionMapperTest {
             new CompanyApi(COMPANY_NUMBER, COMPANY_NAME), SubmissionStatus.ACCEPTED, PAYMENT_SESSIONS,
             FEE_ON_SUBMISSION, CONFIRM_AUTHORISED, new SubmissionFormApi(BARCODE, FORM_TYPE, new FileDetailListApi(
             Collections.singletonList(
-                new FileDetailApi(FILE_ID, FILENAME, FILE_SIZE, CONVERTED_FILE_ID, FileConversionStatus.CONVERTED, null,
+                new FileDetailApi(FILE_ID, FILENAME, FILE_SIZE, "Inc component", CONVERTED_FILE_ID, FileConversionStatus.CONVERTED, null,
                     now)))), now, now, now, null);
     }
 
@@ -147,7 +148,7 @@ class SubmissionMapperTest {
             new CompanyApi(COMPANY_NUMBER, COMPANY_NAME), SubmissionStatus.ACCEPTED, PAYMENT_SESSIONS,
             FEE_ON_SUBMISSION, CONFIRM_AUTHORISED, new SubmissionFormApi(BARCODE, FORM_TYPE, new FileDetailListApi(
             Collections.singletonList(
-                new FileDetailApi(FILE_ID, FILENAME, FILE_SIZE, CONVERTED_FILE_ID, FileConversionStatus.CONVERTED, null,
+                new FileDetailApi(FILE_ID, FILENAME, FILE_SIZE, "Inc component", CONVERTED_FILE_ID, FileConversionStatus.CONVERTED, null,
                     now)))), now, now, now, Collections.singletonList(new RejectReasonApi(REJECT_REASON)));
     }
 }

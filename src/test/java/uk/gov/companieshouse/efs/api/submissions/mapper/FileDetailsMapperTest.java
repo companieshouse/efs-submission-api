@@ -59,6 +59,6 @@ class FileDetailsMapperTest {
     }
 
     private FileDetails expectedFileDetails(LocalDateTime now) {
-        return new FileDetails(FILE_ID, FILE_NAME, FILE_SIZE, null, FileConversionStatus.WAITING, null, now);
+        return new FileDetails(FILE_ID, FILE_NAME, FILE_SIZE, "Inc component", null, FileConversionStatus.WAITING, null, now);
     }
 }

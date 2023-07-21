@@ -51,6 +51,7 @@ public class SubmissionMapper {
                         fileDetails.getFileId(),
                         fileDetails.getFileName(),
                         fileDetails.getFileSize(),
+                        fileDetails.getIncorporationComponent(),
                         fileDetails.getConvertedFileId(),
                         fileDetails.getConversionStatus(),
                         fileDetails.getNumberOfPages(),

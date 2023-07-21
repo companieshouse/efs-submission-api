@@ -27,6 +27,7 @@ public class FileDetailsMapper {
                         fileDetailsApi.getFileId(),
                         fileDetailsApi.getFileName(),
                         fileDetailsApi.getFileSize(),
+                        fileDetailsApi.getIncorporationComponent(),
                         null,
                         FileConversionStatus.WAITING,
                         null,

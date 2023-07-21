@@ -53,7 +53,7 @@ class SubmissionApiMapperTest {
                 new CompanyApi("company number", "company name"), SubmissionStatus.OPEN, new SessionListApi(
                 Collections.singletonList(new SessionApi("session Id", "session state", "session Status"))),
                 "fee on submission", true, new SubmissionFormApi("barcode", "form type", new FileDetailListApi(
-                Collections.singletonList(new FileDetailApi("File id", "file name", 10000L, "converted file id",
+                Collections.singletonList(new FileDetailApi("File id", "file name", 10000L, "Inc component","converted file id",
                         FileConversionStatus.CONVERTED, 10, LOCAL_FIXED_NOW)))), LOCAL_FIXED_NOW, LOCAL_FIXED_NOW.plusMinutes(1),
                 LOCAL_FIXED_NOW.plusMinutes(2), Collections.singletonList(new RejectReasonApi("reason")));
 
