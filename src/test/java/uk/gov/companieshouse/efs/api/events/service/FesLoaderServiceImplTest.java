@@ -3,7 +3,7 @@ package uk.gov.companieshouse.efs.api.events.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,10 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.TransactionTimedOutException;
 import uk.gov.companieshouse.efs.api.events.service.exception.FesLoaderException;
-import uk.gov.companieshouse.efs.api.events.service.fesloader.BatchDao;
-import uk.gov.companieshouse.efs.api.events.service.fesloader.EnvelopeDao;
-import uk.gov.companieshouse.efs.api.events.service.fesloader.FormDao;
-import uk.gov.companieshouse.efs.api.events.service.fesloader.ImageDao;
+import uk.gov.companieshouse.efs.api.events.service.fesloader.*;
 import uk.gov.companieshouse.efs.api.events.service.model.FesFileModel;
 import uk.gov.companieshouse.efs.api.events.service.model.FesLoaderModel;
 import uk.gov.companieshouse.efs.api.events.service.model.FormModel;
@@ -53,6 +50,8 @@ class FesLoaderServiceImplTest {
 
     private static final long BATCH_ID = 321L;
 
+    private static final long FORM_ID = 320L;
+
     private FesLoaderServiceImpl fesLoaderService;
 
     @Mock
@@ -70,12 +69,18 @@ class FesLoaderServiceImplTest {
     @Mock
     private FormModel formModel;
 
+    @Mock
+    private AttachmentDao attachmentDao;
+
+    @Mock
+    private CoveringLetterDao coveringLetterDao;
+
     @Captor
     private ArgumentCaptor<FormModel> formModelCaptor;
 
     @BeforeEach
     void setup() {
-        this.fesLoaderService = new FesLoaderServiceImpl(batchDao, envelopeDao, dateGenerator, imageDao, formDao);
+        this.fesLoaderService = new FesLoaderServiceImpl(batchDao, envelopeDao, dateGenerator, imageDao, formDao,attachmentDao, coveringLetterDao);
     }
 
     @ParameterizedTest(name = "sameDayIndicator: {0}")
@@ -94,6 +99,7 @@ class FesLoaderServiceImplTest {
         when(envelopeDao.getNextEnvelopeId()).thenReturn(ENVELOPE_ID);
         when(model.getTiffFiles()).thenReturn(Collections.singletonList(myTiff));
         when(imageDao.getNextImageId()).thenReturn(IMAGE_ID);
+        when(formDao.getNextFormId()).thenReturn(FORM_ID);
         when(model.getBarcode()).thenReturn(BARCODE);
         when(model.getCompanyName()).thenReturn(COMPANY_NAME);
         when(model.getCompanyNumber()).thenReturn(COMPANY_NUMBER);
@@ -114,7 +120,7 @@ class FesLoaderServiceImplTest {
         verify(imageDao).getNextImageId();
         verify(imageDao).insertImage(IMAGE_ID, myTiff.getTiffFile());
 
-        verify(formDao).insertForm(formModelCaptor.capture());
+        verify(formDao).insertForm(anyLong(), formModelCaptor.capture());
         assertEquals(BARCODE, formModelCaptor.getValue().getBarcode());
         assertEquals(COMPANY_NAME, formModelCaptor.getValue().getCompanyName());
         assertEquals(COMPANY_NUMBER, formModelCaptor.getValue().getCompanyNumber());

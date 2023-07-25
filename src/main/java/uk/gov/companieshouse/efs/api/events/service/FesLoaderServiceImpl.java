@@ -11,10 +11,8 @@ import org.springframework.transaction.TransactionTimedOutException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 import uk.gov.companieshouse.efs.api.events.service.exception.FesLoaderException;
-import uk.gov.companieshouse.efs.api.events.service.fesloader.BatchDao;
-import uk.gov.companieshouse.efs.api.events.service.fesloader.EnvelopeDao;
-import uk.gov.companieshouse.efs.api.events.service.fesloader.FormDao;
-import uk.gov.companieshouse.efs.api.events.service.fesloader.ImageDao;
+import uk.gov.companieshouse.efs.api.events.service.fesloader.*;
+import uk.gov.companieshouse.efs.api.events.service.model.FesFileModel;
 import uk.gov.companieshouse.efs.api.events.service.model.FesLoaderModel;
 import uk.gov.companieshouse.efs.api.events.service.model.FormModel;
 import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
@@ -28,11 +26,16 @@ public class FesLoaderServiceImpl implements FesLoaderService {
     private static final String FES_INSERT_TIMER_TASK_NAME = "FES_INSERT_TRANSACTION";
     public static final String DURATION_FORMAT = "m'm':s's':S'ms'";
 
+    public static final String IN01_FORM = "IN01";
+
     private BatchDao batchDao;
     private EnvelopeDao envelopeDao;
     private ImageDao imageDao;
     private CurrentTimestampGenerator timestampGenerator;
     private FormDao formDao;
+    private AttachmentDao attachmentDao;
+    private CoveringLetterDao coveringLetterDao;
+
 
     /**
      * Constructor.
@@ -45,18 +48,27 @@ public class FesLoaderServiceImpl implements FesLoaderService {
      */
     @Autowired
     public FesLoaderServiceImpl(BatchDao batchDao, EnvelopeDao envelopeDao, CurrentTimestampGenerator timestampGenerator,
-                                ImageDao imageDao, FormDao formDao) {
+                                ImageDao imageDao, FormDao formDao, AttachmentDao attachmentDao, CoveringLetterDao coveringLetterDao) {
         this.batchDao = batchDao;
         this.envelopeDao = envelopeDao;
         this.timestampGenerator = timestampGenerator;
         this.imageDao = imageDao;
         this.formDao = formDao;
+        this.attachmentDao = attachmentDao;
+        this.coveringLetterDao = coveringLetterDao;
     }
 
     @Override
     @Transactional(value = "fesTransactionManager", label = {"FES", "EFS insert"},
             timeoutString = "${fes.datasource.transaction.timeout:10}")
     public void insertSubmission(FesLoaderModel model) {
+        long formImageId = 0;
+        long memArtsImageId = 0 ;
+        long suppNameAuthImageId = 0;
+        long coveringLetterImageId = 0;
+        long coveringLetterId = 0;
+        int formPageCount = 0;
+
         StopWatch timer = new StopWatch(getClass().getSimpleName());
 
         try {
@@ -65,11 +77,43 @@ public class FesLoaderServiceImpl implements FesLoaderService {
 
             long nextBatchId = insertBatchRecord();
             long envelopeId = insertEnvelopeRecord(nextBatchId);
+
             // image - batch ID (also used in form update)
-            model.getTiffFiles().forEach(file -> {
-                long imageId = insertImageRecord(file.getTiffFile());
-                insertFormRecord(model, envelopeId, imageId, file.getNumberOfPages());
-            });
+            for(FesFileModel file : model.getTiffFiles()) {
+                //TODO consider whether this should be a switch statement
+                //if memandarts exist store the image
+               if(file.getAttachmentType()!=null && file.getAttachmentType().equalsIgnoreCase("MEMARTS")) {
+                    memArtsImageId = insertImageRecord(file.getTiffFile());
+                } else if(file.getAttachmentType() !=null && file.getAttachmentType().equalsIgnoreCase("SUPPNAMEAUTH")) {
+                   //if supplementary evidence exists store the image
+                    suppNameAuthImageId = insertImageRecord(file.getTiffFile());
+                } else if(file.getAttachmentType()!= null && file.getAttachmentType().equalsIgnoreCase("COVLETTER")) {
+                   //if a covering letter has been included then store image and update database
+                    coveringLetterImageId = insertImageRecord(file.getTiffFile());
+                    coveringLetterId = insertCoveringLetter(envelopeId, coveringLetterImageId, file.getNumberOfPages());
+                } else {
+                   //otherwise this is the form itself which needs to be stored.
+                    formImageId = insertImageRecord(file.getTiffFile());
+                    formPageCount = file.getNumberOfPages();
+                }
+            }
+            if(formImageId > 0) {
+                long formId = insertFormRecord(model, envelopeId, formImageId, formPageCount, coveringLetterId);
+                if(memArtsImageId > 0){
+                    insertAttachment(formId,1L,memArtsImageId);
+                }
+                if(suppNameAuthImageId > 0) {
+                    insertAttachment(formId,2L, suppNameAuthImageId);
+                }
+            } else {
+                //throw an exception as something went really wrong
+            }
+
+                // image - batch ID (also used in form update)c
+//                model.getTiffFiles().forEach(file -> {
+//                    long imageId = insertImageRecord(file.getTiffFile());
+//                    insertFormRecord(model, envelopeId, imageId, file.getNumberOfPages());
+//                });
 
             timer.stop();
             final String timeToInsertAsString = DurationFormatUtils.formatDuration(
@@ -87,10 +131,28 @@ public class FesLoaderServiceImpl implements FesLoaderService {
         }
     }
 
-    private void insertFormRecord(FesLoaderModel model, long envelopeId, long imageId, Integer numberOfPages) {
+    private long insertFormRecord(FesLoaderModel model, long envelopeId, long imageId, Integer numberOfPages, long coveringLetterId) {
         //form
-        formDao.insertForm(mapToFormModel(model, envelopeId, imageId, numberOfPages));
+        long formId = formDao.getNextFormId();
+        LOGGER.debug("Form ID " + formId);
+        formDao.insertForm(formId,mapToFormModel(model, envelopeId, imageId, numberOfPages, coveringLetterId));
         LOGGER.debug("inserted form into DB");
+        return formId;
+    }
+
+    private void insertAttachment(long formId, long attachmentTypeId, long imageId) {
+        long attachmentId = attachmentDao.getNextAttachmentId();
+        LOGGER.debug("attachment ID " + attachmentId);
+        attachmentDao.insertAttachment(attachmentId, formId, attachmentTypeId, imageId);
+        LOGGER.debug("inserted attachment into DB");
+    }
+
+    private long insertCoveringLetter(long envelopeId, long imageId, int pageCount) {
+        long coveringLetterId = coveringLetterDao.getNextCoveringLetterId();
+        LOGGER.debug("coveringLetterID " + coveringLetterId);
+        coveringLetterDao.insertCoveringLetter(coveringLetterId, envelopeId, imageId, pageCount);
+        LOGGER.debug("inserted covering letter into DB");
+        return coveringLetterId;
     }
 
     private long insertImageRecord(byte[] file) {
@@ -125,12 +187,13 @@ public class FesLoaderServiceImpl implements FesLoaderService {
         return nextBatchId;
     }
 
-    private FormModel mapToFormModel(FesLoaderModel model, long envelopeId, long imageId, Integer numberOfPages) {
+    private FormModel mapToFormModel(FesLoaderModel model, long envelopeId, long imageId, Integer numberOfPages, long coveringLetterId) {
         return FormModel.builder()
                 .withBarcode(model.getBarcode())
                 .withCompanyName(model.getCompanyName())
                 .withCompanyNumber(model.getCompanyNumber())
                 .withFormType(model.getFormType())
+                .withCoveringLetterId(coveringLetterId)
                 .withImageId(imageId)
                 .withEnvelopeId(envelopeId)
                 .withFormStatus(1L)

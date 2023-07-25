@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.efs.api.events.service.fesloader;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 
 import java.sql.Timestamp;
@@ -25,8 +24,11 @@ class FormDaoTest {
     private static final String FORM_TYPE = "SH01";
     private static final long IMAGE_ID = 1L;
     private static final long ENVELOPE_ID = 2L;
+    private static final long COVERING_LETTER_ID = 3L;
     private static final long FORM_STATUS = 1L;
     private static final int NUMBER_OF_PAGES = 2;
+
+    private static final long FORM_ID = 8L;
 
     private FormDao formDao;
 
@@ -45,11 +47,11 @@ class FormDaoTest {
         LocalDateTime now = LocalDateTime.now();
 
         //when
-        this.formDao.insertForm(getFormModel(now, isSameDay));
+        this.formDao.insertForm(FORM_ID, getFormModel(now, isSameDay));
 
         //then
-        verify(jdbcTemplate).update(anyString(), eq(BARCODE), eq(COMPANY_NUMBER), eq(COMPANY_NAME),
-            eq(FORM_TYPE), eq(IMAGE_ID), eq(ENVELOPE_ID), eq(FORM_STATUS), eq(NUMBER_OF_PAGES),
+        verify(jdbcTemplate).update(anyString(), eq(FORM_ID), eq(BARCODE), eq(COMPANY_NUMBER), eq(COMPANY_NAME),
+            eq(FORM_TYPE), eq(COVERING_LETTER_ID), eq(IMAGE_ID), eq(ENVELOPE_ID), eq(FORM_STATUS), eq(NUMBER_OF_PAGES),
             eq(FORM_TYPE), eq(COMPANY_NAME), eq(COMPANY_NUMBER), eq(BARCODE),
             eq(Timestamp.valueOf(now)), eq(isSameDay ? "Y" : "N"));
     }
@@ -60,6 +62,7 @@ class FormDaoTest {
                 .withCompanyNumber(COMPANY_NUMBER)
                 .withCompanyName(COMPANY_NAME)
                 .withFormType(FORM_TYPE)
+                .withCoveringLetterId(COVERING_LETTER_ID)
                 .withImageId(IMAGE_ID)
                 .withEnvelopeId(ENVELOPE_ID)
                 .withFormStatus(FORM_STATUS)

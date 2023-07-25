@@ -13,6 +13,7 @@ public class FormModel {
     private String companyName;
     private String companyNumber;
     private String formType;
+    private Long coveringLetterId;
     private Long formId;
     private Long imageId;
     private Integer numberOfPages;
@@ -43,6 +44,8 @@ public class FormModel {
     public String getFormType() {
         return formType;
     }
+
+    public Long getCoveringLetterId() { return coveringLetterId;}
 
     public Long getFormId() {
         return formId;
@@ -104,6 +107,11 @@ public class FormModel {
             return this;
         }
 
+        public Builder withCoveringLetterId(Long coveringLetterId){
+            buildSteps.add(data -> data.coveringLetterId = coveringLetterId);
+            return this;
+        }
+
         public Builder withFormId(Long formId) {
             buildSteps.add(data -> data.formId = formId);
             return this;
@@ -144,29 +152,28 @@ public class FormModel {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final FormModel formModel = (FormModel) o;
-        return sameDayService == formModel.sameDayService && Objects.equals(getEnvelopeId(),
-            formModel.getEnvelopeId()) && Objects.equals(getBarcode(), formModel.getBarcode())
-            && Objects.equals(getCompanyName(), formModel.getCompanyName()) && Objects.equals(
-            getCompanyNumber(), formModel.getCompanyNumber()) && Objects.equals(getFormType(),
-            formModel.getFormType()) && Objects.equals(getFormId(), formModel.getFormId())
-            && Objects.equals(getImageId(), formModel.getImageId()) && Objects.equals(
-            getNumberOfPages(), formModel.getNumberOfPages()) && Objects.equals(getFormStatus(),
-            formModel.getFormStatus()) && Objects.equals(getBarcodeDate(),
-            formModel.getBarcodeDate());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FormModel formModel = (FormModel) o;
+        return sameDayService == formModel.sameDayService
+                && Objects.equals(getEnvelopeId(), formModel.getEnvelopeId())
+                && Objects.equals(getBarcode(), formModel.getBarcode())
+                && Objects.equals(getCompanyName(), formModel.getCompanyName())
+                && Objects.equals(getCompanyNumber(), formModel.getCompanyNumber())
+                && Objects.equals(getFormType(), formModel.getFormType())
+                && Objects.equals(getCoveringLetterId(), formModel.getCoveringLetterId())
+                && Objects.equals(getFormId(), formModel.getFormId())
+                && Objects.equals(getImageId(), formModel.getImageId())
+                && Objects.equals(getNumberOfPages(), formModel.getNumberOfPages())
+                && Objects.equals(getFormStatus(), formModel.getFormStatus())
+                && Objects.equals(getBarcodeDate(), formModel.getBarcodeDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getEnvelopeId(), getBarcode(), getCompanyName(), getCompanyNumber(),
-            getFormType(), getFormId(), getImageId(), getNumberOfPages(), getFormStatus(),
-            getBarcodeDate(), sameDayService);
+        return Objects.hash(getEnvelopeId(), getBarcode(), getCompanyName(), getCompanyNumber(), getFormType(),
+                getCoveringLetterId(), getFormId(), getImageId(), getNumberOfPages(), getFormStatus(),
+                getBarcodeDate(), sameDayService);
     }
 }

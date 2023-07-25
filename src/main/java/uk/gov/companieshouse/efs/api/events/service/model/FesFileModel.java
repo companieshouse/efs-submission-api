@@ -7,6 +7,15 @@ public class FesFileModel {
 
     private byte[] tiffFile;
     private Integer numberOfPages;
+    private String attachmentType;
+
+    public String getAttachmentType() {
+        return attachmentType;
+    }
+
+    public void setAttachmentType(String attachmentType) {
+        this.attachmentType = attachmentType;
+    }
 
     public FesFileModel(byte[] tiffFile, Integer numberOfPages) {
         this.tiffFile = tiffFile;
@@ -30,22 +39,17 @@ public class FesFileModel {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final FesFileModel that = (FesFileModel) o;
-        return Arrays.equals(getTiffFile(), that.getTiffFile()) && Objects
-            .equals(getNumberOfPages(), that.getNumberOfPages());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FesFileModel that = (FesFileModel) o;
+        return Arrays.equals(tiffFile, that.tiffFile) && Objects.equals(numberOfPages, that.numberOfPages) && Objects.equals(attachmentType, that.attachmentType);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getNumberOfPages());
-        result = 31 * result + Arrays.hashCode(getTiffFile());
+        int result = Objects.hash(numberOfPages, attachmentType);
+        result = 31 * result + Arrays.hashCode(tiffFile);
         return result;
     }
 }

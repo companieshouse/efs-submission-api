@@ -18,6 +18,7 @@ class FormModelTest {
     private static final Long FORM_ID = 3000L;
     private static final Long ENVELOPE_ID = 4000L;
     private static final Long IMAGE_ID = 5000L;
+    private static final Long COVERING_LETTER_ID = 2000L;
 
     private FormModel testModel;
 
@@ -26,6 +27,7 @@ class FormModelTest {
         testModel = FormModel.builder()
             .withFormId(FORM_ID)
             .withFormType("form")
+            .withCoveringLetterId(COVERING_LETTER_ID)
             .withFormStatus(FORM_STATUS)
             .withBarcode("barcode")
             .withBarcodeDate(BARCODE_DATE)
@@ -98,6 +100,8 @@ class FormModelTest {
         assertThat(FormModel.builder().build().getSameDayIndicator(), is("N"));
     }
 
+    @Test
+    void getCoveringLetterId() {assertThat(testModel.getCoveringLetterId(), is(COVERING_LETTER_ID));}
     @Test
     void testEqualsAndHashcode() {
         EqualsVerifier.forClass(FormModel.class)
