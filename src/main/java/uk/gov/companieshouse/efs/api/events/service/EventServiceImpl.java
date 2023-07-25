@@ -184,7 +184,7 @@ public class EventServiceImpl implements EventService {
                 submission.getFormDetails().getFileDetailsList().forEach(
                         file -> tiffFiles.add(
                                 new FesFileModel(
-                                        tiffDownloadService.downloadTiffFile(file.getConvertedFileId()), file.getNumberOfPages())));
+                                        tiffDownloadService.downloadTiffFile(file.getConvertedFileId()), file.getNumberOfPages(), file.getIncorporationComponent())));
                 LOGGER.debug(String.format("Retrieved [%d] files for submission [%s] from S3", tiffFiles.size(), submission.getId()));
 
                 // insert into FES DB

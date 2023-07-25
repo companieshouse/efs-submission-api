@@ -80,40 +80,39 @@ public class FesLoaderServiceImpl implements FesLoaderService {
 
             // image - batch ID (also used in form update)
             for(FesFileModel file : model.getTiffFiles()) {
-                //TODO consider whether this should be a switch statement
-                //if memandarts exist store the image
-               if(file.getAttachmentType()!=null && file.getAttachmentType().equalsIgnoreCase("MEMARTS")) {
+               if(file.getAttachmentType()!=null && file.getAttachmentType().equalsIgnoreCase("MemAndArts")) {
+                    LOGGER.debug("Trying to insert the Mem&Arts image into FES DB");
                     memArtsImageId = insertImageRecord(file.getTiffFile());
-                } else if(file.getAttachmentType() !=null && file.getAttachmentType().equalsIgnoreCase("SUPPNAMEAUTH")) {
-                   //if supplementary evidence exists store the image
+                } else if(file.getAttachmentType() !=null && file.getAttachmentType().equalsIgnoreCase("SuppEvidence")) {
+                    LOGGER.debug("Trying to insert the Supplementary Evidence image into FES DB");
                     suppNameAuthImageId = insertImageRecord(file.getTiffFile());
-                } else if(file.getAttachmentType()!= null && file.getAttachmentType().equalsIgnoreCase("COVLETTER")) {
-                   //if a covering letter has been included then store image and update database
+                } else if(file.getAttachmentType()!= null && file.getAttachmentType().equalsIgnoreCase("CoveringLetter")) {
+                   LOGGER.debug("Trying to insert the Covering Letter image into FES DB");
                     coveringLetterImageId = insertImageRecord(file.getTiffFile());
+                   LOGGER.debug("Trying to insert a new covering letter");
                     coveringLetterId = insertCoveringLetter(envelopeId, coveringLetterImageId, file.getNumberOfPages());
                 } else {
+                   LOGGER.debug("Trying to insert the Form image into the FES DB");
                    //otherwise this is the form itself which needs to be stored.
                     formImageId = insertImageRecord(file.getTiffFile());
                     formPageCount = file.getNumberOfPages();
                 }
             }
             if(formImageId > 0) {
+                LOGGER.debug("Trying to insert the new Form into the FES DB");
                 long formId = insertFormRecord(model, envelopeId, formImageId, formPageCount, coveringLetterId);
-                if(memArtsImageId > 0){
+                if(memArtsImageId > 0) {
+                    LOGGER.debug("If the mem&art exists for this form then insert into FES DB as an attachment");
                     insertAttachment(formId,1L,memArtsImageId);
                 }
                 if(suppNameAuthImageId > 0) {
+                    LOGGER.debug("If supplementary evidence exists for this form then insert into FES DB as an attachment");
                     insertAttachment(formId,2L, suppNameAuthImageId);
                 }
             } else {
                 //throw an exception as something went really wrong
+                throw new FesLoaderException("Error inserting submission - form does not exist");
             }
-
-                // image - batch ID (also used in form update)c
-//                model.getTiffFiles().forEach(file -> {
-//                    long imageId = insertImageRecord(file.getTiffFile());
-//                    insertFormRecord(model, envelopeId, imageId, file.getNumberOfPages());
-//                });
 
             timer.stop();
             final String timeToInsertAsString = DurationFormatUtils.formatDuration(

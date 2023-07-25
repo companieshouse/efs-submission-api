@@ -22,6 +22,11 @@ public class FesFileModel {
         this.numberOfPages = numberOfPages;
     }
 
+    public FesFileModel(byte[] tiffFile, Integer numberOfPages, String attachmentType){
+       this(tiffFile, numberOfPages);
+       this.attachmentType = attachmentType;
+    }
+
     public byte[] getTiffFile() {
         return tiffFile;
     }
