@@ -26,8 +26,6 @@ public class FesLoaderServiceImpl implements FesLoaderService {
     private static final String FES_INSERT_TIMER_TASK_NAME = "FES_INSERT_TRANSACTION";
     public static final String DURATION_FORMAT = "m'm':s's':S'ms'";
 
-    public static final String IN01_FORM = "IN01";
-
     private BatchDao batchDao;
     private EnvelopeDao envelopeDao;
     private ImageDao imageDao;
@@ -98,8 +96,8 @@ public class FesLoaderServiceImpl implements FesLoaderService {
                     formPageCount = file.getNumberOfPages();
                 }
             }
-            if(formImageId > 0) {
-                LOGGER.debug("Trying to insert the new Form into the FES DB");
+            if(formImageId > 0 ) {
+                LOGGER.debug(String.format("Inserting record into FORM table for submission with barcode [%s]", model.getBarcode()));
                 long formId = insertFormRecord(model, envelopeId, formImageId, formPageCount, coveringLetterId);
                 if(memArtsImageId > 0) {
                     LOGGER.debug("If the mem&art exists for this form then insert into FES DB as an attachment");
@@ -133,8 +131,15 @@ public class FesLoaderServiceImpl implements FesLoaderService {
     private long insertFormRecord(FesLoaderModel model, long envelopeId, long imageId, Integer numberOfPages, long coveringLetterId) {
         //form
         long formId = formDao.getNextFormId();
+        FormModel formModel = mapToFormModel(model, envelopeId, imageId, numberOfPages, coveringLetterId);
+
         LOGGER.debug("Form ID " + formId);
-        formDao.insertForm(formId,mapToFormModel(model, envelopeId, imageId, numberOfPages, coveringLetterId));
+        if(coveringLetterId > 0) {
+            formDao.insertFormWithCoveringLetter(formId, formModel);
+        } else {
+            formDao.insertForm(formId, formModel);
+        }
+
         LOGGER.debug("inserted form into DB");
         return formId;
     }

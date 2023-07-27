@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -51,9 +50,25 @@ class FormDaoTest {
 
         //then
         verify(jdbcTemplate).update(anyString(), eq(FORM_ID), eq(BARCODE), eq(COMPANY_NUMBER), eq(COMPANY_NAME),
-            eq(FORM_TYPE), eq(COVERING_LETTER_ID), eq(IMAGE_ID), eq(ENVELOPE_ID), eq(FORM_STATUS), eq(NUMBER_OF_PAGES),
+            eq(FORM_TYPE), eq(IMAGE_ID), eq(ENVELOPE_ID), eq(FORM_STATUS), eq(NUMBER_OF_PAGES),
             eq(FORM_TYPE), eq(COMPANY_NAME), eq(COMPANY_NUMBER), eq(BARCODE),
             eq(Timestamp.valueOf(now)), eq(isSameDay ? "Y" : "N"));
+    }
+
+    @ParameterizedTest(name = "isSameDay: {0}")
+    @ValueSource(booleans = {false, true})
+    void testFormDaoInsertsNewFormWithCoveringLetterWhen(final boolean isSameDay) {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+
+        //when
+        this.formDao.insertFormWithCoveringLetter(FORM_ID, getFormModel(now, isSameDay));
+
+        //then
+        verify(jdbcTemplate).update(anyString(), eq(FORM_ID), eq(BARCODE), eq(COMPANY_NUMBER), eq(COMPANY_NAME),
+                eq(FORM_TYPE), eq(COVERING_LETTER_ID), eq(IMAGE_ID), eq(ENVELOPE_ID), eq(FORM_STATUS), eq(NUMBER_OF_PAGES),
+                eq(FORM_TYPE), eq(COMPANY_NAME), eq(COMPANY_NUMBER), eq(BARCODE),
+                eq(Timestamp.valueOf(now)), eq(isSameDay ? "Y" : "N"));
     }
 
     private FormModel getFormModel(LocalDateTime now, final boolean isSameDay) {
