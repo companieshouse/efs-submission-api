@@ -1,12 +1,23 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -186,6 +197,47 @@ public class EventServiceImpl implements EventService {
                                 new FesFileModel(
                                         tiffDownloadService.downloadTiffFile(file.getConvertedFileId()), file.getNumberOfPages(), file.getIncorporationComponent())));
                 LOGGER.debug(String.format("Retrieved [%d] files for submission [%s] from S3", tiffFiles.size(), submission.getId()));
+
+                // create map that identifies the file types and then proceed if 'IN01cont' present
+                HashMap<String, byte[]> identifyAttachmentType = new HashMap<>();
+                for (FesFileModel file : tiffFiles) {
+                    identifyAttachmentType.put(file.getAttachmentType(),file.getTiffFile());
+                }
+
+                if (identifyAttachmentType.get("IN01cont") != null) {
+                    ByteArrayOutputStream mergedByteArrayStream = new ByteArrayOutputStream();
+                    try {
+                        BufferedImage in01Image = ImageIO.read(new ByteArrayInputStream(identifyAttachmentType.get("IN01")));
+                        BufferedImage in01contImage = ImageIO.read(new ByteArrayInputStream(identifyAttachmentType.get("IN01cont")));
+                        List<BufferedImage> imagesToMerge = new ArrayList<>(Arrays.asList(in01Image, in01contImage));
+
+                        // TIFF writer
+                        ImageWriter writer = ImageIO.getImageWritersByFormatName("TIFF").next();
+                        try (ImageOutputStream output = ImageIO.createImageOutputStream(mergedByteArrayStream)) {
+                            writer.setOutput(output);
+                            ImageWriteParam params = writer.getDefaultWriteParam();
+                            params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                            params.setCompressionType("Deflate");
+                            writer.prepareWriteSequence(null);
+
+                            // ready to do the merging..
+                            for (BufferedImage image : imagesToMerge) {
+                                writer.writeToSequence(new IIOImage(image, null, null), params);
+                            }
+                            writer.endWriteSequence();
+                        }
+                        writer.dispose();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    // finally overwrite the IN01 file with the merged data
+                    for (FesFileModel file : tiffFiles) {
+                        if (StringUtils.equals("IN01", file.getAttachmentType())) {
+                            file.setTiffFile(mergedByteArrayStream.toByteArray());
+                        }
+                    }
+                }
 
                 // insert into FES DB
 
