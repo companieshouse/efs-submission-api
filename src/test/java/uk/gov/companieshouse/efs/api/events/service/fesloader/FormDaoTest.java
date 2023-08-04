@@ -65,7 +65,7 @@ class FormDaoTest {
         this.formDao.insertFormWithCoveringLetter(FORM_ID, getFormModel(now, isSameDay));
 
         //then
-        verify(jdbcTemplate).update(anyString(), eq(FORM_ID), eq(BARCODE), eq(COMPANY_NUMBER), eq(COMPANY_NAME),
+        verify(jdbcTemplate).update(anyString(), eq(FORM_ID), eq(BARCODE), eq(COMPANY_NAME),
                 eq(FORM_TYPE), eq(COVERING_LETTER_ID), eq(IMAGE_ID), eq(ENVELOPE_ID), eq(FORM_STATUS), eq(NUMBER_OF_PAGES),
                 eq(FORM_TYPE), eq(COMPANY_NAME), eq(COMPANY_NUMBER), eq(BARCODE),
                 eq(Timestamp.valueOf(now)), eq(isSameDay ? "Y" : "N"));
