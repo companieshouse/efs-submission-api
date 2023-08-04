@@ -136,6 +136,8 @@ public class FesLoaderServiceImpl implements FesLoaderService {
         LOGGER.debug("Form ID " + formId);
         if(coveringLetterId > 0) {
             formDao.insertFormWithCoveringLetter(formId, formModel);
+        } else if(model.getFormType().equalsIgnoreCase("IN01")) {
+            formDao.insertIncorporationForm(formId, formModel);
         } else {
             formDao.insertForm(formId, formModel);
         }
