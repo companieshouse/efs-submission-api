@@ -129,19 +129,19 @@ public class FesLoaderServiceImpl implements FesLoaderService {
     }
 
     private long insertFormRecord(FesLoaderModel model, long envelopeId, long imageId, Integer numberOfPages, long coveringLetterId) {
-        //form
         long formId = formDao.getNextFormId();
         FormModel formModel = mapToFormModel(model, envelopeId, imageId, numberOfPages, coveringLetterId);
-
         LOGGER.debug("Form ID " + formId);
-        if(coveringLetterId > 0) {
-            formDao.insertFormWithCoveringLetter(formId, formModel);
-        } else if(model.getFormType().equalsIgnoreCase("IN01")) {
-            formDao.insertIncorporationForm(formId, formModel);
+
+        if(model.getFormType().equalsIgnoreCase("IN01")) {
+            if(coveringLetterId > 0) {
+                formDao.insertFormWithCoveringLetter(formId, formModel);
+            } else {
+                formDao.insertIncorporationForm(formId, formModel);
+            }
         } else {
             formDao.insertForm(formId, formModel);
         }
-
         LOGGER.debug("inserted form into DB");
         return formId;
     }

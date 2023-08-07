@@ -21,8 +21,10 @@ public class FormDao {
     }
     public void insertFormWithCoveringLetter(long formId, FormModel model) {
         this.jdbc.update(
-            "INSERT INTO form(FORM_ID, FORM_BARCODE, FORM_CORPORATE_BODY_NAME, FORM_TYPE, FORM_COVERING_LETTER_ID, FORM_IMAGE_ID, FORM_ENVELOPE_ID, FORM_STATUS, FORM_PAGE_COUNT, FORM_OCR_FORM_TYPE, FORM_OCR_CORPORATE_BODY_NAME, FORM_OCR_INCORPORATION_NUMBER, FORM_OCR_BARCODE_1, FORM_BARCODE_DATE, FORM_SAME_DAY) "
-            + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO form(FORM_ID, FORM_BARCODE, FORM_CORPORATE_BODY_NAME, FORM_TYPE, FORM_COVERING_LETTER_ID, " +
+                    "FORM_IMAGE_ID, FORM_ENVELOPE_ID, FORM_STATUS, FORM_PAGE_COUNT, FORM_OCR_FORM_TYPE, " +
+                    "FORM_OCR_CORPORATE_BODY_NAME, FORM_OCR_INCORPORATION_NUMBER, FORM_OCR_BARCODE_1, FORM_BARCODE_DATE, FORM_SAME_DAY) "
+            + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             formId, model.getBarcode(), model.getCompanyName(),
             model.getFormType(), model.getCoveringLetterId(), model.getImageId(), model.getEnvelopeId(), model.getFormStatus(),
             model.getNumberOfPages(), model.getFormType(), model.getCompanyName(),
@@ -44,7 +46,7 @@ public class FormDao {
     public void insertIncorporationForm(long formId, FormModel model) {
         this.jdbc.update(
                 "INSERT INTO form(FORM_ID, FORM_BARCODE, FORM_CORPORATE_BODY_NAME, FORM_TYPE, FORM_IMAGE_ID, FORM_ENVELOPE_ID, FORM_STATUS, FORM_PAGE_COUNT, FORM_OCR_FORM_TYPE, FORM_OCR_CORPORATE_BODY_NAME, FORM_OCR_INCORPORATION_NUMBER, FORM_OCR_BARCODE_1, FORM_BARCODE_DATE, FORM_SAME_DAY) "
-                        + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 formId, model.getBarcode(), model.getCompanyName(),
                 model.getFormType(), model.getImageId(), model.getEnvelopeId(), model.getFormStatus(),
                 model.getNumberOfPages(), model.getFormType(), model.getCompanyName(),
