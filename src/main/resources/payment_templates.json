@@ -17,7 +17,7 @@
         "class_of_payment": [
           "data-maintenance"
         ],
-        "description": "Upload a document to Companies House: SLPCS01",
+        "description": "Upload a document to Companies House: SLPCS01 at midnight",
         "description_identifier": "EFS_SLPCS01",
         "kind": "cost#cost",
         "product_type": "efs-slpcs01"
@@ -32,11 +32,37 @@
         "$date":"2019-01-08T00:00:01.000Z"
       }
     },
-    "description": "Upload form SLPCS01",
+    "description": "Upload form SLPCS01 after midnight",
     "etag": "50ad23b174375c0e3343f9601b6128bb92ed079e",
     "items": [
       {
         "amount": "57",
+        "available_payment_methods": [
+          "credit-card"
+        ],
+        "class_of_payment": [
+          "data-maintenance"
+        ],
+        "description": "Upload a document to Companies House: SLPCS01",
+        "description_identifier": "EFS_SLPCS01",
+        "kind": "cost#cost",
+        "product_type": "efs-slpcs01"
+      }
+    ],
+    "kind": "EFS"
+  },
+  {
+    "_id": {
+      "fee": "SLPCS01",
+      "start_timestamp_utc": {
+        "$date":"2019-01-07T23:59:59.000Z"
+      }
+    },
+    "description": "Upload form SLPCS01 before midnight",
+    "etag": "50ad23b174375c0e3343f9601b6128bb92ed079e",
+    "items": [
+      {
+        "amount": "7",
         "available_payment_methods": [
           "credit-card"
         ],

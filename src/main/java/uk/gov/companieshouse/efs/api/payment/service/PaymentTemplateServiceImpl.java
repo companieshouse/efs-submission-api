@@ -30,7 +30,7 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     //TODO
     @Override
     public Optional<PaymentTemplate> getTemplate(final String fee, final Instant chargedAt) {
-        return repository.findFirstById_FeeOrderById_StartTimestampUtcDesc(fee);
+        return repository.findFirstById_FeeAndId_StartTimestampUtcLessThanEqualOrderById_StartTimestampUtcDesc(fee, chargedAt);
 
     }
 
