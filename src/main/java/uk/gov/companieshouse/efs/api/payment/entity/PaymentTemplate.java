@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.persistence.EmbeddedId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
@@ -248,6 +249,10 @@ public final class PaymentTemplate {
          */
         public static final class Builder {
             private String amount;
+            @JsonProperty("start_timestamp_utc")
+            private String startTimestampUtc;
+            @JsonProperty("end_timestamp_utc")
+            private String endTimestampUtc;
             @JsonProperty("available_payment_methods")
             private List<String> availablePaymentMethods;
             @JsonProperty("class_of_payment")
@@ -270,6 +275,28 @@ public final class PaymentTemplate {
              */
             public Builder withAmount(final String val) {
                 amount = val;
+                return this;
+            }
+
+            /**
+             * set the startTimestampUtc on the {@code PaymentTemplate}
+             *
+             * @param val the amount
+             * @return builder with the amount set to specified value
+             */
+            public Builder withStartTimestampUtc(final String val){
+                startTimestampUtc = val;
+                return this;
+            }
+
+            /**
+             * set the endTimestampUtc on the {@code PaymentTemplate}
+             *
+             * @param val the amount
+             * @return builder with the amount set to specified value
+             */
+            public Builder withEndTimestampUtc(final String val){
+                endTimestampUtc = val;
                 return this;
             }
 
@@ -443,9 +470,8 @@ public final class PaymentTemplate {
         }
     }
 
-    @Id
-    private String id;
-
+    @EmbeddedId
+    private PaymentTemplateId id;
     @Field
     private String description;
     @Field
@@ -465,11 +491,11 @@ public final class PaymentTemplate {
     @Transient // not an entity field; for use by PaymentController.getPaymentDetails() response
     private String companyNumber;
 
-    public String getId() {
+    public PaymentTemplateId getId() {
         return id;
     }
 
-    public void setId(final String id) {
+    public void setId(final PaymentTemplateId id) {
         this.id = id;
     }
 
@@ -577,7 +603,7 @@ public final class PaymentTemplate {
      * {@code PaymentTemplate} static builder class
      */
     public static final class Builder {
-        private String id;
+        private PaymentTemplateId id;
         private String description;
         private String etag;
         @JsonProperty("items")
@@ -599,7 +625,7 @@ public final class PaymentTemplate {
          * @param val the id
          * @return builder with the id set to specified value
          */
-        public Builder withId(final String val) {
+        public Builder withId(final PaymentTemplateId val) {
             id = val;
             return this;
         }

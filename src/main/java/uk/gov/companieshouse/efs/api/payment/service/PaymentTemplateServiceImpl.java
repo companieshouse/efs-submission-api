@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.efs.api.payment.service;
 
+import java.time.Instant;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -14,7 +15,7 @@ import uk.gov.companieshouse.efs.api.payment.repository.PaymentTemplateRepositor
 @Service
 @Import(Config.class)
 public class PaymentTemplateServiceImpl implements PaymentTemplateService {
-    private PaymentTemplateRepository repository;
+    private final PaymentTemplateRepository repository;
 
     /**
      * PaymentTemplateService constructor
@@ -26,13 +27,17 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
         this.repository = repository;
     }
 
+    //TODO
     @Override
-    public Optional<PaymentTemplate> getTemplate(final String id) {
-        return repository.findById(id);
+    public Optional<PaymentTemplate> getTemplate(final String fee, final Instant chargedAt) {
+        return repository.findFirstById_FeeOrderById_StartTimestampUtcDesc(fee);
+
     }
+
 
     @Override
     public void putTemplate(final PaymentTemplate template) {
         repository.save(template);
     }
+
 }
