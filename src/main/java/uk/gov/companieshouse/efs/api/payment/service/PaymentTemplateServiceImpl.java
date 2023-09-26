@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.efs.api.payment.service;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -28,8 +28,9 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     }
 
     @Override
-    public Optional<PaymentTemplate> getTemplate(final String fee, final Instant chargedAt) {
-        return repository.findFirstById_FeeAndId_StartTimestampLessThanEqualOrderById_StartTimestampDesc(fee, chargedAt);
+    public Optional<PaymentTemplate> getTemplate(final String fee, final LocalDateTime activeAt) {
+        return repository.findFirstById_FeeAndId_StartTimestampLessThanEqualOrderById_StartTimestampDesc(fee,
+            activeAt);
 
     }
 

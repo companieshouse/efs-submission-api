@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +18,7 @@ class PaymentTemplateIdTest {
 
     private PaymentTemplateId testPaymentTemplateId;
     private static final String FEE = "Fee Template ID";
-    private static final Instant TIMESTAMP = Instant.parse("2019-01-08T00:00:00.000Z");
+    private static final LocalDateTime TIMESTAMP = LocalDateTime.parse("2019-01-08T00:00:01");
 
     @BeforeEach
     void setUp() {
@@ -49,7 +50,7 @@ class PaymentTemplateIdTest {
                 //@formatter:off
                 is("PaymentTemplateId["
                         + "fee=Fee Template ID,"
-                        + "startTimestamp=2019-01-08T00:00:00Z"
+                        + "startTimestamp=2019-01-08T00:00:01"
                         + "]"));
                 //@formatter:off
     }

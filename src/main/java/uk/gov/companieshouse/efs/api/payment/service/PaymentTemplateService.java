@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.efs.api.payment.service;
 
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
 
@@ -11,12 +11,13 @@ import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
 public interface PaymentTemplateService {
 
     /**
-     * Retrieve the template for the specified id
+     * Retrieve the template for the specified id active at the specified date/time
      *
-     * @param fee the payment template id
+     * @param fee the payment template id of the template
+     * @param activeAt the local date/time for which the template must be active
      * @return the payment template
      */
-    default Optional<PaymentTemplate> getTemplate(String fee, Instant chargedAt) {
+    default Optional<PaymentTemplate> getTemplate(String fee, LocalDateTime activeAt) {
         throw new UnsupportedOperationException("not implemented");
     }
 

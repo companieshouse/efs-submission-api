@@ -12,9 +12,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.Clock;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -60,13 +59,9 @@ class PaymentControllerTest {
     public static final String CHARGED = "CHARGED";
     public static final String CHARGES = "CHARGES";
     public static final String UNKNOWN = "UNKNOWN";
-    private static final Instant START_TIMESTAMP_WINTER = Instant.parse("2019-01-08T00:00:00.000");
-    private static final Instant START_TIMESTAMP_SUMMER = Instant.parse("2019-07-08T00:00:00.000");
+    private static final LocalDateTime START_TIMESTAMP = LocalDateTime.parse("2019-01-08T00:00:00");
     public static final PaymentTemplateId CHARGED_TEMPLATE_ID = new PaymentTemplateId(CHARGED,
-            START_TIMESTAMP_WINTER);
-    private static final Clock CLOCK_FIXED_UTC = Clock.fixed(START_TIMESTAMP_WINTER, ZoneId.of("UTC"));
-    private static final ZonedDateTime TIME_BST = ZonedDateTime.ofInstant(START_TIMESTAMP_SUMMER, ZoneId.of("Europe/London"));
-    private static final Clock CLOCK_FIXED_BST = Clock.fixed(START_TIMESTAMP_SUMMER, ZoneId.of(""));
+        START_TIMESTAMP);
 
     @Mock
 
@@ -124,7 +119,7 @@ class PaymentControllerTest {
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP_WINTER)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
         when(request.getRequestURL()).thenReturn(
             new StringBuffer(PAYMENT_REQUEST_URL).append("/").append(SUB_ID).append("/"));
 
@@ -265,7 +260,7 @@ class PaymentControllerTest {
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(UNKNOWN, START_TIMESTAMP_WINTER)).thenReturn(Optional.empty());
+        when(paymentTemplateService.getTemplate(UNKNOWN, START_TIMESTAMP)).thenReturn(Optional.empty());
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -284,7 +279,7 @@ class PaymentControllerTest {
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP_WINTER)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
         when(request.getRequestURL()).thenReturn(new StringBuffer("http://localhost:9999/efs-submission-api/submission{"));
 
         //when
@@ -305,7 +300,7 @@ class PaymentControllerTest {
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP_WINTER)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -328,7 +323,7 @@ class PaymentControllerTest {
 
         when(service.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP_WINTER)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);

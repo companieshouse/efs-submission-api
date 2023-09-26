@@ -3,7 +3,7 @@ package uk.gov.companieshouse.efs.api.payment.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import javax.persistence.Embeddable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -17,12 +17,12 @@ public final class PaymentTemplateId implements Serializable {
     private String fee;
     @Field("start_timestamp")
     @JsonProperty("start_timestamp")
-    private Instant startTimestamp;
+    private LocalDateTime startTimestamp;
 
     public PaymentTemplateId() {
     }
 
-    public PaymentTemplateId(final String fee, final Instant startTimestamp) {
+    public PaymentTemplateId(final String fee, final LocalDateTime startTimestamp) {
         this.fee = fee;
         this.startTimestamp = startTimestamp;
     }
@@ -31,7 +31,7 @@ public final class PaymentTemplateId implements Serializable {
         return fee;
     }
 
-    public Instant getStartTimestamp() {
+    public LocalDateTime getStartTimestamp() {
         return startTimestamp;
     }
 

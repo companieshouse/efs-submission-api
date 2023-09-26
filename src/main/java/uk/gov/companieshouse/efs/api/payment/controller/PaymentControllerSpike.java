@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.payment.controller;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,7 +24,7 @@ import uk.gov.companieshouse.logging.Logger;
 @RequestMapping(value = "/efs-submission-api/payment-templates", produces = {"application/json"})
 
 public class PaymentControllerSpike {
-    private static final Instant CHARGE_TIMESTAMP = Instant.parse("2019-01-08T00:00:00.000Z");
+    private static final LocalDateTime CHARGE_TIMESTAMP = LocalDateTime.parse("2019-01-08T00:00:00");
     private final Logger logger;
     private final PaymentTemplateService paymentTemplateService;
 
@@ -73,7 +74,7 @@ public class PaymentControllerSpike {
     public ResponseEntity<Void> createTestPaymentTemplate() {
 
         PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder()
-                .withId(new PaymentTemplateId("TEST", Instant.now()))
+                .withId(new PaymentTemplateId("TEST", LocalDateTime.now()))
                 .withDescription("Testing")
                 .build();
 
