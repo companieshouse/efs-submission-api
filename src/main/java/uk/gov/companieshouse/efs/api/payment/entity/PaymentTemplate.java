@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import javax.persistence.EmbeddedId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -232,6 +231,7 @@ public final class PaymentTemplate {
         @Override
         public String toString() {
             return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                    //TODO - add id
                 .append("amount", amount).append("availablePaymentMethods", availablePaymentMethods)
                 .append("classOfPayment", classOfPayment).append("description", description)
                 .append("descriptionId", descriptionId).append("kind", kind)
@@ -249,10 +249,6 @@ public final class PaymentTemplate {
          */
         public static final class Builder {
             private String amount;
-            @JsonProperty("start_timestamp_utc")
-            private String startTimestampUtc;
-            @JsonProperty("end_timestamp_utc")
-            private String endTimestampUtc;
             @JsonProperty("available_payment_methods")
             private List<String> availablePaymentMethods;
             @JsonProperty("class_of_payment")
@@ -275,28 +271,6 @@ public final class PaymentTemplate {
              */
             public Builder withAmount(final String val) {
                 amount = val;
-                return this;
-            }
-
-            /**
-             * set the startTimestampUtc on the {@code PaymentTemplate}
-             *
-             * @param val the amount
-             * @return builder with the amount set to specified value
-             */
-            public Builder withStartTimestampUtc(final String val){
-                startTimestampUtc = val;
-                return this;
-            }
-
-            /**
-             * set the endTimestampUtc on the {@code PaymentTemplate}
-             *
-             * @param val the amount
-             * @return builder with the amount set to specified value
-             */
-            public Builder withEndTimestampUtc(final String val){
-                endTimestampUtc = val;
                 return this;
             }
 
@@ -573,22 +547,16 @@ public final class PaymentTemplate {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof PaymentTemplate)) {
             return false;
         }
         final PaymentTemplate that = (PaymentTemplate) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getDescription(), that.getDescription())
-            && Objects.equals(getEtag(), that.getEtag()) && Objects.equals(getItems(), that.getItems()) && Objects
-            .equals(getKind(), that.getKind()) && Objects.equals(getLinks(), that.getLinks()) && Objects
-            .equals(getPaymentReference(), that.getPaymentReference()) && getStatus() == that.getStatus() && Objects
-            .equals(getCompanyNumber(), that.getCompanyNumber());
+        return com.google.common.base.Objects.equal(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects
-            .hash(getId(), getDescription(), getEtag(), getItems(), getKind(), getLinks(), getPaymentReference(),
-                getStatus(), getCompanyNumber());
+        return com.google.common.base.Objects.hashCode(getId());
     }
 
     @Override

@@ -20,13 +20,14 @@ import java.util.Collections;
 import java.util.List;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class PaymentTemplateTest {
     private static final String COMPANY_NUMBER = "00000000";
     public static final PaymentTemplateId TEMPLATE_ID =
-            new PaymentTemplateId("539045987ba7870fe", Instant.parse("2019-01-08T00:00:00.000Z"));
+            new PaymentTemplateId("SLPCS01 Test", Instant.parse("2019-01-08T00:00:00.000Z"));
 
     private PaymentTemplate testDetails;
     private PaymentTemplate.Item item;
@@ -44,7 +45,8 @@ public class PaymentTemplateTest {
         links = new PaymentTemplate.Links("http://resource.url", new URL("http://self.url"));
         testDetails = PaymentTemplate.newBuilder().withId(TEMPLATE_ID)
             .withDescription("Upload a form to Companies house")
-            .withEtag("d8a936fc59fd43ba6c66363c25684be1964ea03d").withItem(item).withKind("cost#cost")
+            .withEtag("d8a936fc59fd43ba6c66363c25684be1964ea03d").withItem(item).withKind("cost"
+                        + "#cost")
             .withLinks(links)
             .withPaymentReference("Test Charge")
             .withStatus(PaymentTemplate.Status.PENDING)
@@ -66,7 +68,6 @@ public class PaymentTemplateTest {
         testDetails.setId(TEMPLATE_ID);
 
         assertThat(testDetails.getId(), is(TEMPLATE_ID));
-        //assertThat();
     }
 
     @Test
@@ -111,6 +112,13 @@ public class PaymentTemplateTest {
     }
 
     @Test
+    void buildWithItemsWhenNull() {
+        testDetails = PaymentTemplate.newBuilder().withItems(null).build();
+
+        assertThat(testDetails.getItems(), is(Matchers.nullValue()));
+    }
+
+    @Test
     void setKind() {
         testDetails.setKind("kind");
 
@@ -119,7 +127,8 @@ public class PaymentTemplateTest {
 
     @Test
     void setLinks() throws MalformedURLException {
-        final PaymentTemplate.Links expected = new PaymentTemplate.Links("resource", new URL("http://self"));
+        final PaymentTemplate.Links expected = new PaymentTemplate.Links("resource", new URL(
+                "http://self"));
 
         testDetails.setLinks(expected);
 
@@ -142,38 +151,39 @@ public class PaymentTemplateTest {
 
     @Test
     void equalsAndHashcode() {
-        //FIXME
-//        EqualsVerifier.forClass(PaymentTemplate.class).usingGetClass()
-//            .suppress(Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(PaymentTemplate.class)
+                .usingGetClass()
+                .suppress(Warning.NONFINAL_FIELDS)
+                .suppress(Warning.SURROGATE_KEY)
+                .verify();
     }
 
     @Test
     void toStringTest() {
-        //FIXME
-//        assertThat(testDetails.toString(),
-//            //@formatter:off
-//            is("PaymentTemplate["
-//                + "id=efs-test,"
-//                + "description=Upload a form to Companies house,"
-//                + "etag=d8a936fc59fd43ba6c66363c25684be1964ea03d,"
-//                + "items=["
-//                +   "PaymentTemplate.Item["
-//                +     "amount=100,"
-//                +     "availablePaymentMethods=[credit-card],"
-//                +     "classOfPayment=[data-maintenance],"
-//                +     "description=Upload a form to Companies House,"
-//                +     "descriptionId=AMOUNT_TO_PAY,"
-//                +     "kind=cost#cost,"
-//                +     "productType=efs-test"
-//                +   "]"
-//                + "],"
-//                + "kind=cost#cost,"
-//                + "links=PaymentTemplate.Links[resource=http://resource.url,"
-//                + "self=http://self.url],"
-//                + "paymentReference=Test Charge,"
-//                + "status=pending,"
-//                + "companyNumber=00000000"
-//                + "]"));
+        assertThat(testDetails.toString(),
+                //@formatter:off
+            is("PaymentTemplate["
+                + "id=PaymentTemplateId[fee=SLPCS01 Test,startTimestamp=2019-01-08T00:00:00Z],"
+                + "description=Upload a form to Companies house,"
+                + "etag=d8a936fc59fd43ba6c66363c25684be1964ea03d,"
+                + "items=["
+                +   "PaymentTemplate.Item["
+                +     "amount=100,"
+                +     "availablePaymentMethods=[credit-card],"
+                +     "classOfPayment=[data-maintenance],"
+                +     "description=Upload a form to Companies House,"
+                +     "descriptionId=AMOUNT_TO_PAY,"
+                +     "kind=cost#cost,"
+                +     "productType=efs-test"
+                +   "]"
+                + "],"
+                + "kind=cost#cost,"
+                + "links=PaymentTemplate.Links[resource=http://resource.url,"
+                + "self=http://self.url],"
+                + "paymentReference=Test Charge,"
+                + "status=pending,"
+                + "companyNumber=00000000"
+                + "]"));
             //@formatter:off
     }
 

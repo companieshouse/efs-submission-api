@@ -2,7 +2,7 @@
   {
     "_id": {
       "fee": "SLPCS01",
-      "start_timestamp_utc": {
+      "start_timestamp": {
         "$date":"2019-01-08T00:00:00.000Z"
       }
     },
@@ -28,7 +28,7 @@
   {
     "_id": {
       "fee": "SLPCS01",
-      "start_timestamp_utc": {
+      "start_timestamp": {
         "$date":"2019-01-08T00:00:01.000Z"
       }
     },
@@ -54,7 +54,7 @@
   {
     "_id": {
       "fee": "SLPCS01",
-      "start_timestamp_utc": {
+      "start_timestamp": {
         "$date":"2019-01-07T23:59:59.000Z"
       }
     },
@@ -80,7 +80,7 @@
   {
     "_id": {
       "fee": "SQPCS01",
-      "start_timestamp_utc": {
+      "start_timestamp": {
       "$date":"2019-01-08T00:00:00.000Z"
     }
     },
@@ -106,7 +106,7 @@
   {
     "_id": {
       "fee": "SH19",
-      "start_timestamp_utc": {
+      "start_timestamp": {
         "$date":"2019-01-08T00:00:00.000Z"
       }
     },
@@ -132,7 +132,7 @@
   {
     "_id": {
       "fee": "SH19_SAMEDAY",
-      "start_timestamp_utc": {
+      "start_timestamp": {
         "$date":"2019-01-08T00:00:00.000Z"
       }
     },

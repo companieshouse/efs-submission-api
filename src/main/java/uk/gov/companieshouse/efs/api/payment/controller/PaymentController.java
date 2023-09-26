@@ -103,15 +103,14 @@ public class PaymentController {
 
                 logger.debug(MessageFormat.format("Fetching payment charge with id: {0}", chargeTemplateId));
                 if (StringUtils.isNotBlank(chargeTemplateId)) {
-                    //FIXME final Optional<PaymentTemplate> optionalTemplate =
-                        //paymentTemplateService.getTemplate(chargeTemplateId);
+                    final Optional<PaymentTemplate> optionalTemplate =
+                        paymentTemplateService.getTemplate(chargeTemplateId, null);
 
-//                    optionalTemplate.ifPresent(t -> logger.debug(MessageFormat.format("template={0}", t)));
-//                    response = optionalTemplate
-//                        .map(paymentTemplate -> getPaymentTemplateResponse(id, request, paymentTemplate))
-//                        .orElseGet(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)::build);
-                   // return response;
-                    return null;
+                    optionalTemplate.ifPresent(t -> logger.debug(MessageFormat.format("template={0}", t)));
+                    response = optionalTemplate
+                        .map(paymentTemplate -> getPaymentTemplateResponse(id, request, paymentTemplate))
+                        .orElseGet(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)::build);
+                    return response;
                 } else {
                     response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
                 }

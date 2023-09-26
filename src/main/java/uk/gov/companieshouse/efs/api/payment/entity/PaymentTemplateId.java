@@ -1,36 +1,38 @@
 package uk.gov.companieshouse.efs.api.payment.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Objects;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Objects;
 import javax.persistence.Embeddable;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Embeddable
-public class PaymentTemplateId implements Serializable {
+public final class PaymentTemplateId implements Serializable {
 
     private static final long serialVersionUID = -3666317728117130710L;
 
     private String fee;
-    @Field("start_timestamp_utc")
-    @JsonProperty("start_timestamp_utc")
-    private Instant startTimestampUtc;
+    @Field("start_timestamp")
+    @JsonProperty("start_timestamp")
+    private Instant startTimestamp;
 
     public PaymentTemplateId() {
     }
 
-    public PaymentTemplateId(final String fee, final Instant startTimestampUtc) {
+    public PaymentTemplateId(final String fee, final Instant startTimestamp) {
         this.fee = fee;
-        this.startTimestampUtc = startTimestampUtc;
+        this.startTimestamp = startTimestamp;
     }
 
     public String getFee() {
         return fee;
     }
 
-    public Instant getStartTimestampUtc() {
-        return startTimestampUtc;
+    public Instant getStartTimestamp() {
+        return startTimestamp;
     }
 
     @Override
@@ -42,12 +44,19 @@ public class PaymentTemplateId implements Serializable {
             return false;
         }
         final PaymentTemplateId that = (PaymentTemplateId) o;
-        return Objects.equals(getFee(), that.getFee()) && Objects.equals(getStartTimestampUtc(),
-                that.getStartTimestampUtc());
+        return Objects.equal(getFee(), that.getFee()) && Objects.equal(getStartTimestamp(),
+                that.getStartTimestamp());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFee(), getStartTimestampUtc());
+        return Objects.hashCode(getFee(), getStartTimestamp());
+    }
+
+    @Override
+    public java.lang.String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("fee", fee)
+                .append("startTimestamp", startTimestamp)
+                .toString();
     }
 }

@@ -3,10 +3,12 @@ package uk.gov.companieshouse.efs.api.payment.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplateTest.TEMPLATE_ID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
+
 
 class PaymentTemplateServiceTest {
     private class TestPaymentTemplateServiceImpl implements PaymentTemplateService {}
@@ -20,10 +22,11 @@ class PaymentTemplateServiceTest {
 
     @Test
     void getTemplate() {
-        //FIXME UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,
-        //FIXME () -> testService.getTemplate("id"));
+        UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,
+                () -> testService.getTemplate(TEMPLATE_ID.getFee(),
+                        TEMPLATE_ID.getStartTimestamp()));
 
-        //FIXME assertThat(thrown.getMessage(), is("not implemented"));
+        assertThat(thrown.getMessage(), is("not implemented"));
     }
 
     @Test

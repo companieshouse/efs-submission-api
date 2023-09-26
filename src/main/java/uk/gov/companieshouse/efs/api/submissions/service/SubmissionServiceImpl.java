@@ -376,9 +376,9 @@ public class SubmissionServiceImpl implements SubmissionService {
             if (StringUtils.isNotBlank(paymentCharge)) {
                 LOGGER.debug(String.format("Payment charge for form [%s] is [%s]", formType, paymentCharge));
 
-                //FIXME final Optional<PaymentTemplate> template = paymentTemplateService.getTemplate(paymentCharge);
+                final Optional<PaymentTemplate> template = paymentTemplateService.getTemplate(paymentCharge, null);
 
-                //FIXME result = template.map(t -> t.getItems().get(0).getAmount()).orElse(null);
+                result = template.map(t -> t.getItems().get(0).getAmount()).orElse(null);
             }
         }
         if (result == null) {

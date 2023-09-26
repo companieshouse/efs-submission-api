@@ -27,13 +27,11 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
         this.repository = repository;
     }
 
-    //TODO
     @Override
     public Optional<PaymentTemplate> getTemplate(final String fee, final Instant chargedAt) {
-        return repository.findFirstById_FeeAndId_StartTimestampUtcLessThanEqualOrderById_StartTimestampUtcDesc(fee, chargedAt);
+        return repository.findFirstById_FeeAndId_StartTimestampLessThanEqualOrderById_StartTimestampDesc(fee, chargedAt);
 
     }
-
 
     @Override
     public void putTemplate(final PaymentTemplate template) {
