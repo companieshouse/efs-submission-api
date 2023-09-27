@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class PaymentTemplateTest {
     private static final String COMPANY_NUMBER = "00000000";
     public static final PaymentTemplateId TEMPLATE_ID =
-            new PaymentTemplateId("SLPCS01 Test", LocalDateTime.parse("2019-01-08T00:00:01"));
+            new PaymentTemplateId("SLPCS01 Test", LocalDateTime.parse("2019-01-08T00:00:00"));
 
     private PaymentTemplate testDetails;
     private PaymentTemplate.Item item;
@@ -164,7 +164,7 @@ public class PaymentTemplateTest {
         assertThat(testDetails.toString(),
                 //@formatter:off
             is("PaymentTemplate["
-                + "id=PaymentTemplateId[fee=SLPCS01 Test,startTimestamp=2019-01-08T00:00:01],"
+                + "id=PaymentTemplateId[fee=SLPCS01 Test,startTimestamp=2019-01-08T00:00],"
                 + "description=Upload a form to Companies house,"
                 + "etag=d8a936fc59fd43ba6c66363c25684be1964ea03d,"
                 + "items=["

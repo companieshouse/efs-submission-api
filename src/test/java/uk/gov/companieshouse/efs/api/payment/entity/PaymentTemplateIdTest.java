@@ -18,7 +18,7 @@ class PaymentTemplateIdTest {
 
     private PaymentTemplateId testPaymentTemplateId;
     private static final String FEE = "Fee Template ID";
-    private static final LocalDateTime TIMESTAMP = LocalDateTime.parse("2019-01-08T00:00:01");
+    private static final LocalDateTime TIMESTAMP = LocalDateTime.parse("2019-01-08T00:00");
 
     @BeforeEach
     void setUp() {
@@ -50,7 +50,7 @@ class PaymentTemplateIdTest {
                 //@formatter:off
                 is("PaymentTemplateId["
                         + "fee=Fee Template ID,"
-                        + "startTimestamp=2019-01-08T00:00:01"
+                        + "startTimestamp=2019-01-08T00:00"
                         + "]"));
                 //@formatter:off
     }
