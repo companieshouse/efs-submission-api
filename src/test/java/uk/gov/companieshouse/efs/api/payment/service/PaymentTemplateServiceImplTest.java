@@ -4,12 +4,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplateTest.TEMPLATE_ID;
 
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,10 +15,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
+import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplateId;
 import uk.gov.companieshouse.efs.api.payment.repository.PaymentTemplateRepository;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentTemplateServiceImplTest {
+    public static final PaymentTemplateId TEMPLATE_ID =
+        new PaymentTemplateId("SLPCS01 Test", LocalDateTime.parse("2019-01-08T00:00:00"));
 
     private PaymentTemplateService testService;
 
@@ -44,14 +43,14 @@ class PaymentTemplateServiceImplTest {
         PaymentTemplate expected = PaymentTemplate.newBuilder().withId(TEMPLATE_ID)
                 .build();
 
-        when(repository.findFirstById_FeeAndId_StartTimestampLessThanEqualOrderById_StartTimestampDesc(
-                TEMPLATE_ID.getFee(), TEMPLATE_ID.getStartTimestamp())).thenReturn(
+        when(repository.findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
+                TEMPLATE_ID.getFee(), TEMPLATE_ID.getActiveFrom())).thenReturn(
                 Optional.of(expected));
 
-        testService.getTemplate(TEMPLATE_ID.getFee(), TEMPLATE_ID.getStartTimestamp());
+        testService.getTemplate(TEMPLATE_ID.getFee(), TEMPLATE_ID.getActiveFrom());
 
-        verify(repository).findFirstById_FeeAndId_StartTimestampLessThanEqualOrderById_StartTimestampDesc(
-                TEMPLATE_ID.getFee(), TEMPLATE_ID.getStartTimestamp());
+        verify(repository).findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
+                TEMPLATE_ID.getFee(), TEMPLATE_ID.getActiveFrom());
     }
 
     @DisplayName("GIVEN a payment template to store "

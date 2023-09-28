@@ -231,7 +231,6 @@ public final class PaymentTemplate {
         @Override
         public String toString() {
             return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                    //TODO - add id
                 .append("amount", amount).append("availablePaymentMethods", availablePaymentMethods)
                 .append("classOfPayment", classOfPayment).append("description", description)
                 .append("descriptionId", descriptionId).append("kind", kind)

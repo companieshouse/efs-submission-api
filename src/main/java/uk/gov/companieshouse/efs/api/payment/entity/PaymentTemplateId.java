@@ -15,24 +15,24 @@ public final class PaymentTemplateId implements Serializable {
     private static final long serialVersionUID = -3666317728117130710L;
 
     private String fee;
-    @Field("start_timestamp")
-    @JsonProperty("start_timestamp")
-    private LocalDateTime startTimestamp;
+    @Field("active_from")
+    @JsonProperty("active_from")
+    private LocalDateTime activeFrom;
 
     public PaymentTemplateId() {
     }
 
-    public PaymentTemplateId(final String fee, final LocalDateTime startTimestamp) {
+    public PaymentTemplateId(final String fee, final LocalDateTime activeFrom) {
         this.fee = fee;
-        this.startTimestamp = startTimestamp;
+        this.activeFrom = activeFrom;
     }
 
     public String getFee() {
         return fee;
     }
 
-    public LocalDateTime getStartTimestamp() {
-        return startTimestamp;
+    public LocalDateTime getActiveFrom() {
+        return activeFrom;
     }
 
     @Override
@@ -44,19 +44,19 @@ public final class PaymentTemplateId implements Serializable {
             return false;
         }
         final PaymentTemplateId that = (PaymentTemplateId) o;
-        return Objects.equal(getFee(), that.getFee()) && Objects.equal(getStartTimestamp(),
-                that.getStartTimestamp());
+        return Objects.equal(getFee(), that.getFee()) && Objects.equal(getActiveFrom(),
+            that.getActiveFrom());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getFee(), getStartTimestamp());
+        return Objects.hashCode(getFee(), getActiveFrom());
     }
 
     @Override
     public java.lang.String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("fee", fee)
-                .append("startTimestamp", startTimestamp)
+            .append("activeFrom", getActiveFrom())
                 .toString();
     }
 }

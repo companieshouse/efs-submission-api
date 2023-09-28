@@ -2,11 +2,11 @@
   {
     "_id": {
       "fee": "SLPCS01",
-      "start_timestamp": {
-        "$date":"2019-01-08T00:00:00.000Z"
+      "active_from": {
+        "$date":"2020-10-29T00:00:00.000Z"
       }
     },
-    "description": "Upload form SLPCS01 with start timesstamp",
+    "description": "Upload form SLPCS01: 2020-10-29",
     "etag": "50ad23b174375c0e3343f9601b6128bb92ed079e",
     "items": [
       {
@@ -17,7 +17,7 @@
         "class_of_payment": [
           "data-maintenance"
         ],
-        "description": "Upload a document to Companies House: SLPCS01 at midnight",
+        "description": "Upload a document to Companies House: SLPCS01",
         "description_identifier": "EFS_SLPCS01",
         "kind": "cost#cost",
         "product_type": "efs-slpcs01"
@@ -28,11 +28,11 @@
   {
     "_id": {
       "fee": "SLPCS01",
-      "start_timestamp": {
-        "$date":"2019-01-08T00:00:01.000Z"
+      "active_from": {
+        "$date":"2024-01-08T00:00:00.000Z"
       }
     },
-    "description": "Upload form SLPCS01 after midnight",
+    "description": "Upload form SLPCS01: 2024-01-08",
     "etag": "50ad23b174375c0e3343f9601b6128bb92ed079e",
     "items": [
       {
@@ -53,38 +53,12 @@
   },
   {
     "_id": {
-      "fee": "SLPCS01",
-      "start_timestamp": {
-        "$date":"2019-01-07T23:59:59.000Z"
-      }
-    },
-    "description": "Upload form SLPCS01 before midnight",
-    "etag": "50ad23b174375c0e3343f9601b6128bb92ed079e",
-    "items": [
-      {
-        "amount": "7",
-        "available_payment_methods": [
-          "credit-card"
-        ],
-        "class_of_payment": [
-          "data-maintenance"
-        ],
-        "description": "Upload a document to Companies House: SLPCS01",
-        "description_identifier": "EFS_SLPCS01",
-        "kind": "cost#cost",
-        "product_type": "efs-slpcs01"
-      }
-    ],
-    "kind": "EFS"
-  },
-  {
-    "_id": {
       "fee": "SQPCS01",
-      "start_timestamp": {
-      "$date":"2019-01-08T00:00:00.000Z"
+      "active_from": {
+      "$date":"2020-10-29T00:00:00.000Z"
     }
     },
-    "description": "Upload form SQPCS01",
+    "description": "Upload form SQPCS01: 2020-10-29",
     "etag": "a6232d3cc78ff7092c39e68bedea049fcfbccc8d",
     "items": [
       {
@@ -105,12 +79,38 @@
   },
   {
     "_id": {
+      "fee": "SQPCS01",
+      "active_from": {
+      "$date":"2024-01-08T00:00:00.000Z"
+    }
+    },
+    "description": "Upload form SQPCS01: 2024-01-08",
+    "etag": "a6232d3cc78ff7092c39e68bedea049fcfbccc8d",
+    "items": [
+      {
+        "amount": "57",
+        "available_payment_methods": [
+          "credit-card"
+        ],
+        "class_of_payment": [
+          "data-maintenance"
+        ],
+        "description": "Upload a document to Companies House: SQPCS01",
+        "description_identifier": "EFS_SQPCS01",
+        "kind": "cost#cost",
+        "product_type": "efs-sqpcs01"
+      }
+    ],
+    "kind": "EFS"
+  },
+  {
+    "_id": {
       "fee": "SH19",
-      "start_timestamp": {
-        "$date":"2019-01-08T00:00:00.000Z"
+      "active_from": {
+        "$date":"2021-07-19T23:00:00.000Z"
       }
     },
-    "description": "Upload form SH19",
+    "description": "Upload form SH19: 2021-07-20",
     "etag": "2F9C0BC7B841A686BCCDA23C85AE54A3354B7B0F",
     "items": [
       {
@@ -131,16 +131,68 @@
   },
   {
     "_id": {
-      "fee": "SH19_SAMEDAY",
-      "start_timestamp": {
-        "$date":"2019-01-08T00:00:00.000Z"
+      "fee": "SH19",
+      "active_from": {
+        "$date":"2024-01-08T00:00:00.000Z"
       }
     },
-    "description": "Upload form SH19",
+    "description": "Upload form SH19: 2024-01-08",
+    "etag": "2F9C0BC7B841A686BCCDA23C85AE54A3354B7B0F",
+    "items": [
+      {
+        "amount": "29",
+        "available_payment_methods": [
+          "credit-card"
+        ],
+        "class_of_payment": [
+          "data-maintenance"
+        ],
+        "description": "Upload a document to Companies House: SH19",
+        "description_identifier": "EFS_SH19",
+        "kind": "cost#cost",
+        "product_type": "efs-sh19"
+      }
+    ],
+    "kind": "EFS"
+  },
+  {
+    "_id": {
+      "fee": "SH19_SAMEDAY",
+      "active_from": {
+        "$date":"2021-07-19T23:00:00.000Z"
+      }
+    },
+    "description": "Upload form SH19: 2021-07-20",
     "etag": "FB9F50ED470E23678519F3AE0E84F31587C43ED8",
     "items": [
       {
         "amount": "50",
+        "available_payment_methods": [
+          "credit-card"
+        ],
+        "class_of_payment": [
+          "data-maintenance"
+        ],
+        "description": "Upload a document to Companies House: SH19",
+        "description_identifier": "EFS_SH19_SAMEDAY",
+        "kind": "cost#cost",
+        "product_type": "efs-sh19-same-day"
+      }
+    ],
+    "kind": "EFS"
+  },
+  {
+    "_id": {
+      "fee": "SH19_SAMEDAY",
+      "active_from": {
+        "$date":"2024-01-08T00:00:00.000Z"
+      }
+    },
+    "description": "Upload form SH19: 2024-01-08",
+    "etag": "FB9F50ED470E23678519F3AE0E84F31587C43ED8",
+    "items": [
+      {
+        "amount": "121",
         "available_payment_methods": [
           "credit-card"
         ],

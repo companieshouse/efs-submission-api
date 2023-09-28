@@ -102,11 +102,13 @@ public class PaymentController {
             FormTemplateApi formTemplate = formTemplateService.getFormTemplate(formType);
             if (formTemplate != null) {
                 final String chargeTemplateId = formTemplate.getPaymentCharge();
+                final LocalDateTime now = LocalDateTime.now(clock);
 
-                logger.debug(MessageFormat.format("Fetching payment charge with id: {0}", chargeTemplateId));
+                logger.debug(MessageFormat.format("Fetching template for fee: {0} at {1}",
+                    chargeTemplateId, now));
                 if (StringUtils.isNotBlank(chargeTemplateId)) {
                     final Optional<PaymentTemplate> optionalTemplate =
-                        paymentTemplateService.getTemplate(chargeTemplateId, LocalDateTime.now(clock));
+                        paymentTemplateService.getTemplate(chargeTemplateId, now);
 
                     optionalTemplate.ifPresent(t -> logger.debug(MessageFormat.format("template={0}", t)));
                     response = optionalTemplate

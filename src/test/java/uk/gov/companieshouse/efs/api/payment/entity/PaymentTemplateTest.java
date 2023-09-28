@@ -14,7 +14,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +24,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class PaymentTemplateTest {
+class PaymentTemplateTest {
     private static final String COMPANY_NUMBER = "00000000";
     public static final PaymentTemplateId TEMPLATE_ID =
             new PaymentTemplateId("SLPCS01 Test", LocalDateTime.parse("2019-01-08T00:00:00"));
@@ -164,7 +163,7 @@ public class PaymentTemplateTest {
         assertThat(testDetails.toString(),
                 //@formatter:off
             is("PaymentTemplate["
-                + "id=PaymentTemplateId[fee=SLPCS01 Test,startTimestamp=2019-01-08T00:00],"
+                + "id=PaymentTemplateId[fee=SLPCS01 Test,activeFrom=2019-01-08T00:00],"
                 + "description=Upload a form to Companies house,"
                 + "etag=d8a936fc59fd43ba6c66363c25684be1964ea03d,"
                 + "items=["
