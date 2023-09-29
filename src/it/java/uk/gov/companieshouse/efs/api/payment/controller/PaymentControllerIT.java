@@ -221,7 +221,7 @@ class PaymentControllerIT {
     }
 
     @Test
-    void getPaymentDetailsWhenSubmissionFormNull() throws Exception {
+    void getPaymentDetailsWhenSubmissionFormNullThen500() throws Exception {
 
         SubmissionApi submissionApiFormNull = new SubmissionApi();
         submissionApi.setId(SUB_ID);
@@ -236,7 +236,7 @@ class PaymentControllerIT {
     }
 
     @Test
-    void getPaymentDetailsWhenPaymentChargeBlank() throws Exception {
+    void getPaymentDetailsWhenPaymentChargeBlankThen500() throws Exception {
 
         FormTemplateApi formTemplateApiBlankCharge = new FormTemplateApi();
         formTemplateApiBlankCharge.setFormType(FORM_TEMPLATE);
@@ -245,6 +245,8 @@ class PaymentControllerIT {
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(formTemplateService.getFormTemplate(FORM_TEMPLATE)).thenReturn(
                 formTemplateApiBlankCharge);
+        when(paymentTemplateService.getTemplate(FEE_TEMPLATE, FIXED_NOW)).thenReturn(
+                Optional.of(paymentTemplate));
 
         mockMvc.perform(get(PAYMENT_URL_TEMPLATE, SUB_ID).headers(httpHeaders))
                 .andDo(print())
@@ -252,5 +254,41 @@ class PaymentControllerIT {
                 .andExpect(jsonPath("$").doesNotExist());
     }
 
+    @Test
+    void getPaymentDetailsWhenCompanyNullThen500() throws Exception {
+
+        SubmissionApi submissionApiCompanyNull = new SubmissionApi();
+        submissionApiCompanyNull.setId(SUB_ID);
+        submissionApiCompanyNull.setSubmissionForm(submissionFormApi);
+
+        when(formTemplateService.getFormTemplate(FORM_TEMPLATE)).thenReturn(formTemplateApi);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApiCompanyNull);
+        when(paymentTemplateService.getTemplate(FEE_TEMPLATE, FIXED_NOW)).thenReturn(
+                Optional.of(paymentTemplate));
+
+        mockMvc.perform(get(PAYMENT_URL_TEMPLATE, SUB_ID).headers(httpHeaders))
+                .andDo(print())
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$").doesNotExist());
+    }
+
+    @Test
+    void getPaymentDetailsWhenCompanyNumberBlankThen500() throws Exception {
+
+        CompanyApi companyApiBlankCompNo = new CompanyApi();
+
+        SubmissionApi submissionApiBlankCompNo = new SubmissionApi();
+        submissionApiBlankCompNo.setId(SUB_ID);
+        submissionApiBlankCompNo.setCompany(companyApiBlankCompNo);
+        submissionApiBlankCompNo.setSubmissionForm(submissionFormApi);
+
+        when(formTemplateService.getFormTemplate(FORM_TEMPLATE)).thenReturn(formTemplateApi);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApiBlankCompNo);
+
+        mockMvc.perform(get(PAYMENT_URL_TEMPLATE, SUB_ID).headers(httpHeaders))
+                .andDo(print())
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$").doesNotExist());
+    }
 
 }
