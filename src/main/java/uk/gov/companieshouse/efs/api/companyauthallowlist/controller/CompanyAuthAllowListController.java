@@ -16,11 +16,7 @@ import uk.gov.companieshouse.logging.Logger;
  */
 @RestController
 @ResponseStatus(HttpStatus.OK)
-@RequestMapping(
-        value = "/efs-submission-api",
-        produces = {"application/json"},
-        consumes = {"application/json"}
-)
+@RequestMapping("/efs-submission-api")
 public class CompanyAuthAllowListController {
 
     private final Logger logger;
@@ -42,7 +38,8 @@ public class CompanyAuthAllowListController {
      * Returns a responseEntity which contains a Boolean value.
      * @return responseEntity containing the response.
      */
-    @GetMapping(value = "/company-authentication/allow-list/{emailAddress}")
+    @GetMapping(value = "/company-authentication/allow-list/{emailAddress}",
+        produces = {"application/json"})
     public ResponseEntity<Boolean> getIsOnAllowList(@PathVariable String emailAddress) {
         try {
             return ResponseEntity.ok().body(service.isOnAllowList(emailAddress));

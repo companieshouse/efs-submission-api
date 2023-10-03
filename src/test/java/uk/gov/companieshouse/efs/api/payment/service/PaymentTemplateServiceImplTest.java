@@ -47,7 +47,7 @@ class PaymentTemplateServiceImplTest {
                 TEMPLATE_ID.getFee(), TEMPLATE_ID.getActiveFrom())).thenReturn(
                 Optional.of(expected));
 
-        testService.getTemplate(TEMPLATE_ID.getFee(), TEMPLATE_ID.getActiveFrom());
+        testService.getPaymentTemplate(TEMPLATE_ID.getFee(), TEMPLATE_ID.getActiveFrom());
 
         verify(repository).findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
                 TEMPLATE_ID.getFee(), TEMPLATE_ID.getActiveFrom());
@@ -57,10 +57,10 @@ class PaymentTemplateServiceImplTest {
                  + "WHEN put template using the service "
                  + "THEN the object is stored")
     @Test
-    void putTemplate() {
+    void postTemplate() {
         PaymentTemplate expected = PaymentTemplate.newBuilder().withId(TEMPLATE_ID)
                 .build();
-        testService.putTemplate(expected);
+        testService.postTemplate(expected);
 
         verify(repository).save(captor.capture());
         assertThat(captor.getValue().getId(), is(TEMPLATE_ID));

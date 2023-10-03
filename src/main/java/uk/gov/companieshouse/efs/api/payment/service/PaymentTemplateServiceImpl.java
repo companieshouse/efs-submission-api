@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.payment.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -17,26 +18,31 @@ import uk.gov.companieshouse.efs.api.payment.repository.PaymentTemplateRepositor
 public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     private final PaymentTemplateRepository repository;
 
-    /**
-     * PaymentTemplateService constructor
-     *
-     * @param repository the {@link PaymentTemplateRepository}
-     */
     @Autowired
     public PaymentTemplateServiceImpl(final PaymentTemplateRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public Optional<PaymentTemplate> getTemplate(final String fee, final LocalDateTime activeAt) {
-        return repository.findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(fee,
-            activeAt);
+    public Optional<PaymentTemplate> getPaymentTemplate(final String fee, final LocalDateTime activeAt) {
+        return repository.findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
+            fee, activeAt);
 
     }
 
     @Override
-    public void putTemplate(final PaymentTemplate template) {
-        repository.save(template);
+    public List<PaymentTemplate> getPaymentTemplates(String fee) {
+        return repository.findById_FeeOrderById_ActiveFromDesc(fee);
+    }
+
+    @Override
+    public List<PaymentTemplate> getPaymentTemplates() {
+        return repository.findAll();
+    }
+
+    @Override
+    public PaymentTemplate postTemplate(final PaymentTemplate template) {
+        return repository.save(template);
     }
 
 }

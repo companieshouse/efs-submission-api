@@ -121,7 +121,7 @@ class PaymentControllerTest {
 
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getPaymentTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
         when(request.getRequestURL()).thenReturn(
             new StringBuffer(PAYMENT_REQUEST_URL).append("/").append(SUB_ID).append("/"));
 
@@ -262,7 +262,7 @@ class PaymentControllerTest {
 
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(UNKNOWN, START_TIMESTAMP)).thenReturn(Optional.empty());
+        when(paymentTemplateService.getPaymentTemplate(UNKNOWN, START_TIMESTAMP)).thenReturn(Optional.empty());
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -281,7 +281,7 @@ class PaymentControllerTest {
 
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getPaymentTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
         when(request.getRequestURL()).thenReturn(new StringBuffer("http://localhost:9999/efs-submission-api/submission{"));
 
         //when
@@ -302,7 +302,7 @@ class PaymentControllerTest {
 
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getPaymentTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -325,7 +325,7 @@ class PaymentControllerTest {
 
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getPaymentTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);

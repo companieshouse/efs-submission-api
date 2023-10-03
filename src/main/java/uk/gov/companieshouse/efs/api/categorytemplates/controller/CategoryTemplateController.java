@@ -22,8 +22,7 @@ import uk.gov.companieshouse.logging.Logger;
  */
 @RestController
 @ResponseStatus(HttpStatus.OK)
-@RequestMapping(value = "/efs-submission-api", produces = {"application/json"},
-        consumes = {"application/json"})
+@RequestMapping("/efs-submission-api")
 public class CategoryTemplateController {
 
     private CategoryTemplateService categoryService;
@@ -46,7 +45,7 @@ public class CategoryTemplateController {
      *
      * @return responseEntity
      */
-    @GetMapping(value = "/category-templates")
+    @GetMapping(value = "/category-templates", produces = {"application/json"})
     public ResponseEntity<CategoryTemplateListApi> getCategoryTemplates(
         @RequestParam(value = "parent", required = false) String categoryId, final HttpServletRequest request) {
 
@@ -70,7 +69,7 @@ public class CategoryTemplateController {
      *
      * @return responseEntity
      */
-    @GetMapping(value = "/category-template/{id}")
+    @GetMapping(value = "/category-template/{id}", produces = {"application/json"})
     public ResponseEntity<CategoryTemplateApi> getCategoryTemplate(@PathVariable String id, HttpServletRequest request) {
         try {
             return ResponseEntity.ok().body(categoryService.getCategoryTemplate(id));
@@ -83,7 +82,7 @@ public class CategoryTemplateController {
         }
     }
 
-    @GetMapping(value = "/category-template/")
+    @GetMapping(value = "/category-template/", produces = {"application/json"})
     public ResponseEntity<CategoryTemplateApi> getRootCategory(HttpServletRequest request) {
         final String id = "ROOT";
         return getCategoryTemplate(id, request);

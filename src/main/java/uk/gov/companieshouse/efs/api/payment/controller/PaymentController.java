@@ -108,7 +108,7 @@ public class PaymentController {
                     chargeTemplateId, now));
                 if (StringUtils.isNotBlank(chargeTemplateId)) {
                     final Optional<PaymentTemplate> optionalTemplate =
-                        paymentTemplateService.getTemplate(chargeTemplateId, now);
+                        paymentTemplateService.getPaymentTemplate(chargeTemplateId, now);
 
                     optionalTemplate.ifPresent(t -> logger.debug(MessageFormat.format("template={0}", t)));
                     response = optionalTemplate

@@ -2,6 +2,7 @@ package uk.gov.companieshouse.efs.api.submissions.service;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -55,6 +56,12 @@ public class SubmissionServiceImpl implements SubmissionService {
         "Updated submission status to %s for submission with id: [%s] at [%s]";
     public static final String SUBMITTED_STATUS_MSG =
         "Updated status SUBMITTED at [%s] for submission with id: [%s]";
+    public static final ImmutableSet<SubmissionStatus> UPDATABLE_STATUSES =
+        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED);
+
+    public static final ImmutableSet<SubmissionStatus> VALIDATABLE_STATUSES =
+        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED,
+            SubmissionStatus.SUBMITTED);
 
     private SubmissionRepository submissionRepository;
     private SubmissionMapper submissionMapper;
@@ -67,12 +74,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     private PaymentTemplateService paymentTemplateService;
     private EmailService emailService;
     private Validator<Submission> validator;
-    public static final ImmutableSet<SubmissionStatus> UPDATABLE_STATUSES =
-        Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED);
+    private final Clock clock;
 
-    public static final ImmutableSet<SubmissionStatus> VALIDATABLE_STATUSES =
-    Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED,
-        SubmissionStatus.SUBMITTED);
 
     @Autowired
     public SubmissionServiceImpl(SubmissionRepository submissionRepository,
@@ -81,7 +84,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         CurrentTimestampGenerator timestampGenerator,
         ConfirmationReferenceGeneratorService confirmationReferenceGenerator,
         FormTemplateService formTemplateService, PaymentTemplateService paymentTemplateService,
-        EmailService emailService, Validator<Submission> validator) {
+        EmailService emailService, Validator<Submission> validator, Clock clock) {
         this.submissionRepository = submissionRepository;
         this.submissionMapper = submissionMapper;
         this.presenterMapper = presenterMapper;
@@ -93,6 +96,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         this.paymentTemplateService = paymentTemplateService;
         this.emailService = emailService;
         this.validator = validator;
+        this.clock = clock;
     }
 
     @Override
@@ -374,15 +378,18 @@ public class SubmissionServiceImpl implements SubmissionService {
             final String paymentCharge = formTemplate.getPaymentCharge();
 
             if (StringUtils.isNotBlank(paymentCharge)) {
-                LOGGER.debug(String.format("Payment charge for form [%s] is [%s]", formType, paymentCharge));
+                final LocalDateTime now = LocalDateTime.now(clock);
 
-                final Optional<PaymentTemplate> template = paymentTemplateService.getTemplate(paymentCharge, null);
+                LOGGER.debug(String.format("Payment fee at [%s] for form [%s] is [%s]",
+                    DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(now), formType, paymentCharge));
+
+                final Optional<PaymentTemplate> template = paymentTemplateService.getPaymentTemplate(paymentCharge, now);
 
                 result = template.map(t -> t.getItems().get(0).getAmount()).orElse(null);
             }
         }
         if (result == null) {
-            LOGGER.debug("Payment charge for form is [N/A]");
+            LOGGER.debug("Payment fee at [%s] for form is [N/A]");
         }
 
         return result;

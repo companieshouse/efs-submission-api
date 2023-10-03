@@ -29,7 +29,7 @@ class PaymentTemplateServiceTest {
         final String fee = TEMPLATE_ID.getFee();
         final LocalDateTime activeFrom = TEMPLATE_ID.getActiveFrom();
         UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,
-            () -> testService.getTemplate(fee, activeFrom));
+            () -> testService.getPaymentTemplate(fee, activeFrom));
 
         assertThat(thrown.getMessage(), is("not implemented"));
     }
@@ -39,7 +39,7 @@ class PaymentTemplateServiceTest {
         final PaymentTemplate template = PaymentTemplate.newBuilder().build();
 
         UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,
-            () -> testService.putTemplate(template));
+            () -> testService.postTemplate(template));
 
         assertThat(thrown.getMessage(), is("not implemented"));
     }

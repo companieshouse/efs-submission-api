@@ -1,28 +1,38 @@
 package uk.gov.companieshouse.efs.api.payment.controller;
 
-import java.time.Instant;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.StringJoiner;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplateId;
 import uk.gov.companieshouse.efs.api.payment.service.PaymentTemplateService;
 import uk.gov.companieshouse.logging.Logger;
 
 @RestController
+@ConditionalOnProperty(prefix = "feature", name = "testing-fees", havingValue = "true")
 @ResponseStatus(HttpStatus.OK)
-@RequestMapping(value = "/efs-submission-api/payment-templates", produces = {"application/json"})
-
+@RequestMapping("/efs-submission-api/payment-templates")
 public class PaymentControllerSpike {
     private static final LocalDateTime CHARGE_TIMESTAMP = LocalDateTime.parse("2019-01-08T00:00:00");
     private final Logger logger;
@@ -37,49 +47,105 @@ public class PaymentControllerSpike {
 
     /**
      * Returns a responseEntity which contains a list of payment templates belonging to an optional
-     * form category, or all templates if category is omitted. Will return a status of not found if
-     * the category is not found.
+     * fee type at an optional active_from date/time, or all templates if fee type and active_from
+     * are omitted.
      *
      * @return responseEntity
      */
-    @GetMapping
-    public ResponseEntity<PaymentTemplate> getPaymentTemplates(
-            @RequestParam(value = "type") String id, HttpServletRequest request) {
+    @GetMapping(produces = {"application/json"})
+    public ResponseEntity<List<PaymentTemplate>> getPaymentTemplates(
+        @RequestParam(value = "type", required = false) String fee,
+        @RequestParam(value = "activeAt", required = false) @DateTimeFormat(
+            iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime activeAt,
+        HttpServletRequest request) {
 
         Map<String, Object> info = new HashMap<>();
-        info.put("id", id);
+        info.put("fee", fee);
         info.put("chargedAt", CHARGE_TIMESTAMP);
         logger.info("Payment template request for ", info);
 
         try {
-            final Optional<PaymentTemplate> template =
-                    paymentTemplateService.getTemplate(id, CHARGE_TIMESTAMP);
-
-            logger.info("Payment template retrieved " + template.map(PaymentTemplate::getId)
-                    .map(PaymentTemplateId::getFee)
-                    .orElse("nothing found"));
-
-            return ResponseEntity.of(template);
+            if (fee == null) {
+                return ResponseEntity.ok(paymentTemplateService.getPaymentTemplates());
+            }
+            if (activeAt == null) {
+                final List<PaymentTemplate> template = paymentTemplateService.getPaymentTemplates(
+                    fee);
+                return ResponseEntity.ok(template);
+            }
+            return ResponseEntity.ok(paymentTemplateService.getPaymentTemplate(fee, activeAt)
+                .map(Arrays::asList)
+                .orElseGet(Collections::emptyList));
         }
         catch (Exception ex) {
+            Map<String, Object> debug = new HashMap<>();
 
-            logger.error("Failed to get payment templates", ex, info);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+            debug.put("fee", fee);
+            debug.put("activeAt", activeAt);
+            logger.error("Failed to get payment template(s)", ex, debug);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
+    static class TestPaymentTemplate {
+        final String fee;
+        final LocalDateTime activeFrom;
+        final String amount;
 
-    @GetMapping("/test")
-    public ResponseEntity<Void> createTestPaymentTemplate() {
+        @JsonCreator
+        public TestPaymentTemplate(@JsonProperty("fee") final String fee,
+            @JsonProperty("active_from") final LocalDateTime activeFrom,
+            @JsonProperty("amount") final String amount) {
+            this.fee = fee;
+            this.activeFrom = activeFrom;
+            this.amount = amount;
+        }
 
-        PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder()
-                .withId(new PaymentTemplateId("TEST", LocalDateTime.now()))
-                .withDescription("Testing")
-                .build();
+        public String getFee() {
+            return fee;
+        }
 
-        paymentTemplateService.putTemplate(paymentTemplate);
+        @JsonProperty("active_from")
+        public LocalDateTime getActiveFrom() {
+            return activeFrom;
+        }
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        public String getAmount() {
+            return amount;
+        }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", TestPaymentTemplate.class.getSimpleName() + "[", "]")
+                .add("fee='" + fee + "'")
+                .add("activeFrom=" + activeFrom)
+                .add("amount='" + amount + "'")
+                .toString();
+        }
+    }
+
+    @PostMapping(value = "/test-fee", consumes = {"application/json"},
+        produces = {"application/json"})
+    public ResponseEntity<PaymentTemplate> createPaymentTemplate(
+        @RequestBody final TestPaymentTemplate templateDetails) {
+
+        final PaymentTemplate.Item item = PaymentTemplate.Item.newBuilder()
+            .withAmount(templateDetails.getAmount())
+            .build();
+        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder()
+            .withId(
+                new PaymentTemplateId(templateDetails.getFee(), templateDetails.getActiveFrom()))
+            .withItem(item)
+            .build();
+
+        final PaymentTemplate saved = paymentTemplateService.postTemplate(paymentTemplate);
+
+        final URI location = ServletUriComponentsBuilder
+            .fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(saved.getId())
+            .toUri();
+
+        return ResponseEntity.created(location).body(saved);
     }
 }

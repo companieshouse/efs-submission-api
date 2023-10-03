@@ -1,5 +1,9 @@
 package uk.gov.companieshouse.efs.api.submissions.service;
 
+import java.time.Clock;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +49,6 @@ import uk.gov.companieshouse.efs.api.util.CurrentTimestampGenerator;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -121,13 +124,16 @@ class SubmissionServiceImplTest {
     @Mock
     private EmailService emailService;
 
+    private Clock clock;
+
     @BeforeEach
     public void setUp() {
+        clock = Clock.fixed(NOW.toInstant(ZoneOffset.UTC), ZoneId.of("UTC"));
         submissionService =
             new SubmissionServiceImpl(submissionRepository, submissionMapper, presenterMapper,
                 companyMapper, fileDetailsMapper, timestampGenerator,
                 confirmationReferenceGenerator, formTemplateService, paymentTemplateService,
-                emailService, validator);
+                emailService, validator, clock);
     }
 
     @Test
@@ -342,8 +348,7 @@ class SubmissionServiceImplTest {
         when(formApi.getFormType()).thenReturn(FORM_TYPE);
         when(formTemplateService.getFormTemplate(FORM_TYPE)).thenReturn(formTemplateApi);
         when(formTemplateApi.getPaymentCharge()).thenReturn(PAYMENT_TEMPLATE);
-        //FIXME
-        //when(paymentTemplateService.getTemplate(PAYMENT_TEMPLATE)).thenReturn(Optional.empty());
+        when(paymentTemplateService.getPaymentTemplate(PAYMENT_TEMPLATE, NOW)).thenReturn(Optional.empty());
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
 
@@ -363,14 +368,15 @@ class SubmissionServiceImplTest {
         final String FORM_TYPE = "NULL_CHARGE";
         final String PAYMENT_TEMPLATE = "PAYMENT";
         final String PAYMENT_CHARGE = "99";
-        PaymentTemplate template =
-            PaymentTemplate.newBuilder().withItem(PaymentTemplate.Item.newBuilder().withAmount(PAYMENT_CHARGE).build()).build();
+        final PaymentTemplate template =
+            PaymentTemplate.newBuilder()
+                .withItem(PaymentTemplate.Item.newBuilder().withAmount(PAYMENT_CHARGE).build())
+                .build();
 
         when(formApi.getFormType()).thenReturn(FORM_TYPE);
         when(formTemplateService.getFormTemplate(FORM_TYPE)).thenReturn(formTemplateApi);
         when(formTemplateApi.getPaymentCharge()).thenReturn(PAYMENT_TEMPLATE);
-       //FIXME
-        //when(paymentTemplateService.getTemplate(PAYMENT_TEMPLATE)).thenReturn(Optional.of(template));
+        when(paymentTemplateService.getPaymentTemplate(PAYMENT_TEMPLATE, NOW)).thenReturn(Optional.of(template));
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
 
@@ -379,8 +385,7 @@ class SubmissionServiceImplTest {
 
         // then
         assertEquals(SUBMISSION_ID, actual.getId());
-        //FIXME
-//        verify(submissionRepository).updateSubmission(argThat(s-> PAYMENT_CHARGE.equals(s.getFeeOnSubmission())));
+        verify(submissionRepository).updateSubmission(argThat(s-> PAYMENT_CHARGE.equals(s.getFeeOnSubmission())));
     }
 
     @Test
@@ -607,12 +612,10 @@ class SubmissionServiceImplTest {
     @Test
     void testCompleteSubmissionWhenFeeBeforePaymentPatch() throws SubmissionValidationException {
         // given
-        SessionApi sessionApi =
-            new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PENDING.toString());
-
         when(submission.getFeeOnSubmission()).thenReturn("1");
         when(submission.getStatus()).thenReturn(SubmissionStatus.PAYMENT_REQUIRED);
         when(submissionRepository.read(anyString())).thenReturn(submission);
+
         // when
         SubmissionResponseApi actual = submissionService.completeSubmission(SUBMISSION_ID);
 
@@ -627,10 +630,6 @@ class SubmissionServiceImplTest {
     @Test
     void testCompleteSubmissionWhenNoFeeAndNotSubmitted() throws SubmissionValidationException {
         // given
-        // FAILED session here for test coverage purposes only
-        SessionApi sessionApi =
-            new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.FAILED.toString());
-
         when(submission.getId()).thenReturn(SUBMISSION_ID);
         when(submission.getStatus()).thenReturn(SubmissionStatus.OPEN);
         when(submissionRepository.read(anyString())).thenReturn(submission);
@@ -654,9 +653,6 @@ class SubmissionServiceImplTest {
     @Test
     void testCompleteSubmissionWhenPaidAfterPaymentPatch() throws SubmissionValidationException {
         // given
-        SessionApi sessionApi =
-            new SessionApi(SESSION_ID, SESSION_STATE, PaymentTemplate.Status.PAID.toString());
-
         when(submission.getFeeOnSubmission()).thenReturn("1");
         when(submission.getStatus()).thenReturn(SubmissionStatus.SUBMITTED);
         when(submissionRepository.read(anyString())).thenReturn(submission);

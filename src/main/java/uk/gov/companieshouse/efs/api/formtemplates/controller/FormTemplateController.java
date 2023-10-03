@@ -21,8 +21,7 @@ import uk.gov.companieshouse.logging.Logger;
  */
 @RestController
 @ResponseStatus(HttpStatus.OK)
-@RequestMapping(value = "/efs-submission-api", produces = {"application/json"},
-        consumes = {"application/json"})
+@RequestMapping("/efs-submission-api")
 public class FormTemplateController {
 
     private FormTemplateService formService;
@@ -45,7 +44,7 @@ public class FormTemplateController {
      *
      * @return responseEntity
      */
-    @GetMapping(value = "/form-templates")
+    @GetMapping(value = "/form-templates", produces = {"application/json"})
     public ResponseEntity<FormTemplateListApi> getFormTemplates(
         @RequestParam(value = "category", required = false) String categoryId, HttpServletRequest request) {
 
@@ -69,7 +68,7 @@ public class FormTemplateController {
      *
      * @return responseEntity
      */
-    @GetMapping(value = "/form-template")
+    @GetMapping(value = "/form-template", produces = {"application/json"})
     public ResponseEntity<FormTemplateApi> getFormTemplate(@RequestParam("type") String id,
         HttpServletRequest request) {
 
