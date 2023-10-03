@@ -3,6 +3,7 @@ package uk.gov.companieshouse.efs.api.payment.controller;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -14,7 +15,6 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
@@ -42,13 +43,11 @@ import uk.gov.companieshouse.efs.api.submissions.mapper.SubmissionApiMapper;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
 import uk.gov.companieshouse.logging.Logger;
 
-//@WebMvcTest(PaymentController.class)
 @SpringBootTest(classes = PaymentController.class)
 @Import(PaymentControllerIT.ClockConfig.class)
 @AutoConfigureMockMvc
 @AutoConfigureWebMvc
 class PaymentControllerIT {
-
     private static final LocalDateTime FIXED_NOW = LocalDateTime.parse("2019-01-08T00:00");
     private static final String FORM_TEMPLATE = "FORM_BEARING_FEE";
     private static final String FEE_TEMPLATE = "FEE_TEMPLATE";
@@ -121,28 +120,27 @@ class PaymentControllerIT {
         formTemplateApi.setPaymentCharge(FEE_TEMPLATE);
 
         item = PaymentTemplate.Item.newBuilder()
-                .withAmount("100")
-                .withAvailablePaymentMethods(Collections.singletonList("credit-card"))
-                .withClassOfPayment(Collections.singletonList("data-maintenance"))
-                .withDescription("Upload a form to Companies House")
-                .withDescriptionId("AMOUNT_TO_PAY")
-                .withKind("cost#cost")
-                .withProductType("efs-test")
-                .build();
+            .withAmount("100")
+            .withAvailablePaymentMethods(Collections.singletonList("credit-card"))
+            .withClassOfPayment(Collections.singletonList("data-maintenance"))
+            .withDescription("Upload a form to Companies House")
+            .withDescriptionId("AMOUNT_TO_PAY")
+            .withKind("cost#cost")
+            .withProductType("efs-test")
+            .build();
         links = new PaymentTemplate.Links("http://resource.url", new URL("http://self.url"));
         paymentTemplateId = new PaymentTemplateId(FEE_TEMPLATE, FIXED_NOW);
-
         paymentTemplate = PaymentTemplate.newBuilder()
-                .withId(paymentTemplateId)
-                .withDescription("Upload a form to Companies house")
-                .withEtag("d8a936fc59fd43ba6c66363c25684be1964ea03d")
-                .withItem(item)
-                .withKind("cost#cost")
-                .withLinks(links)
-                .withPaymentReference("Test Charge")
-                .withStatus(PaymentTemplate.Status.PENDING)
-                .withCompanyNumber(COMPANY_NUMBER)
-                .build();
+            .withId(paymentTemplateId)
+            .withDescription("Upload a form to Companies house")
+            .withEtag("d8a936fc59fd43ba6c66363c25684be1964ea03d")
+            .withItem(item)
+            .withKind("cost#cost")
+            .withLinks(links)
+            .withPaymentReference("Test Charge")
+            .withStatus(PaymentTemplate.Status.PENDING)
+            .withCompanyNumber(COMPANY_NUMBER)
+            .build();
     }
 
     @Test
@@ -150,7 +148,7 @@ class PaymentControllerIT {
 
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(formTemplateService.getFormTemplate(FORM_TEMPLATE)).thenReturn(formTemplateApi);
-        when(paymentTemplateService.getTemplate(FEE_TEMPLATE, FIXED_NOW)).thenReturn(
+        when(paymentTemplateService.getPaymentTemplate(FEE_TEMPLATE, FIXED_NOW)).thenReturn(
                 Optional.empty());
 
         mockMvc.perform(get(PAYMENT_URL_TEMPLATE, SUB_ID).headers(httpHeaders))
@@ -159,24 +157,22 @@ class PaymentControllerIT {
                 .andExpect(jsonPath("$").doesNotExist());
     }
 
-    //TODO add more detailed JSON verification?
     @Test
     void getPaymentDetailsWhenTemplateFoundThen200() throws Exception {
-
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(formTemplateService.getFormTemplate(FORM_TEMPLATE)).thenReturn(formTemplateApi);
-        when(paymentTemplateService.getTemplate(FEE_TEMPLATE, FIXED_NOW)).thenReturn(
-                Optional.of(paymentTemplate));
+        when(paymentTemplateService.getPaymentTemplate(FEE_TEMPLATE, FIXED_NOW)).thenReturn(
+            Optional.of(paymentTemplate));
 
-        MvcResult mvcResult =
-                mockMvc.perform(get(PAYMENT_URL_TEMPLATE, SUB_ID).headers(httpHeaders))
-                        .andDo(print())
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$").hasJsonPath())
-                        .andExpect(jsonPath("$.items[0].amount").value("100"))
-                        .andReturn();
+        mockMvc.perform(get(PAYMENT_URL_TEMPLATE, SUB_ID).headers(httpHeaders))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").hasJsonPath())
+            .andExpect(jsonPath("$.id.fee").value(FEE_TEMPLATE))
+            .andExpect(jsonPath("$.id.active_from").value("2019-01-08T00:00:00"))
+            .andExpect(jsonPath("$.items[0].amount").value("100"));
 
-        Assertions.assertEquals("application/json", mvcResult.getResponse().getContentType());
     }
 
     @Test
@@ -245,7 +241,7 @@ class PaymentControllerIT {
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(formTemplateService.getFormTemplate(FORM_TEMPLATE)).thenReturn(
                 formTemplateApiBlankCharge);
-        when(paymentTemplateService.getTemplate(FEE_TEMPLATE, FIXED_NOW)).thenReturn(
+        when(paymentTemplateService.getPaymentTemplate(FEE_TEMPLATE, FIXED_NOW)).thenReturn(
                 Optional.of(paymentTemplate));
 
         mockMvc.perform(get(PAYMENT_URL_TEMPLATE, SUB_ID).headers(httpHeaders))
@@ -263,7 +259,7 @@ class PaymentControllerIT {
 
         when(formTemplateService.getFormTemplate(FORM_TEMPLATE)).thenReturn(formTemplateApi);
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApiCompanyNull);
-        when(paymentTemplateService.getTemplate(FEE_TEMPLATE, FIXED_NOW)).thenReturn(
+        when(paymentTemplateService.getPaymentTemplate(FEE_TEMPLATE, FIXED_NOW)).thenReturn(
                 Optional.of(paymentTemplate));
 
         mockMvc.perform(get(PAYMENT_URL_TEMPLATE, SUB_ID).headers(httpHeaders))
@@ -286,9 +282,10 @@ class PaymentControllerIT {
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApiBlankCompNo);
 
         mockMvc.perform(get(PAYMENT_URL_TEMPLATE, SUB_ID).headers(httpHeaders))
-                .andDo(print())
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$").doesNotExist());
+            .andDo(print())
+            .andExpect(status().isInternalServerError())
+            .andExpect(jsonPath("$").doesNotExist());
+
     }
 
 }
