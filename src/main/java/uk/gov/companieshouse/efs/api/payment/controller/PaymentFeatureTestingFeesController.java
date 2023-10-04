@@ -33,13 +33,13 @@ import uk.gov.companieshouse.logging.Logger;
 @ConditionalOnProperty(prefix = "feature", name = "testing-fees", havingValue = "true")
 @ResponseStatus(HttpStatus.OK)
 @RequestMapping("/efs-submission-api/payment-templates")
-public class PaymentControllerSpike {
+public class PaymentFeatureTestingFeesController {
     private static final LocalDateTime CHARGE_TIMESTAMP = LocalDateTime.parse("2019-01-08T00:00:00");
     private final Logger logger;
     private final PaymentTemplateService paymentTemplateService;
 
     @Autowired
-    public PaymentControllerSpike(final PaymentTemplateService paymentTemplateService,
+    public PaymentFeatureTestingFeesController(final PaymentTemplateService paymentTemplateService,
             Logger logger) {
         this.paymentTemplateService = paymentTemplateService;
         this.logger = logger;
