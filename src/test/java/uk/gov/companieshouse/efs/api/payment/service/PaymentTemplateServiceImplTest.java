@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +40,7 @@ class PaymentTemplateServiceImplTest {
             + "WHEN fetch template by ID using the service "
             + "THEN the result is the found object")
     @Test
-    void getTemplate() {
+    void getPaymentTemplateStringLocalDateTime() {
         PaymentTemplate expected = PaymentTemplate.newBuilder().withId(TEMPLATE_ID)
                 .build();
 
@@ -52,6 +53,38 @@ class PaymentTemplateServiceImplTest {
         verify(repository).findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
                 TEMPLATE_ID.getFee(), TEMPLATE_ID.getActiveFrom());
     }
+    @DisplayName("GIVEN a template ID to retrieve existing payment templates "
+            + "WHEN fetch templates by ID using the service "
+            + "THEN the result is the found object")
+    @Test
+    void getPaymentTemplatesString() {
+        PaymentTemplate expected = PaymentTemplate.newBuilder().withId(TEMPLATE_ID)
+                .build();
+
+        when(repository.findById_FeeOrderById_ActiveFromDesc(
+                TEMPLATE_ID.getFee())).thenReturn(Collections.singletonList(expected));
+
+        testService.getPaymentTemplates(TEMPLATE_ID.getFee());
+
+        verify(repository).findById_FeeOrderById_ActiveFromDesc(
+                TEMPLATE_ID.getFee());
+    }
+    @DisplayName("GIVEN there are payment templates "
+            + "WHEN fetch templates by using the service "
+            + "THEN the result is the found object")
+    @Test
+    void getPaymentTemplates() {
+        PaymentTemplate expected = PaymentTemplate.newBuilder().withId(TEMPLATE_ID)
+                .build();
+
+        when(repository.findAll()).thenReturn(Collections.singletonList(expected));
+
+        testService.getPaymentTemplates();
+
+        verify(repository).findAll();
+    }
+
+
 
     @DisplayName("GIVEN a payment template to store "
                  + "WHEN put template using the service "
