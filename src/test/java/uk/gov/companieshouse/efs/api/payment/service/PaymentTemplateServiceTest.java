@@ -25,7 +25,7 @@ class PaymentTemplateServiceTest {
     }
 
     @Test
-    void getTemplate() {
+    void getPaymentTemplateStringLocalDateTime() {
         final String fee = TEMPLATE_ID.getFee();
         final LocalDateTime activeFrom = TEMPLATE_ID.getActiveFrom();
         UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,
@@ -33,6 +33,24 @@ class PaymentTemplateServiceTest {
 
         assertThat(thrown.getMessage(), is("not implemented"));
     }
+
+    @Test
+    void getPaymentTemplatesString() {
+        final String fee = TEMPLATE_ID.getFee();
+        UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,
+                () -> testService.getPaymentTemplates(fee));
+
+        assertThat(thrown.getMessage(), is("not implemented"));
+    }
+
+    @Test
+    void getPaymentTemplates() {
+        UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class,
+                () -> testService.getPaymentTemplates());
+
+        assertThat(thrown.getMessage(), is("not implemented"));
+    }
+
 
     @Test
     void putTemplate() {

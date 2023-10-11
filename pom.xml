@@ -59,6 +59,7 @@
         <!-- Sonar dependency -->
         <sonar.verbose>true</sonar.verbose>
         <sonar.projectKey>uk.gov.companieshouse:efs-submission-api</sonar.projectKey>
+        <sonar.coverage.exclusions>**/PaymentFeatureTestingFeesController.java</sonar.coverage.exclusions>
     </properties>
 
     <dependencyManagement>
