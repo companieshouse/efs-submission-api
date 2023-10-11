@@ -30,6 +30,7 @@ public class FormTemplateController {
     /**
      * Form template controller constructor.
      * @param formService service used to store the form template
+     * @param logger the service logger
      */
     @Autowired
     public FormTemplateController(final FormTemplateService formService, final Logger logger) {
@@ -38,8 +39,8 @@ public class FormTemplateController {
     }
 
     /**
-     * Returns a responseEntity which contains a list of form templates belonging to an optional form category, or
-     * all templates if category is omitted.
+     * Returns a responseEntity which contains a list of form templates belonging to an optional
+     * form category, or all templates if category is omitted.
      * Will return a status of not found if the category is not found.
      *
      * @return responseEntity

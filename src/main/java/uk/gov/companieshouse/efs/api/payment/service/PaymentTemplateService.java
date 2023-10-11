@@ -12,40 +12,41 @@ import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
 public interface PaymentTemplateService {
 
     /**
-     * Retrieve the template for the specified id active at the specified date/time
+     * Find the single {@link PaymentTemplate} having {@code fee} equal to the specified {@code fee}
+     * and {@code activeFrom} on or before the specified {@code activeAt} date/time.
      *
-     * @param fee the payment template id of the template
-     * @param activeAt the local date/time for which the template must be active
-     * @return the payment template
+     * @param fee      the fee ID to query
+     * @param activeAt the local date/time to query
+     * @return the {@link PaymentTemplate} found, if any, wrapped in an {@link Optional}.
      */
     default Optional<PaymentTemplate> getPaymentTemplate(String fee, LocalDateTime activeAt) {
         throw new UnsupportedOperationException("not implemented");
     }
 
     /**
-     * Retrieve the all templates for the specified id
+     * Find the {@link PaymentTemplate}s having {@code fee} equal to the specified {@code fee}.
      *
-     * @param fee the payment template id of the template(s)
-     * @return the payment template
+     * @param fee the fee ID to query
+     * @return the collection of {@link PaymentTemplate} found, if any, wrapped in a {@link List}.
      */
     default List<PaymentTemplate> getPaymentTemplates(String fee) {
         throw new UnsupportedOperationException("not implemented");
     }
 
     /**
-     * Retrieve the all templates
+     * Find all {@link PaymentTemplate}s.
      *
-     * @return the payment template list
+     * @return the collection of {@link PaymentTemplate} found, if any, wrapped in a {@link List}.
      */
     default List<PaymentTemplate> getPaymentTemplates() {
         throw new UnsupportedOperationException("not implemented");
     }
 
     /**
-     * Store the payment template
+     * Store the {@link PaymentTemplate}.
      *
-     * @param template the payment template to be stored
-     * @return
+     * @param template the {@link PaymentTemplate} to be stored
+     * @return the {@link PaymentTemplate} stored
      */
     default PaymentTemplate postTemplate(PaymentTemplate template) {
         throw new UnsupportedOperationException("not implemented");

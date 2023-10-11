@@ -31,6 +31,7 @@ public class CategoryTemplateController {
     /**
      * Category template controller constructor.
      * @param categoryService service used to store the category template
+     * @param logger the service logger
      */
     @Autowired
     public CategoryTemplateController(final CategoryTemplateService categoryService, final Logger logger) {
@@ -39,8 +40,8 @@ public class CategoryTemplateController {
     }
 
     /**
-     * Returns a responseEntity which contains a list of category types belonging to an optional parent form
-     * category, or all categories if omitted.
+     * Returns a responseEntity which contains a list of category types belonging to an optional
+     * parent form category, or all categories if omitted.
      * Will return a status of not found if the list is not found.
      *
      * @return responseEntity

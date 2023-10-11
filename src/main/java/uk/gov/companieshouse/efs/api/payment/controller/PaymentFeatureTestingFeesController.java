@@ -29,6 +29,10 @@ import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplateId;
 import uk.gov.companieshouse.efs.api.payment.service.PaymentTemplateService;
 import uk.gov.companieshouse.logging.Logger;
 
+/**
+ * Testing/diagnostic endpoints for activation-date -based payment templates. Only instantiated when
+ * env var {@code FEATURE_TESTING_FEES=true} (default is false)
+ */
 @RestController
 @ConditionalOnProperty(prefix = "feature", name = "testing-fees", havingValue = "true")
 @ResponseStatus(HttpStatus.OK)
@@ -46,11 +50,17 @@ public class PaymentFeatureTestingFeesController {
     }
 
     /**
-     * Returns a responseEntity which contains a list of payment templates belonging to an optional
-     * fee type at an optional active_from date/time, or all templates if fee type and active_from
-     * are omitted.
+     * Returns a responseEntity which contains a list of {@link PaymentTemplate} belonging to an
+     * optional
+     * fee id, and also that is active at an optional local date/time, or all
+     * {@link PaymentTemplate} otherwise.
+     * @param fee (optional unless {@code activeAt} is not omitted) the fee id associated with a
+     *            form template
+     * @param activeAt (optional) a {@link LocalDateTime} at which that the resultant
+     * {@link PaymentTemplate} is active
      *
-     * @return responseEntity
+     * @return responseEntity containing list of {@link PaymentTemplate}. Will consist of a
+     * single value if {@code fee} and {@code activeAt} are specified.
      */
     @GetMapping(produces = {"application/json"})
     public ResponseEntity<List<PaymentTemplate>> getPaymentTemplates(
@@ -87,6 +97,9 @@ public class PaymentFeatureTestingFeesController {
         }
     }
 
+    /**
+     * DTO class used as request body by {@link #createPaymentTemplate}
+     */
     static class TestPaymentTemplate {
         final String fee;
         final LocalDateTime activeFrom;
@@ -124,6 +137,19 @@ public class PaymentFeatureTestingFeesController {
         }
     }
 
+    /**
+     * Create and store a bare-bones payment template for test purposes.
+     * Details required in request body (a {@link TestPaymentTemplate} DTO):
+     * <ul>
+     *     <li>Fee ID</li>
+     *     <li>ActiveFrom local date/time</li>
+     *     <li>Amount</li>
+     * </ul>
+     *
+     * @param templateDetails the DTO containing details to be stored
+     *
+     * @return the {@link PaymentTemplate} as stored
+     */
     @PostMapping(value = "/test-fee", consumes = {"application/json"},
         produces = {"application/json"})
     public ResponseEntity<PaymentTemplate> createPaymentTemplate(

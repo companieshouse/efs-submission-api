@@ -9,6 +9,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+/**
+ * Embedded composite key entity that identifies a unique {@link PaymentTemplate}:
+ * <ul>
+ *     <li>fee: the Fee ID</li>
+ *     <li>activeFrom: the {@link LocalDateTime} when the parent {@link PaymentTemplate} becomes
+ *     active. <b>Note: </b>This will be converted and stored as a UTC value on the database
+ *     side.</li>
+ * </ul>
+ */
 @Embeddable
 public final class PaymentTemplateId implements Serializable {
 
@@ -19,9 +28,17 @@ public final class PaymentTemplateId implements Serializable {
     @JsonProperty("active_from")
     private LocalDateTime activeFrom;
 
+    /**
+     * No-arg constructor.
+     */
     public PaymentTemplateId() {
     }
 
+    /**
+     * All-arg constructor.
+     * @param fee the fee id code
+     * @param activeFrom the local date/time when activeness begins
+     */
     public PaymentTemplateId(final String fee, final LocalDateTime activeFrom) {
         this.fee = fee;
         this.activeFrom = activeFrom;
