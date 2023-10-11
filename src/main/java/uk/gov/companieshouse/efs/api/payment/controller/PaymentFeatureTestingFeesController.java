@@ -100,13 +100,13 @@ public class PaymentFeatureTestingFeesController {
     /**
      * DTO class used as request body by {@link #createPaymentTemplate}
      */
-    static class TestPaymentTemplate {
+    public static class TestingFeesPaymentTemplate {
         final String fee;
         final LocalDateTime activeFrom;
         final String amount;
 
         @JsonCreator
-        public TestPaymentTemplate(@JsonProperty("fee") final String fee,
+        public TestingFeesPaymentTemplate(@JsonProperty("fee") final String fee,
             @JsonProperty("active_from") final LocalDateTime activeFrom,
             @JsonProperty("amount") final String amount) {
             this.fee = fee;
@@ -129,7 +129,7 @@ public class PaymentFeatureTestingFeesController {
 
         @Override
         public String toString() {
-            return new StringJoiner(", ", TestPaymentTemplate.class.getSimpleName() + "[", "]")
+            return new StringJoiner(", ", TestingFeesPaymentTemplate.class.getSimpleName() + "[", "]")
                 .add("fee='" + fee + "'")
                 .add("activeFrom=" + activeFrom)
                 .add("amount='" + amount + "'")
@@ -139,7 +139,7 @@ public class PaymentFeatureTestingFeesController {
 
     /**
      * Create and store a bare-bones payment template for test purposes.
-     * Details required in request body (a {@link TestPaymentTemplate} DTO):
+     * Details required in request body (a {@link TestingFeesPaymentTemplate} DTO):
      * <ul>
      *     <li>Fee ID</li>
      *     <li>ActiveFrom local date/time</li>
@@ -153,7 +153,7 @@ public class PaymentFeatureTestingFeesController {
     @PostMapping(value = "/test-fee", consumes = {"application/json"},
         produces = {"application/json"})
     public ResponseEntity<PaymentTemplate> createPaymentTemplate(
-        @RequestBody final TestPaymentTemplate templateDetails) {
+        @RequestBody final TestingFeesPaymentTemplate templateDetails) {
 
         final PaymentTemplate.Item item = PaymentTemplate.Item.newBuilder()
             .withAmount(templateDetails.getAmount())
