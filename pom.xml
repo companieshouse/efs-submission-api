@@ -59,6 +59,9 @@
         <!-- Sonar dependency -->
         <sonar.verbose>true</sonar.verbose>
         <sonar.projectKey>uk.gov.companieshouse:efs-submission-api</sonar.projectKey>
+
+        <dependency-check-plugin.version>8.4.0</dependency-check-plugin.version>
+
     </properties>
 
     <dependencyManagement>
@@ -368,6 +371,23 @@
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.1.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check-plugin.version}</version>
+                <configuration>
+                    <suppressionFiles>
+                        <suppressionFile>suppress.xml</suppressionFile>
+                    </suppressionFiles>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
