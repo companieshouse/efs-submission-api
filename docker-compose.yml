@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  suppression-web:
+  efs-submission-api:
     image: '169942020521.dkr.ecr.eu-west-1.amazonaws.com/local/efs-submission-api:latest'
     expose:
       - 8080
