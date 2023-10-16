@@ -11,6 +11,10 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +36,7 @@ import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
 import uk.gov.companieshouse.efs.api.payment.PaymentClose;
 import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplate;
+import uk.gov.companieshouse.efs.api.payment.entity.PaymentTemplateId;
 import uk.gov.companieshouse.efs.api.payment.service.PaymentTemplateService;
 import uk.gov.companieshouse.efs.api.submissions.mapper.SubmissionApiMapper;
 import uk.gov.companieshouse.efs.api.submissions.mapper.SubmissionMapper;
@@ -54,20 +59,22 @@ class PaymentControllerTest {
     public static final String CHARGED = "CHARGED";
     public static final String CHARGES = "CHARGES";
     public static final String UNKNOWN = "UNKNOWN";
+    private static final LocalDateTime START_TIMESTAMP = LocalDateTime.parse("2019-01-08T00:00:00");
+    public static final PaymentTemplateId CHARGED_TEMPLATE_ID = new PaymentTemplateId(CHARGED,
+        START_TIMESTAMP);
 
     @Mock
+
     private SessionListApi paymentSessions;
 
     private PaymentController paymentController;
 
     @Mock
-    private SubmissionService service;
+    private SubmissionService submissionService;
     @Mock
     private FormTemplateService formTemplateService;
     @Mock
     private PaymentTemplateService paymentTemplateService;
-    @Mock
-    private SubmissionService submissionService;
     @Mock
     private EmailService emailService;
     @Mock
@@ -78,6 +85,9 @@ class PaymentControllerTest {
 
     @Mock
     private SubmissionResponseApi response;
+
+    @Mock
+    private Clock clock;
 
     @Mock
     private Logger logger;
@@ -92,9 +102,10 @@ class PaymentControllerTest {
 
     @BeforeEach
     void setUp() {
+        clock = Clock.fixed(START_TIMESTAMP.toInstant(ZoneOffset.UTC), ZoneId.of("UTC"));
         this.paymentController =
-            new PaymentController(service, formTemplateService, paymentTemplateService,
-                submissionService, emailService, submissionApiMapper, logger);
+            new PaymentController(submissionService, formTemplateService, paymentTemplateService,
+                emailService, submissionApiMapper, clock, logger);
         company = new Company(COMPANY_NUMBER, "test-company");
     }
 
@@ -106,11 +117,11 @@ class PaymentControllerTest {
             new Submission.Builder().withFormDetails(formDetails).withCompany(company).build());
         final FormTemplateApi formTemplate =
             new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, null, false, null);
-        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
+        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED_TEMPLATE_ID).build();
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getPaymentTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
         when(request.getRequestURL()).thenReturn(
             new StringBuffer(PAYMENT_REQUEST_URL).append("/").append(SUB_ID).append("/"));
 
@@ -129,7 +140,7 @@ class PaymentControllerTest {
     @Test
     void testGetPaymentDetailsWhenSubmissionNotFound() {
         //given
-        when(service.readSubmission(SUB_ID)).thenReturn(null);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(null);
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -143,7 +154,7 @@ class PaymentControllerTest {
         //given
         SubmissionApi submission = new SubmissionMapper().map(new Submission.Builder().withId(SUB_ID).build());
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -159,7 +170,7 @@ class PaymentControllerTest {
         SubmissionApi submission =
             new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -175,7 +186,7 @@ class PaymentControllerTest {
         SubmissionApi submission =
             new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(UNKNOWN)).thenReturn(null);
 
         //when
@@ -192,7 +203,7 @@ class PaymentControllerTest {
         SubmissionApi submission =
             new SubmissionMapper().map(new Submission.Builder().withFormDetails(formDetails).build());
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -210,7 +221,7 @@ class PaymentControllerTest {
         final FormTemplateApi formTemplate =
             new FormTemplateApi(NOCHARGE, "no charge", null, null, false, false, null, false, null);
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
 
         //when
@@ -229,7 +240,7 @@ class PaymentControllerTest {
         final FormTemplateApi formTemplate =
             new FormTemplateApi(NOCHARGE, "no charge", null, "", false, false, null, false, null);
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
 
         //when
@@ -249,14 +260,13 @@ class PaymentControllerTest {
             new FormTemplateApi(NOCHARGE, "no charge", null, UNKNOWN, false, false, null, false,
                 null);
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(NOCHARGE)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(UNKNOWN)).thenReturn(Optional.empty());
+        when(paymentTemplateService.getPaymentTemplate(UNKNOWN, START_TIMESTAMP)).thenReturn(Optional.empty());
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
 
-        //then
         assertThat(response.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
@@ -267,13 +277,12 @@ class PaymentControllerTest {
             new Submission.Builder().withFormDetails(formDetails).withCompany(company).build());
         final FormTemplateApi formTemplate =
             new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, null, false, null);
-        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
+        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED_TEMPLATE_ID).build();
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES)).thenReturn(Optional.of(paymentTemplate));
-        when(request.getRequestURL())
-            .thenReturn(new StringBuffer("http://localhost:9999/efs-submission-api/submission{"));
+        when(paymentTemplateService.getPaymentTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
+        when(request.getRequestURL()).thenReturn(new StringBuffer("http://localhost:9999/efs-submission-api/submission{"));
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -289,11 +298,11 @@ class PaymentControllerTest {
             .map(new Submission.Builder().withFormDetails(formDetails).build());
         final FormTemplateApi formTemplate =
             new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, null, false, null);
-        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
+        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED_TEMPLATE_ID).build();
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getPaymentTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -312,11 +321,11 @@ class PaymentControllerTest {
             .map(new Submission.Builder().withFormDetails(formDetails).withCompany(company).build());
         final FormTemplateApi formTemplate =
             new FormTemplateApi(CHARGED, "charged", null, CHARGES, false, false, null, false, null);
-        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED).build();
+        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder().withId(CHARGED_TEMPLATE_ID).build();
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(formTemplateService.getFormTemplate(CHARGED)).thenReturn(formTemplate);
-        when(paymentTemplateService.getTemplate(CHARGES)).thenReturn(Optional.of(paymentTemplate));
+        when(paymentTemplateService.getPaymentTemplate(CHARGES, START_TIMESTAMP)).thenReturn(Optional.of(paymentTemplate));
 
         //when
         final ResponseEntity<PaymentTemplate> response = paymentController.getPaymentDetails(SUB_ID, request);
@@ -330,7 +339,7 @@ class PaymentControllerTest {
     void testSubmitPaymentSessionsReturnsId() {
         //given
         paymentSessions = new SessionListApi();
-        when(service.updateSubmissionWithPaymentSessions("123", paymentSessions)).thenReturn(response);
+        when(submissionService.updateSubmissionWithPaymentSessions("123", paymentSessions)).thenReturn(response);
 
         //when
         ResponseEntity<SubmissionResponseApi> actual =
@@ -345,7 +354,7 @@ class PaymentControllerTest {
     @Test
     void testSubmitPaymentSessionsReturns409Conflict() {
         //given
-        when(service.updateSubmissionWithPaymentSessions(SUB_ID, paymentSessions))
+        when(submissionService.updateSubmissionWithPaymentSessions(SUB_ID, paymentSessions))
             .thenThrow(new SubmissionIncorrectStateException("not OPEN"));
 
         //when
@@ -376,7 +385,7 @@ class PaymentControllerTest {
     @Test
     void testSubmitPaymentSessionsReturns404NotFound() {
         // given
-        when(service.updateSubmissionWithPaymentSessions(SUB_ID, paymentSessions))
+        when(submissionService.updateSubmissionWithPaymentSessions(SUB_ID, paymentSessions))
             .thenThrow(new SubmissionNotFoundException("not found"));
 
         // when
@@ -408,7 +417,7 @@ class PaymentControllerTest {
                 .withCompany(company)
                 .build());
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         submission.setStatus(SubmissionStatus.SUBMITTED); // invalid status
 
         // when
@@ -429,7 +438,7 @@ class PaymentControllerTest {
                 .withCompany(company)
                 .build());
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submission);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submission);
         when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenThrow(
             new SubmissionIncorrectStateException("test exception"));
         submission.setStatus(SubmissionStatus.PAYMENT_REQUIRED);
@@ -455,7 +464,7 @@ class PaymentControllerTest {
         final SubmissionApi submissionApi = new SubmissionMapper().map(submission);
         final SubmissionResponseApi submissionResponse = new SubmissionResponseApi(SUB_ID);
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submissionApi);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(submissionResponse);
 
         // when
@@ -479,7 +488,7 @@ class PaymentControllerTest {
         final SubmissionApi submissionApi = new SubmissionMapper().map(submission);
         final SubmissionResponseApi submissionResponse = new SubmissionResponseApi(SUB_ID);
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submissionApi);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(paymentClose.isPaid()).thenReturn(false);
         when(paymentClose.isFailed()).thenReturn(true);
         when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(
@@ -508,7 +517,7 @@ class PaymentControllerTest {
         final SubmissionApi submissionApi = new SubmissionMapper().map(submission);
         final SubmissionResponseApi submissionResponse = new SubmissionResponseApi(SUB_ID);
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submissionApi);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(submissionResponse);
 
         // when
@@ -532,7 +541,7 @@ class PaymentControllerTest {
         final SubmissionApi submissionApi = new SubmissionMapper().map(submission);
         final SubmissionResponseApi submissionResponse = new SubmissionResponseApi(SUB_ID);
 
-        when(service.readSubmission(SUB_ID)).thenReturn(submissionApi);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(paymentClose.isPaid()).thenReturn(true);
         when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(submissionResponse);
         when(submissionApiMapper.map(submissionApi)).thenReturn(submission);

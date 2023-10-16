@@ -22,8 +22,7 @@ import uk.gov.companieshouse.logging.Logger;
  */
 @RestController
 @ResponseStatus(HttpStatus.OK)
-@RequestMapping(value = "/efs-submission-api", produces = {"application/json"},
-        consumes = {"application/json"})
+@RequestMapping("/efs-submission-api")
 public class CategoryTemplateController {
 
     private CategoryTemplateService categoryService;
@@ -32,6 +31,7 @@ public class CategoryTemplateController {
     /**
      * Category template controller constructor.
      * @param categoryService service used to store the category template
+     * @param logger the service logger
      */
     @Autowired
     public CategoryTemplateController(final CategoryTemplateService categoryService, final Logger logger) {
@@ -40,13 +40,13 @@ public class CategoryTemplateController {
     }
 
     /**
-     * Returns a responseEntity which contains a list of category types belonging to an optional parent form
-     * category, or all categories if omitted.
+     * Returns a responseEntity which contains a list of category types belonging to an optional
+     * parent form category, or all categories if omitted.
      * Will return a status of not found if the list is not found.
      *
      * @return responseEntity
      */
-    @GetMapping(value = "/category-templates")
+    @GetMapping(value = "/category-templates", produces = {"application/json"})
     public ResponseEntity<CategoryTemplateListApi> getCategoryTemplates(
         @RequestParam(value = "parent", required = false) String categoryId, final HttpServletRequest request) {
 
@@ -70,7 +70,7 @@ public class CategoryTemplateController {
      *
      * @return responseEntity
      */
-    @GetMapping(value = "/category-template/{id}")
+    @GetMapping(value = "/category-template/{id}", produces = {"application/json"})
     public ResponseEntity<CategoryTemplateApi> getCategoryTemplate(@PathVariable String id, HttpServletRequest request) {
         try {
             return ResponseEntity.ok().body(categoryService.getCategoryTemplate(id));
@@ -83,7 +83,7 @@ public class CategoryTemplateController {
         }
     }
 
-    @GetMapping(value = "/category-template/")
+    @GetMapping(value = "/category-template/", produces = {"application/json"})
     public ResponseEntity<CategoryTemplateApi> getRootCategory(HttpServletRequest request) {
         final String id = "ROOT";
         return getCategoryTemplate(id, request);

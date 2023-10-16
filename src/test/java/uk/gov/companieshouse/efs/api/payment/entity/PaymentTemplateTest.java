@@ -14,20 +14,25 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class PaymentTemplateTest {
     private static final String COMPANY_NUMBER = "00000000";
+    public static final PaymentTemplateId TEMPLATE_ID =
+            new PaymentTemplateId("SLPCS01 Test", LocalDateTime.parse("2019-01-08T00:00:00"));
 
     private PaymentTemplate testDetails;
     private PaymentTemplate.Item item;
     private PaymentTemplate.Links links;
+
 
     @BeforeEach
     void setUp() throws MalformedURLException {
@@ -38,9 +43,10 @@ class PaymentTemplateTest {
             .withKind("cost#cost")
             .withProductType("efs-test").build();
         links = new PaymentTemplate.Links("http://resource.url", new URL("http://self.url"));
-        testDetails = PaymentTemplate.newBuilder().withId("efs-test")
+        testDetails = PaymentTemplate.newBuilder().withId(TEMPLATE_ID)
             .withDescription("Upload a form to Companies house")
-            .withEtag("d8a936fc59fd43ba6c66363c25684be1964ea03d").withItem(item).withKind("cost#cost")
+            .withEtag("d8a936fc59fd43ba6c66363c25684be1964ea03d").withItem(item).withKind("cost"
+                        + "#cost")
             .withLinks(links)
             .withPaymentReference("Test Charge")
             .withStatus(PaymentTemplate.Status.PENDING)
@@ -59,9 +65,9 @@ class PaymentTemplateTest {
 
     @Test
     void setId() {
-        testDetails.setId("539045987ba7870fe");
+        testDetails.setId(TEMPLATE_ID);
 
-        assertThat(testDetails.getId(), is("539045987ba7870fe"));
+        assertThat(testDetails.getId(), is(TEMPLATE_ID));
     }
 
     @Test
@@ -106,6 +112,13 @@ class PaymentTemplateTest {
     }
 
     @Test
+    void buildWithItemsWhenNull() {
+        testDetails = PaymentTemplate.newBuilder().withItems(null).build();
+
+        assertThat(testDetails.getItems(), is(Matchers.nullValue()));
+    }
+
+    @Test
     void setKind() {
         testDetails.setKind("kind");
 
@@ -114,7 +127,8 @@ class PaymentTemplateTest {
 
     @Test
     void setLinks() throws MalformedURLException {
-        final PaymentTemplate.Links expected = new PaymentTemplate.Links("resource", new URL("http://self"));
+        final PaymentTemplate.Links expected = new PaymentTemplate.Links("resource", new URL(
+                "http://self"));
 
         testDetails.setLinks(expected);
 
@@ -137,16 +151,19 @@ class PaymentTemplateTest {
 
     @Test
     void equalsAndHashcode() {
-        EqualsVerifier.forClass(PaymentTemplate.class).usingGetClass()
-            .suppress(Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(PaymentTemplate.class)
+                .usingGetClass()
+                .suppress(Warning.NONFINAL_FIELDS)
+                .suppress(Warning.SURROGATE_KEY)
+                .verify();
     }
 
     @Test
     void toStringTest() {
         assertThat(testDetails.toString(),
-            //@formatter:off
+                //@formatter:off
             is("PaymentTemplate["
-                + "id=efs-test,"
+                + "id=PaymentTemplateId[fee=SLPCS01 Test,activeFrom=2019-01-08T00:00],"
                 + "description=Upload a form to Companies house,"
                 + "etag=d8a936fc59fd43ba6c66363c25684be1964ea03d,"
                 + "items=["

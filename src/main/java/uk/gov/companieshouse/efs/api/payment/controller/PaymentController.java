@@ -7,6 +7,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -50,25 +52,25 @@ public class PaymentController {
         Sets.immutableEnumSet(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED);
 
     private final Logger logger;
+    private final Clock clock;
 
-    private final SubmissionService service;
+    private final SubmissionService submissionService;
     private final FormTemplateService formTemplateService;
     private final PaymentTemplateService paymentTemplateService;
-    private final SubmissionService submissionService;
     private final EmailService emailService;
     private final SubmissionApiMapper submissionApiMapper;
 
     @Autowired
-    public PaymentController(SubmissionService service, FormTemplateService formTemplateService,
-        final PaymentTemplateService paymentTemplateService,
-        final SubmissionService submissionService, final EmailService emailService,
-        final SubmissionApiMapper submissionApiMapper, Logger logger) {
-        this.service = service;
+    public PaymentController(final SubmissionService submissionService,
+        final FormTemplateService formTemplateService,
+        final PaymentTemplateService paymentTemplateService, final EmailService emailService,
+        final SubmissionApiMapper submissionApiMapper, final Clock clock, final Logger logger) {
         this.formTemplateService = formTemplateService;
         this.paymentTemplateService = paymentTemplateService;
         this.submissionService = submissionService;
         this.emailService = emailService;
         this.submissionApiMapper = submissionApiMapper;
+        this.clock = clock;
         this.logger = logger;
     }
 
@@ -85,7 +87,7 @@ public class PaymentController {
 
         logger.debug(MessageFormat.format("Fetching submission with id: {0}", id));
 
-        final SubmissionApi submission = service.readSubmission(id);
+        final SubmissionApi submission = submissionService.readSubmission(id);
         final ResponseEntity<PaymentTemplate> response;
 
         if (submission == null) {
@@ -100,11 +102,13 @@ public class PaymentController {
             FormTemplateApi formTemplate = formTemplateService.getFormTemplate(formType);
             if (formTemplate != null) {
                 final String chargeTemplateId = formTemplate.getPaymentCharge();
+                final LocalDateTime now = LocalDateTime.now(clock);
 
-                logger.debug(MessageFormat.format("Fetching payment charge with id: {0}", chargeTemplateId));
+                logger.debug(MessageFormat.format("Fetching template for fee: {0} at {1}",
+                    chargeTemplateId, now));
                 if (StringUtils.isNotBlank(chargeTemplateId)) {
                     final Optional<PaymentTemplate> optionalTemplate =
-                        paymentTemplateService.getTemplate(chargeTemplateId);
+                        paymentTemplateService.getPaymentTemplate(chargeTemplateId, now);
 
                     optionalTemplate.ifPresent(t -> logger.debug(MessageFormat.format("template={0}", t)));
                     response = optionalTemplate
@@ -144,7 +148,7 @@ public class PaymentController {
         
         logger.debug(MessageFormat.format("Fetching submission with id: {0}", id));
 
-        final SubmissionApi submission = service.readSubmission(id);
+        final SubmissionApi submission = submissionService.readSubmission(id);
         ResponseEntity<SubmissionResponseApi> response = ResponseEntity.noContent()
             .build();
 
@@ -179,7 +183,7 @@ public class PaymentController {
     private ResponseEntity<PaymentTemplate> getPaymentTemplateResponse(final String id,
         final HttpServletRequest request, final PaymentTemplate paymentTemplate) {
         final ResponseEntity<PaymentTemplate> response;
-        final SubmissionApi submission = service.readSubmission(id);
+        final SubmissionApi submission = submissionService.readSubmission(id);
 
         if (submission.getCompany() == null || StringUtils.isBlank(submission.getCompany().getCompanyNumber())) {
             response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -230,7 +234,8 @@ public class PaymentController {
         }
 
         try {
-            return ResponseEntity.ok(service.updateSubmissionWithPaymentSessions(id, paymentSessions));
+            return ResponseEntity.ok(
+                submissionService.updateSubmissionWithPaymentSessions(id, paymentSessions));
         } catch (SubmissionNotFoundException ex) {
             return ResponseEntity.notFound().build();
         } catch (SubmissionIncorrectStateException ex) {

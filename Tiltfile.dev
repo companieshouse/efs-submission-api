@@ -37,7 +37,7 @@ local_resource(
   ],
   cmd = '''
     root=$(basename "$(cd ../..|| exit; pwd)")
-    container_name="${root}_mongo_1"
+    container_name="${root}-mongo-1"
 
     json_files=(src/main/resources/*.json)
     db="efs_submissions"
