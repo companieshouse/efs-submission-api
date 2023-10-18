@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.persistence.EmbeddedId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -443,9 +443,8 @@ public final class PaymentTemplate {
         }
     }
 
-    @Id
-    private String id;
-
+    @EmbeddedId
+    private PaymentTemplateId id;
     @Field
     private String description;
     @Field
@@ -465,11 +464,11 @@ public final class PaymentTemplate {
     @Transient // not an entity field; for use by PaymentController.getPaymentDetails() response
     private String companyNumber;
 
-    public String getId() {
+    public PaymentTemplateId getId() {
         return id;
     }
 
-    public void setId(final String id) {
+    public void setId(final PaymentTemplateId id) {
         this.id = id;
     }
 
@@ -547,22 +546,16 @@ public final class PaymentTemplate {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof PaymentTemplate)) {
             return false;
         }
         final PaymentTemplate that = (PaymentTemplate) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getDescription(), that.getDescription())
-            && Objects.equals(getEtag(), that.getEtag()) && Objects.equals(getItems(), that.getItems()) && Objects
-            .equals(getKind(), that.getKind()) && Objects.equals(getLinks(), that.getLinks()) && Objects
-            .equals(getPaymentReference(), that.getPaymentReference()) && getStatus() == that.getStatus() && Objects
-            .equals(getCompanyNumber(), that.getCompanyNumber());
+        return com.google.common.base.Objects.equal(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects
-            .hash(getId(), getDescription(), getEtag(), getItems(), getKind(), getLinks(), getPaymentReference(),
-                getStatus(), getCompanyNumber());
+        return com.google.common.base.Objects.hashCode(getId());
     }
 
     @Override
@@ -577,7 +570,7 @@ public final class PaymentTemplate {
      * {@code PaymentTemplate} static builder class
      */
     public static final class Builder {
-        private String id;
+        private PaymentTemplateId id;
         private String description;
         private String etag;
         @JsonProperty("items")
@@ -599,7 +592,7 @@ public final class PaymentTemplate {
          * @param val the id
          * @return builder with the id set to specified value
          */
-        public Builder withId(final String val) {
+        public Builder withId(final PaymentTemplateId val) {
             id = val;
             return this;
         }

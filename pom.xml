@@ -27,7 +27,7 @@
         <environment-reader-library.version>1.3.2</environment-reader-library.version>
         <!-- Logging -->
         <log4j-bom.version>2.17.0</log4j-bom.version>
-        <structured-logging.version>1.9.14</structured-logging.version>
+        <structured-logging.version>1.9.12</structured-logging.version>
         <avro.version>1.8.1</avro.version>
         <ch-kafka.version>1.4.4</ch-kafka.version>
         <kafka-models.version>1.0.12</kafka-models.version>
@@ -59,6 +59,7 @@
         <!-- Sonar dependency -->
         <sonar.verbose>true</sonar.verbose>
         <sonar.projectKey>uk.gov.companieshouse:efs-submission-api</sonar.projectKey>
+        <sonar.coverage.exclusions>**/PaymentFeatureTestingFeesController.java</sonar.coverage.exclusions>
         <sonar.jacoco.reportPath>target/site/jacoco/jacoco.xml</sonar.jacoco.reportPath>
         <sonar.dependencyCheck.htmlReportPath>
             ${project.basedir}/target/dependency-check-report.html
@@ -303,6 +304,26 @@
         </dependency>
     </dependencies>
     <build>
+        <!--
+            Workaround for Tilt infinite rebuild loop:
+            1. mvn compile: copies src/main/resources/*.properties to target/classes (standard behaviour)
+            2. those copies files have a new ctime (creation timestamp)
+            3. Tiltfile.dev watches ./target/classes/*.properties and triggers live update
+            4. Live update runs mvn compile
+
+            Solution:
+            1. Prevent step 1 above by excluding src/main/resources/*.properties from standard build
+            2. Instead run maven-antrun-plugin copy task setting preservelastmodified=true
+        -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>*.properties</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -357,6 +378,28 @@
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
+            <!-- See Workaround Note above -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.build.outputDirectory}" preservelastmodified="true">
+                                    <fileset dir="src/main/resources">
+                                        <include name="*.properties"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -377,7 +420,7 @@
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.2.1</version>
             </plugin>
             <plugin>
                 <groupId>org.owasp</groupId>
