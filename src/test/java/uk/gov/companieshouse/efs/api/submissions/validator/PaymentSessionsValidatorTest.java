@@ -109,7 +109,7 @@ class PaymentSessionsValidatorTest {
             assertThrows(SubmissionValidationException.class, () -> testValidator.validate(submission));
 
         assertThat(exception.getMessage(),
-            is(MessageFormat.format("Fee amount is missing for form [{0}] in submission [{1}]", TEST_FORM, SUB_ID)));
+            is(MessageFormat.format("Fee item is missing for form [{0}] in submission [{1}]", TEST_FORM, SUB_ID)));
         verifyNoInteractions(nextValidator);
     }
 

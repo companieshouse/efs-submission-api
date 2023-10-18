@@ -48,7 +48,8 @@ public class PaymentSessionsValidator extends ValidatorImpl<Submission> implemen
                         checkPaymentSessions(input, formType, hasPaymentSessions, decimalAmount);
                     } else {
                         throw new SubmissionValidationException(String
-                            .format("Fee amount is missing for form [%s] in submission [%s]", formType, input.getId()));
+                            .format("Fee item is missing for form [%s] in submission [%s]",
+                                formType, input.getId()));
                     }
                 }
             }
