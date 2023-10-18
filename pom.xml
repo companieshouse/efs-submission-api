@@ -60,6 +60,12 @@
         <sonar.verbose>true</sonar.verbose>
         <sonar.projectKey>uk.gov.companieshouse:efs-submission-api</sonar.projectKey>
         <sonar.jacoco.reportPath>target/site/jacoco/jacoco.xml</sonar.jacoco.reportPath>
+        <sonar.dependencyCheck.htmlReportPath>
+            ${project.basedir}/target/dependency-check-report.html
+        </sonar.dependencyCheck.htmlReportPath>
+        <sonar.java.binaries>
+            ${project.basedir}/target
+        </sonar.java.binaries>
 
         <!-- OWASP dependency checker -->
         <dependency-check-plugin.version>8.4.0</dependency-check-plugin.version>
@@ -378,6 +384,9 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>${dependency-check-plugin.version}</version>
                 <configuration>
+                    <formats>
+                        <format>html</format>
+                    </formats>
                     <suppressionFiles>
                         <suppressionFile>suppress.xml</suppressionFile>
                     </suppressionFiles>
