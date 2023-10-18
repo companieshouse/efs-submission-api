@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.efs.api.submissions.validator;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -14,11 +16,13 @@ import uk.gov.companieshouse.efs.api.submissions.validator.exception.SubmissionV
 public class PaymentSessionsValidator extends ValidatorImpl<Submission> implements Validator<Submission> {
     private final FormTemplateRepository formRepository;
     private final PaymentTemplateRepository paymentRepository;
+    private final Clock clock;
 
     public PaymentSessionsValidator(final FormTemplateRepository formTemplateRepository,
-        final PaymentTemplateRepository paymentTemplateRepository) {
+        final PaymentTemplateRepository paymentTemplateRepository, final Clock clock) {
         this.formRepository = formTemplateRepository;
         this.paymentRepository = paymentTemplateRepository;
+        this.clock = clock;
     }
 
     @Override
@@ -32,7 +36,8 @@ public class PaymentSessionsValidator extends ValidatorImpl<Submission> implemen
 
             if (StringUtils.isNotBlank(formFee)) {
                 final Optional<PaymentTemplate> paymentTemplate =
-                    formTemplate.map(FormTemplate::getFee).flatMap(paymentRepository::findById);
+                    paymentRepository.findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
+                    formFee, LocalDateTime.now(clock));
                 final Optional<PaymentTemplate.Item> firstItem =
                     paymentTemplate.flatMap(p -> p.getItems().stream().findFirst());
 

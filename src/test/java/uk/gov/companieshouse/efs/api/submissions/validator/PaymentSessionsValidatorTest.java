@@ -8,6 +8,10 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.text.MessageFormat;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +34,7 @@ class PaymentSessionsValidatorTest {
     private static final String TEST_FORM = "FORM";
     private static final String TEST_FEE = "FEE";
     private static final String SUB_ID = "0000000000";
+    private static final LocalDateTime NOW = LocalDateTime.now();
 
     private PaymentSessionsValidator testValidator;
 
@@ -52,15 +57,18 @@ class PaymentSessionsValidatorTest {
     @Mock
     private Validator<Submission> nextValidator;
 
+    private Clock clock;
+
     @BeforeEach
     void setUp() {
-        testValidator = new PaymentSessionsValidator(formRepository, paymentRepository);
+        clock = Clock.fixed(NOW.toInstant(ZoneOffset.UTC), ZoneId.of("UTC"));
+        testValidator = new PaymentSessionsValidator(formRepository, paymentRepository, clock);
         testValidator.setNext(nextValidator);
     }
 
     @Test
     void validateWhenFormRepositoryNullThenValid() throws SubmissionValidationException {
-        testValidator = new PaymentSessionsValidator(null, paymentRepository);
+        testValidator = new PaymentSessionsValidator(null, paymentRepository, clock);
         testValidator.setNext(nextValidator);
 
         testValidator.validate(submission);
@@ -70,7 +78,7 @@ class PaymentSessionsValidatorTest {
 
     @Test
     void validateWhenPaymentRepositoryNullThenValid() throws SubmissionValidationException {
-        testValidator = new PaymentSessionsValidator(formRepository, null);
+        testValidator = new PaymentSessionsValidator(formRepository, null, clock);
         testValidator.setNext(nextValidator);
 
         testValidator.validate(submission);
@@ -92,7 +100,9 @@ class PaymentSessionsValidatorTest {
     void validateWhenPaymentItemsEmptyAndHasPaymentSessionsThenInvalid() {
         expectSubmissionWithForm();
         expectFormWithPaymentTemplate(TEST_FEE);
-        when(paymentRepository.findById(TEST_FEE)).thenReturn(Optional.of(paymentTemplate));
+        when(
+            paymentRepository.findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
+                TEST_FEE, LocalDateTime.now(clock))).thenReturn(Optional.of(paymentTemplate));
         expectErrorMessageDetails();
 
         final SubmissionValidationException exception =
@@ -123,7 +133,9 @@ class PaymentSessionsValidatorTest {
     void validateWhenFormFeeNotFoundThenValid() throws SubmissionValidationException {
         expectSubmissionWithForm();
         expectFormWithPaymentTemplate(TEST_FEE);
-        when(paymentRepository.findById(TEST_FEE)).thenReturn(Optional.empty());
+        when(
+            paymentRepository.findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
+                TEST_FEE, LocalDateTime.now(clock))).thenReturn(Optional.empty());
 
         testValidator.validate(submission);
 
@@ -134,7 +146,9 @@ class PaymentSessionsValidatorTest {
     void validateWhenPaymentTemplateNotFoundThenValid() throws SubmissionValidationException {
         expectSubmissionWithForm();
         expectFormWithPaymentTemplate(TEST_FEE);
-        when(paymentRepository.findById(TEST_FEE)).thenReturn(Optional.empty());
+        when(
+            paymentRepository.findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
+                TEST_FEE, LocalDateTime.now(clock))).thenReturn(Optional.empty());
 
         testValidator.validate(submission);
 
@@ -252,7 +266,9 @@ class PaymentSessionsValidatorTest {
     }
 
     private void expectPaymentTemplateWithSingleItem() {
-        when(paymentRepository.findById(TEST_FEE)).thenReturn(Optional.of(paymentTemplate));
+        when(
+            paymentRepository.findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
+                TEST_FEE, LocalDateTime.now(clock))).thenReturn(Optional.of(paymentTemplate));
         when(paymentTemplate.getItems()).thenReturn(Collections.singletonList(paymentItem));
     }
 

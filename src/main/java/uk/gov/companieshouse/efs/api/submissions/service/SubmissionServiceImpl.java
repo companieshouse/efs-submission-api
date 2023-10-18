@@ -373,12 +373,12 @@ public class SubmissionServiceImpl implements SubmissionService {
     private String getPaymentCharge(final String formType) {
         final FormTemplateApi formTemplate = formType != null ? formTemplateService.getFormTemplate(formType) : null;
         String result = null;
+        final LocalDateTime now = LocalDateTime.now(clock);
 
         if (formTemplate != null) {
             final String paymentCharge = formTemplate.getPaymentCharge();
 
             if (StringUtils.isNotBlank(paymentCharge)) {
-                final LocalDateTime now = LocalDateTime.now(clock);
 
                 LOGGER.debug(String.format("Payment fee at [%s] for form [%s] is [%s]",
                     DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(now), formType, paymentCharge));
@@ -389,7 +389,8 @@ public class SubmissionServiceImpl implements SubmissionService {
             }
         }
         if (result == null) {
-            LOGGER.debug("Payment fee at [%s] for form is [N/A]");
+            LOGGER.debug(String.format("Payment fee at [%s] for form [%s] is [N/A]",
+                DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(now), formType));
         }
 
         return result;

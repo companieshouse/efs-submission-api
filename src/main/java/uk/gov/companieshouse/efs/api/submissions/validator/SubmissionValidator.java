@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.efs.api.submissions.validator;
 
+import java.time.Clock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
@@ -15,15 +16,17 @@ public class SubmissionValidator extends ValidatorImpl<Submission> implements Va
     private FormTemplateRepository formRepository;
     private PaymentTemplateRepository paymentRepository;
     private CategoryTemplateService categoryTemplateService;
+    private final Clock clock;
     private final Logger logger;
 
 
     @Autowired
     public SubmissionValidator(FormTemplateRepository formRepository, PaymentTemplateRepository paymentRepository,
-        CategoryTemplateService categoryTemplateService, final Logger logger) {
+        CategoryTemplateService categoryTemplateService, final Clock clock, final Logger logger) {
         this.formRepository = formRepository;
         this.categoryTemplateService = categoryTemplateService;
         this.paymentRepository = paymentRepository;
+        this.clock = clock;
         this.logger = logger;
     }
 
@@ -37,7 +40,7 @@ public class SubmissionValidator extends ValidatorImpl<Submission> implements Va
         val1.setNext(new FormTemplateValidator(formRepository))
             .setNext(new ConfirmAuthorisedValidator(formRepository, categoryTemplateService))
             .setNext(new FileDetailsValidator())
-            .setNext(new PaymentSessionsValidator(formRepository, paymentRepository))
+            .setNext(new PaymentSessionsValidator(formRepository, paymentRepository, clock))
             .setNext(new FesAttachmentValidator(formRepository))
             .setNext(new PresenterValidator())
             .setNext(new CompanyDetailsValidator())

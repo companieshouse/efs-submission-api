@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +39,7 @@ class SubmissionValidatorTest {
         PaymentTemplate.Item.newBuilder().withAmount(TEST_AMOUNT).build();
     public static final String FEE_FORM = "SLPCS01";
     public static final String NON_FEE_FORM = "SH01";
-
+    private static final LocalDateTime NOW = LocalDateTime.now();
     private SubmissionValidator validator;
 
     @Mock
@@ -57,9 +61,13 @@ class SubmissionValidatorTest {
     @Mock
     private Logger logger;
 
+    private Clock clock;
+
     @BeforeEach
     void setUp() {
-        this.validator = new SubmissionValidator(formRepository, paymentRepository, categoryTemplateService, logger);
+        clock = Clock.fixed(NOW.toInstant(ZoneOffset.UTC), ZoneId.of("UTC"));
+        this.validator = new SubmissionValidator(formRepository, paymentRepository,
+            categoryTemplateService, clock, logger);
     }
 
 
@@ -90,7 +98,9 @@ class SubmissionValidatorTest {
             .thenReturn(new FormDetails(null, FEE_FORM, Collections.singletonList(FileDetails.builder().build())));
         when(formRepository.findById(anyString())).thenReturn(Optional.of(formTemplate));
         when(formTemplate.getFee()).thenReturn("TEST_FEE");
-        when(paymentRepository.findById("TEST_FEE")).thenReturn(Optional.of(paymentTemplate));
+        when(
+            paymentRepository.findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
+                "TEST_FEE", LocalDateTime.now(clock))).thenReturn(Optional.of(paymentTemplate));
         when(paymentTemplate.getItems()).thenReturn(Collections.singletonList(TEST_ITEM));
         when(submission.getPaymentSessions()).thenReturn(new SessionListApi(
             Collections.singletonList(new SessionApi("woeirsodiflsj",
