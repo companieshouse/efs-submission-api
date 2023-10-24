@@ -43,9 +43,9 @@
         <testcontainers.version>1.15.3</testcontainers.version>
 
         <!-- Spring -->
-        <spring-boot-dependencies.version>2.4.4</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>2.5.15</spring-boot-dependencies.version>
         <spring-test.version>5.2.0.RELEASE</spring-test.version>
-        <spring-boot-maven-plugin.version>2.2.0.RELEASE</spring-boot-maven-plugin.version>
+        <spring-boot-maven-plugin.version>${spring-boot-dependencies.version}</spring-boot-maven-plugin.version>
 
         <!-- Maven -->
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
