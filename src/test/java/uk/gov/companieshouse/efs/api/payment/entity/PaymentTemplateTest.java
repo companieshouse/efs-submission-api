@@ -12,6 +12,8 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -189,7 +191,11 @@ class PaymentTemplateTest {
 
     @Test
     void jsonRepresentation() throws JsonProcessingException {
-        final String json = new ObjectMapper().writeValueAsString(testDetails);
+        final JsonMapper mapper = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .build();;
+        final String json = mapper.writeValueAsString(testDetails);
+
         assertThat(json, allOf(
             //formatter:off
             containsString("id"), containsString("description"),

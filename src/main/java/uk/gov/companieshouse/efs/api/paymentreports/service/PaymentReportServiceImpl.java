@@ -70,17 +70,17 @@ public class PaymentReportServiceImpl implements PaymentReportService {
     @Value("${scotland.payment.form.types}")
     private List<String> scotlandForms;
 
-    private EmailService emailService;
+    private final EmailService emailService;
 
-    private PaymentReportMapper paymentReportMapper;
+    private final PaymentReportMapper paymentReportMapper;
 
     private final OutputStreamWriterFactory outputStreamWriterFactory;
 
-    private SubmissionRepository repository;
+    private final SubmissionRepository repository;
 
-    private S3ClientService s3ClientService;
+    private final S3ClientService s3ClientService;
 
-    private String paymentReportBucketName;
+    private final String paymentReportBucketName;
 
     @Autowired
     public PaymentReportServiceImpl(final EmailService emailService, final ReportQueryServiceImpl reportQueryService,
@@ -123,16 +123,15 @@ public class PaymentReportServiceImpl implements PaymentReportService {
         return submissions.stream().map(paymentReportMapper::map).collect(Collectors.toList());
     }
 
-    private String writeCsvFile(List<PaymentTransaction> paymentTransactions) throws IOException {
+    @Override
+    public String generateCsvFileContent(List<PaymentTransaction> paymentTransactions) throws IOException {
+        final CsvMapper csvMapper = CsvMapper.builder().disable(
+            MapperFeature.SORT_PROPERTIES_ALPHABETICALLY).build();
+        final CsvSchema csvSchema = csvMapper.schemaFor(PaymentTransaction.class).withHeader();
+        final ByteArrayOutputStream content = new ByteArrayOutputStream();
 
-        final CsvMapper csvMapper = new CsvMapper();
-
-        csvMapper.disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
-
-        CsvSchema csvSchema = csvMapper.schemaFor(PaymentTransaction.class).withHeader();
-
-        ByteArrayOutputStream content = new ByteArrayOutputStream();
-        try (OutputStreamWriter woStream = outputStreamWriterFactory.createFor(new BufferedOutputStream(content))) {
+        try (final OutputStreamWriter woStream = outputStreamWriterFactory.createFor(
+            new BufferedOutputStream(content))) {
             csvMapper.writer(csvSchema).writeValue(woStream, paymentTransactions);
             return content.toString(StandardCharsets.UTF_8.toString());
         } catch (IOException ex) {
@@ -148,14 +147,12 @@ public class PaymentReportServiceImpl implements PaymentReportService {
     private void createReport(String reportPattern, List<PaymentTransaction> paymentTransactions) throws IOException {
         String reportName =
             formatReportName(LocalDate.now(clock).minusDays(reportPeriodDaysBeforeToday), reportPattern);
-        String csvContent = writeCsvFile(paymentTransactions);
+        String csvContent = generateCsvFileContent(paymentTransactions);
         s3ClientService.uploadToS3(reportName, csvContent, paymentReportBucketName);
         LOGGER.info(String.format("Sending payment report email [%s] to Finance", reportName));
 
-        boolean hasNoPaymentTransactions = true;
-        if (!paymentTransactions.isEmpty()) {
-            hasNoPaymentTransactions = false;
-        }
+        final boolean hasNoPaymentTransactions = paymentTransactions.isEmpty();
+
         emailService.sendPaymentReportEmail(
             new PaymentReportEmailModel(s3ClientService.generateFileLink(s3ClientService.getResourceId(reportName),
                 paymentReportBucketName), reportName.replace(".csv", ""), hasNoPaymentTransactions));

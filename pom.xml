@@ -43,7 +43,7 @@
         <testcontainers.version>1.15.3</testcontainers.version>
 
         <!-- Spring -->
-        <spring-boot-dependencies.version>2.5.15</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>2.6.15</spring-boot-dependencies.version>
         <spring-test.version>5.2.0.RELEASE</spring-test.version>
         <spring-boot-maven-plugin.version>${spring-boot-dependencies.version}</spring-boot-maven-plugin.version>
 
@@ -312,8 +312,8 @@
             4. Live update runs mvn compile
 
             Solution:
-            1. Prevent step 1 above by excluding src/main/resources/*.properties from standard build
-            2. Instead run maven-antrun-plugin copy task setting preservelastmodified=true
+            1. Prevent copying of resources above by excluding src/main/resources/*.properties from standard build
+            2. Instead of that, run maven-antrun-plugin <copy> task with its attribute preservelastmodified=true
         -->
         <resources>
             <resource>
@@ -387,6 +387,8 @@
                         <phase>compile</phase>
                         <configuration>
                             <target>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <!-- predefined maven property is not recognised by IDEA -->
                                 <copy todir="${project.build.outputDirectory}" preservelastmodified="true">
                                     <fileset dir="src/main/resources">
                                         <include name="*.properties"/>
