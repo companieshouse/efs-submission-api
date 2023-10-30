@@ -214,6 +214,12 @@
             <version>1.34.1</version>
         </dependency>
         <dependency>
+            <!-- update from version in transient dependency of google-oauth-client-->
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-context</artifactId>
+            <version>1.59.0</version>
+        </dependency>
+        <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>sdk-manager-java</artifactId>
             <version>${sdk-manager-java.version}</version>
