@@ -28,7 +28,7 @@
         <!-- Logging -->
         <log4j-bom.version>2.17.0</log4j-bom.version>
         <structured-logging.version>1.9.12</structured-logging.version>
-        <avro.version>1.8.1</avro.version>
+        <avro.version>1.11.3</avro.version>
         <ch-kafka.version>1.4.4</ch-kafka.version>
         <kafka-models.version>1.0.12</kafka-models.version>
         <ojdbc6.version>11.2.0.3</ojdbc6.version>
@@ -183,7 +183,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>30.1-jre</version>
+            <version>32.0.1-jre</version>
         </dependency>
         <dependency>
             <groupId>com.oracle</groupId>
@@ -442,6 +442,7 @@
                     <formats>
                         <format>html</format>
                     </formats>
+                    <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
                     <suppressionFiles>
                         <suppressionFile>suppress.xml</suppressionFile>
                     </suppressionFiles>

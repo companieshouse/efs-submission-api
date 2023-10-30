@@ -1,6 +1,13 @@
 package uk.gov.companieshouse.efs.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.concurrent.ExecutionException;
+import javax.sql.DataSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
@@ -16,13 +23,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoClientDbFactory;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.CollectionUtils;
@@ -37,14 +43,6 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
-
-import javax.sql.DataSource;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.concurrent.ExecutionException;
 
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
@@ -250,7 +248,7 @@ public class BaseIntegrationTest {
     private static void initMongo() {
         String mongoURI = String.format(MONGODB_URL_PATTERN, container.getServiceHost(MONGODB_SERVICE_NAME, MONGODB_SERVICE_PORT), container.getServicePort(MONGODB_SERVICE_NAME, MONGODB_SERVICE_PORT));
         System.setProperty("spring.data.mongodb.uri", mongoURI);
-        mongoTemplate = new MongoTemplate(new SimpleMongoClientDbFactory(mongoURI));
+        mongoTemplate = new MongoTemplate(new SimpleMongoClientDatabaseFactory(mongoURI));
         mongoTemplate.createCollection(FORM_TEMPLATES_COLLECTION_NAME);
         mongoTemplate.createCollection(CATEGORY_TEMPLATES_COLLECTION_NAME);
         mongoTemplate.createCollection(SUBMISSION_COLLECTION_NAME);
