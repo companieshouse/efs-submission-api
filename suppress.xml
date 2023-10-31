@@ -9,4 +9,32 @@
         <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-web@.*$</packageUrl>
         <cve>CVE-2016-1000027</cve>
     </suppress>
+    <suppress until="2024-04-30Z">
+        <notes><![CDATA[
+   file name: sonar-scanner-api-2.16.2.588.jar (shaded: com.squareup.okhttp3:okhttp-urlconnection:3.14.2)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.squareup\.okhttp3/okhttp\-urlconnection@.*$</packageUrl>
+        <cve>CVE-2023-0833</cve>
+    </suppress>
+    <suppress until="2024-04-30Z">
+        <notes><![CDATA[
+   file name: sonar-scanner-api-2.16.2.588.jar (shaded: com.squareup.okhttp3:okhttp:3.14.2)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.squareup\.okhttp3/okhttp@.*$</packageUrl>
+        <vulnerabilityName>CVE-2021-0341</vulnerabilityName>
+    </suppress>
+    <suppress until="2024-04-30Z">
+        <notes><![CDATA[
+   file name: sonar-scanner-api-2.16.2.588.jar (shaded: com.squareup.okio:okio:1.17.2)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.squareup\.okio/okio@.*$</packageUrl>
+        <cve>CVE-2023-3635</cve>
+    </suppress>
+    <suppress until="2024-04-30Z">
+        <notes><![CDATA[
+   file name: sonar-scanner-api-2.16.2.588.jar (shaded: com.squareup.okhttp3:okhttp:3.14.2)
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.squareup\.okhttp3/okhttp@.*$</packageUrl>
+        <cve>CVE-2023-0833</cve>
+    </suppress>
 </suppressions>
