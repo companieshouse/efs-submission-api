@@ -51,4 +51,12 @@
         <packageUrl regex="true">^pkg:maven/org\.json/json@.*$</packageUrl>
         <cve>CVE-2023-5072</cve>
     </suppress>
+    <suppress until="2024-04-30Z">
+        <notes><![CDATA[
+   file name: netty-transport-*-4.1.100.Final.jar
+   See https://github.com/aws/aws-sdk-java-v2/issues/4584#issuecomment-1760547020 thread
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.netty/netty.*$</packageUrl>
+        <cve>CVE-2023-4586</cve>
+    </suppress>
 </suppressions>
