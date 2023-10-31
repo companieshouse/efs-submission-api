@@ -37,4 +37,18 @@
         <packageUrl regex="true">^pkg:maven/com\.squareup\.okhttp3/okhttp@.*$</packageUrl>
         <cve>CVE-2023-0833</cve>
     </suppress>
+    <suppress until="2024-04-30Z">
+        <notes><![CDATA[
+   file name: json-20231013.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.json/json@.*$</packageUrl>
+        <cve>CVE-2022-45688</cve>
+    </suppress>
+    <suppress until="2024-04-30Z">
+        <notes><![CDATA[
+   file name: json-20231013.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.json/json@.*$</packageUrl>
+        <cve>CVE-2023-5072</cve>
+    </suppress>
 </suppressions>
