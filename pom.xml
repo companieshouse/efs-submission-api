@@ -162,6 +162,12 @@
             <version>${avro.version}</version>
         </dependency>
         <dependency>
+            <!-- update from version in transient dependency avro -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.24.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20231013</version>
