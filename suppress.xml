@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-
+    <suppress until="2024-04-30Z">
+        <notes><![CDATA[
+           File name: spring-web-5.3.30.jar
+           Suppressed for 6 months
+           We will need to upgrade to JDK 17 before we can move to the latest version of spring-web
+           ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-web@.*$</packageUrl>
+        <cve>CVE-2016-1000027</cve>
+    </suppress>
 </suppressions>

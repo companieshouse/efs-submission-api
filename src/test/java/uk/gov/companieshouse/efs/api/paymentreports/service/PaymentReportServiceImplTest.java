@@ -23,6 +23,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -287,6 +288,37 @@ class PaymentReportServiceImplTest {
         assertThat(values.get(1).getFileLink(), is(failedFileLink));
         assertThat(values.get(1).getFileName(), is(failedReportName.replace(".csv", "")));
 
+    }
+
+
+    @Test
+    void generateCsvFileContent() throws IOException {
+        final List<PaymentTransaction> transactions = Arrays.asList(submissionSFF, submissionNSFF,
+                submissionSH19_SAMEDAY)
+            .stream()
+            .map(this::buildTransaction)
+            .collect(Collectors.toList());
+        final String expectedCsvContent = "submissionId,customerRef,userEmail,submittedAt,amountPaid,paymentRef,formType,companyNumber\n"
+            + "SCOT_FAILED_FEE,REF_SFF,presenter@nomail.net,2020-08-31T11:11:11,10,PAY_SFF,SQP1,00000000\n"
+            + "FAILED_FEE,REF_FF,presenter@nomail.net,2020-08-31T13:13:13,10,PAY_FF,CS01,00000000\n"
+            + "FAILED_FEE,REF_FF,presenter@nomail.net,2020-08-31T13:13:13,50,PAY_FF,SH19_SAMEDAY,00000000\n";
+
+        when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenCallRealMethod();
+
+        final String csvFileContent = testService.generateCsvFileContent(transactions);
+
+        assertThat(csvFileContent, is(expectedCsvContent));
+    }
+
+    @Test
+    void generateCsvFileContentWhenIoException() throws IOException {
+        when(outputStreamWriterFactory.createFor(any(BufferedOutputStream.class))).thenReturn(
+            outputStreamWriter);
+        doThrow(new IOException("test exception")).
+            when(outputStreamWriter).write(any(char[].class), anyInt(), anyInt());
+
+        assertThrows(IOException.class,
+            () -> testService.generateCsvFileContent(Collections.emptyList()));
     }
 
     private void expectReportUpload(final String failedFileLink, final String failedReportName) {
