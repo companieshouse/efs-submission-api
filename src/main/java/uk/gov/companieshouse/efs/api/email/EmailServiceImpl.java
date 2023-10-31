@@ -2,6 +2,8 @@ package uk.gov.companieshouse.efs.api.email;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import org.apache.avro.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,8 +152,16 @@ public class EmailServiceImpl implements EmailService {
             result.setValue(serializer.serialize(document, schema));
             producer.send(result);
         } catch (ExecutionException ex) {
+            Map<String, Object> errorMap = new HashMap<>();
+            errorMap.put("document", document);
+            errorMap.put("message", result);
+            LOGGER.errorContext(document.getAppId(), ex, errorMap);
             throw new EmailServiceException("Error sending message to kafka", ex);
         } catch (InterruptedException ex) {
+            Map<String, Object> errorMap = new HashMap<>();
+            errorMap.put("document", document);
+            errorMap.put("message", result);
+            LOGGER.errorContext(document.getAppId(), ex, errorMap);
             Thread.currentThread().interrupt();
             throw new EmailServiceException("Error - thread interrupted", ex);
         }
