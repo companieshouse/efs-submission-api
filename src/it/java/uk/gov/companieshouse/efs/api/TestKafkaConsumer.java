@@ -24,7 +24,7 @@ public class TestKafkaConsumer {
             consumer.assign(Collections.singletonList(new TopicPartition("email-send", 0)));
             int duration = 0;
             while (duration < timeout) {
-                ConsumerRecords<?, ?> records = consumer.poll(Duration.ofSeconds(2));
+                ConsumerRecords<?, ?> records = consumer.poll(Duration.ofSeconds(2).toMillis());
                 if (records.count() > 0) {
                     return true;
                 }
