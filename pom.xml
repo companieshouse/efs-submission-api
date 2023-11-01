@@ -29,7 +29,7 @@
         <log4j-bom.version>2.17.0</log4j-bom.version>
         <structured-logging.version>1.9.12</structured-logging.version>
         <avro.version>1.8.1</avro.version>
-        <ch-kafka.version>1.4.8</ch-kafka.version>
+        <ch-kafka.version>1.4.9</ch-kafka.version>
         <kafka-models.version>1.0.12</kafka-models.version>
         <ojdbc6.version>11.2.0.3</ojdbc6.version>
         <junit-jupiter.version>5.7.1</junit-jupiter.version>
