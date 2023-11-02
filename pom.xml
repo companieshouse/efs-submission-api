@@ -178,6 +178,12 @@
             <version>${ch-kafka.version}</version>
         </dependency>
         <dependency>
+            <!-- override kafka-clients transitive dependency for 0.10 needed   -->
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>0.10.2.2</version>
+        </dependency>
+        <dependency>
             <!-- update from version in transient dependency of ch-kafka -->
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
