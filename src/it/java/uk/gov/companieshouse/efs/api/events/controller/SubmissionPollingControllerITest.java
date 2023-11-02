@@ -1,5 +1,15 @@
 package uk.gov.companieshouse.efs.api.events.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
@@ -24,17 +34,6 @@ import uk.gov.companieshouse.efs.api.BaseIntegrationTest;
 import uk.gov.companieshouse.efs.api.filetransfer.model.FileTransferDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.concurrent.ExecutionException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 class SubmissionPollingControllerITest extends BaseIntegrationTest {
 
     private static final String SUBMISSION_ID = "1234abcd5678defa9012bcde";
@@ -55,6 +54,11 @@ class SubmissionPollingControllerITest extends BaseIntegrationTest {
     private MockMvc mockMvc;
 
     private MockServerClient mockServerClient = getMockServerClient();
+
+    @BeforeEach
+    protected void before() {
+        super.before();
+    }
 
     @AfterEach
     protected void after() throws InterruptedException, ExecutionException {
