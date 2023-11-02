@@ -25,6 +25,7 @@
         <api-helper-java.version>1.1.0-rc1</api-helper-java.version>
         <rest-service-common-library.version>0.0.3</rest-service-common-library.version>
         <environment-reader-library.version>1.3.2</environment-reader-library.version>
+        <jackson.version>2.15.3</jackson.version>
         <!-- Logging -->
         <log4j-bom.version>2.17.0</log4j-bom.version>
         <structured-logging.version>1.9.12</structured-logging.version>
@@ -69,7 +70,7 @@
         </sonar.java.binaries>
 
         <!-- OWASP dependency checker -->
-        <dependency-check-plugin.version>8.4.0</dependency-check-plugin.version>
+        <dependency-check-plugin.version>8.4.2</dependency-check-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -128,10 +129,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
