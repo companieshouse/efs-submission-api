@@ -30,11 +30,11 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
-import uk.gov.companieshouse.efs.api.BaseIntegrationTest;
+import uk.gov.companieshouse.efs.api.IntegrationTestBase;
 import uk.gov.companieshouse.efs.api.filetransfer.model.FileTransferDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 
-class SubmissionPollingControllerITest extends BaseIntegrationTest {
+class SubmissionPollingControllerITest extends IntegrationTestBase {
 
     private static final String SUBMISSION_ID = "1234abcd5678defa9012bcde";
     private static final String SUBMISSION_COLLECTION_NAME = "submissions";

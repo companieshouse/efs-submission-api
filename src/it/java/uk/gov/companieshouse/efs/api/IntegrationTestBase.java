@@ -1,8 +1,22 @@
 package uk.gov.companieshouse.efs.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import javax.sql.DataSource;
+import kafka.admin.AdminUtils;
+import kafka.admin.RackAwareMode;
+import kafka.utils.ZKStringSerializer$;
+import kafka.utils.ZkUtils;
+import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.ZkConnection;
 import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.PartitionInfo;
@@ -14,17 +28,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.client.MockServerClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDbFactory;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.CollectionUtils;
@@ -39,31 +51,13 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
-import org.I0Itec.zkclient.ZkClient;
-import org.I0Itec.zkclient.ZkConnection;
-
-import java.util.Properties;
-
-import kafka.admin.AdminUtils;
-import kafka.admin.RackAwareMode;
-import kafka.utils.ZKStringSerializer$;
-import kafka.utils.ZkUtils;
-
-
-import javax.sql.DataSource;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.concurrent.ExecutionException;
 
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = EfsApiApplication.class)
 @TestPropertySource(locations = {"classpath:application.properties", "classpath:/validation.properties"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class BaseIntegrationTest {
+@EnableMongoRepositories("uk.gov.companieshouse.efs.api")
+public class IntegrationTestBase {
 
     private static final String DOCKER_COMPOSE_FILE = "src/test/resources/docker-compose.yml";
 
@@ -76,7 +70,7 @@ public class BaseIntegrationTest {
 
     private static final String MONGODB_SERVICE_NAME = "efs-mongodb_1";
     private static final int MONGODB_SERVICE_PORT = 27017;
-    private static final String MONGODB_URL_PATTERN = "mongodb://%s:%d/test";
+    private static final String MONGODB_URL_PATTERN = "mongodb://%s:%d/efs_submissions";
     private static final String SUBMISSION_COLLECTION_NAME = "submissions";
     private static final String FORM_TEMPLATES_COLLECTION_NAME = "form_templates";
     private static final String CATEGORY_TEMPLATES_COLLECTION_NAME = "category_templates";
@@ -139,7 +133,7 @@ public class BaseIntegrationTest {
 
     @AfterEach
     protected void after() throws ExecutionException, InterruptedException {
-        deleteKafkaOffsets();
+        dropSendEmailTopic();
     }
 
     public static SqsClient getSqsClient() {
@@ -323,8 +317,6 @@ public class BaseIntegrationTest {
         System.setProperty("kafka.schema.registry.url", kafkaSchemaRegistryBaseURL);
         System.setProperty("kafka.schema.uri.email-send", EMAIL_SEND_FETCH_SCHEMA_PATH);
 
-        createSendEmailTopic();
-
         try {
             restTemplate.postForEntity(
                 getSchemaRegistryUri(),
@@ -380,6 +372,31 @@ public class BaseIntegrationTest {
 
         ZkUtils zkUtils = new ZkUtils(zkClient, new ZkConnection(zookeeperConnect), isSecureKafkaCluster);
         AdminUtils.createTopic(zkUtils, topic, partitions, replication, topicConfig, RackAwareMode.Enforced$.MODULE$);
+        zkClient.close();
+    }
+
+    private static void dropSendEmailTopic() {
+        String zookeeperConnect = getZookeeperUri();
+        int sessionTimeoutMs = 10 * 1000;
+        int connectionTimeoutMs = 8 * 1000;
+
+        String topic = KAFKA_EMAIL_TOPIC_NAME;
+        int partitions = 1;
+        int replication = 1;
+        Properties topicConfig = new Properties(); // add per-topic configurations settings here
+
+        // Note: You must initialize the ZkClient with ZKStringSerializer.  If you don't, then
+        // createTopic() will only seem to work (it will return without error).  The topic will exist in
+        // only ZooKeeper and will be returned when listing topics, but Kafka itself does not create the
+        // topic.
+        ZkClient zkClient = new ZkClient(zookeeperConnect, sessionTimeoutMs, connectionTimeoutMs,
+            ZKStringSerializer$.MODULE$);
+
+        // Security for Kafka was added in Kafka 0.9.0.0
+        boolean isSecureKafkaCluster = false;
+
+        ZkUtils zkUtils = new ZkUtils(zkClient, new ZkConnection(zookeeperConnect), isSecureKafkaCluster);
+        AdminUtils.deleteTopic(zkUtils, topic);
         zkClient.close();
     }
 }

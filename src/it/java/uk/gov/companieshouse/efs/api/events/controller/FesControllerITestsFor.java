@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
-import uk.gov.companieshouse.efs.api.BaseIntegrationTest;
+import uk.gov.companieshouse.efs.api.IntegrationTestBase;
 import uk.gov.companieshouse.efs.api.submissions.model.RejectReason;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 
@@ -23,13 +24,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class FesControllerITest extends BaseIntegrationTest {
+class FesControllerITest extends IntegrationTestBase {
 
     private static final String SUBMISSION_ID = "1234abcd5678defa9012bcde";
     private static final String SUBMISSION_COLLECTION_NAME = "submissions";
 
     @Autowired
     private MockMvc mockMvc;
+
+    @BeforeEach
+    protected void before() {
+        super.before();
+    }
 
     @AfterEach
     protected void after() throws InterruptedException, ExecutionException {

@@ -5,6 +5,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
@@ -19,7 +20,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
-import uk.gov.companieshouse.efs.api.BaseIntegrationTest;
+import uk.gov.companieshouse.efs.api.IntegrationTestBase;
 import uk.gov.companieshouse.efs.api.events.service.model.BarcodeRequest;
 import uk.gov.companieshouse.efs.api.events.service.model.BarcodeResponse;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
@@ -33,8 +34,7 @@ import static org.mockserver.model.HttpResponse.response;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Disabled("Oracle container image unavailable")
-class SubmitToFesControllerITest extends BaseIntegrationTest {
+class SubmitToFesControllerITest extends IntegrationTestBase {
 
     private static final String SUBMISSION_ID = "1234abcd5678defa9012bcde";
     private static final String CONVERTED_TIFF_OBJECT_KEY = "converted-tiffs/eeeeeeee-dddd-cccc-bbbb-aaaaaaaaaaaa";
@@ -44,6 +44,11 @@ class SubmitToFesControllerITest extends BaseIntegrationTest {
     private MockMvc mockMvc;
 
     private MockServerClient mockServerClient = getMockServerClient();
+
+    @BeforeEach
+    protected void before() {
+        super.before();
+    }
 
     @AfterEach
     protected void after() throws ExecutionException, InterruptedException {
@@ -56,6 +61,7 @@ class SubmitToFesControllerITest extends BaseIntegrationTest {
     }
 
     @Test
+    @Disabled("Oracle container image unavailable")
     void testSubmitToFes() throws Exception {
         //given {an application has been submitted}
         getMongoTemplate().insert(Document.parse(IOUtils.resourceToString("/submission-ready-to-submit.json", StandardCharsets.UTF_8)), getSubmissionCollectionName());
