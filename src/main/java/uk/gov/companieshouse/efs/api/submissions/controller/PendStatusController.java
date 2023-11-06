@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
-import avro.shaded.com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

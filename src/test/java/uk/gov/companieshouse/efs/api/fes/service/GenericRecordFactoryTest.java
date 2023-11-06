@@ -25,7 +25,8 @@ class GenericRecordFactoryTest {
     @Test
     void testGenericRecordFactoryReturnsGenericDataRecordWithSchema() {
         //when
-        GenericRecord actual = genericRecordFactory.getGenericRecord(Schema.createRecord(Collections.emptyList()));
+        GenericRecord actual = genericRecordFactory.getGenericRecord(
+            Schema.createRecord(null, null, null, false, Collections.emptyList()));
 
         //then
         assertNotNull(actual);

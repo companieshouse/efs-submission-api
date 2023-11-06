@@ -25,11 +25,12 @@
         <api-helper-java.version>1.1.0-rc1</api-helper-java.version>
         <rest-service-common-library.version>0.0.3</rest-service-common-library.version>
         <environment-reader-library.version>1.3.2</environment-reader-library.version>
+        <jackson.version>2.15.3</jackson.version>
         <!-- Logging -->
         <log4j-bom.version>2.17.0</log4j-bom.version>
         <structured-logging.version>1.9.12</structured-logging.version>
-        <avro.version>1.8.1</avro.version>
-        <ch-kafka.version>1.4.8</ch-kafka.version>
+        <avro.version>1.11.3</avro.version>
+        <ch-kafka.version>1.4.4</ch-kafka.version>
         <kafka-models.version>1.0.12</kafka-models.version>
         <ojdbc6.version>11.2.0.3</ojdbc6.version>
         <junit-jupiter.version>5.7.1</junit-jupiter.version>
@@ -69,7 +70,7 @@
         </sonar.java.binaries>
 
         <!-- OWASP dependency checker -->
-        <dependency-check-plugin.version>8.4.0</dependency-check-plugin.version>
+        <dependency-check-plugin.version>8.4.2</dependency-check-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -126,12 +127,14 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -162,9 +165,15 @@
             <version>${avro.version}</version>
         </dependency>
         <dependency>
+            <!-- update from version in transient dependency avro -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.24.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20180813</version>
+            <version>20231013</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -178,6 +187,24 @@
             <version>0.10.2.2</version>
         </dependency>
         <dependency>
+            <!-- update from version in transient dependency of ch-kafka -->
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>1.1.10.5</version>
+        </dependency>
+        <dependency>
+            <!-- update from version in transient dependency of ch-kafka -->
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.9.1.2184</version>
+        </dependency>
+        <dependency>
+            <!-- update from version in transient dependency of sonar-maven-plugin -->
+            <groupId>org.sonarsource.scanner.api</groupId>
+            <artifactId>sonar-scanner-api</artifactId>
+            <version>2.16.3.1081</version>
+        </dependency>
+        <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>kafka-models</artifactId>
             <version>${kafka-models.version}</version>
@@ -189,7 +216,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>30.1-jre</version>
+            <version>32.0.1-jre</version>
         </dependency>
         <dependency>
             <groupId>com.oracle</groupId>
@@ -213,7 +240,18 @@
             <artifactId>private-api-sdk-java</artifactId>
             <version>${private-api-sdk-java.version}</version>
         </dependency>
-
+        <dependency>
+            <!-- update from version in transient dependency of private-api-sdk-java -->
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client</artifactId>
+            <version>1.34.1</version>
+        </dependency>
+        <dependency>
+            <!-- update from version in transient dependency of google-oauth-client-->
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-context</artifactId>
+            <version>1.59.0</version>
+        </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>sdk-manager-java</artifactId>
@@ -448,6 +486,7 @@
                     <formats>
                         <format>html</format>
                     </formats>
+                    <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
                     <suppressionFiles>
                         <suppressionFile>suppress.xml</suppressionFile>
                     </suppressionFiles>
