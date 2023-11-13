@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.efs.api.health;
+package uk.gov.companieshouse.efs.api.maintenance;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
