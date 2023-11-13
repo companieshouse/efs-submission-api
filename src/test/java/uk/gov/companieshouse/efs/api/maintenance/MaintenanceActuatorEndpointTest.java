@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.efs.api.health;
+package uk.gov.companieshouse.efs.api.maintenance;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,7 +54,7 @@ class MaintenanceActuatorEndpointTest {
     }
 
     @Test
-    void healthWhenOnlyEndTimeNotBlank() {
+    void checkWhenOnlyEndTimeNotBlank() {
         setupPeriodConfigValues("", "3 Dec 23 00:30 GMT", null);
 
         final MaintenanceCheckApi resultNow = testEndpoint.check();
@@ -65,7 +65,7 @@ class MaintenanceActuatorEndpointTest {
     }
 
     @Test
-    void healthWhenPeriodSetForFuture() {
+    void checkWhenPeriodSetForFuture() {
         setupPeriodConfigValues("3 Jan 24 00:30 GMT", "3 Jan 24 02:30 GMT", null);
 
         final MaintenanceCheckApi resultNow = testEndpoint.check();
@@ -78,7 +78,7 @@ class MaintenanceActuatorEndpointTest {
     }
 
     @Test
-    void healthWhenPeriodSetForPast() {
+    void checkWhenPeriodSetForPast() {
         setupPeriodConfigValues("3 Dec 23 00:30 GMT", "3 Dec 23 02:30 GMT", null);
 
         final MaintenanceCheckApi resultNow = testEndpoint.check();
@@ -91,7 +91,7 @@ class MaintenanceActuatorEndpointTest {
     }
 
     @Test
-    void healthWhenPeriodSetAndOngoing() {
+    void checkWhenPeriodSetAndOngoing() {
         setupPeriodConfigValues("25 Dec 23 00:30 GMT", "25 Dec 23 02:30 GMT",
             "UNAVAILABLE - PLANNED MAINTENANCE");
 
@@ -105,7 +105,7 @@ class MaintenanceActuatorEndpointTest {
     }
 
     @Test
-    void healthWhenStartTimeInvalidNoTimezone() {
+    void checkWhenStartTimeInvalidNoTimezone() {
         setupPeriodConfigValues("25 Dec 23 00:30", "25 Dec 23 02:30 GMT",
             "UNAVAILABLE - PLANNED MAINTENANCE");
 
@@ -121,7 +121,7 @@ class MaintenanceActuatorEndpointTest {
     }
 
     @Test
-    void healthWhenEndTimeInvalidNoSpaceAfterTime() {
+    void checkWhenEndTimeInvalidNoSpaceAfterTime() {
         setupPeriodConfigValues("25 Dec 23 00:30 GMT", "5 Jan 24 02:30+01",
             "UNAVAILABLE - PLANNED MAINTENANCE");
 

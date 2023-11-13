@@ -21,7 +21,8 @@ import uk.gov.companieshouse.logging.Logger;
 public class MaintenanceActuatorEndpoint {
 
     private static final String NO_PLANNED_MAINTENANCE_CONFIGURED =
-        "No planned maintenance is " + "configured";
+        "No planned maintenance is configured";
+
     private final Clock clock;
     private final Logger logger;
 
