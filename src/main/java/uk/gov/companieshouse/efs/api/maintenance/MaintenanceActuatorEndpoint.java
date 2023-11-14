@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.efs.maintenance.MaintenanceCheckApi;
 import uk.gov.companieshouse.api.model.efs.maintenance.ServiceStatus;
@@ -49,7 +51,7 @@ public class MaintenanceActuatorEndpoint {
      */
     @ReadOperation(produces = "application/json")
     @Bean
-    public MaintenanceCheckApi check() {
+    public ResponseEntity<MaintenanceCheckApi> check() {
         ZonedDateTime startDateTime = null;
         ZonedDateTime endDateTime = null;
 
@@ -61,8 +63,9 @@ public class MaintenanceActuatorEndpoint {
                 "PLANNED_MAINTENANCE_START_TIME: " + e.getMessage();
 
             logger.error(errorMessage);
-            return new MaintenanceCheckApi(ServiceStatus.UP, errorMessage, outOfServiceStart,
-                outOfServiceEnd);
+            return buildResponse(
+                new MaintenanceCheckApi(ServiceStatus.UP, errorMessage, outOfServiceStart,
+                    outOfServiceEnd), HttpStatus.OK);
         }
         try {
             endDateTime = StringUtils.isBlank(outOfServiceEnd) ? null : parseZonedDateTime(
@@ -72,9 +75,9 @@ public class MaintenanceActuatorEndpoint {
                 "PLANNED_MAINTENANCE_END_TIME: " + e.getMessage();
 
             logger.error(errorMessage);
-            return new MaintenanceCheckApi(ServiceStatus.UP, errorMessage,
+            return buildResponse(new MaintenanceCheckApi(ServiceStatus.UP, errorMessage,
                 startDateTime == null ? null : startDateTime.format(DateTimeFormatter.ISO_INSTANT),
-                outOfServiceEnd);
+                outOfServiceEnd), HttpStatus.OK);
         }
 
         final ZonedDateTime now = ZonedDateTime.now(clock);
@@ -85,26 +88,35 @@ public class MaintenanceActuatorEndpoint {
                 logger.info("Planned maintenance is ongoing - ending at " + endDateTime.format(
                     DateTimeFormatter.ISO_INSTANT));
 
-                return new MaintenanceCheckApi(ServiceStatus.OUT_OF_SERVICE, outOfServiceMessage,
+                return buildResponse(
+                    new MaintenanceCheckApi(ServiceStatus.OUT_OF_SERVICE, outOfServiceMessage,
                     startDateTime.format(DateTimeFormatter.ISO_INSTANT),
-                    endDateTime.format(DateTimeFormatter.ISO_INSTANT));
+                        endDateTime.format(DateTimeFormatter.ISO_INSTANT)),
+                    HttpStatus.SERVICE_UNAVAILABLE);
             }
             else {
                 logger.info("No planned maintenance is ongoing");
-                return new MaintenanceCheckApi(ServiceStatus.UP,
+                return buildResponse(new MaintenanceCheckApi(ServiceStatus.UP,
                     "Planned maintenance has been configured",
                     startDateTime.format(DateTimeFormatter.ISO_INSTANT),
-                    endDateTime.format(DateTimeFormatter.ISO_INSTANT));
+                    endDateTime.format(DateTimeFormatter.ISO_INSTANT)), HttpStatus.OK);
             }
         }
         else {
             logger.info(NO_PLANNED_MAINTENANCE_CONFIGURED);
-            return new MaintenanceCheckApi(ServiceStatus.UP, NO_PLANNED_MAINTENANCE_CONFIGURED);
+            return buildResponse(
+                new MaintenanceCheckApi(ServiceStatus.UP, NO_PLANNED_MAINTENANCE_CONFIGURED),
+                HttpStatus.OK);
         }
     }
 
     private static ZonedDateTime parseZonedDateTime(final String zoned) {
         return ZonedDateTime.parse(zoned,
             DateTimeFormatter.ofPattern("d MMM yy HH:mm[ z][ x]", Locale.ENGLISH));
+    }
+
+    private static ResponseEntity<MaintenanceCheckApi> buildResponse(final MaintenanceCheckApi body,
+        final HttpStatus status) {
+        return new ResponseEntity<>(body, status);
     }
 }

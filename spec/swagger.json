@@ -777,6 +777,50 @@
         }
       }
     },
+    "/maintenance": {
+      "get": {
+        "summary": "Service maintenance check",
+        "x-operationName": "maintenanceCheck",
+        "tags": [
+          "information"
+        ],
+        "operationId": "maintenanceCheck",
+        "description": "Checks the service configuration for a planned maintenance period.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - no ongoing maintenance now",
+            "schema": {
+              "$ref": "#/definitions/maintenanceStatus"
+            },
+            "examples": {
+              "application/json": {
+                "status": "UP",
+                "message": "Planned maintenance has been configured",
+                "maintenance_start_time": "2023-11-13T05:10:00Z",
+                "maintenance_end_time": "2023-11-13T18:00:00Z"
+              }
+            }
+          },
+          "503": {
+            "description": "SERVICE UNAVAILABLE - Planned maintenance is ongoing now",
+            "schema": {
+              "$ref": "#/definitions/maintenanceStatus"
+            },
+            "examples": {
+              "application/json": {
+                "status": "OUT_OF_SERVICE",
+                "message": "UNAVAILABLE - PLANNED MAINTENANCE",
+                "maintenance_start_time": "2023-11-14T05:10:00Z",
+                "maintenance_end_time": "2023-11-14T10:00:00Z"
+              }
+            }
+          }
+        }
+      }
+    },
     "/events/queue-files": {
       "post": {
         "summary": "Poll for submitted applications. Queue PDFs for FES enabled forms in SQS and change status to PROCESSING. Otherwise email submitted applications and change status to PROCESSED_BY_EMAIL",
@@ -1365,6 +1409,39 @@
         "status": {
           "type": "string",
           "example": "UP"
+        }
+      }
+    },
+    "maintenanceStatus": {
+      "title": "Maintenance Status",
+      "type": "object",
+      "required": [
+        "status",
+        "message"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "UP",
+          "enum": [
+            "UP",
+            "DOWN",
+            "OUT_OF_SERVICE"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "example": "No planned maintenance is configured"
+        },
+        "maintenance_start_time": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2023-11-13T05:10:00Z"
+        },
+        "maintenance_end_time": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2023-11-13T05:50:00Z"
         }
       }
     },
