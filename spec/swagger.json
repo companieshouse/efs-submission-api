@@ -791,21 +791,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK - no ongoing maintenance now",
-            "schema": {
-              "$ref": "#/definitions/maintenanceStatus"
-            },
-            "examples": {
-              "application/json": {
-                "status": "UP",
-                "message": "Planned maintenance has been configured",
-                "maintenance_start_time": "2023-11-13T05:10:00Z",
-                "maintenance_end_time": "2023-11-13T18:00:00Z"
-              }
-            }
-          },
-          "503": {
-            "description": "SERVICE UNAVAILABLE - Planned maintenance is ongoing now",
+            "description": "OK - maintenance check successful",
             "schema": {
               "$ref": "#/definitions/maintenanceStatus"
             },
