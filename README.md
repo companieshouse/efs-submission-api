@@ -90,6 +90,7 @@ Certain form types will be sent by efs-submission-api to FES while other form ty
 ### Notes
 
 Planned maintenance format: `d MMM yy HH:mm z|x` where
+- `MMM` is the 3-letter month abbrev. (case sensitive: e.g. `Nov` not `NOV`)
 - `z` is the zone short name e.g. `GMT`
 - `x` is the 2-digit zone offset from UTC e.g. `+01`  (= British Summer Time)
 
