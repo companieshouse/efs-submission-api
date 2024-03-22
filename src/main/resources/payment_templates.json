@@ -105,7 +105,7 @@
       "active_from": {"$date":"2024-05-01T00:00:00.000Z"}
     },
     "description": "Upload form SH19: 2024-05-01",
-    "etag": "531dc6a2b5ed738fde4ae0d9318868cd505e5706",
+    "etag": "b5a053f2008ae24b00f3fdd8be49ffdf2abba6bc",
     "items": [
       {
         "amount": "33",
@@ -145,7 +145,7 @@
       "active_from": {"$date":"2024-05-01T00:00:00.000Z"}
     },
     "description": "Upload form SH19: 2024-05-01",
-    "etag": "b5a053f2008ae24b00f3fdd8be49ffdf2abba6bc",
+    "etag": "50354d925e84f7a059ac3b1d27b0e12fd4b8f1a2",
     "items": [
       {
         "amount": "136",
