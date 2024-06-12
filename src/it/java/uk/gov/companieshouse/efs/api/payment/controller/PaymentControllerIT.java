@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -97,7 +99,7 @@ class PaymentControllerIT {
     }
 
     @BeforeEach
-    void setUp() throws MalformedURLException {
+    void setUp() throws MalformedURLException, URISyntaxException {
         httpHeaders = new HttpHeaders();
         httpHeaders.add("ERIC-Access-Token", PASSTHROUGH_HEADER);
         httpHeaders.add("ERIC-Identity", USER);
@@ -128,7 +130,7 @@ class PaymentControllerIT {
             .withKind("cost#cost")
             .withProductType("efs-test")
             .build();
-        links = new PaymentTemplate.Links("http://resource.url", new URL("http://self.url"));
+        links = new PaymentTemplate.Links("http://resource.url", new URI("http://self.url").toURL());
         paymentTemplateId = new PaymentTemplateId(FEE_TEMPLATE, FIXED_NOW);
         paymentTemplate = PaymentTemplate.newBuilder()
             .withId(paymentTemplateId)

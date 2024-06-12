@@ -1,17 +1,16 @@
 package uk.gov.companieshouse.efs.api.formtemplates.controller;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateListApi;
@@ -30,6 +29,8 @@ class FormTemplateTemplateControllerTest {
     private Logger logger;
 
     private FormTemplateController controller;
+
+    private HttpStatusCode status = HttpStatusCode.valueOf(500);
 
     @BeforeEach
     void setUp() {
@@ -76,7 +77,7 @@ class FormTemplateTemplateControllerTest {
         final ResponseEntity<FormTemplateListApi> actual = controller.getFormTemplates(categoryId, request);
 
         //then
-        assertThat(actual.getStatusCodeValue(), is(500));
+        assertEquals(actual.getStatusCode(), status);
     }
 
     @Test
@@ -105,6 +106,6 @@ class FormTemplateTemplateControllerTest {
         final ResponseEntity<FormTemplateApi> actual = controller.getFormTemplate(formType, request);
 
         //then
-        assertThat(actual.getStatusCodeValue(), is(500));
+        assertEquals(actual.getStatusCode(), status);
     }
 }

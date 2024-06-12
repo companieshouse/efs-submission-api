@@ -18,46 +18,55 @@
         <skip.integration.tests>false</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
 
-        <java.version>1.8</java.version>
-        <java-session-handler.version>2.2.0</java-session-handler.version>
-        <private-api-sdk-java.version>2.0.325</private-api-sdk-java.version>
-        <sdk-manager-java.version>1.5.1</sdk-manager-java.version>
-        <api-helper-java.version>1.1.0-rc1</api-helper-java.version>
-        <rest-service-common-library.version>0.0.3</rest-service-common-library.version>
-        <environment-reader-library.version>1.3.2</environment-reader-library.version>
-        <jackson.version>2.15.3</jackson.version>
+        <java.version>21</java.version>
+        <java-session-handler.version>4.0.7</java-session-handler.version>
+        <private-api-sdk-java.version>4.0.142</private-api-sdk-java.version>
+        <sdk-manager-java.version>3.0.5</sdk-manager-java.version>
+        <api-helper-java.version>3.0.1</api-helper-java.version>
+        <rest-service-common-library.version>2.0.2</rest-service-common-library.version>
+        <environment-reader-library.version>3.0.1</environment-reader-library.version>
+        <jackson.version>2.17.1</jackson.version>
         <!-- Logging -->
-        <log4j-bom.version>2.17.0</log4j-bom.version>
-        <structured-logging.version>1.9.12</structured-logging.version>
+        <log4j-bom.version>3.0.0-alpha1</log4j-bom.version>
+        <structured-logging.version>3.0.8</structured-logging.version>
         <avro.version>1.11.3</avro.version>
-        <ch-kafka.version>1.4.4</ch-kafka.version>
-        <kafka-models.version>1.0.12</kafka-models.version>
-        <ojdbc6.version>11.2.0.3</ojdbc6.version>
+        <ch-kafka.version>3.0.2</ch-kafka.version>
+        <kafka-models.version>3.0.7</kafka-models.version>
+        <kafka-clients.version>3.7.0</kafka-clients.version>
+        <ojdbc11.version>23.4.0.24.05</ojdbc11.version>
         <junit-jupiter.version>5.7.1</junit-jupiter.version>
         <mockito-junit-jupiter.version>3.8.0</mockito-junit-jupiter.version>
-        <commons-lang3.version>3.10</commons-lang3.version>
-        <commons-io.version>2.8.0</commons-io.version>
-        <equalsverifier.version>3.1.6</equalsverifier.version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
+        <commons-io.version>2.16.1</commons-io.version>
+        <commons-compress.version>1.26.2</commons-compress.version>
+        <equalsverifier.version>3.16.1</equalsverifier.version>
         <sqs-common-version>0.0.1</sqs-common-version>
         <imageio.version>1.4.0</imageio.version>
+        <grpc-context.version>1.64.0</grpc-context.version>
+        <nimbus-jose-jwt.version>9.40</nimbus-jose-jwt.version>
+        <snappy-java.version>1.1.10.5</snappy-java.version>
+        <guava.version>33.2.1-jre</guava.version>
+        <mockserver-client-java.version>5.5.4</mockserver-client-java.version>
 
-        <testcontainers.version>1.15.3</testcontainers.version>
+        <testcontainers.version>1.19.8</testcontainers.version>
 
         <!-- Spring -->
-        <spring-boot-dependencies.version>2.7.17</spring-boot-dependencies.version>
-        <spring-test.version>5.2.0.RELEASE</spring-test.version>
+        <spring-boot-dependencies.version>3.2.5</spring-boot-dependencies.version>
+        <spring-test.version>6.1.8</spring-test.version>
         <spring-boot-maven-plugin.version>${spring-boot-dependencies.version}</spring-boot-maven-plugin.version>
 
         <!-- Maven -->
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+        <jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
 
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Sonar dependency -->
+        <sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
         <sonar.verbose>true</sonar.verbose>
         <sonar.projectKey>uk.gov.companieshouse:efs-submission-api</sonar.projectKey>
         <sonar.coverage.exclusions>**/PaymentFeatureTestingFeesController.java</sonar.coverage.exclusions>
@@ -105,7 +114,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -165,12 +173,12 @@
             <!-- update from version in transient dependency avro -->
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.24.0</version>
+            <version>${commons-compress.version}</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20231013</version>
+            <version>20240303</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -181,30 +189,40 @@
             <!-- override kafka-clients transitive dependency for 0.10 needed   -->
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>0.10.2.2</version>
+            <version>${kafka-clients.version}</version>
         </dependency>
         <dependency>
             <!-- update from version in transient dependency of ch-kafka -->
             <groupId>org.xerial.snappy</groupId>
             <artifactId>snappy-java</artifactId>
-            <version>1.1.10.5</version>
+            <version>${snappy-java.version}</version>
         </dependency>
         <dependency>
             <!-- update from version in transient dependency of ch-kafka -->
             <groupId>org.sonarsource.scanner.maven</groupId>
             <artifactId>sonar-maven-plugin</artifactId>
-            <version>3.9.1.2184</version>
-        </dependency>
-        <dependency>
-            <!-- update from version in transient dependency of sonar-maven-plugin -->
-            <groupId>org.sonarsource.scanner.api</groupId>
-            <artifactId>sonar-scanner-api</artifactId>
-            <version>2.16.3.1081</version>
+            <version>${sonar-maven-plugin.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-sec-dispatcher</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.sonarsource.scanner.api</groupId>
+                    <artifactId>sonar-scanner-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>kafka-models</artifactId>
             <version>${kafka-models.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.http2</groupId>
+                    <artifactId>http2-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
@@ -213,12 +231,12 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>32.0.1-jre</version>
+            <version>${guava.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>${ojdbc6.version}</version>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
+            <version>${ojdbc11.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -228,7 +246,7 @@
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
-            <version>9.35</version>
+            <version>${nimbus-jose-jwt.version}</version>
         </dependency>
 
         <!-- SDKs -->
@@ -241,13 +259,13 @@
             <!-- update from version in transient dependency of private-api-sdk-java -->
             <groupId>com.google.oauth-client</groupId>
             <artifactId>google-oauth-client</artifactId>
-            <version>1.34.1</version>
+            <version>1.36.0</version>
         </dependency>
         <dependency>
             <!-- update from version in transient dependency of google-oauth-client-->
             <groupId>io.grpc</groupId>
             <artifactId>grpc-context</artifactId>
-            <version>1.59.0</version>
+            <version>${grpc-context.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -344,13 +362,13 @@
         <dependency>
             <groupId>org.mock-server</groupId>
             <artifactId>mockserver-client-java</artifactId>
-            <version>5.5.4</version>
+            <version>${mockserver-client-java.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-core</artifactId>
-            <version>1.12.343</version>
+            <version>1.12.740</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -405,6 +423,9 @@
                     </excludes>
                     <skipTests>${skip.unit.tests}</skipTests>
                     <trimStackTrace>false</trimStackTrace>
+                    <environmentVariables>
+                        <AWS_REGION>eu-west-2</AWS_REGION>
+                    </environmentVariables>
                 </configuration>
             </plugin>
             <plugin>
@@ -432,7 +453,7 @@
             <!-- See Workaround Note above -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
@@ -473,9 +494,8 @@
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>${jib-maven-plugin.version}</version>
             </plugin>
         </plugins>
     </build>
-
 </project>

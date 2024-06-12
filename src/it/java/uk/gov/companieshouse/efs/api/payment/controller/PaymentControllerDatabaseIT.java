@@ -2,14 +2,18 @@ package uk.gov.companieshouse.efs.api.payment.controller;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.*;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -26,7 +30,8 @@ import uk.gov.companieshouse.efs.api.payment.repository.PaymentTemplateRepositor
 @ContextConfiguration(classes = MongoDbTestContainerConfig.class)
 class PaymentControllerDatabaseIT {
     private static final String FEE_ID = "FEE";
-    private static final LocalDateTime NOW_LDT = LocalDateTime.now();
+    private static final LocalDateTime NOW_LDT = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final Logger log = LoggerFactory.getLogger(PaymentControllerDatabaseIT.class);
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -62,7 +67,9 @@ class PaymentControllerDatabaseIT {
         final List<PaymentTemplate> result =
             paymentTemplateRepository.findById_FeeOrderById_ActiveFromDesc(
                 FEE_ID);
-
+        System.out.println("Result: " + result.get(1));
+        System.out.println("Past: " + future);
+        Assertions.assertEquals(3, result.size());
         assertThat(result, contains(future, present, past));
     }
 
