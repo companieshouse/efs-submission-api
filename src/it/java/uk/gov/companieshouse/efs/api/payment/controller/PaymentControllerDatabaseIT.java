@@ -67,8 +67,6 @@ class PaymentControllerDatabaseIT {
         final List<PaymentTemplate> result =
             paymentTemplateRepository.findById_FeeOrderById_ActiveFromDesc(
                 FEE_ID);
-        System.out.println("Result: " + result.get(1));
-        System.out.println("Past: " + future);
         Assertions.assertEquals(3, result.size());
         assertThat(result, contains(future, present, past));
     }
