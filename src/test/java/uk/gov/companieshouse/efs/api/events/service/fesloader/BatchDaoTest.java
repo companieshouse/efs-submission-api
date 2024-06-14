@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class BatchDaoTest {
@@ -49,7 +49,7 @@ class BatchDaoTest {
     @Test
     void testBatchDaoObtainsNextBatchNameIdFromSequence() {
         //given
-        when(this.template.queryForObject(anyString(), eq(Long.class), any())).thenReturn(BATCH_NAME_ID);
+        when(this.template.queryForObject(anyString(), eq(Long.class), any(Object[].class))).thenReturn(BATCH_NAME_ID);
 
         //when
         long actual = this.batchDao.getBatchNameId("EFS_200511");

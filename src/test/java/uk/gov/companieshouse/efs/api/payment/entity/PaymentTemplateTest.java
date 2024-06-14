@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -37,14 +39,14 @@ class PaymentTemplateTest {
 
 
     @BeforeEach
-    void setUp() throws MalformedURLException {
+    void setUp() throws MalformedURLException, URISyntaxException {
         item = PaymentTemplate.Item.newBuilder().withAmount("100")
             .withAvailablePaymentMethods(Collections.singletonList("credit-card"))
             .withClassOfPayment(Collections.singletonList("data-maintenance"))
             .withDescription("Upload a form to Companies House").withDescriptionId("AMOUNT_TO_PAY")
             .withKind("cost#cost")
             .withProductType("efs-test").build();
-        links = new PaymentTemplate.Links("http://resource.url", new URL("http://self.url"));
+        links = new PaymentTemplate.Links("http://resource.url", new URI("http://self.url").toURL());
         testDetails = PaymentTemplate.newBuilder().withId(TEMPLATE_ID)
             .withDescription("Upload a form to Companies house")
             .withEtag("d8a936fc59fd43ba6c66363c25684be1964ea03d").withItem(item).withKind("cost"
@@ -128,9 +130,9 @@ class PaymentTemplateTest {
     }
 
     @Test
-    void setLinks() throws MalformedURLException {
-        final PaymentTemplate.Links expected = new PaymentTemplate.Links("resource", new URL(
-                "http://self"));
+    void setLinks() throws MalformedURLException, URISyntaxException {
+        final PaymentTemplate.Links expected = new PaymentTemplate.Links("resource", new URI(
+                "http://self").toURL());
 
         testDetails.setLinks(expected);
 
@@ -321,8 +323,8 @@ class PaymentTemplateTest {
     }
 
     @Test
-    void linksSetSelf() throws MalformedURLException {
-        final URL expected = new URL("http://self");
+    void linksSetSelf() throws MalformedURLException, URISyntaxException {
+        final URL expected = new URI("http://self").toURL();
 
         links.setSelf(expected);
 

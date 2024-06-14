@@ -1,14 +1,16 @@
 package uk.gov.companieshouse.efs.api.companyauthallowlist.controller;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.efs.api.companyauthallowlist.service.CompanyAuthAllowListServiceImpl;
 import uk.gov.companieshouse.logging.Logger;
@@ -39,7 +41,7 @@ class CompanyAuthAllowListControllerTest {
         final ResponseEntity<Boolean> emailAddressOnAllowList = testController.getIsOnAllowList(
             USER1_EMAIL_ADDRESS);
 
-        assertThat(emailAddressOnAllowList.getBody(), is(false));
+        MatcherAssert.assertThat(emailAddressOnAllowList.getBody(), is(false));
     }
 
     @Test
@@ -50,17 +52,18 @@ class CompanyAuthAllowListControllerTest {
         final ResponseEntity<Boolean> emailAddressOnAllowList = testController.getIsOnAllowList(
             USER1_EMAIL_ADDRESS);
 
-        assertThat(emailAddressOnAllowList.getBody(), is(true));
+        MatcherAssert.assertThat(emailAddressOnAllowList.getBody(), is(true));
     }
 
     @Test
     void testWhenExceptionIsThrown() {
+        HttpStatusCode status = HttpStatusCode.valueOf(500);
 
         when(testService.isOnAllowList(USER1_EMAIL_ADDRESS)).thenThrow(new RuntimeException("Test exception scenario"));
 
         final ResponseEntity<Boolean> emailAddressOnAllowList = testController.getIsOnAllowList(
             USER1_EMAIL_ADDRESS);
 
-        assertThat(emailAddressOnAllowList.getStatusCodeValue(), is(500));
+        Assertions.assertEquals(emailAddressOnAllowList.getStatusCode(), status);
     }
 }

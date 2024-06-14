@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.efs.api.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.ArrayUtils;
 
 /**

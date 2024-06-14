@@ -17,6 +17,8 @@ import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignReques
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
 
@@ -65,10 +67,10 @@ class S3ClientServiceTest {
     }
 
     @Test
-    void testS3ClientServiceGeneratesLink() throws MalformedURLException {
+    void testS3ClientServiceGeneratesLink() throws MalformedURLException, URISyntaxException {
         //given
         when(presigner.presignGetObject(any(GetObjectPresignRequest.class))).thenReturn(presignedGetObjectRequest);
-        when(presignedGetObjectRequest.url()).thenReturn(new URL("http://chs-dev.internal:4001"));
+        when(presignedGetObjectRequest.url()).thenReturn(new URI("http://chs-dev.internal:4001").toURL());
 
         //when
         String actual = spyService.generateFileLink("12345678", BUCKET_NAME);
