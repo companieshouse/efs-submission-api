@@ -20,13 +20,13 @@
 
         <java.version>21</java.version>
         <java-session-handler.version>4.0.7</java-session-handler.version>
-        <private-api-sdk-java.version>4.0.142</private-api-sdk-java.version>
-        <sdk-manager-java.version>3.0.5</sdk-manager-java.version>
+        <aws-java-sdk-core.version>1.12.741</aws-java-sdk-core.version>
+        <private-api-sdk-java.version>4.0.144</private-api-sdk-java.version>
+        <sdk-manager-java.version>3.0.9</sdk-manager-java.version>
         <api-helper-java.version>3.0.1</api-helper-java.version>
         <rest-service-common-library.version>2.0.2</rest-service-common-library.version>
         <environment-reader-library.version>3.0.1</environment-reader-library.version>
-        <jackson.version>2.17.1</jackson.version>
-        <aws-java-sdk-core.version>1.12.740</aws-java-sdk-core.version>
+
         <!-- Logging -->
         <log4j-bom.version>3.0.0-alpha1</log4j-bom.version>
         <structured-logging.version>3.0.8</structured-logging.version>
@@ -46,8 +46,9 @@
         <nimbus-jose-jwt.version>9.40</nimbus-jose-jwt.version>
         <snappy-java.version>1.1.10.5</snappy-java.version>
         <guava.version>33.2.1-jre</guava.version>
-        <mockserver-client-java.version>5.5.4</mockserver-client-java.version>
+        <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
         <google-oauth-client.version>1.36.0</google-oauth-client.version>
+        <jackson.version>2.17.1</jackson.version>
         <json.version>20240303</json.version>
 
         <testcontainers.version>1.19.8</testcontainers.version>
@@ -361,6 +362,12 @@
             <artifactId>mockserver-client-java</artifactId>
             <version>${mockserver-client-java.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.ethlo.time</groupId>
+                    <artifactId>itu</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
