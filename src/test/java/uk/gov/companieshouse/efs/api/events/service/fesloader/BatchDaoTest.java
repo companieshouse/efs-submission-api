@@ -51,8 +51,6 @@ class BatchDaoTest {
         //given
         when(this.template.queryForObject(anyString(), eq(Long.class), any(Object[].class))).thenReturn(BATCH_NAME_ID);
 
-        //doReturn(BATCH_NAME_ID).when(this.template.queryForObject(anyString(), eq(Long.class), any()));
-
         //when
         long actual = this.batchDao.getBatchNameId("EFS_200511");
 

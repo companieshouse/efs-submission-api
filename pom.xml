@@ -26,6 +26,7 @@
         <rest-service-common-library.version>2.0.2</rest-service-common-library.version>
         <environment-reader-library.version>3.0.1</environment-reader-library.version>
         <jackson.version>2.17.1</jackson.version>
+        <aws-java-sdk-core.version>1.12.740</aws-java-sdk-core.version>
         <!-- Logging -->
         <log4j-bom.version>3.0.0-alpha1</log4j-bom.version>
         <structured-logging.version>3.0.8</structured-logging.version>
@@ -33,8 +34,8 @@
         <ch-kafka.version>3.0.2</ch-kafka.version>
         <kafka-clients.version>3.7.0</kafka-clients.version>
         <ojdbc11.version>23.4.0.24.05</ojdbc11.version>
-        <junit-jupiter.version>5.7.1</junit-jupiter.version>
-        <mockito-junit-jupiter.version>3.8.0</mockito-junit-jupiter.version>
+        <junit-jupiter.version>5.10.2</junit-jupiter.version>
+        <mockito-junit-jupiter.version>5.2.0</mockito-junit-jupiter.version>
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <commons-io.version>2.16.1</commons-io.version>
         <commons-compress.version>1.26.2</commons-compress.version>
@@ -46,6 +47,8 @@
         <snappy-java.version>1.1.10.5</snappy-java.version>
         <guava.version>33.2.1-jre</guava.version>
         <mockserver-client-java.version>5.5.4</mockserver-client-java.version>
+        <google-oauth-client.version>1.36.0</google-oauth-client.version>
+        <json.version>20240303</json.version>
 
         <testcontainers.version>1.19.8</testcontainers.version>
 
@@ -58,7 +61,8 @@
         <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-        <jib-maven-plugin.version>3.2.1</jib-maven-plugin.version>
+        <jib-maven-plugin.version>3.4.3</jib-maven-plugin.version>
+        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -182,7 +186,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20240303</version>
+            <version>${json.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -252,7 +256,7 @@
             <!-- update from version in transient dependency of private-api-sdk-java -->
             <groupId>com.google.oauth-client</groupId>
             <artifactId>google-oauth-client</artifactId>
-            <version>1.36.0</version>
+            <version>${google-oauth-client.version}</version>
         </dependency>
         <dependency>
             <!-- update from version in transient dependency of google-oauth-client-->
@@ -361,7 +365,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-core</artifactId>
-            <version>1.12.740</version>
+            <version>${aws-java-sdk-core.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -448,7 +452,7 @@
             <!-- See Workaround Note above -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
