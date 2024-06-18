@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.efs.api.filetransfer.model;
 
 import java.util.Objects;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 /**
  * Class representing the file transfer API client response.
@@ -9,14 +9,14 @@ import org.springframework.http.HttpStatus;
 public class FileTransferApiClientDetailsResponse {
 
     private String fileId;
-    private HttpStatus httpStatus;
+    private HttpStatusCode httpStatus;
     private String fileStatus;
 
     public FileTransferApiClientDetailsResponse(){
 
     }
 
-    public FileTransferApiClientDetailsResponse(String fileId, HttpStatus httpStatus, String fileStatus) {
+    public FileTransferApiClientDetailsResponse(String fileId, HttpStatusCode httpStatus, String fileStatus) {
         this.fileId = fileId;
         this.httpStatus = httpStatus;
         this.fileStatus = fileStatus;
@@ -30,11 +30,11 @@ public class FileTransferApiClientDetailsResponse {
         this.fileId = fileId;
     }
 
-    public HttpStatus getHttpStatus() {
+    public HttpStatusCode getHttpStatus() {
         return httpStatus;
     }
 
-    public void setHttpStatus(HttpStatus httpStatus) {
+    public void setHttpStatus(HttpStatusCode httpStatus) {
         this.httpStatus = httpStatus;
     }
 
@@ -70,7 +70,7 @@ public class FileTransferApiClientDetailsResponse {
 
     public static class Builder {
         private String fileId;
-        private HttpStatus httpStatus;
+        private HttpStatusCode httpStatus;
         private String fileStatus;
 
         public Builder withFileId(String fileId) {
@@ -78,7 +78,7 @@ public class FileTransferApiClientDetailsResponse {
             return this;
         }
 
-        public Builder withHttpStatus(HttpStatus httpStatus) {
+        public Builder withHttpStatus(HttpStatusCode httpStatus) {
             this.httpStatus = httpStatus;
             return this;
         }

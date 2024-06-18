@@ -4,20 +4,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateApi;
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateListApi;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -73,7 +71,7 @@ class CategoryTemplateControllerTest {
 
     @Test
     void testGetCategoriesByCategoryExceptionThrown() {
-
+        HttpStatusCode status = HttpStatusCode.valueOf(500);
         //given
         final String categoryId = "category";
         when(service.getCategoryTemplatesByCategory(categoryId)).thenThrow(new RuntimeException("Test exception scenario"));
@@ -82,7 +80,7 @@ class CategoryTemplateControllerTest {
         final ResponseEntity<CategoryTemplateListApi> actual = controller.getCategoryTemplates(categoryId, request);
 
         //then
-        assertThat(actual.getStatusCodeValue(), is(500));
+        assertEquals(status, actual.getStatusCode());
     }
 
     @Test
@@ -103,7 +101,7 @@ class CategoryTemplateControllerTest {
 
     @Test
     void testGetCategoryTemplateByCategoryExceptionThrown() {
-
+        HttpStatusCode status = HttpStatusCode.valueOf(500);
         //given
         final String categoryId = "category";
         when(service.getCategoryTemplate(categoryId)).thenThrow(new RuntimeException("Test exception scenario"));
@@ -112,7 +110,7 @@ class CategoryTemplateControllerTest {
         final ResponseEntity<CategoryTemplateApi> actual = controller.getCategoryTemplate(categoryId, request);
 
         //then
-        assertThat(actual.getStatusCodeValue(), is(500));
+        assertEquals(status, actual.getStatusCode());
     }
 
     @Test
