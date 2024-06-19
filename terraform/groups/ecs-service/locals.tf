@@ -8,7 +8,7 @@ locals {
   eric_port                  = "10000"
   docker_repo                = "efs-submission-api"
   kms_alias                  = "alias/${var.aws_profile}/environment-services-kms"
-  lb_listener_rule_priority  = 210
+  lb_listener_rule_priority  = 38
   lb_listener_paths          = ["/efs-submission-api/*", "/efs-submission-api/healthcheck"]
   healthcheck_path           = "/efs-submission-api/healthcheck" # healthcheck path for efs-submission-api
   healthcheck_matcher        = "200"
