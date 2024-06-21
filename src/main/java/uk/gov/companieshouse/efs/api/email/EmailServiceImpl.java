@@ -22,8 +22,8 @@ import uk.gov.companieshouse.efs.api.email.model.InternalFailedConversionModel;
 import uk.gov.companieshouse.efs.api.email.model.InternalSubmissionEmailModel;
 import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailModel;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
+import uk.gov.companieshouse.efs.api.kafka.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.message.Message;
-import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 

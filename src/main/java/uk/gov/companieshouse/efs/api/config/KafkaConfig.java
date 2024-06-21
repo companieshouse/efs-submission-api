@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.companieshouse.efs.api.kafka.CHKafkaProducer;
 import uk.gov.companieshouse.efs.api.client.RestClient;
 import uk.gov.companieshouse.kafka.producer.Acks;
-import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
 import uk.gov.companieshouse.kafka.producer.ProducerConfigHelper;
 
