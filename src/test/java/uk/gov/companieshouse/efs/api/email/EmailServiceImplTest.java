@@ -56,8 +56,8 @@ import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailData;
 import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailModel;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
+import uk.gov.companieshouse.efs.api.kafka.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.message.Message;
-import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 
 @ExtendWith(MockitoExtension.class)
 class EmailServiceImplTest {
