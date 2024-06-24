@@ -55,15 +55,15 @@
         <testcontainers.version>1.19.8</testcontainers.version>
 
         <!-- Spring -->
-        <spring-boot.version>3.2.6</spring-boot.version>
-        <spring-test.version>6.1.8</spring-test.version>
+        <spring-boot.version>3.3.1</spring-boot.version>
+        <spring-test.version>6.1.10</spring-test.version>
 
         <!-- Maven -->
-        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.3.0</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.3.0</maven-failsafe-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-        <jib-maven-plugin.version>3.4.2</jib-maven-plugin.version>
+        <jib-maven-plugin.version>3.4.3</jib-maven-plugin.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -412,8 +412,6 @@
             <version>${aws-java-sdk-core.version}</version>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
     <build>
         <!--
