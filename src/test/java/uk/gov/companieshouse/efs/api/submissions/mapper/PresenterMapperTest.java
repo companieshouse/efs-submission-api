@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.api.model.efs.submissions.PresenterApi;
+import uk.gov.companieshouse.efs.api.submissions.model.PresenterApi;
 import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

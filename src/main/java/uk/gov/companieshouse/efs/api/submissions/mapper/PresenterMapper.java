@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.efs.api.submissions.mapper;
 
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.api.model.efs.submissions.PresenterApi;
 import uk.gov.companieshouse.efs.api.submissions.model.Presenter;
+import uk.gov.companieshouse.efs.api.submissions.model.PresenterApi;
 
 @Component
 public class PresenterMapper {
