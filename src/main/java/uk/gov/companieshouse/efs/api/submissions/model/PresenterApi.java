@@ -20,7 +20,7 @@ public final class PresenterApi {
         this.email = email;
     }
 
-    public PresenterApi(uk.gov.companieshouse.api.model.efs.submissions.PresenterApi other) {
+    public PresenterApi(uk.gov.companieshouse.efs.api.submissions.model.PresenterApi other) {
         this(other.getEmail());
     }
 
