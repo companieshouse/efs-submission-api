@@ -98,7 +98,7 @@ class NewSubmissionControllerTest {
     @Test
     void testInvalidPresenterApiEmailNull() {
         //given
-        PresenterApi invalidPresenter = new PresenterApi((String) null);
+        PresenterApi invalidPresenter = new PresenterApi();
         when(result.hasErrors()).thenReturn(true);
         when(result.getFieldError()).thenReturn(new FieldError("presenterApi", "email", "Presenter email must not be empty"));
 
@@ -107,6 +107,19 @@ class NewSubmissionControllerTest {
 
         //then
         assertEquals(HttpStatus.BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    void testPresenterApiConstructorWithOther() {
+        //given
+        uk.gov.companieshouse.efs.api.submissions.model.PresenterApi other = new uk.gov.companieshouse.efs.api.submissions.model.PresenterApi();
+        other.setEmail("demo@ch.gov.uk");
+
+        //when
+        PresenterApi presenter = new PresenterApi(other);
+
+        //then
+        assertEquals("demo@ch.gov.uk", presenter.getEmail());
     }
 
     @Test
