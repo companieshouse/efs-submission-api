@@ -8,14 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.gov.companieshouse.api.model.efs.submissions.PresenterApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
-import uk.gov.companieshouse.efs.api.submissions.model.PresenterApi;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@Validated
 @RequestMapping("/efs-submission-api/submissions/new")
 public class NewSubmissionController {
 
