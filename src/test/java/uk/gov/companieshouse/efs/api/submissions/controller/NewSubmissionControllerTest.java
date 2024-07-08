@@ -112,7 +112,7 @@ class NewSubmissionControllerTest {
     @Test
     void testPresenterApiConstructorWithOther() {
         //given
-        uk.gov.companieshouse.efs.api.submissions.model.PresenterApi other = new uk.gov.companieshouse.efs.api.submissions.model.PresenterApi();
+        uk.gov.companieshouse.api.model.efs.submissions.PresenterApi other = new uk.gov.companieshouse.api.model.efs.submissions.PresenterApi();
         other.setEmail("demo@ch.gov.uk");
 
         //when
