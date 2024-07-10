@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.mongodb.core.mapping.Field;
