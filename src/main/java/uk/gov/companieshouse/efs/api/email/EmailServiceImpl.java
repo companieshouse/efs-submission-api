@@ -145,6 +145,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private void sendMessage(EmailDocument<?> document) {
+        LOGGER.debug(String.format("sending message to [%s]", document.getEmailAddress()));
         Message result = new Message();
         result.setTopic(document.getTopic());
         result.setTimestamp(timestampGenerator.generateTimestamp().toEpochSecond(ZoneOffset.UTC));
