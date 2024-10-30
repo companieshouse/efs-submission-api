@@ -19,7 +19,7 @@
         <skip.unit.tests>false</skip.unit.tests>
 
         <java.version>21</java.version>
-        <java-session-handler.version>4.0.7</java-session-handler.version>
+        <java-session-handler.version>4.1.1</java-session-handler.version>
         <aws-java-sdk-core.version>1.12.741</aws-java-sdk-core.version>
         <private-api-sdk-java.version>4.0.168</private-api-sdk-java.version>
         <sdk-manager-java.version>3.0.9</sdk-manager-java.version>
@@ -28,9 +28,8 @@
         <environment-reader-library.version>3.0.1</environment-reader-library.version>
 
         <!-- Logging -->
-        <log4j-bom.version>3.0.0-alpha1</log4j-bom.version>
-        <structured-logging.version>3.0.8</structured-logging.version>
-        <avro.version>1.11.3</avro.version>
+        <structured-logging.version>3.0.14</structured-logging.version>
+        <avro.version>1.12.0</avro.version>
         <ch-kafka.version>3.0.2</ch-kafka.version>
         <kafka-clients.version>3.7.0</kafka-clients.version>
         <kafka-models.version>3.0.7</kafka-models.version>
@@ -56,12 +55,12 @@
         <testcontainers.version>1.19.8</testcontainers.version>
 
         <!-- Spring -->
-        <spring-boot.version>3.3.1</spring-boot.version>
-        <spring-test.version>6.1.10</spring-test.version>
+        <spring-boot.version>3.3.5</spring-boot.version>
+        <spring-test.version>6.1.14</spring-test.version>
 
         <!-- Maven -->
-        <maven-surefire-plugin.version>3.3.0</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>3.3.0</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.5.0</maven-failsafe-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <jib-maven-plugin.version>3.4.2</jib-maven-plugin.version>
@@ -86,16 +85,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Fix for CVE-2021-44228 -->
-            <!-- Fix for CVE-2021-45105 -->
-            <!-- Required until v2.5.8 springframework & v2.6.2 springboot -->
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-bom</artifactId>
-                <version>${log4j-bom.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -173,6 +162,12 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>structured-logging</artifactId>
             <version>${structured-logging.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
