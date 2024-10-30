@@ -28,7 +28,8 @@
         <environment-reader-library.version>3.0.1</environment-reader-library.version>
 
         <!-- Logging -->
-        <structured-logging.version>3.0.14</structured-logging.version>
+        <log4j-bom.version>2.24.1</log4j-bom.version>
+        <structured-logging.version>3.0.20</structured-logging.version>
         <avro.version>1.12.0</avro.version>
         <ch-kafka.version>3.0.2</ch-kafka.version>
         <kafka-clients.version>3.7.0</kafka-clients.version>
@@ -85,6 +86,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
