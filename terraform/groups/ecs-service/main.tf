@@ -19,7 +19,7 @@ terraform {
 }
 
 module "secrets" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.253"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.293"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
@@ -28,8 +28,9 @@ module "secrets" {
 }
 
 module "ecs-service" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.253"
-
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.293"
+  read_only_root_filesystem = false
+  
   # Environmental configuration
   environment             = var.environment
   aws_region              = var.aws_region

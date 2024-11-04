@@ -9,7 +9,7 @@ locals {
   docker_repo                = "efs-submission-api"
   kms_alias                  = "alias/${var.aws_profile}/environment-services-kms"
   lb_listener_rule_priority  = 38
-  lb_listener_paths          = ["/efs-submission-api/*", "/efs-submission-api/submissions/new", "/efs-submission-api/events", "/efs-submission-api/events*", "/efs-submission-api/healthcheck"]
+  lb_listener_paths          = ["/efs-submission-api/*", "/efs-submission-api/submissions/new", "/efs-submission-api/events", "/efs-submission-api/events*"]
   healthcheck_path           = "/efs-submission-api/healthcheck" # healthcheck path for efs-submission-api
   healthcheck_matcher        = "200"
   vpc_name                   = local.stack_secrets["vpc_name"]
