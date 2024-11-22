@@ -1,19 +1,21 @@
 # ------------------------------------------------------------------------------
 # Environment
 # ------------------------------------------------------------------------------
-variable "environment" {
+variable "aws_profile" {
+  default     = "development-eu-west-2"
   type        = string
-  description = "The environment name, defined in envrionments vars."
+  description = "The AWS profile to use for deployment."
 }
+
 variable "aws_region" {
   default     = "eu-west-2"
   type        = string
   description = "The AWS region for deployment."
 }
-variable "aws_profile" {
-  default     = "development-eu-west-2"
+
+variable "environment" {
   type        = string
-  description = "The AWS profile to use for deployment."
+  description = "The environment name, defined in envrionments vars."
 }
 
 # ------------------------------------------------------------------------------
@@ -32,53 +34,55 @@ variable "desired_task_count" {
   description = "The desired ECS task count for this service"
   default = 1 # defaulted low for dev environments, override for production
 }
-variable "required_cpus" {
-  type = number
-  description = "The required cpu resource for this service. 1024 here is 1 vCPU"
-  default = 256 # defaulted low for dev environments, override for production
-}
-variable "required_memory" {
-  type = number
-  description = "The required memory for this service"
-  default = 512 # defaulted low for node service in dev environments, override for production
-}
 
 variable "eric_cpus" {
   type = number
   description = "The required cpu resource for eric. 1024 here is 1 vCPU"
   default = 256
 }
+
 variable "eric_memory" {
   type = number
   description = "The required memory for eric"
   default = 512
 }
+
 variable "max_task_count" {
   type        = number
   description = "The maximum number of tasks for this service."
   default     = 3
 }
 
-variable "use_fargate" {
-  type        = bool
-  description = "If true, sets the required capabilities for all containers in the task definition to use FARGATE, false uses EC2"
-  default     = true
+variable "min_task_count" {
+  type        = number
+  description = "The maximum number of tasks for this service."
+  default     = 1
 }
-variable "use_capacity_provider" {
-  type        = bool
-  description = "Whether to use a capacity provider instead of setting a launch type for the service"
-  default     = true
+
+variable "required_cpus" {
+  type = number
+  description = "The required cpu resource for this service. 1024 here is 1 vCPU"
+  default = 256 # defaulted low for dev environments, override for production
 }
+
+variable "required_memory" {
+  type = number
+  description = "The required memory for this service"
+  default = 512 # defaulted low for node service in dev environments, override for production
+}
+
 variable "service_autoscale_enabled" {
   type        = bool
   description = "Whether to enable service autoscaling, including scheduled autoscaling"
   default     = true
 }
+
 variable "service_autoscale_target_value_cpu" {
   type        = number
   description = "Target CPU percentage for the ECS Service to autoscale on"
-  default     = 50 # 100 disables autoscaling using CPU as a metric
+  default     = 80 # 100 disables autoscaling using CPU as a metric
 }
+
 variable "service_scaledown_schedule" {
   type        = string
   description = "The schedule to use when scaling down the number of tasks to zero."
@@ -87,6 +91,7 @@ variable "service_scaledown_schedule" {
 
   default     = ""
 }
+
 variable "service_scaleup_schedule" {
   type        = string
   description = "The schedule to use when scaling up the number of tasks to their normal desired level."
@@ -94,6 +99,18 @@ variable "service_scaleup_schedule" {
   # E.g. a value of '5 6 * * ? *' would be Mon-Sun 6:05am.  An empty string indicates that no schedule should be created.
 
   default     = ""
+}
+
+variable "use_capacity_provider" {
+  type        = bool
+  description = "Whether to use a capacity provider instead of setting a launch type for the service"
+  default     = true
+}
+
+variable "use_fargate" {
+  type        = bool
+  description = "If true, sets the required capabilities for all containers in the task definition to use FARGATE, false uses EC2"
+  default     = true
 }
 
 # ----------------------------------------------------------------------
@@ -108,6 +125,15 @@ variable "cloudwatch_alarms_enabled" {
 # ------------------------------------------------------------------------------
 # Service environment variable configs
 # ------------------------------------------------------------------------------
+variable "efs_submission_api_version" {
+  type        = string
+  description = "The version of the efs-submission-api container to run."
+}
+
+variable "eric_version" {
+  type        = string
+  description = "The version of the eric container to run."
+}
 
 variable "ssm_version_prefix" {
   type        = string
@@ -117,15 +143,7 @@ variable "ssm_version_prefix" {
 
 variable "use_set_environment_files" {
   type        = bool
-  default     = false
+  default     = true
   description = "Toggle default global and shared environment files"
 }
 
-variable "efs_submission_api_version" {
-  type        = string
-  description = "The version of the efs-submission-api container to run."
-}
-variable "eric_version" {
-  type        = string
-  description = "The version of the eric container to run."
-}
