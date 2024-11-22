@@ -135,6 +135,12 @@ variable "eric_version" {
   description = "The version of the eric container to run."
 }
 
+variable "log_level" {
+  default     = "info"
+  type        = string
+  description = "The log level for services to use: trace, debug, info or error"
+}
+
 variable "ssm_version_prefix" {
   type        = string
   description = "String to use as a prefix to the names of the variables containing variables and secrets version."
