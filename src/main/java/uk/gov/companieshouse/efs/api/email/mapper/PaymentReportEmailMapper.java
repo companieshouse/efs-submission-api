@@ -12,7 +12,7 @@ import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
 @Component
-public class PaymentReportEmailMapper {
+public class   PaymentReportEmailMapper {
 
     private PaymentReportEmailConfig config;
     private IdentifierGeneratable idGenerator;
@@ -29,7 +29,7 @@ public class PaymentReportEmailMapper {
         return EmailDocument.<PaymentReportEmailData>builder()
             .withTopic(config.getTopic())
             .withMessageId(idGenerator.generateId())
-            .withRecipientEmailAddress(config.getFinanceEmailAddress())
+            .withRecipientEmailAddress(getEmailAddressForReportFilename(model))
             .withEmailTemplateAppId(config.getAppId())
             .withEmailTemplateMessageType(config.getMessageType())
             .withData(fromPaymentReport(model))
