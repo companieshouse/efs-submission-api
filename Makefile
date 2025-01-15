@@ -2,14 +2,7 @@ artifact_name       := efs-submission-api
 version             := unversioned
 
 dependency_check_base_suppressions:=common_suppressions_spring_6.xml
-
-# dependency_check_suppressions_repo_branch
-# The branch of the dependency-check-suppressions repository to use
-# as the source of the suppressions file.
-# This should point to "main" branch when being used for release,
-# but can point to a different branch for experimentation/development.
-dependency_check_suppressions_repo_branch:=feature/suppressions-for-company-accounts-api
-
+dependency_check_suppressions_repo_branch:=main
 dependency_check_minimum_cvss := 4
 dependency_check_assembly_analyzer_enabled := false
 dependency_check_suppressions_repo_url:=git@github.com:companieshouse/dependency-check-suppressions.git
