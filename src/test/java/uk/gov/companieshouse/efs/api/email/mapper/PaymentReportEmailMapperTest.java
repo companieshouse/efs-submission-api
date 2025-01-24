@@ -66,9 +66,8 @@ class PaymentReportEmailMapperTest {
             when(config.getScottishEmailAddress()).thenReturn("scot_internal_demo@ch.gov.uk");
         } else if (StringUtils.equals("specCap", reportType)) {
             when(config.getSpecialCapitalEmailAddress()).thenReturn("specCap_internal_demo@ch.gov.uk");
-        } else {
-            when(config.getFinanceEmailAddress()).thenReturn("internal_demo@ch.gov.uk");
         }
+        when(config.getFinanceEmailAddress()).thenReturn("internal_demo@ch.gov.uk");
         when(idGenerator.generateId()).thenReturn("123");
         when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
 
@@ -84,21 +83,17 @@ class PaymentReportEmailMapperTest {
 
     private EmailDocument<PaymentReportEmailData> expectedPaymentReportEmailDocument(final String reportType) {
         final String fileName;
-        final String recipientEmailAddress;
         if (StringUtils.equals("scottish", reportType)) {
             fileName = "file-nameScottish";
-            recipientEmailAddress = "scot_internal_demo@ch.gov.uk";
         } else if (StringUtils.equals("specCap", reportType)) {
             fileName = "file-nameSH19";
-            recipientEmailAddress = "specCap_internal_demo@ch.gov.uk";
         } else {
             fileName = "file-name";
-            recipientEmailAddress = "internal_demo@ch.gov.uk";
         }
 
         return EmailDocument.<PaymentReportEmailData>builder()
             .withEmailTemplateAppId("efs-submission-api.payment_report").withMessageId("123")
-            .withEmailTemplateMessageType("efs_payment_report").withRecipientEmailAddress(recipientEmailAddress)
+            .withEmailTemplateMessageType("efs_payment_report").withRecipientEmailAddress("internal_demo@ch.gov.uk")
             .withCreatedAt("02 June 2020").withTopic("email-send").withData(
                 PaymentReportEmailData.builder().withTo(getReportEmailAddress(reportType))
                     .withSubject(fileName).withFileLink("file-link").withFileName(fileName).build()).build();
