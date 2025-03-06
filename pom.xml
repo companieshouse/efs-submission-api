@@ -71,19 +71,16 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Sonar dependency -->
-        <sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
-        <sonar.verbose>true</sonar.verbose>
+        <!--sonar configuration-->
+        <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
+        <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
+        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+        <sonar.login></sonar.login>
+        <sonar.password></sonar.password>
         <sonar.projectKey>uk.gov.companieshouse:efs-submission-api</sonar.projectKey>
+        <sonar.projectName>efs-submission-api</sonar.projectName>
         <sonar.coverage.exclusions>**/PaymentFeatureTestingFeesController.java</sonar.coverage.exclusions>
-        <sonar.jacoco.reportPath>target/site/jacoco/jacoco.xml</sonar.jacoco.reportPath>
-        <sonar.dependencyCheck.htmlReportPath>
-            ${project.basedir}/target/dependency-check-report.html
-        </sonar.dependencyCheck.htmlReportPath>
-        <sonar.java.binaries>
-            ${project.basedir}/target
-        </sonar.java.binaries>
     </properties>
-
     <dependencyManagement>
         <dependencies>
             <!-- Temporarily pinned netty dependency see Jira SEC-160 -->

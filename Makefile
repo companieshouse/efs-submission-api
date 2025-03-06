@@ -53,11 +53,11 @@ dist: clean build package
 
 .PHONY: sonar
 sonar: security-check
-	mvn sonar:sonar
+	mvn sonar:sonar -Dsonar.dependencyCheck.htmlReportPath=./target/dependency-check-report.html
 
 .PHONY: sonar-pr-analysis
-sonar-pr-analysis:
-	mvn sonar:sonar -P sonar-pr-analysis
+sonar-pr-analysis: dependency-check
+	mvn sonar:sonar -P sonar-pr-analysis -Dsonar.dependencyCheck.htmlReportPath=./target/dependency-check-report.html
 
 ##### Start of dependency-check block to be put at bottom of Makefile
 .PHONY: dependency-check
