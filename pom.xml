@@ -52,7 +52,6 @@
 
         <mockito-junit-jupiter.version>5.2.0</mockito-junit-jupiter.version>
         <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
-        <netty-common.version>[4.1.118.Final,)</netty-common.version>
         <nimbus-jose-jwt.version>9.40</nimbus-jose-jwt.version>
         <private-api-sdk-java.version>4.0.168</private-api-sdk-java.version>
         <sdk-manager-java.version>3.0.9</sdk-manager-java.version>
@@ -79,9 +78,9 @@
         <dependencies>
             <!-- Temporarily pinned netty dependency see Jira SEC-160 -->
             <dependency>
-              <groupId>io.netty</groupId>
-              <artifactId>netty-common</artifactId>
-                <version>${netty-common.version}}</version>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>4.1.118.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
