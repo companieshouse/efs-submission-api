@@ -17,80 +17,70 @@
     <properties>
         <skip.integration.tests>false</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
-
         <java.version>21</java.version>
-        <java-session-handler.version>4.1.1</java-session-handler.version>
-        <aws-java-sdk-core.version>1.12.741</aws-java-sdk-core.version>
-        <private-api-sdk-java.version>4.0.168</private-api-sdk-java.version>
-        <sdk-manager-java.version>3.0.9</sdk-manager-java.version>
         <api-helper-java.version>3.0.1</api-helper-java.version>
-        <rest-service-common-library.version>2.0.2</rest-service-common-library.version>
-        <environment-reader-library.version>3.0.1</environment-reader-library.version>
-
-        <!-- Logging -->
-        <log4j-bom.version>2.24.1</log4j-bom.version>
-        <structured-logging.version>3.0.20</structured-logging.version>
         <avro.version>1.12.0</avro.version>
+        <aws-java-sdk-core.version>1.12.741</aws-java-sdk-core.version>
         <ch-kafka.version>3.0.2</ch-kafka.version>
+        <commons-compress.version>1.26.2</commons-compress.version>
+        <commons-io.version>2.16.1</commons-io.version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
+        <environment-reader-library.version>3.0.1</environment-reader-library.version>
+        <equalsverifier.version>3.16.1</equalsverifier.version>
+        <google-oauth-client.version>1.36.0</google-oauth-client.version>
+        <grpc-context.version>1.64.0</grpc-context.version>
+        <guava.version>33.2.1-jre</guava.version>
+        <imageio.version>1.4.0</imageio.version>
+        <jackson.version>2.17.1</jackson.version>
+        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+        <jakarta.persistence.version>3.2.0</jakarta.persistence.version>
+        <java-session-handler.version>4.1.1</java-session-handler.version>
+        <jib-maven-plugin.version>3.4.2</jib-maven-plugin.version>
+        <json.version>20240303</json.version>
+        <junit-jupiter.version>5.10.2</junit-jupiter.version>
         <kafka-clients.version>3.7.2</kafka-clients.version>
         <kafka-models.version>3.0.7</kafka-models.version>
+        <log4j-bom.version>2.24.1</log4j-bom.version>
         <ojdbc11.version>23.4.0.24.05</ojdbc11.version>
-        <junit-jupiter.version>5.10.2</junit-jupiter.version>
-        <mockito-junit-jupiter.version>5.2.0</mockito-junit-jupiter.version>
-        <commons-lang3.version>3.14.0</commons-lang3.version>
-        <commons-io.version>2.16.1</commons-io.version>
-        <commons-compress.version>1.26.2</commons-compress.version>
-        <equalsverifier.version>3.16.1</equalsverifier.version>
-        <sqs-common-version>0.0.1</sqs-common-version>
-        <imageio.version>1.4.0</imageio.version>
-        <grpc-context.version>1.64.0</grpc-context.version>
-        <nimbus-jose-jwt.version>9.40</nimbus-jose-jwt.version>
-        <snappy-java.version>1.1.10.5</snappy-java.version>
-        <guava.version>33.2.1-jre</guava.version>
-        <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
-        <google-oauth-client.version>1.36.0</google-oauth-client.version>
-        <jackson.version>2.17.1</jackson.version>
-        <json.version>20240303</json.version>
-        <jakarta.persistence.version>3.2.0</jakarta.persistence.version>
-
-        <testcontainers.version>1.19.8</testcontainers.version>
-
-        <!-- Spring -->
-        <spring-boot.version>3.3.5</spring-boot.version>
-        <spring-test.version>6.1.14</spring-test.version>
-
         <!-- Maven -->
-        <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
-        <maven-failsafe-plugin.version>3.5.0</maven-failsafe-plugin.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-        <jib-maven-plugin.version>3.4.2</jib-maven-plugin.version>
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
-
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven-failsafe-plugin.version>3.5.0</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
 
-        <!-- Sonar dependency -->
-        <sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
-        <sonar.verbose>true</sonar.verbose>
+        <mockito-junit-jupiter.version>5.2.0</mockito-junit-jupiter.version>
+        <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
+        <nimbus-jose-jwt.version>9.40</nimbus-jose-jwt.version>
+        <private-api-sdk-java.version>4.0.168</private-api-sdk-java.version>
+        <sdk-manager-java.version>3.0.9</sdk-manager-java.version>
+        <snakeyaml.version>2.2</snakeyaml.version>
+        <snappy-java.version>1.1.10.5</snappy-java.version>
+        <spring-boot.version>3.3.5</spring-boot.version>
+        <spring-test.version>6.1.14</spring-test.version>
+        <structured-logging.version>3.0.20</structured-logging.version>
+        <sqs-common-version>0.0.1</sqs-common-version>
+        <rest-service-common-library.version>2.0.2</rest-service-common-library.version>
+        <testcontainers.version>1.19.8</testcontainers.version>
+
+        <!--sonar configuration-->
+        <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
+        <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
+        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+        <sonar.login></sonar.login>
+        <sonar.password></sonar.password>
         <sonar.projectKey>uk.gov.companieshouse:efs-submission-api</sonar.projectKey>
+        <sonar.projectName>efs-submission-api</sonar.projectName>
         <sonar.coverage.exclusions>**/PaymentFeatureTestingFeesController.java</sonar.coverage.exclusions>
-        <sonar.jacoco.reportPath>target/site/jacoco/jacoco.xml</sonar.jacoco.reportPath>
-        <sonar.dependencyCheck.htmlReportPath>
-            ${project.basedir}/target/dependency-check-report.html
-        </sonar.dependencyCheck.htmlReportPath>
-        <sonar.java.binaries>
-            ${project.basedir}/target
-        </sonar.java.binaries>
     </properties>
-
     <dependencyManagement>
         <dependencies>
             <!-- Temporarily pinned netty dependency see Jira SEC-160 -->
             <dependency>
-              <groupId>io.netty</groupId>
-              <artifactId>netty-common</artifactId>
-              <version>4.1.116.Final</version>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>4.1.118.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
@@ -259,7 +249,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>2.2</version>
+            <version>${snakeyaml.version}</version>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>
