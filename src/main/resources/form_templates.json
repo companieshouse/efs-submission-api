@@ -1368,15 +1368,6 @@
   "isFesEnabled" : true,
   "messageTextIdList": [1,4]
 }, {
-  "_id" : "NDISCA",
-  "formName" : "NDISCA - Notice attached to NDISC",
-  "formCategory" : "IA1986_NOD",
-  "orderIndex" : 2,
-  "fee" : "",
-  "isAuthenticationRequired" : true,
-  "isFesEnabled" : true,
-  "messageTextIdList": [1,4]
-}, {
   "_id" : "VAM1",
   "formName" : "VAM1 - Notice of the commencement of moratorium",
   "formCategory" : "INSEW2016_CVAM",
@@ -1898,15 +1889,6 @@
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
   "messageTextIdList": [1,4]
-}, {
-  "_id" : "WU01",
-  "formName" : "WU01 - Notice of court order in a winding up",
-  "formCategory" : "INSEW2016_WU",
-  "orderIndex": 1,
-  "fee" : "",
-  "isAuthenticationRequired" : true,
-  "isFesEnabled" : true,
-  "messageTextIdList": [1]
 }, {
   "_id" : "WU02",
   "formName" : "WU02 - Notice of order of appointment of provisional liquidator",
