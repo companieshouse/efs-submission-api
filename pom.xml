@@ -53,11 +53,11 @@
         <mockito-junit-jupiter.version>5.2.0</mockito-junit-jupiter.version>
         <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
         <nimbus-jose-jwt.version>9.40</nimbus-jose-jwt.version>
-        <private-api-sdk-java.version>4.0.168</private-api-sdk-java.version>
+        <private-api-sdk-java.version>4.0.283</private-api-sdk-java.version>
         <sdk-manager-java.version>3.0.9</sdk-manager-java.version>
         <snakeyaml.version>2.2</snakeyaml.version>
         <snappy-java.version>1.1.10.5</snappy-java.version>
-        <spring-boot.version>3.3.5</spring-boot.version>
+        <spring-boot.version>3.3.7</spring-boot.version>
         <spring-test.version>6.1.14</spring-test.version>
         <structured-logging.version>3.0.20</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>

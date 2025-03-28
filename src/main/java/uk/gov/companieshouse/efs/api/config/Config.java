@@ -1,14 +1,5 @@
 package uk.gov.companieshouse.efs.api.config;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
-import java.util.function.Supplier;
-import javax.sql.DataSource;
 import org.apache.avro.io.EncoderFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import uk.gov.companieshouse.api.InternalApiClient;
+import uk.gov.companieshouse.api.http.ApiKeyHttpClient;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.efs.api.email.config.ExternalConfirmationEmailConfig;
 import uk.gov.companieshouse.efs.api.email.config.ExternalPaymentFailedEmailConfig;
@@ -44,6 +37,16 @@ import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 import uk.gov.companieshouse.efs.api.util.UuidGenerator;
 import uk.gov.companieshouse.logging.Logger;
+
+import javax.sql.DataSource;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Configuration class used by api for validation and id generation.
@@ -303,6 +306,18 @@ public class Config {
             .withPaymentReportEmailMapper(internalEmailMapperFactory.getPaymentReportMapper())
             .withRejectEmailMapper(externalEmailMapperFactory.getRejectMapper())
             .build();
+    }
+
+    @Bean("internalApiClient")
+    InternalApiClient internalApiClient(@Value("${chs.kafka.api.key}") final String chsKafkaApiKey,
+                                        @Value("${chs.kafka.api.url}") final String chsKafkaApiUrl) {
+        ApiKeyHttpClient apiKeyHttpClient = new ApiKeyHttpClient(chsKafkaApiKey);
+        apiKeyHttpClient.setRequestId("efs-submission-api");
+
+        InternalApiClient internalApiClient = new InternalApiClient(apiKeyHttpClient);
+        internalApiClient.setBasePath(chsKafkaApiUrl);
+
+        return internalApiClient;
     }
 
 }

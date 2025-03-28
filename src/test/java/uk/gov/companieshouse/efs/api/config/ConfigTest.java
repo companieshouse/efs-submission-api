@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.time.Clock;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSH19SameDaySubmissionSupportEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionBusinessEmailMapper;
 import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionSupportEmailMapper;
@@ -106,6 +108,11 @@ class ConfigTest {
         assertThat(mapperFactory.getInternalFailedConversionEmailMapper(), isA(InternalFailedConversionEmailMapper.class));
         assertThat(mapperFactory.getInternalSubmissionEmailMapper(), isA(InternalSubmissionEmailMapper.class));
         assertThat(mapperFactory.getPaymentReportEmailMapper(), isA(PaymentReportEmailMapper.class));
+    }
+
+    @Test
+    void internalApiClient()  {
+        assertThat(testConfig.internalApiClient("api-key", "http://localhost"), isA(InternalApiClient.class));
     }
 
 }
