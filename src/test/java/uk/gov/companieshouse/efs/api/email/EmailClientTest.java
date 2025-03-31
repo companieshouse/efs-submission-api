@@ -62,7 +62,6 @@ public class EmailClientTest {
 
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
 
-        //PaymentReportEmailModel emailModel = new PaymentReportEmailModel("file-link", "filename.pdf", false);
         PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);
         EmailDocument<PaymentReportEmailData> document = getPaymentEmailDocument(emailData);
 
