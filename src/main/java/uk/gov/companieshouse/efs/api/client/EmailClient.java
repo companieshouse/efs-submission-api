@@ -9,7 +9,7 @@ import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.chskafka.PrivateSendEmailHandler;
 import uk.gov.companieshouse.api.handler.chskafka.request.PrivateSendEmailPost;
 import uk.gov.companieshouse.api.model.ApiResponse;
-import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
+import uk.gov.companieshouse.efs.api.client.exception.EmailClientException;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
@@ -27,7 +27,7 @@ public class EmailClient {
         this.objectMapper = objectMapper;
     }
 
-    public <T> ApiResponse<Void> sendEmail(final EmailDocument<T> document) throws EmailServiceException {
+    public <T> ApiResponse<Void> sendEmail(final EmailDocument<T> document) throws EmailClientException {
         try {
             String jsonData = objectMapper.writeValueAsString(document);
 
@@ -50,11 +50,11 @@ public class EmailClient {
 
         } catch(JsonProcessingException ex) {
             LOGGER.error("Error creating payload", ex);
-            throw new EmailServiceException("Error creating payload for CHS Kafka API: ", ex);
+            throw new EmailClientException("Error creating payload for CHS Kafka API: ", ex);
 
         } catch (ApiErrorResponseException ex) {
             LOGGER.error("Error sending email", ex);
-            throw new EmailServiceException("Error sending payload to CHS Kafka API: ", ex);
+            throw new EmailClientException("Error sending payload to CHS Kafka API: ", ex);
         }
     }
 }

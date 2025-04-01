@@ -1,107 +1,89 @@
 package uk.gov.companieshouse.efs.api.email;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import org.apache.avro.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.api.error.ApiError;
+import uk.gov.companieshouse.api.model.ApiResponse;
+import uk.gov.companieshouse.efs.api.client.EmailClient;
+import uk.gov.companieshouse.efs.api.client.exception.EmailClientException;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
 import uk.gov.companieshouse.efs.api.email.mapper.EmailMapperFactory;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailData;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
-import uk.gov.companieshouse.efs.api.email.model.ExternalAcceptEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.ExternalRejectEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.InternalAvFailedEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.InternalFailedConversionModel;
-import uk.gov.companieshouse.efs.api.email.model.InternalSubmissionEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailModel;
-import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
-import uk.gov.companieshouse.efs.api.kafka.CHKafkaProducer;
-import uk.gov.companieshouse.kafka.message.Message;
+import uk.gov.companieshouse.efs.api.email.model.*;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 @Service
 public class EmailServiceImpl implements EmailService {
 
-    private CHKafkaProducer producer;
-    private EmailSerialiser serializer;
-    private Schema schema;
-    private EmailMapperFactory emailMapperFactory;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
-
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
+
+    private final EmailMapperFactory emailMapperFactory;
+    private final EmailClient emailClient;
 
     /**
      * Constructor.
      *
-     * @param producer              dependency
-     * @param serializer            dependency
-     * @param schema                dependency
      * @param emailMapperFactory    dependency
-     * @param timestampGenerator    dependency
+     * @param emailClient           dependency
      */
     @Autowired
-    public EmailServiceImpl(CHKafkaProducer producer, EmailSerialiser serializer, Schema schema,
-            EmailMapperFactory emailMapperFactory, TimestampGenerator<LocalDateTime> timestampGenerator) {
-        this.producer = producer;
-        this.serializer = serializer;
-        this.schema = schema;
+    public EmailServiceImpl(EmailMapperFactory emailMapperFactory, EmailClient emailClient) {
         this.emailMapperFactory = emailMapperFactory;
-        this.timestampGenerator = timestampGenerator;
+        this.emailClient = emailClient;
     }
 
     @Override
     public void sendExternalConfirmation(ExternalNotificationEmailModel emailModel) {
-        LOGGER.debug(String.format("Sending external email confirming submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending external email confirming submission [%s]", emailModel.getSubmission().getId()));
         sendMessage(this.emailMapperFactory.getConfirmationEmailMapper().map(emailModel));
     }
 
     @Override
     public void sendExternalPaymentFailedNotification(ExternalNotificationEmailModel emailModel) {
-        LOGGER.debug(String.format("Sending external email notifying payment failed for submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending external email notifying payment failed for submission [%s]", emailModel.getSubmission().getId()));
         sendMessage(this.emailMapperFactory.getPaymentFailedEmailMapper().map(emailModel));
     }
 
     @Override
     public void sendExternalAccept(ExternalAcceptEmailModel emailModel) {
-        LOGGER.debug(String.format("Sending external email accepting submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending external email accepting submission [%s]", emailModel.getSubmission().getId()));
         sendMessage(this.emailMapperFactory.getAcceptEmailMapper().map(emailModel));
     }
 
     @Override
     public void sendExternalReject(ExternalRejectEmailModel emailModel) {
-        LOGGER.debug(String.format("Sending external email rejecting submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending external email rejecting submission [%s]", emailModel.getSubmission().getId()));
         sendMessage(this.emailMapperFactory.getRejectEmailMapper().map(emailModel));
     }
 
     @Override
     public void sendInternalFailedAV(InternalAvFailedEmailModel emailModel) {
-        LOGGER.debug(String.format("Sending internal av failed email rejecting submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending internal av failed email rejecting submission [%s]", emailModel.getSubmission().getId()));
         sendMessage(this.emailMapperFactory.getInternalAvFailedEmailMapper().map(emailModel));
     }
 
     @Override
     public void sendInternalSubmission(InternalSubmissionEmailModel emailModel) {
-        LOGGER.debug(String.format("Sending submission [%s] to internal email", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending submission [%s] to internal email", emailModel.getSubmission().getId()));
         sendMessage(this.emailMapperFactory.getInternalSubmissionEmailMapper().map(emailModel));
     }
 
     @Override
     public void sendInternalFailedConversion(InternalFailedConversionModel emailModel) {
-        LOGGER.debug(String.format("Sending internal failed conversion email rejecting submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending internal failed conversion email rejecting submission [%s]", emailModel.getSubmission().getId()));
         sendMessage(this.emailMapperFactory.getInternalFailedConversionEmailMapper().map(emailModel));
     }
 
     @Override
     public void sendDelayedSubmissionSupportEmail(DelayedSubmissionSupportEmailModel emailModel) {
-        LOGGER.debug(String.format("Sending delayed submission support email for [%d] submissions",
+        LOGGER.debug(format("Sending delayed submission support email for [%d] submissions",
                 emailModel.getNumberOfDelayedSubmissions()));
         sendMessage(this.emailMapperFactory.getDelayedSubmissionSupportEmailMapper().map(emailModel));
     }
@@ -109,7 +91,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendDelayedSH19SubmissionSupportEmail(DelayedSubmissionSupportEmailModel emailModel,
         String businessEmail) {
-        LOGGER.debug(String.format(
+        LOGGER.debug(format(
             "Sending delayed SH19 same day submission support email for [%d] submissions",
             emailModel.getNumberOfDelayedSubmissions()));
         final EmailDocument<DelayedSubmissionSupportEmailData> document =
@@ -121,7 +103,7 @@ public class EmailServiceImpl implements EmailService {
         
         data.setTo(businessEmail);
 
-        LOGGER.debug(String.format(
+        LOGGER.debug(format(
             "Sending delayed SH19 same day submission business email for [%d] submissions",
             emailModel.getNumberOfDelayedSubmissions()));
         final EmailDocument<DelayedSubmissionSupportEmailData> businessCopy =
@@ -133,7 +115,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendDelayedSubmissionBusinessEmail(DelayedSubmissionBusinessEmailModel emailModel) {
-        LOGGER.debug(String.format("Sending delayed submission business email for [%d] submissions",
+        LOGGER.debug(format("Sending delayed submission business email for [%d] submissions",
                 emailModel.getNumberOfDelayedSubmissions()));
         sendMessage(this.emailMapperFactory.getDelayedSubmissionBusinessEmailMapper().map(emailModel));
     }
@@ -144,27 +126,24 @@ public class EmailServiceImpl implements EmailService {
         sendMessage(this.emailMapperFactory.getPaymentReportEmailMapper().map(emailModel));
     }
 
-    private void sendMessage(EmailDocument<?> document) {
-        LOGGER.debug(String.format("sending message to [%s]", document.getEmailAddress()));
-        Message result = new Message();
-        result.setTopic(document.getTopic());
-        result.setTimestamp(timestampGenerator.generateTimestamp().toEpochSecond(ZoneOffset.UTC));
+    private void sendMessage(final EmailDocument<?> document) {
+        LOGGER.debug(format("Sending message to [%s]", document.getEmailAddress()));
         try {
-            result.setValue(serializer.serialize(document, schema));
-            producer.send(result);
-        } catch (ExecutionException ex) {
+            ApiResponse<Void> response = emailClient.sendEmail(document);
+
+            if (response.getStatusCode() != HttpStatus.OK.value()) {
+                LOGGER.error(format("Error sending document to email client: [%d]", response.getStatusCode()));
+
+                String errorList = response.getErrors().stream().map(ApiError::getError).collect(Collectors.joining());
+                throw new EmailServiceException(format("Error sending request to CHS Kafka API: %s", errorList));
+            }
+
+        } catch(EmailClientException ex) {
             Map<String, Object> errorMap = new HashMap<>();
             errorMap.put("document", document);
-            errorMap.put("message", result);
             LOGGER.errorContext(document.getAppId(), ex, errorMap);
-            throw new EmailServiceException("Error sending message to kafka", ex);
-        } catch (InterruptedException ex) {
-            Map<String, Object> errorMap = new HashMap<>();
-            errorMap.put("document", document);
-            errorMap.put("message", result);
-            LOGGER.errorContext(document.getAppId(), ex, errorMap);
-            Thread.currentThread().interrupt();
-            throw new EmailServiceException("Error - thread interrupted", ex);
+
+            throw new EmailServiceException("Error sending document to email client: ", ex);
         }
     }
 }

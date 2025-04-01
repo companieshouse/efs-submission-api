@@ -17,6 +17,7 @@ import uk.gov.companieshouse.api.handler.chskafka.PrivateSendEmailHandler;
 import uk.gov.companieshouse.api.handler.chskafka.request.PrivateSendEmailPost;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.efs.api.client.EmailClient;
+import uk.gov.companieshouse.efs.api.client.exception.EmailClientException;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailData;
@@ -118,7 +119,7 @@ public class EmailClientTest {
         EmailDocument<PaymentReportEmailData> document = getPaymentEmailDocument(emailData);
 
         // Act:
-        EmailServiceException emailSendingException = assertThrows(EmailServiceException.class, () ->
+        EmailClientException expectedException = assertThrows(EmailClientException.class, () ->
                 emailClient.sendEmail(document)
         );
 
@@ -127,7 +128,7 @@ public class EmailClientTest {
         verify(privateSendEmailHandler, times(1)).postSendEmail(eq("/send-email"), any(SendEmail.class));
         verify(privateSendEmailPost, times(1)).execute();
 
-        assertThat(emailSendingException.getMessage(), is("Error sending payload to CHS Kafka API: "));
+        assertThat(expectedException.getMessage(), is("Error sending payload to CHS Kafka API: "));
     }
 
     @Test
@@ -142,14 +143,14 @@ public class EmailClientTest {
         EmailDocument<PaymentReportEmailData> document = getPaymentEmailDocument(emailData);
 
         // Act:
-        EmailServiceException emailSendingException = assertThrows(EmailServiceException.class, () ->
+        EmailClientException expectedException = assertThrows(EmailClientException.class, () ->
                 emailClient.sendEmail(document)
         );
 
         // Assert:
         verifyNoInteractions(internalApiClient);
 
-        assertThat(emailSendingException.getMessage(), is("Error creating payload for CHS Kafka API: "));
+        assertThat(expectedException.getMessage(), is("Error creating payload for CHS Kafka API: "));
     }
 
     @Test
