@@ -1,32 +1,20 @@
 package uk.gov.companieshouse.efs.api.config;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isA;
-import static org.mockito.ArgumentMatchers.anyString;
-
-import java.time.Clock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import uk.gov.companieshouse.api.InternalApiClient;
-import uk.gov.companieshouse.efs.api.email.mapper.DelayedSH19SameDaySubmissionSupportEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionBusinessEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionSupportEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.EmailMapperFactory;
-import uk.gov.companieshouse.efs.api.email.mapper.ExternalAcceptEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.ExternalEmailMapperFactory;
-import uk.gov.companieshouse.efs.api.email.mapper.ExternalNotificationEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.ExternalRejectEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.InternalAvFailedEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.InternalEmailMapperFactory;
-import uk.gov.companieshouse.efs.api.email.mapper.InternalFailedConversionEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.InternalSubmissionEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.PaymentReportEmailMapper;
+import uk.gov.companieshouse.efs.api.email.mapper.*;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
+
+import java.time.Clock;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.isA;
 
 @ExtendWith(MockitoExtension.class)
 class ConfigTest {

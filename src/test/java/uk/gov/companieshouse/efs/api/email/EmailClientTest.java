@@ -2,7 +2,6 @@ package uk.gov.companieshouse.efs.api.email;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +17,6 @@ import uk.gov.companieshouse.api.handler.chskafka.request.PrivateSendEmailPost;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.efs.api.client.EmailClient;
 import uk.gov.companieshouse.efs.api.client.exception.EmailClientException;
-import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailData;
 
@@ -34,7 +32,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailClientTest {
+class EmailClientTest {
 
     @Mock
     private InternalApiClient internalApiClient;
@@ -46,9 +44,6 @@ public class EmailClientTest {
     void setUp() {
         ReflectionTestUtils.setField(emailClient, "objectMapper", new ObjectMapper());
     }
-
-    @AfterEach
-    void tearDown() {}
 
     @Test
     void givenValidPayload_whenEmailRequested_thenReturnSuccess() throws ApiErrorResponseException {
@@ -90,7 +85,7 @@ public class EmailClientTest {
 
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
 
-        PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);
+        PaymentReportEmailData emailData = new PaymentReportEmailData(null, null, null, null, false);
         EmailDocument<PaymentReportEmailData> document = getPaymentEmailDocument(emailData);
 
         // Act:
