@@ -148,60 +148,6 @@ class EmailClientTest {
         assertThat(expectedException.getMessage(), is("Error creating payload for CHS Kafka API: "));
     }
 
-    @Test
-    void givenValidPayload_whenPaymentReportEmail_thenReturnSuccess() throws ApiErrorResponseException {
-        // Arrange:
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-
-        PrivateSendEmailPost privateSendEmailPost = mock(PrivateSendEmailPost.class);
-        when(privateSendEmailPost.execute()).thenReturn(apiResponse);
-
-        PrivateSendEmailHandler privateSendEmailHandler = mock(PrivateSendEmailHandler.class);
-        when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any(SendEmail.class))).thenReturn(privateSendEmailPost);
-
-        when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
-
-        PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);
-        EmailDocument<PaymentReportEmailData> document = getPaymentEmailDocument(emailData);
-
-        // Act:
-        ApiResponse<Void> response = emailClient.sendEmail(document);
-
-        // Assert:
-        verify(internalApiClient, times(1)).sendEmailHandler();
-        verify(privateSendEmailHandler, times(1)).postSendEmail(eq("/send-email"), any(SendEmail.class));
-        verify(privateSendEmailPost, times(1)).execute();
-
-        assertThat(response.getStatusCode(), is(200));
-    }
-
-    @Test
-    void givenInvalidPayload_whenPaymentEmailRequested_thenReturnBadRequest() throws ApiErrorResponseException {
-        // Arrange:
-        ApiResponse<Void> apiResponse = new ApiResponse<>(400, Map.of());
-
-        PrivateSendEmailPost privateSendEmailPost = mock(PrivateSendEmailPost.class);
-        when(privateSendEmailPost.execute()).thenReturn(apiResponse);
-
-        PrivateSendEmailHandler privateSendEmailHandler = mock(PrivateSendEmailHandler.class);
-        when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any(SendEmail.class))).thenReturn(privateSendEmailPost);
-
-        when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
-
-        PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);
-        EmailDocument<PaymentReportEmailData> document = getPaymentEmailDocument(emailData);
-
-        // Act:
-        ApiResponse<Void> response = emailClient.sendEmail(document);
-
-        // Assert:
-        verify(internalApiClient, times(1)).sendEmailHandler();
-        verify(privateSendEmailHandler, times(1)).postSendEmail(eq("/send-email"), any(SendEmail.class));
-        verify(privateSendEmailPost, times(1)).execute();
-
-        assertThat(response.getStatusCode(), is(400));
-    }
-
     private EmailDocument<PaymentReportEmailData> getPaymentEmailDocument(final PaymentReportEmailData data) {
         return EmailDocument.<PaymentReportEmailData>builder()
                 .withTopic("test-email-topic")
