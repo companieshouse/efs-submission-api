@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.efs.api.email;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.error.ApiError;
@@ -33,7 +32,6 @@ public class EmailServiceImpl implements EmailService {
      * @param emailMapperFactory    dependency
      * @param emailClient           dependency
      */
-    @Autowired
     public EmailServiceImpl(EmailMapperFactory emailMapperFactory, EmailClient emailClient) {
         this.emailMapperFactory = emailMapperFactory;
         this.emailClient = emailClient;

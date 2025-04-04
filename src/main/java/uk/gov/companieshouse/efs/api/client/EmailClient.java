@@ -14,16 +14,18 @@ import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
+import java.util.function.Supplier;
+
 @Component
 public class EmailClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
-    private final InternalApiClient internalApiClient;
+    private final Supplier<InternalApiClient> internalApiClientSupplier;
     private final ObjectMapper objectMapper;
 
-    public EmailClient(final InternalApiClient internalApiClient, final ObjectMapper objectMapper) {
-        this.internalApiClient = internalApiClient;
+    public EmailClient(final Supplier<InternalApiClient> internalApiClientSupplier, final ObjectMapper objectMapper) {
+        this.internalApiClientSupplier = internalApiClientSupplier;
         this.objectMapper = objectMapper;
     }
 
@@ -38,7 +40,7 @@ public class EmailClient {
             sendEmail.setJsonData(jsonData);
             sendEmail.setEmailAddress(document.getEmailAddress());
 
-            PrivateSendEmailHandler emailHandler = internalApiClient.sendEmailHandler();
+            PrivateSendEmailHandler emailHandler = internalApiClientSupplier.get().sendEmailHandler();
             PrivateSendEmailPost emailPost = emailHandler.postSendEmail("/send-email", sendEmail);
 
             ApiResponse<Void> response = emailPost.execute();

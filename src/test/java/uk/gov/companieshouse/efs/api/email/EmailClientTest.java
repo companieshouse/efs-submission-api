@@ -23,6 +23,7 @@ import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailData;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -33,6 +34,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EmailClientTest {
+
+    @Mock
+    private Supplier<InternalApiClient> internalApiClientSupplier;
 
     @Mock
     private InternalApiClient internalApiClient;
@@ -56,6 +60,7 @@ class EmailClientTest {
         PrivateSendEmailHandler privateSendEmailHandler = mock(PrivateSendEmailHandler.class);
         when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any(SendEmail.class))).thenReturn(privateSendEmailPost);
 
+        when(internalApiClientSupplier.get()).thenReturn(internalApiClient);
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
 
         PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);
@@ -83,6 +88,7 @@ class EmailClientTest {
         PrivateSendEmailHandler privateSendEmailHandler = mock(PrivateSendEmailHandler.class);
         when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any(SendEmail.class))).thenReturn(privateSendEmailPost);
 
+        when(internalApiClientSupplier.get()).thenReturn(internalApiClient);
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
 
         PaymentReportEmailData emailData = new PaymentReportEmailData(null, null, null, null, false);
@@ -108,6 +114,7 @@ class EmailClientTest {
         PrivateSendEmailHandler privateSendEmailHandler = mock(PrivateSendEmailHandler.class);
         when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any(SendEmail.class))).thenReturn(privateSendEmailPost);
 
+        when(internalApiClientSupplier.get()).thenReturn(internalApiClient);
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
 
         PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);
@@ -148,8 +155,8 @@ class EmailClientTest {
         assertThat(expectedException.getMessage(), is("Error creating payload for CHS Kafka API: "));
     }
 
-    private EmailDocument<PaymentReportEmailData> getPaymentEmailDocument(final PaymentReportEmailData data) {
-        return EmailDocument.<PaymentReportEmailData>builder()
+    private <T> EmailDocument<T> getPaymentEmailDocument(final T data) {
+        return EmailDocument.<T>builder()
                 .withTopic("test-email-topic")
                 .withMessageId(UUID.randomUUID().toString())
                 .withRecipientEmailAddress("unit-test@ch.gov.uk")

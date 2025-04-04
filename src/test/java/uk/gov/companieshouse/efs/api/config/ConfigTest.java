@@ -100,7 +100,8 @@ class ConfigTest {
 
     @Test
     void internalApiClient()  {
-        assertThat(testConfig.internalApiClient("api-key", "http://localhost"), isA(InternalApiClient.class));
+        InternalApiClient apiClient = testConfig.internalApiClientSupplier("api-key", "http://localhost").get();
+        assertThat(apiClient, isA(InternalApiClient.class));
     }
 
 }
