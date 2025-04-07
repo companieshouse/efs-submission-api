@@ -2,7 +2,11 @@ package uk.gov.companieshouse.efs.api.email;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.support.RequestContext;
 import uk.gov.companieshouse.api.error.ApiError;
+import uk.gov.companieshouse.api.http.HttpClient;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.efs.api.client.EmailClient;
 import uk.gov.companieshouse.efs.api.client.exception.EmailClientException;
@@ -14,6 +18,7 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;

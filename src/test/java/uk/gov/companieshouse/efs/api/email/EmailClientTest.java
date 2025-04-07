@@ -14,6 +14,7 @@ import uk.gov.companieshouse.api.chskafka.SendEmail;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.chskafka.PrivateSendEmailHandler;
 import uk.gov.companieshouse.api.handler.chskafka.request.PrivateSendEmailPost;
+import uk.gov.companieshouse.api.http.HttpClient;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.efs.api.client.EmailClient;
 import uk.gov.companieshouse.efs.api.client.exception.EmailClientException;
@@ -61,6 +62,7 @@ class EmailClientTest {
         when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any(SendEmail.class))).thenReturn(privateSendEmailPost);
 
         when(internalApiClientSupplier.get()).thenReturn(internalApiClient);
+        when(internalApiClient.getHttpClient()).thenReturn(mock(HttpClient.class));
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
 
         PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);
@@ -89,6 +91,7 @@ class EmailClientTest {
         when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any(SendEmail.class))).thenReturn(privateSendEmailPost);
 
         when(internalApiClientSupplier.get()).thenReturn(internalApiClient);
+        when(internalApiClient.getHttpClient()).thenReturn(mock(HttpClient.class));
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
 
         PaymentReportEmailData emailData = new PaymentReportEmailData(null, null, null, null, false);
@@ -115,6 +118,7 @@ class EmailClientTest {
         when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any(SendEmail.class))).thenReturn(privateSendEmailPost);
 
         when(internalApiClientSupplier.get()).thenReturn(internalApiClient);
+        when(internalApiClient.getHttpClient()).thenReturn(mock(HttpClient.class));
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
 
         PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);

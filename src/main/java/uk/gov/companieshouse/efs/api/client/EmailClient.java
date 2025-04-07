@@ -3,6 +3,8 @@ package uk.gov.companieshouse.efs.api.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.chskafka.SendEmail;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -14,6 +16,8 @@ import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 @Component
@@ -40,13 +44,16 @@ public class EmailClient {
             sendEmail.setJsonData(jsonData);
             sendEmail.setEmailAddress(document.getEmailAddress());
 
-            PrivateSendEmailHandler emailHandler = internalApiClientSupplier.get().sendEmailHandler();
+            InternalApiClient apiClient = internalApiClientSupplier.get();
+            apiClient.getHttpClient().setRequestId(getRequestId().orElse(UUID.randomUUID().toString()));
+
+            PrivateSendEmailHandler emailHandler = apiClient.sendEmailHandler();
             PrivateSendEmailPost emailPost = emailHandler.postSendEmail("/send-email", sendEmail);
 
             ApiResponse<Void> response = emailPost.execute();
 
-            LOGGER.info(String.format("Posted '%s' email to CHS Kafka API: (Response %d)",
-                    sendEmail.getMessageType(), response.getStatusCode()));
+            LOGGER.info(String.format("Posted '%s' email to CHS Kafka API (RequestId: %s): (Response %d)",
+                    apiClient.getHttpClient().getRequestId(), sendEmail.getMessageType(), response.getStatusCode()));
 
             return response;
 
@@ -59,4 +66,14 @@ public class EmailClient {
             throw new EmailClientException("Error sending payload to CHS Kafka API: ", ex);
         }
     }
+
+    private Optional<String> getRequestId() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            return Optional.ofNullable(attributes.getRequest().getHeader("x-request-id"));
+        }
+        return Optional.empty();
+    }
+
+
 }

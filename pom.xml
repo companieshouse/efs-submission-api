@@ -57,7 +57,7 @@
         <sdk-manager-java.version>3.0.9</sdk-manager-java.version>
         <snakeyaml.version>2.2</snakeyaml.version>
         <snappy-java.version>1.1.10.5</snappy-java.version>
-        <spring-boot.version>3.3.7</spring-boot.version>
+        <spring-boot.version>3.4.4</spring-boot.version>
         <spring-test.version>6.1.14</spring-test.version>
         <structured-logging.version>3.0.20</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>
