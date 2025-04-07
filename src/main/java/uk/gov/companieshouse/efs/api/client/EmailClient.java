@@ -44,8 +44,10 @@ public class EmailClient {
             sendEmail.setJsonData(jsonData);
             sendEmail.setEmailAddress(document.getEmailAddress());
 
+            String requestId = getRequestId().orElse(UUID.randomUUID().toString());
+
             InternalApiClient apiClient = internalApiClientSupplier.get();
-            apiClient.getHttpClient().setRequestId(getRequestId().orElse(UUID.randomUUID().toString()));
+            apiClient.getHttpClient().setRequestId(requestId);
 
             PrivateSendEmailHandler emailHandler = apiClient.sendEmailHandler();
             PrivateSendEmailPost emailPost = emailHandler.postSendEmail("/send-email", sendEmail);
@@ -69,10 +71,10 @@ public class EmailClient {
 
     private Optional<String> getRequestId() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes != null) {
-            return Optional.ofNullable(attributes.getRequest().getHeader("x-request-id"));
+        if(attributes == null) {
+            return Optional.empty();
         }
-        return Optional.empty();
+        return Optional.ofNullable(attributes.getRequest().getHeader("x-request-id"));
     }
 
 

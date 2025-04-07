@@ -2,13 +2,17 @@ package uk.gov.companieshouse.efs.api.email;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.chskafka.SendEmail;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -157,6 +161,96 @@ class EmailClientTest {
         verifyNoInteractions(internalApiClient);
 
         assertThat(expectedException.getMessage(), is("Error creating payload for CHS Kafka API: "));
+    }
+
+    @Test
+    void givenValidPayload_whenHttpRequestIdUnavailable_thenReturnEmptyRequestId() throws ApiErrorResponseException {
+        // Arrange:
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+
+        PrivateSendEmailPost privateSendEmailPost = mock(PrivateSendEmailPost.class);
+        when(privateSendEmailPost.execute()).thenReturn(apiResponse);
+
+        PrivateSendEmailHandler privateSendEmailHandler = mock(PrivateSendEmailHandler.class);
+        when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any(SendEmail.class))).thenReturn(privateSendEmailPost);
+
+        // For structured logging we need to be able to mock the request at the service-level.
+        try (MockedStatic<RequestContextHolder> mocked = mockStatic(RequestContextHolder.class)) {
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            when(request.getHeader("x-request-id")).thenReturn("this-is-my-request-id");
+
+            ServletRequestAttributes requestAttributes = mock(ServletRequestAttributes.class);
+            when(requestAttributes.getRequest()).thenReturn(request);
+
+            mocked.when(RequestContextHolder::getRequestAttributes).thenReturn(requestAttributes);
+
+            when(internalApiClientSupplier.get()).thenReturn(internalApiClient);
+
+            HttpClient httpClient = mock(HttpClient.class);
+            when(internalApiClient.getHttpClient()).thenReturn(httpClient);
+            when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
+
+            PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);
+            EmailDocument<PaymentReportEmailData> document = getPaymentEmailDocument(emailData);
+
+            // Act:
+            ApiResponse<Void> response = emailClient.sendEmail(document);
+
+            // Assert:
+            verify(httpClient, times(1)).setRequestId("this-is-my-request-id");
+            verify(internalApiClient, times(1)).sendEmailHandler();
+            verify(privateSendEmailHandler, times(1)).postSendEmail(eq("/send-email"), any(SendEmail.class));
+            verify(privateSendEmailPost, times(1)).execute();
+
+            mocked.verify(RequestContextHolder::getRequestAttributes, times(1));
+
+            assertThat(response.getStatusCode(), is(200));
+        }
+    }
+
+    @Test
+    void givenValidPayload_whenHttpRequestIdAvailable_thenReturnEmptyRequestId() throws ApiErrorResponseException {
+        // Arrange:
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+
+        PrivateSendEmailPost privateSendEmailPost = mock(PrivateSendEmailPost.class);
+        when(privateSendEmailPost.execute()).thenReturn(apiResponse);
+
+        PrivateSendEmailHandler privateSendEmailHandler = mock(PrivateSendEmailHandler.class);
+        when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any(SendEmail.class))).thenReturn(privateSendEmailPost);
+
+        // For structured logging we need to be able to mock the request at the service-level.
+        try (MockedStatic<RequestContextHolder> mocked = mockStatic(RequestContextHolder.class)) {
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            when(request.getHeader("x-request-id")).thenReturn(null);
+
+            ServletRequestAttributes requestAttributes = mock(ServletRequestAttributes.class);
+            when(requestAttributes.getRequest()).thenReturn(request);
+
+            mocked.when(RequestContextHolder::getRequestAttributes).thenReturn(requestAttributes);
+
+            when(internalApiClientSupplier.get()).thenReturn(internalApiClient);
+
+            HttpClient httpClient = mock(HttpClient.class);
+            when(internalApiClient.getHttpClient()).thenReturn(httpClient);
+            when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
+
+            PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);
+            EmailDocument<PaymentReportEmailData> document = getPaymentEmailDocument(emailData);
+
+            // Act:
+            ApiResponse<Void> response = emailClient.sendEmail(document);
+
+            // Assert:
+            verify(httpClient, times(1)).setRequestId(anyString());
+            verify(internalApiClient, times(1)).sendEmailHandler();
+            verify(privateSendEmailHandler, times(1)).postSendEmail(eq("/send-email"), any(SendEmail.class));
+            verify(privateSendEmailPost, times(1)).execute();
+
+            mocked.verify(RequestContextHolder::getRequestAttributes, times(1));
+
+            assertThat(response.getStatusCode(), is(200));
+        }
     }
 
     private <T> EmailDocument<T> getPaymentEmailDocument(final T data) {
