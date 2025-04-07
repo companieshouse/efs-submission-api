@@ -242,7 +242,7 @@ class EmailClientTest {
             ApiResponse<Void> response = emailClient.sendEmail(document);
 
             // Assert:
-            verify(httpClient, times(1)).setRequestId(anyString());
+            verify(httpClient, times(1)).setRequestId(argThat(s -> s.length() == 36));
             verify(internalApiClient, times(1)).sendEmailHandler();
             verify(privateSendEmailHandler, times(1)).postSendEmail(eq("/send-email"), any(SendEmail.class));
             verify(privateSendEmailPost, times(1)).execute();
