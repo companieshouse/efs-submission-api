@@ -8,8 +8,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.chskafka.SendEmail;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
-import uk.gov.companieshouse.api.handler.chskafka.PrivateSendEmailHandler;
-import uk.gov.companieshouse.api.handler.chskafka.request.PrivateSendEmailPost;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.efs.api.client.exception.EmailClientException;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
@@ -35,22 +33,22 @@ public class EmailClient {
 
     public <T> ApiResponse<Void> sendEmail(final EmailDocument<T> document) throws EmailClientException {
         try {
-            String jsonData = objectMapper.writeValueAsString(document);
+            var jsonData = objectMapper.writeValueAsString(document);
 
-            SendEmail sendEmail = new SendEmail();
+            var sendEmail = new SendEmail();
             sendEmail.setAppId(document.getAppId());
             sendEmail.setMessageId(document.getMessageId());
             sendEmail.setMessageType(document.getMessageType());
             sendEmail.setJsonData(jsonData);
             sendEmail.setEmailAddress(document.getEmailAddress());
 
-            String requestId = getRequestId().orElse(UUID.randomUUID().toString());
+            var requestId = getRequestId().orElse(UUID.randomUUID().toString());
 
-            InternalApiClient apiClient = internalApiClientSupplier.get();
+            var apiClient = internalApiClientSupplier.get();
             apiClient.getHttpClient().setRequestId(requestId);
 
-            PrivateSendEmailHandler emailHandler = apiClient.sendEmailHandler();
-            PrivateSendEmailPost emailPost = emailHandler.postSendEmail("/send-email", sendEmail);
+            var emailHandler = apiClient.sendEmailHandler();
+            var emailPost = emailHandler.postSendEmail("/send-email", sendEmail);
 
             ApiResponse<Void> response = emailPost.execute();
 
