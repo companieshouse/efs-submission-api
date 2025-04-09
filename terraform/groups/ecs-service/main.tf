@@ -19,7 +19,7 @@ terraform {
 }
 
 module "secrets" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=1.0.296"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/secrets?ref=JU-1308-new"
 
   name_prefix = "${local.service_name}-${var.environment}"
   environment = var.environment
@@ -28,7 +28,7 @@ module "secrets" {
 }
 
 module "ecs-service" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=1.0.296"
+  source = "git@github.com:companieshouse/terraform-modules//aws/ecs/ecs-service?ref=JU-1308-new"
   read_only_root_filesystem = false
 
   # Environmental configuration
@@ -38,6 +38,13 @@ module "ecs-service" {
   environment             = var.environment
   task_execution_role_arn = data.aws_iam_role.ecs_cluster_iam_role.arn
   vpc_id                  = data.aws_vpc.vpc.id
+  eventbridge_scheduler_role_arn = var.eventbridge_scheduler_role_arn
+
+  # Pass health check configuration, including optional startPeriod
+  task_healthcheck_interval     = var.task_healthcheck_interval
+  task_healthcheck_timeout      = var.task_healthcheck_timeout
+  task_healthcheck_retries      = var.task_healthcheck_retries
+  task_healthcheck_startPeriod  = var.task_healthcheck_startPeriod
 
   # Load balancer configuration
   health_check_grace_period_seconds = 240

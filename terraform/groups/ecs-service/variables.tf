@@ -18,6 +18,32 @@ variable "environment" {
   description = "The environment name, defined in envrionments vars."
 }
 
+variable "eventbridge_scheduler_role_arn" {
+  description = "ARN of the IAM role for the EventBridge scheduler"
+  default     = null
+  type        = string
+}
+
+variable "task_healthcheck_interval" {
+  type        = string
+  description = "Health check interval configuration for ECS task definitions."
+}
+
+variable "task_healthcheck_timeout" {
+  type        = string
+  description = "Health check timeout configuration for ECS task definitions."
+}
+
+variable "task_healthcheck_retries" {
+  type        = string
+  description = "Health check retries configuration for ECS task definitions."
+}
+
+variable "task_healthcheck_startPeriod" {
+  type        = string
+  description = "Health check start period configuration for ECS task definitions."
+}
+
 # ------------------------------------------------------------------------------
 # Docker Container
 # ------------------------------------------------------------------------------
