@@ -1,63 +1,31 @@
 package uk.gov.companieshouse.efs.api.email;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.ZoneOffset;
-import java.util.concurrent.ExecutionException;
-import org.apache.avro.Schema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.api.model.ApiResponse;
+import uk.gov.companieshouse.efs.api.client.EmailClient;
+import uk.gov.companieshouse.efs.api.client.exception.EmailClientException;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
-import uk.gov.companieshouse.efs.api.email.mapper.DelayedSH19SameDaySubmissionSupportEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionBusinessEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.DelayedSubmissionSupportEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.EmailMapperFactory;
-import uk.gov.companieshouse.efs.api.email.mapper.ExternalAcceptEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.ExternalNotificationEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.ExternalRejectEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.InternalAvFailedEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.InternalFailedConversionEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.InternalSubmissionEmailMapper;
-import uk.gov.companieshouse.efs.api.email.mapper.PaymentReportEmailMapper;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailData;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailData;
-import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionSupportEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
-import uk.gov.companieshouse.efs.api.email.model.ExternalAcceptEmailData;
-import uk.gov.companieshouse.efs.api.email.model.ExternalAcceptEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.ExternalConfirmationEmailData;
-import uk.gov.companieshouse.efs.api.email.model.ExternalNotificationEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.ExternalRejectEmailData;
-import uk.gov.companieshouse.efs.api.email.model.ExternalRejectEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.InternalAvFailedEmailData;
-import uk.gov.companieshouse.efs.api.email.model.InternalAvFailedEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.InternalFailedConversionEmailData;
-import uk.gov.companieshouse.efs.api.email.model.InternalFailedConversionModel;
-import uk.gov.companieshouse.efs.api.email.model.InternalSubmissionEmailData;
-import uk.gov.companieshouse.efs.api.email.model.InternalSubmissionEmailModel;
-import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailData;
-import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailModel;
+import uk.gov.companieshouse.efs.api.email.mapper.*;
+import uk.gov.companieshouse.efs.api.email.model.*;
+import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
-import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
-import uk.gov.companieshouse.efs.api.kafka.CHKafkaProducer;
-import uk.gov.companieshouse.kafka.message.Message;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EmailServiceImplTest {
@@ -65,19 +33,10 @@ class EmailServiceImplTest {
     private EmailServiceImpl emailService;
 
     @Mock
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
-
-    @Mock
-    private CHKafkaProducer producer;
-
-    @Mock
-    private EmailSerialiser serializer;
-
-    @Mock
-    private Schema schema;
+    private EmailClient emailClient;
 
     @Captor
-    private ArgumentCaptor<Message> messageCaptor;
+    private ArgumentCaptor<EmailDocument<?>> emailDocumentCaptor;
 
     @Mock
     private Submission submission;
@@ -108,32 +67,10 @@ class EmailServiceImplTest {
 
     @Mock
     private PaymentReportEmailModel paymentReportEmailModel;
-    @Mock
-    private EmailDocument<ExternalConfirmationEmailData> externalNotificationEmailDocument;
-
-    @Mock
-    private EmailDocument<ExternalAcceptEmailData> externalAcceptEmailDocument;
-
-    @Mock
-    private EmailDocument<ExternalRejectEmailData> externalRejectEmailDocument;
 
     @Mock
     private EmailDocument<InternalAvFailedEmailData> internalAVFailedEmailDocument;
 
-    @Mock
-    private EmailDocument<InternalFailedConversionEmailData> internalFailedConversionEmailDocument;
-
-    @Mock
-    private EmailDocument<InternalSubmissionEmailData> internalSubmissionEmailDocument;
-
-    @Mock
-    private EmailDocument<DelayedSubmissionSupportEmailData> delayedSubmissionSupportEmailDataEmailDocument;
-
-    @Mock
-    private EmailDocument<DelayedSubmissionBusinessEmailData> delayedSubmissionBusinessEmailDataEmailDocument;
-
-    @Mock
-    private EmailDocument<PaymentReportEmailData> paymentReportEmailDocument;
     @Mock
     private EmailMapperFactory emailMapperFactory;
 
@@ -163,316 +100,506 @@ class EmailServiceImplTest {
 
     @Mock
     private DelayedSubmissionBusinessEmailMapper delayedSubmissionBusinessEmailMapper;
-    @Mock
-    private DelayedSubmissionSupportEmailData document;
 
     @Mock
     private PaymentReportEmailMapper paymentReportEmailMapper;
 
     @BeforeEach
     void setUp() {
-        this.emailService = new EmailServiceImpl(producer, serializer, schema, emailMapperFactory, timestampGenerator);
+        this.emailService = new EmailServiceImpl(emailMapperFactory, emailClient);
     }
 
     @Test
-    void testEmailServiceSendsMessageToKafkaWhenSubmissionAccepted() throws ExecutionException, InterruptedException {
+    void testEmailServiceSendsMessageToKafkaApiWhenSubmissionAccepted() throws EmailServiceException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(externalAcceptEmailDocument.getTopic()).thenReturn("external-email-send");
+        ExternalAcceptEmailData emailData = new ExternalAcceptEmailData(
+                "unit@test.gov.uk",
+                "My Subject Line",
+                "CN000123",
+                "My Company Name",
+                "CONREF-001",
+                "Form-Type",
+                LocalDateTime.now().toString());
+
+        EmailDocument<ExternalAcceptEmailData> emailDocument = createEmailDocument(emailData);
+
         when(emailMapperFactory.getAcceptEmailMapper()).thenReturn(acceptEmailMapper);
-        when(acceptEmailMapper.map(any())).thenReturn(externalAcceptEmailDocument);
+        when(acceptEmailMapper.map(externalAcceptEmailModel)).thenReturn(emailDocument);
         when(submission.getId()).thenReturn("abc");
         when(externalAcceptEmailModel.getSubmission()).thenReturn(submission);
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendExternalAccept(externalAcceptEmailModel);
 
         // then
-        verify(serializer).serialize(externalAcceptEmailDocument, schema);
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("external-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(emailMapperFactory, times(1)).getAcceptEmailMapper();
+        verify(acceptEmailMapper, times(1)).map(externalAcceptEmailModel);
+        verify(submission, times(1)).getId();
+        verify(externalAcceptEmailModel, times(1)).getSubmission();
+        verify(emailClient).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
+        assertEquals("email-template-app-id", emailDocumentCaptor.getValue().getAppId());
+        assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentCaptor.getValue().getMessageId());
+        assertEquals("email-template-message-type", emailDocumentCaptor.getValue().getMessageType());
+        assertThat(emailDocument.getData(), is(emailData));
+        assertEquals("unit-test@ch.gov.uk", emailDocumentCaptor.getValue().getEmailAddress());
+        assertEquals("test-email-topic", emailDocumentCaptor.getValue().getTopic());
+        assertEquals("2025-04-01T10:06:43.596087", emailDocumentCaptor.getValue().getCreatedAt());
     }
 
     @Test
-    void testEmailServiceSendsMessageToKafkaWhenSubmissionRejected() throws ExecutionException, InterruptedException {
+    void testEmailServiceSendsMessageToKafkaApiWhenSubmissionRejected() throws EmailServiceException{
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(externalRejectEmailDocument.getTopic()).thenReturn("external-email-send");
+        ExternalRejectEmailData emailData = ExternalRejectEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .withCompanyNumber("CN000123")
+                .withCompanyName("My Company Name")
+                .withConfirmationReference("CONREF-001")
+                .withFormType("Form-Type")
+                .withRejectionDate(LocalDateTime.now().toString())
+                .withRejectReasons(List.of("Not fussed"))
+                .withIsPaidForm(true)
+                .build();
+
+        EmailDocument<ExternalRejectEmailData> emailDocument = createEmailDocument(emailData);
+
         when(emailMapperFactory.getRejectEmailMapper()).thenReturn(rejectEmailMapper);
-        when(rejectEmailMapper.map(any())).thenReturn(externalRejectEmailDocument);
+        when(rejectEmailMapper.map(externalRejectEmailModel)).thenReturn(emailDocument);
         when(submission.getId()).thenReturn("abc");
         when(externalRejectEmailModel.getSubmission()).thenReturn(submission);
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendExternalReject(externalRejectEmailModel);
 
         // then
-        verify(serializer).serialize(externalRejectEmailDocument, schema);
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("external-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(emailMapperFactory, times(1)).getRejectEmailMapper();
+        verify(rejectEmailMapper, times(1)).map(externalRejectEmailModel);
+        verify(submission, times(1)).getId();
+        verify(externalRejectEmailModel, times(1)).getSubmission();
+        verify(emailClient).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
+        assertEquals("email-template-app-id", emailDocumentCaptor.getValue().getAppId());
+        assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentCaptor.getValue().getMessageId());
+        assertEquals("email-template-message-type", emailDocumentCaptor.getValue().getMessageType());
+        assertThat(emailDocument.getData(), is(emailData));
+        assertEquals("unit-test@ch.gov.uk", emailDocumentCaptor.getValue().getEmailAddress());
+        assertEquals("test-email-topic", emailDocumentCaptor.getValue().getTopic());
+        assertEquals("2025-04-01T10:06:43.596087", emailDocumentCaptor.getValue().getCreatedAt());
     }
 
     @Test
-    void testEmailServiceSendsMessageToKafkaWhenSubmissionHasInfectedFiles() throws ExecutionException, InterruptedException {
+    void testEmailServiceSendsMessageToKafkaApiWhenSubmissionHasInfectedFiles() throws EmailServiceException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(internalAVFailedEmailDocument.getTopic()).thenReturn("internal-email-send");
+        InternalAvFailedEmailData emailData = InternalAvFailedEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .withCompanyNumber("CN000123")
+                .withCompanyName("My Company Name")
+                .withConfirmationReference("CONREF-001")
+                .withFormType("Form-Type")
+                .withRejectionDate(LocalDateTime.now().toString())
+                .withInfectedFiles(List.of("file-1", "file-2"))
+                .build();
+
+        EmailDocument<InternalAvFailedEmailData> emailDocument = createEmailDocument(emailData);
+
         when(emailMapperFactory.getInternalAvFailedEmailMapper()).thenReturn(internalAVFailedEmailMapper);
-        when(internalAVFailedEmailMapper.map(any())).thenReturn(internalAVFailedEmailDocument);
+        when(internalAVFailedEmailMapper.map(internalAVFailedEmailModel)).thenReturn(emailDocument);
         when(internalAVFailedEmailModel.getSubmission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendInternalFailedAV(internalAVFailedEmailModel);
 
         // then
-        verify(serializer).serialize(internalAVFailedEmailDocument, schema);
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("internal-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(emailMapperFactory, times(1)).getInternalAvFailedEmailMapper();
+        verify(internalAVFailedEmailMapper, times(1)).map(internalAVFailedEmailModel);
+        verify(submission, times(1)).getId();
+        verify(internalAVFailedEmailModel, times(1)).getSubmission();
+        verify(emailClient).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
+        assertEquals("email-template-app-id", emailDocumentCaptor.getValue().getAppId());
+        assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentCaptor.getValue().getMessageId());
+        assertEquals("email-template-message-type", emailDocumentCaptor.getValue().getMessageType());
+        assertThat(emailDocument.getData(), is(emailData));
+        assertEquals("unit-test@ch.gov.uk", emailDocumentCaptor.getValue().getEmailAddress());
+        assertEquals("test-email-topic", emailDocumentCaptor.getValue().getTopic());
+        assertEquals("2025-04-01T10:06:43.596087", emailDocumentCaptor.getValue().getCreatedAt());
     }
 
     @Test
-    void testEmailServiceSendsMessageToKafkaWhenFilesFailConversion() throws ExecutionException, InterruptedException {
+    void testEmailServiceSendsMessageToKafkaApiWhenFilesFailConversion() throws EmailServiceException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(internalFailedConversionEmailDocument.getTopic()).thenReturn("internal-email-send");
+        InternalFailedConversionEmailData emailData = InternalFailedConversionEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .withCompanyNumber("CN000123")
+                .withCompanyName("My Company Name")
+                .withConfirmationReference("CONREF-001")
+                .withFormType("Form-Type")
+                .withRejectionDate(LocalDateTime.now().toString())
+                .withFailedToConvert(List.of("file-1", "file-2"))
+                .build();
+
+        EmailDocument<InternalFailedConversionEmailData> emailDocument = createEmailDocument(emailData);
+
         when(emailMapperFactory.getInternalFailedConversionEmailMapper()).thenReturn(internalFailedConversionEmailMapper);
-        when(internalFailedConversionEmailMapper.map(any())).thenReturn(internalFailedConversionEmailDocument);
+        when(internalFailedConversionEmailMapper.map(internalFailedConversionModel)).thenReturn(emailDocument);
         when(internalFailedConversionModel.getSubmission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendInternalFailedConversion(internalFailedConversionModel);
 
         // then
-        verify(serializer).serialize(internalFailedConversionEmailDocument, schema);
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("internal-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(emailMapperFactory, times(1)).getInternalFailedConversionEmailMapper();
+        verify(internalFailedConversionEmailMapper, times(1)).map(internalFailedConversionModel);
+        verify(submission, times(1)).getId();
+        verify(internalFailedConversionModel, times(1)).getSubmission();
+        verify(emailClient).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
+        assertEquals("email-template-app-id", emailDocumentCaptor.getValue().getAppId());
+        assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentCaptor.getValue().getMessageId());
+        assertEquals("email-template-message-type", emailDocumentCaptor.getValue().getMessageType());
+        assertThat(emailDocument.getData(), is(emailData));
+        assertEquals("unit-test@ch.gov.uk", emailDocumentCaptor.getValue().getEmailAddress());
+        assertEquals("test-email-topic", emailDocumentCaptor.getValue().getTopic());
+        assertEquals("2025-04-01T10:06:43.596087", emailDocumentCaptor.getValue().getCreatedAt());
     }
 
     @Test
-    void testEmailServiceThrowsEmailServiceExceptionWhenProducerThrowsExecutionException()
-            throws ExecutionException, InterruptedException {
+    void testEmailServiceThrowsEmailServiceExceptionWhenClientThrowsServiceException() throws EmailServiceException {
         // given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(internalAVFailedEmailDocument.getTopic()).thenReturn("internal-email-send");
         when(emailMapperFactory.getInternalAvFailedEmailMapper()).thenReturn(internalAVFailedEmailMapper);
         when(internalAVFailedEmailMapper.map(any())).thenReturn(internalAVFailedEmailDocument);
         when(internalAVFailedEmailModel.getSubmission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
-        doThrow(ExecutionException.class).when(producer).send(any());
+
+        doThrow(EmailClientException.class).when(emailClient).sendEmail(any());
 
         // when
-        Executable actual = () -> this.emailService.sendInternalFailedAV(internalAVFailedEmailModel);
+        EmailServiceException expected = assertThrows(EmailServiceException.class, () ->
+                emailService.sendInternalFailedAV(internalAVFailedEmailModel)
+        );
 
         // then
-        EmailServiceException ex = assertThrows(EmailServiceException.class, actual);
-        assertEquals("Error sending message to kafka", ex.getMessage());
-
+        assertThat(expected.getMessage(), is("Error sending document to email client: "));
     }
 
     @Test
-    void testEmailServiceThrowsEmailServiceExceptionWhenProducerThrowsInterruptedException()
-            throws ExecutionException, InterruptedException {
+    void testEmailServiceThrowsEmailServiceExceptionWhenClientThrowsClientException() throws EmailServiceException {
         // given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(internalAVFailedEmailDocument.getTopic()).thenReturn("internal-email-send");
         when(emailMapperFactory.getInternalAvFailedEmailMapper()).thenReturn(internalAVFailedEmailMapper);
         when(internalAVFailedEmailMapper.map(any())).thenReturn(internalAVFailedEmailDocument);
         when(internalAVFailedEmailModel.getSubmission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
-        doThrow(InterruptedException.class).when(producer).send(any());
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(400, Map.of());
+        when(emailClient.sendEmail(any())).thenReturn(apiResponse);
 
         // when
-        Executable actual = () -> this.emailService.sendInternalFailedAV(internalAVFailedEmailModel);
+        EmailServiceException expected = assertThrows(EmailServiceException.class, () ->
+                emailService.sendInternalFailedAV(internalAVFailedEmailModel)
+        );
 
         // then
-        EmailServiceException ex = assertThrows(EmailServiceException.class, actual);
-        assertEquals("Error - thread interrupted", ex.getMessage());
+        assertThat(expected.getMessage(), is("Error sending request to CHS Kafka API: "));
     }
 
     @Test
-    void testSendExternalConfirmation() throws ExecutionException, InterruptedException {
+    void testSendExternalConfirmation() throws EmailServiceException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(externalNotificationEmailDocument.getTopic()).thenReturn("confirm-email-send");
+        ExternalConfirmationEmailData emailData = ExternalConfirmationEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .withCompany(new Company("CN000123","My Company Name"))
+                .withConfirmationReference("CONREF-001")
+                .withFormType("Form-Type")
+                .build();
+
+        EmailDocument<ExternalConfirmationEmailData> emailDocument = createEmailDocument(emailData);
+
         when(externalNotificationEmailModel.getSubmission()).thenReturn(submission);
         when(submission.getId()).thenReturn("123");
         when(emailMapperFactory.getConfirmationEmailMapper()).thenReturn(notificationEmailMapper);
-        when(notificationEmailMapper.map(any())).thenReturn(externalNotificationEmailDocument);
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+        when(notificationEmailMapper.map(externalNotificationEmailModel)).thenReturn(emailDocument);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         //when
         this.emailService.sendExternalConfirmation(externalNotificationEmailModel);
 
         //then
-        verify(notificationEmailMapper).map(externalNotificationEmailModel);
-        verify(serializer).serialize(externalNotificationEmailDocument, schema);
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("confirm-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(emailMapperFactory, times(1)).getConfirmationEmailMapper();
+        verify(notificationEmailMapper, times(1)).map(externalNotificationEmailModel);
+        verify(submission, times(1)).getId();
+        verify(externalNotificationEmailModel, times(1)).getSubmission();
+        verify(emailClient).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
+        assertEquals("email-template-app-id", emailDocumentCaptor.getValue().getAppId());
+        assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentCaptor.getValue().getMessageId());
+        assertEquals("email-template-message-type", emailDocumentCaptor.getValue().getMessageType());
+        assertThat(emailDocument.getData(), is(emailData));
+        assertEquals("unit-test@ch.gov.uk", emailDocumentCaptor.getValue().getEmailAddress());
+        assertEquals("test-email-topic", emailDocumentCaptor.getValue().getTopic());
+        assertEquals("2025-04-01T10:06:43.596087", emailDocumentCaptor.getValue().getCreatedAt());
     }
 
     @Test
-    void testSendExternalPaymentFailedNotification() throws ExecutionException, InterruptedException {
+    void testSendExternalPaymentFailedNotification() throws EmailServiceException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(externalNotificationEmailDocument.getTopic()).thenReturn("notification-email-send");
+        ExternalConfirmationEmailData emailData = ExternalConfirmationEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .withCompany(new Company("CN000123","My Company Name"))
+                .withConfirmationReference("CONREF-001")
+                .withFormType("Form-Type")
+                .build();
+
+        EmailDocument<ExternalConfirmationEmailData> emailDocument = createEmailDocument(emailData);
+
         when(externalNotificationEmailModel.getSubmission()).thenReturn(submission);
         when(submission.getId()).thenReturn("123");
         when(emailMapperFactory.getPaymentFailedEmailMapper()).thenReturn(notificationEmailMapper);
-        when(notificationEmailMapper.map(any())).thenReturn(externalNotificationEmailDocument);
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+        when(notificationEmailMapper.map(externalNotificationEmailModel)).thenReturn(emailDocument);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         //when
         this.emailService.sendExternalPaymentFailedNotification(externalNotificationEmailModel);
 
         //then
-        verify(notificationEmailMapper).map(externalNotificationEmailModel);
-        verify(serializer).serialize(externalNotificationEmailDocument, schema);
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("notification-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(emailMapperFactory, times(1)).getPaymentFailedEmailMapper();
+        verify(notificationEmailMapper, times(1)).map(externalNotificationEmailModel);
+        verify(submission, times(1)).getId();
+        verify(externalNotificationEmailModel, times(1)).getSubmission();
+        verify(emailClient).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
+        assertEquals("email-template-app-id", emailDocumentCaptor.getValue().getAppId());
+        assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentCaptor.getValue().getMessageId());
+        assertEquals("email-template-message-type", emailDocumentCaptor.getValue().getMessageType());
+        assertThat(emailDocument.getData(), is(emailData));
+        assertEquals("unit-test@ch.gov.uk", emailDocumentCaptor.getValue().getEmailAddress());
+        assertEquals("test-email-topic", emailDocumentCaptor.getValue().getTopic());
+        assertEquals("2025-04-01T10:06:43.596087", emailDocumentCaptor.getValue().getCreatedAt());
     }
 
     @Test
-    void testEmailServiceSendsMessageToKafkaWhenSubmissionNotFesEnabled() throws ExecutionException, InterruptedException {
+    void testEmailServiceSendsMessageToKafkaApiWhenSubmissionNotFesEnabled() throws EmailServiceException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(internalSubmissionEmailDocument.getTopic()).thenReturn("internal-email-send");
+        InternalSubmissionEmailData emailData = InternalSubmissionEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .withCompany(new Company("CN000123","My Company Name"))
+                .withConfirmationReference("CONREF-001")
+                .withFormType("Form-Type")
+                .build();
+
+        EmailDocument<InternalSubmissionEmailData> emailDocument = createEmailDocument(emailData);
+
         when(emailMapperFactory.getInternalSubmissionEmailMapper()).thenReturn(internalSubmissionEmailMapper);
-        when(internalSubmissionEmailMapper.map(any())).thenReturn(internalSubmissionEmailDocument);
+        when(internalSubmissionEmailMapper.map(internalSubmissionEmailModel)).thenReturn(emailDocument);
         when(internalSubmissionEmailModel.getSubmission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendInternalSubmission(internalSubmissionEmailModel);
 
         // then
-        verify(serializer).serialize(internalSubmissionEmailDocument, schema);
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("internal-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(emailMapperFactory, times(1)).getInternalSubmissionEmailMapper();
+        verify(internalSubmissionEmailMapper, times(1)).map(internalSubmissionEmailModel);
+        verify(submission, times(1)).getId();
+        verify(internalSubmissionEmailModel, times(1)).getSubmission();
+        verify(emailClient).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
+        assertEquals("email-template-app-id", emailDocumentCaptor.getValue().getAppId());
+        assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentCaptor.getValue().getMessageId());
+        assertEquals("email-template-message-type", emailDocumentCaptor.getValue().getMessageType());
+        assertThat(emailDocument.getData(), is(emailData));
+        assertEquals("unit-test@ch.gov.uk", emailDocumentCaptor.getValue().getEmailAddress());
+        assertEquals("test-email-topic", emailDocumentCaptor.getValue().getTopic());
+        assertEquals("2025-04-01T10:06:43.596087", emailDocumentCaptor.getValue().getCreatedAt());
     }
 
-
     @Test
-    void testEmailServiceSendsMessageToKafkaWhenSubmissionDelayed() throws ExecutionException, InterruptedException {
+    void testEmailServiceSendsMessageToKafkaApiWhenSubmissionDelayed() throws EmailServiceException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(delayedSubmissionSupportEmailDataEmailDocument.getTopic()).thenReturn("delayed-submission-support-email-send");
+        DelayedSubmissionSupportEmailData emailData = DelayedSubmissionSupportEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .build();
+
+        EmailDocument<DelayedSubmissionSupportEmailData> emailDocument = createEmailDocument(emailData);
+
         when(emailMapperFactory.getDelayedSubmissionSupportEmailMapper()).thenReturn(delayedSubmissionSupportEmailMapper);
-        when(delayedSubmissionSupportEmailMapper.map(any())).thenReturn(delayedSubmissionSupportEmailDataEmailDocument);
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+        when(delayedSubmissionSupportEmailMapper.map(delayedSubmissionSupportEmailModel)).thenReturn(emailDocument);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendDelayedSubmissionSupportEmail(delayedSubmissionSupportEmailModel);
 
         // then
-        verify(serializer).serialize(delayedSubmissionSupportEmailDataEmailDocument, schema);
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("delayed-submission-support-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(emailMapperFactory, times(1)).getDelayedSubmissionSupportEmailMapper();
+        verify(delayedSubmissionSupportEmailMapper, times(1)).map(delayedSubmissionSupportEmailModel);
+        verify(emailClient).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
+        assertEquals("email-template-app-id", emailDocumentCaptor.getValue().getAppId());
+        assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentCaptor.getValue().getMessageId());
+        assertEquals("email-template-message-type", emailDocumentCaptor.getValue().getMessageType());
+        assertThat(emailDocument.getData(), is(emailData));
+        assertEquals("unit-test@ch.gov.uk", emailDocumentCaptor.getValue().getEmailAddress());
+        assertEquals("test-email-topic", emailDocumentCaptor.getValue().getTopic());
+        assertEquals("2025-04-01T10:06:43.596087", emailDocumentCaptor.getValue().getCreatedAt());
     }
 
     @Test
-    void testEmailServiceSendsMessageToKafkaWhenSH19SameDaySubmissionDelayed() throws ExecutionException, InterruptedException {
+    void testEmailServiceSendsMessageToKafkaApiWhenSH19SameDaySubmissionDelayed() throws EmailServiceException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(delayedSubmissionSupportEmailDataEmailDocument.getTopic()).thenReturn(
-            "delayed-submission-support-email-send");
-        when(delayedSubmissionSupportEmailDataEmailDocument.getData()).thenReturn(document);
-        when(emailMapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper()).thenReturn(
-            delayedSH19SameDaySubmissionSupportEmailMapper);
-        when(delayedSH19SameDaySubmissionSupportEmailMapper.map(any())).thenReturn(delayedSubmissionSupportEmailDataEmailDocument);
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+        DelayedSubmissionSupportEmailData emailData = DelayedSubmissionSupportEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .build();
+
+        EmailDocument<DelayedSubmissionSupportEmailData> emailDocument = createEmailDocument(emailData);
+
+        when(emailMapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper()).thenReturn(delayedSH19SameDaySubmissionSupportEmailMapper);
+        when(delayedSH19SameDaySubmissionSupportEmailMapper.map(delayedSubmissionSupportEmailModel)).thenReturn(emailDocument);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(any(EmailDocument.class))).thenReturn(apiResponse);
 
         // when
         this.emailService.sendDelayedSH19SubmissionSupportEmail(delayedSubmissionSupportEmailModel, "businessEmail");
 
         // then
-        verify(serializer).serialize(delayedSubmissionSupportEmailDataEmailDocument, schema);
-        verify(document).setTo("businessEmail");
-        verify(producer, times(2)).send(messageCaptor.capture());
+        verify(emailMapperFactory, times(1)).getDelayedSH19SameDaySubmissionSupportEmailMapper();
+        verify(delayedSH19SameDaySubmissionSupportEmailMapper, times(1)).map(any());
+        verify(emailClient, times(2)).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
         for (int i = 0; i < 2; ++i) {
-            assertEquals("delayed-submission-support-email-send",
-                messageCaptor.getAllValues().get(i).getTopic());
-            assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC),
-                messageCaptor.getAllValues().get(i).getTimestamp());
-            assertArrayEquals("Hello".getBytes(), messageCaptor.getAllValues().get(i).getValue());
+            EmailDocument<?> emailDocumentValue = emailDocumentCaptor.getAllValues().get(i);
+
+            assertEquals("email-template-app-id", emailDocumentValue.getAppId());
+            assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentValue.getMessageId());
+            assertEquals("email-template-message-type", emailDocumentValue.getMessageType());
+            assertThat(emailDocument.getData(), is(emailData));
+
+            // Service sends 2 emails, but the 2nd one has the "supplied" email address.
+            String expectedEmailAddress = (i == 0) ? "unit-test@ch.gov.uk" : "businessEmail";
+            assertEquals(expectedEmailAddress, emailDocumentValue.getEmailAddress());
+
+            assertEquals("test-email-topic", emailDocumentValue.getTopic());
+            assertEquals("2025-04-01T10:06:43.596087", emailDocumentValue.getCreatedAt());
         }
     }
 
     @Test
-    void testEmailServiceSendsMessageToKafkaWhenSubmissionVeryDelayed() throws ExecutionException, InterruptedException {
+    void testEmailServiceSendsMessageToKafkaApiWhenSubmissionVeryDelayed() throws EmailServiceException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(delayedSubmissionBusinessEmailDataEmailDocument.getTopic()).thenReturn("delayed-submission-business-email-send");
+        DelayedSubmissionBusinessEmailData emailData = DelayedSubmissionBusinessEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .build();
+
+        EmailDocument<DelayedSubmissionBusinessEmailData> emailDocument = createEmailDocument(emailData);
+
         when(emailMapperFactory.getDelayedSubmissionBusinessEmailMapper()).thenReturn(delayedSubmissionBusinessEmailMapper);
-        when(delayedSubmissionBusinessEmailMapper.map(any())).thenReturn(delayedSubmissionBusinessEmailDataEmailDocument);
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+        when(delayedSubmissionBusinessEmailMapper.map(delayedSubmissionBusinessEmailModel)).thenReturn(emailDocument);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendDelayedSubmissionBusinessEmail(delayedSubmissionBusinessEmailModel);
 
         // then
-        verify(serializer).serialize(delayedSubmissionBusinessEmailDataEmailDocument, schema);
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("delayed-submission-business-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(emailMapperFactory, times(1)).getDelayedSubmissionBusinessEmailMapper();
+        verify(delayedSubmissionBusinessEmailMapper, times(1)).map(delayedSubmissionBusinessEmailModel);
+        verify(emailClient).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
+        assertEquals("email-template-app-id", emailDocumentCaptor.getValue().getAppId());
+        assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentCaptor.getValue().getMessageId());
+        assertEquals("email-template-message-type", emailDocumentCaptor.getValue().getMessageType());
+        assertThat(emailDocument.getData(), is(emailData));
+        assertEquals("unit-test@ch.gov.uk", emailDocumentCaptor.getValue().getEmailAddress());
+        assertEquals("test-email-topic", emailDocumentCaptor.getValue().getTopic());
+        assertEquals("2025-04-01T10:06:43.596087", emailDocumentCaptor.getValue().getCreatedAt());
     }
 
     @Test
-    void testEmailServiceSendsMessageToKafkaWhenPaymentReportRequested() throws ExecutionException, InterruptedException {
+    void testEmailServiceSendsMessageToKafkaApiWhenPaymentReportRequested() throws EmailServiceException {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
-        when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
-        when(paymentReportEmailDocument.getTopic()).thenReturn("external-email-send");
+        PaymentReportEmailData emailData = PaymentReportEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .build();
+
+        EmailDocument<PaymentReportEmailData> emailDocument = createEmailDocument(emailData);
+
         when(emailMapperFactory.getPaymentReportEmailMapper()).thenReturn(paymentReportEmailMapper);
-        when(paymentReportEmailMapper.map(any())).thenReturn(paymentReportEmailDocument);
-        when(serializer.serialize(any(), any())).thenReturn("Hello".getBytes());
+        when(paymentReportEmailMapper.map(paymentReportEmailModel)).thenReturn(emailDocument);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendPaymentReportEmail(paymentReportEmailModel);
 
         // then
-        verify(serializer).serialize(paymentReportEmailDocument, schema);
-        verify(producer).send(messageCaptor.capture());
-        assertEquals("external-email-send", messageCaptor.getValue().getTopic());
-        assertEquals(createAtLocalDateTime.toEpochSecond(ZoneOffset.UTC), messageCaptor.getValue().getTimestamp());
-        assertArrayEquals("Hello".getBytes(), messageCaptor.getValue().getValue());
+        verify(emailMapperFactory, times(1)).getPaymentReportEmailMapper();
+        verify(paymentReportEmailMapper, times(1)).map(paymentReportEmailModel);
+        verify(emailClient).sendEmail(emailDocumentCaptor.capture());
+        verify(emailClient, times(1)).sendEmail(emailDocument);
+
+        assertEquals("email-template-app-id", emailDocumentCaptor.getValue().getAppId());
+        assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentCaptor.getValue().getMessageId());
+        assertEquals("email-template-message-type", emailDocumentCaptor.getValue().getMessageType());
+        assertThat(emailDocument.getData(), is(emailData));
+        assertEquals("unit-test@ch.gov.uk", emailDocumentCaptor.getValue().getEmailAddress());
+        assertEquals("test-email-topic", emailDocumentCaptor.getValue().getTopic());
+        assertEquals("2025-04-01T10:06:43.596087", emailDocumentCaptor.getValue().getCreatedAt());
+    }
+
+    private <T> EmailDocument<T> createEmailDocument(final T data) {
+        return EmailDocument.<T>builder()
+                .withTopic("test-email-topic")
+                .withMessageId("dfb90835-c7cc-4293-a407-b18d2723a92e")
+                .withRecipientEmailAddress("unit-test@ch.gov.uk")
+                .withEmailTemplateAppId("email-template-app-id")
+                .withEmailTemplateMessageType("email-template-message-type")
+                .withData(data)
+                .withCreatedAt("2025-04-01T10:06:43.596087")
+                .build();
     }
 
 }

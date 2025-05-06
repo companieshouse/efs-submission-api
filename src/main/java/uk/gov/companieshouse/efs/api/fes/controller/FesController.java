@@ -25,7 +25,7 @@ import java.util.Optional;
 @RestController
 public class FesController {
 
-    private FesService fesService;
+    private final FesService fesService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
