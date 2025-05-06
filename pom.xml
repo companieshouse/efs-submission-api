@@ -75,12 +75,6 @@
     </properties>
     <dependencyManagement>
         <dependencies>
-            <!-- Temporarily pinned netty dependency see Jira SEC-160 -->
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-common</artifactId>
-                <version>4.1.118.Final</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
