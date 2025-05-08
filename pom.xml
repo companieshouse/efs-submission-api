@@ -45,8 +45,7 @@
         <!-- Maven -->
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-failsafe-plugin.version>3.5.0</maven-failsafe-plugin.version>
         <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
 
@@ -57,7 +56,7 @@
         <sdk-manager-java.version>3.0.9</sdk-manager-java.version>
         <snakeyaml.version>2.2</snakeyaml.version>
         <snappy-java.version>1.1.10.5</snappy-java.version>
-        <spring-boot.version>3.4.4</spring-boot.version>
+        <spring-boot.version>3.4.5</spring-boot.version>
         <spring-test.version>6.1.14</spring-test.version>
         <structured-logging.version>3.0.20</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>
@@ -76,12 +75,6 @@
     </properties>
     <dependencyManagement>
         <dependencies>
-            <!-- Temporarily pinned netty dependency see Jira SEC-160 -->
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-common</artifactId>
-                <version>4.1.118.Final</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
@@ -223,7 +216,7 @@
             <version>${sonar-maven-plugin.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.codehaus.plexus</groupId>
+                    <groupId>org.sonatype.plexus</groupId>
                     <artifactId>plexus-sec-dispatcher</artifactId>
                 </exclusion>
                 <exclusion>
