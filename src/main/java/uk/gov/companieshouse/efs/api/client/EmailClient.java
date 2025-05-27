@@ -2,6 +2,9 @@ package uk.gov.companieshouse.efs.api.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Supplier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -13,10 +16,6 @@ import uk.gov.companieshouse.efs.api.client.exception.EmailClientException;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Supplier;
 
 @Component
 public class EmailClient {
@@ -33,7 +32,7 @@ public class EmailClient {
 
     public <T> ApiResponse<Void> sendEmail(final EmailDocument<T> document) throws EmailClientException {
         try {
-            var jsonData = objectMapper.writeValueAsString(document);
+            var jsonData = objectMapper.writeValueAsString(document.getData());
 
             var sendEmail = new SendEmail();
             sendEmail.setAppId(document.getAppId());
@@ -53,7 +52,7 @@ public class EmailClient {
             ApiResponse<Void> response = emailPost.execute();
 
             LOGGER.info(String.format("Posted '%s' email to CHS Kafka API (RequestId: %s): (Response %d)",
-                    apiClient.getHttpClient().getRequestId(), sendEmail.getMessageType(), response.getStatusCode()));
+                    sendEmail.getMessageType(), apiClient.getHttpClient().getRequestId(), response.getStatusCode()));
 
             return response;
 
