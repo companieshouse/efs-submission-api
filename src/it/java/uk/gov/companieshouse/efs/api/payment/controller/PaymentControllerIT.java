@@ -23,11 +23,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.submissions.CompanyApi;
@@ -62,19 +62,19 @@ class PaymentControllerIT {
             "/efs-submission-api/submission/{id}/payment";
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
+    @MockitoBean
     private UserAuthenticationInterceptor userAuthenticationInterceptor;
-    @MockBean
+    @MockitoBean
     private SubmissionService submissionService;
-    @MockBean
+    @MockitoBean
     private FormTemplateService formTemplateService;
-    @MockBean
+    @MockitoBean
     private PaymentTemplateService paymentTemplateService;
-    @MockBean
+    @MockitoBean
     private EmailService emailService;
-    @MockBean
+    @MockitoBean
     private SubmissionApiMapper submissionApiMapper;
-    @MockBean
+    @MockitoBean
     private Logger logger;
     private HttpHeaders httpHeaders;
     private CompanyApi companyApi;
