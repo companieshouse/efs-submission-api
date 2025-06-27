@@ -1,5 +1,0 @@
-app_name: efs-submission-api
-group: internalapi
-weight: 900    
-routes:    
-   1: ^/efs-submission-api/.*
