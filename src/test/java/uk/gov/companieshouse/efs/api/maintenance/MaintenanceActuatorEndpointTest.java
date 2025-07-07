@@ -17,8 +17,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.api.model.efs.maintenance.MaintenanceCheckApi;
 import uk.gov.companieshouse.api.model.efs.maintenance.ServiceStatus;
