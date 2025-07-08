@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 
 import uk.gov.companieshouse.api.model.efs.events.FileConversionResultStatusApi;
 import uk.gov.companieshouse.api.model.efs.events.FileConversionStatusApi;
-import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.efs.api.events.service.EventService;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.FileIncorrectStateException;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.FileNotFoundException;

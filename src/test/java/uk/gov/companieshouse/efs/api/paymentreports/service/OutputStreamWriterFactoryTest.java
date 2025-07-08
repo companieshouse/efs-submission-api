@@ -8,7 +8,6 @@ import static org.hamcrest.CoreMatchers.is;
 
 import java.io.BufferedOutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
