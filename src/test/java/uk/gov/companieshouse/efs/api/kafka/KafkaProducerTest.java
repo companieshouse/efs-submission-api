@@ -33,6 +33,8 @@ class KafkaProducerTest {
     @Mock
     private ProducerConfig producerConfig;
 
+    private TestKafkaProducer2 kafkaProducer2UnderTest;
+
     /**
      * Extends {@link KafkaProducer} to provide a concrete implementation for testing.
      */
@@ -120,7 +122,7 @@ class KafkaProducerTest {
     @DisplayName("createChKafkaProducer() creates a CHKafkaProducer with the provided config")
     void createChKafkaProducerCreatesProducerWithProvidedConfig() {
         // Given
-        final TestKafkaProducer2 kafkaProducer2UnderTest = new TestKafkaProducer2();
+        kafkaProducer2UnderTest = new TestKafkaProducer2();
 
         // When
         CHKafkaProducer result = kafkaProducer2UnderTest.createChKafkaProducer(producerConfig);
@@ -147,7 +149,7 @@ class KafkaProducerTest {
     void afterPropertiesSetCallsTemplateMethods() {
 
         // Given
-        final TestKafkaProducer2 kafkaProducer2UnderTest = new TestKafkaProducer2();
+        kafkaProducer2UnderTest = new TestKafkaProducer2();
 
         // When
         kafkaProducer2UnderTest.afterPropertiesSet();
@@ -164,7 +166,7 @@ class KafkaProducerTest {
     void afterPropertiesSetSetsProducerMember() {
 
         // Given
-        final TestKafkaProducer2 kafkaProducer2UnderTest = new TestKafkaProducer2();
+        kafkaProducer2UnderTest = new TestKafkaProducer2();
 
         // When
         kafkaProducer2UnderTest.afterPropertiesSet();
@@ -179,7 +181,7 @@ class KafkaProducerTest {
     void afterPropertiesSetSetsProducerConfigProperties() {
 
         // Given
-        final TestKafkaProducer2 kafkaProducer2UnderTest = new TestKafkaProducer2();
+        kafkaProducer2UnderTest = new TestKafkaProducer2();
 
         // When
         kafkaProducer2UnderTest.afterPropertiesSet();
