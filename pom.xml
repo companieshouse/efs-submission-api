@@ -65,9 +65,10 @@
         <testcontainers.version>1.21.2</testcontainers.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <opentelemetry-instrumentation-bom.version>2.16.0</opentelemetry-instrumentation-bom.version>
-        <!-- VE-2025-52520, CVE-2025-53506, CVE-2025-48989 -->
-        <tomcat-embed.version>10.1.44</tomcat-embed.version>
-
+        <!-- CVE-2025-52520, CVE-2025-53506, CVE-2025-48989 as a sub dependency of spring-boot-starter-web 3.5.3-->
+        <tomcat-embed.version>10.1.46</tomcat-embed.version>
+        <!-- CVE-2025-55163(8.2), CVE-2025-58056(2.9), CVE-2025-58057 as a sub dependency of sqs 2.31.68-->
+        <netty-transport.version>4.1.27.Final</netty-transport.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -270,7 +271,11 @@
             <artifactId>tomcat-embed-core</artifactId>
             <version>${tomcat-embed.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>${netty-transport.version}</version>
+        </dependency>
         <!-- SDKs -->
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
