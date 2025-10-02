@@ -77,6 +77,8 @@
         <netty-transport-native-unix-common.version>4.2.6.Final</netty-transport-native-unix-common.version>
         <!-- CVE-2025-55163(8.2), CVE-2025-58056(2.9), CVE-2025-58057 as a sub dependency of sqs 2.31.68-->
         <netty-codec.version>4.2.6.Final</netty-codec.version>
+        <!-- CVE-2025-55163(8.2), CVE-2025-58056(2.9), CVE-2025-58057 as a sub dependency of sqs 2.31.68-->
+        <netty-all.version>4.2.6.Final</netty-all.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -301,13 +303,13 @@
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
-            <artifactId>netty-codec</artifactId>
+            <artifactId>netty-transport-native-unix-common</artifactId>
             <version>${netty-codec.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
-            <artifactId>netty-transport-native-unix-common</artifactId>
-            <version>${netty-codec.version}</version>
+            <artifactId>netty-all</artifactId>
+            <version>${netty-all.version}</version>
         </dependency>
         <!-- SDKs -->
         <dependency>
