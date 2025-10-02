@@ -71,6 +71,8 @@
         <tomcat-embed-websocket.version>11.0.11</tomcat-embed-websocket.version>
         <!-- CVE-2025-55163(8.2), CVE-2025-58056(2.9), CVE-2025-58057 as a sub dependency of sqs 2.31.68-->
         <netty-transport.version>4.2.6.Final</netty-transport.version>
+        <!-- CVE-2025-55163(8.2), CVE-2025-58056(2.9), CVE-2025-58057 as a sub dependency of sqs 2.31.68-->
+        <netty-transport-classes-epoll.version>4.2.6.Final</netty-transport-classes-epoll.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -282,6 +284,11 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-transport</artifactId>
             <version>${netty-transport.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-classes-epoll</artifactId>
+            <version>${netty-transport-classes-epoll.version}</version>
         </dependency>
         <!-- SDKs -->
         <dependency>
