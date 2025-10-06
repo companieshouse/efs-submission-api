@@ -21,7 +21,7 @@
         <api-helper-java.version>3.0.1</api-helper-java.version>
         <avro.version>1.12.0</avro.version>
         <aws-java-sdk-core.version>1.12.787</aws-java-sdk-core.version>
-        <software.amazon.awssdk.version>2.31.68</software.amazon.awssdk.version>
+        <software.amazon.awssdk.version>2.34.8</software.amazon.awssdk.version>
         <ch-kafka.version>3.0.2</ch-kafka.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <commons-io.version>2.19.0</commons-io.version>
@@ -69,8 +69,6 @@
         <tomcat-embed-core.version>10.1.46</tomcat-embed-core.version>
         <!-- CVE-2025-52520(7.5), CVE-2025-53506(7.5), CVE-2025-48989 as a sub dependency of spring-boot-starter-web 3.5.3-->
         <tomcat-embed-websocket.version>11.0.11</tomcat-embed-websocket.version>
-        <!-- CVE-2025-55163(8.2), CVE-2025-58056(2.9), CVE-2025-58057 as a sub dependency of sqs 2.31.68-->
-        <netty-nio-client.version>2.34.8</netty-nio-client.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -277,12 +275,6 @@
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-websocket</artifactId>
             <version>${tomcat-embed-websocket.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>netty-nio-client</artifactId>
-            <version>${netty-nio-client.version}</version>
-            <scope>compile</scope>
         </dependency>
         <!-- SDKs -->
         <dependency>
