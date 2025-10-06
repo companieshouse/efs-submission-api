@@ -7,7 +7,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +44,7 @@ class PaymentReportMapperTest {
         paySessions = new SessionListApi(IntStream.range(1, 10)
             .mapToObj(
                 i -> new SessionApi("test-pay-ref-" + i, "test-state-" + i, "test-status-" + i))
-            .collect(Collectors.toList()));
+            .toList());
         submission = Submission.builder().withId("id").withConfirmationReference("confirmRef").withPresenter(presenter)
             .withSubmittedAt(submitted).withFeeOnSubmission("fee").withPaymentSessions(paySessions)
             .withFormDetails(formDetails).withCompany(company).build();

@@ -14,7 +14,6 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
-import uk.gov.companieshouse.efs.api.submissions.validator.exception.SubmissionValidationException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -82,7 +81,7 @@ class PendSubmissionControllerTest {
     }
 
     @Test
-    void testReturnConflictIfSubmissionStatusNotPendable() throws SubmissionValidationException {
+    void testReturnConflictIfSubmissionStatusNotPendable() {
 
         //given
         when(service.readSubmission(any())).thenReturn(submissionApi);
@@ -97,7 +96,7 @@ class PendSubmissionControllerTest {
     }
 
     @Test
-    void testReturnNotFoundIfSubmissionDoesNotExist() throws SubmissionValidationException {
+    void testReturnNotFoundIfSubmissionDoesNotExist() {
         //given
         when(service.readSubmission(any())).thenReturn(null);
 

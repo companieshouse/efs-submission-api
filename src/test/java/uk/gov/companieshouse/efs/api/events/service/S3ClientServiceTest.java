@@ -36,9 +36,10 @@ class S3ClientServiceTest {
 
     private static final String ENV_NAME = "TEST_ENV";
 
-    protected static final String SCOT_CONTENT =
-        "submissionId,customerRef,userEmail,submittedAt,amountPaid,paymentRef,formType,companyNumber\n"
-            + "SCOT_FEE,REF_SF,presenter@nomail.net,2020-08-31T10:10:10,10,PAY_SF,SQP1,00000000\n";
+    protected static final String SCOT_CONTENT = """
+        submissionId,customerRef,userEmail,submittedAt,amountPaid,paymentRef,formType,companyNumber
+        SCOT_FEE,REF_SF,presenter@nomail.net,2020-08-31T10:10:10,10,PAY_SF,SQP1,00000000
+        """;
 
     @Mock
     private S3Presigner presigner;

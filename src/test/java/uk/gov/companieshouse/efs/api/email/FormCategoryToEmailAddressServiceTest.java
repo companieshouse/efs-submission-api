@@ -257,7 +257,7 @@ class FormCategoryToEmailAddressServiceTest {
         Executable actual = () -> formCategoryToEmailAddressService.cacheEmailAddressByFormCategory();
 
         //then
-        Exception ex = assertThrows(Exception.class, actual);
+        assertThrows(Exception.class, actual);
     }
 
     private void setUpRegPowersCategoryAndForm() {

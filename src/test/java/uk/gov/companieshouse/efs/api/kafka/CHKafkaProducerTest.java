@@ -48,7 +48,7 @@ public class CHKafkaProducerTest {
 
     @Before
     public void test() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         createTestMessage();
 
         when(mockProducerFactory.getProducer(any(Properties.class))).thenReturn(mockKafkaProducer);
@@ -56,7 +56,7 @@ public class CHKafkaProducerTest {
     }
 
     @Test
-    public void testSendAndReturnFuture() throws Exception {
+    public void testSendAndReturnFuture() {
 
         createTestProducer(true, Acks.NO_RESPONSE);
         producer.sendAndReturnFuture(message);
@@ -101,7 +101,7 @@ public class CHKafkaProducerTest {
     }
 
     @Test
-    public void testCloseRoundRobinAcksNoResponse() throws Exception {
+    public void testCloseRoundRobinAcksNoResponse() {
         createTestProducer(true, Acks.NO_RESPONSE);
         producer.close();
         verify(mockKafkaProducer).close();
@@ -112,9 +112,8 @@ public class CHKafkaProducerTest {
      *
      * @param roundRobinPartitioner
      * @param acks
-     * @throws Exception
      */
-    private void createTestProducer(boolean roundRobinPartitioner, Acks acks) throws Exception {
+    private void createTestProducer(boolean roundRobinPartitioner, Acks acks) {
         mockApacheKafkaIntegration(roundRobinPartitioner, acks.getCode());
 
         ProducerConfig config = new ProducerConfig();
@@ -135,9 +134,8 @@ public class CHKafkaProducerTest {
      *
      * @param roundRobinPartitioner
      * @param acksCode
-     * @throws Exception
      */
-    private void mockApacheKafkaIntegration(boolean roundRobinPartitioner, String acksCode) throws Exception {
+    private void mockApacheKafkaIntegration(boolean roundRobinPartitioner, String acksCode) {
         Properties props = new Properties();
         props.put("bootstrap.servers", String.join(",", new String[]{TEST_BROKER}));
         props.put("acks", acksCode);

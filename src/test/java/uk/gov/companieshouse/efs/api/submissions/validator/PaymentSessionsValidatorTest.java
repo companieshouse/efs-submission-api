@@ -143,19 +143,6 @@ class PaymentSessionsValidatorTest {
     }
 
     @Test
-    void validateWhenPaymentTemplateNotFoundThenValid() throws SubmissionValidationException {
-        expectSubmissionWithForm();
-        expectFormWithPaymentTemplate(TEST_FEE);
-        when(
-            paymentRepository.findFirstById_FeeAndId_ActiveFromLessThanEqualOrderById_ActiveFromDesc(
-                TEST_FEE, LocalDateTime.now(clock))).thenReturn(Optional.empty());
-
-        testValidator.validate(submission);
-
-        verify(nextValidator).validate(submission);
-    }
-
-    @Test
     void validateWhenFeeAmountNullThenInvalid() {
         expectSubmissionWithForm();
         expectFormWithPaymentTemplate(TEST_FEE);

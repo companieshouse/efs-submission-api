@@ -195,7 +195,7 @@ class PaymentTemplateTest {
     void jsonRepresentation() throws JsonProcessingException {
         final JsonMapper mapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
-            .build();;
+            .build();
         final String json = mapper.writeValueAsString(testDetails);
 
         assertThat(json, allOf(

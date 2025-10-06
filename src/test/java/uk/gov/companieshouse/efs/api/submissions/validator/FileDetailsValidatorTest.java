@@ -22,7 +22,6 @@ import uk.gov.companieshouse.efs.api.submissions.validator.exception.SubmissionV
 @ExtendWith(MockitoExtension.class)
 class FileDetailsValidatorTest {
     private static final String SUB_ID = "0000000000";
-    private static final String TEST_FORM = "FORM";
 
     private FileDetailsValidator testValidator;
 

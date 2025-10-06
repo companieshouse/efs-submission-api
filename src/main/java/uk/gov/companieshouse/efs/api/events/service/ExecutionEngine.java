@@ -3,7 +3,6 @@ package uk.gov.companieshouse.efs.api.events.service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -33,7 +32,7 @@ public class ExecutionEngine {
 
     @Autowired
     public ExecutionEngine(SubmissionService submissionService, MessageService messageService, EmailService emailService, S3ClientService s3ClientService,
-        @Qualifier("file-bucket-name") String fileBucketName) {
+        @Qualifier("fileBucketName") String fileBucketName) {
         this.submissionService = submissionService;
         this.messageService = messageService;
         this.emailService = emailService;
@@ -95,6 +94,6 @@ public class ExecutionEngine {
     private List<EmailFileDetails> createEmailFileDetailsList(List<FileDetails> fileDetails) {
         return fileDetails.stream()
                 .map(file -> new EmailFileDetails(file, s3ClientService.generateFileLink(file.getFileId(), fileBucketName)))
-                .collect(Collectors.toList());
+            .toList();
     }
 }

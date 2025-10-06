@@ -73,7 +73,7 @@ public class SubmissionMapper {
     private List<RejectReasonApi> mapRejectReasons(List<RejectReason> rejectReasons) {
         return Optional.ofNullable(rejectReasons)
                 .map(theRejectReasons -> theRejectReasons.stream()
-                        .map(rejectReason -> new RejectReasonApi(rejectReason.getReason())).collect(Collectors.toList()))
+                        .map(rejectReason -> new RejectReasonApi(rejectReason.getReason())).toList())
                 .orElse(null);
     }
 }

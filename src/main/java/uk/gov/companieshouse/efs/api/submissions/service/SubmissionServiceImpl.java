@@ -6,10 +6,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -226,7 +223,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
                 .filter(
-                    s -> StringUtils.equals(s.getSessionId(), paymentClose.getPaymentReference()))
+                    s -> Objects.equals(s.getSessionId(), paymentClose.getPaymentReference()))
                 .findFirst();
         matchedSession.orElseThrow(
             () -> new SubmissionIncorrectStateException("payment reference not matched"))

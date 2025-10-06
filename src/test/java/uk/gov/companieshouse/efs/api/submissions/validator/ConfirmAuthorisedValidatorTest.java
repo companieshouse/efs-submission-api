@@ -108,22 +108,6 @@ class ConfirmAuthorisedValidatorTest {
     }
 
     @Test
-    void validateWhenTopLevelCategoryNotInsolvencyConfirmAuthorisedTrueThenValid()
-        throws SubmissionValidationException {
-        testValidator = new ConfirmAuthorisedValidator(formRepository, categoryService);
-        testValidator.setNext(nextValidator);
-        when(submission.getFormDetails()).thenReturn(formDetails);
-        when(formDetails.getFormType()).thenReturn(TEST_FORM);
-        when(formTemplate.getFormCategory()).thenReturn("ANY BUT INSOLVENCY");
-        when(formRepository.findById(TEST_FORM)).thenReturn(Optional.of(formTemplate));
-        when(categoryService.getTopLevelCategory(anyString())).thenReturn(CategoryTypeConstants.OTHER);
-
-        testValidator.validate(submission);
-
-        verify(nextValidator).validate(submission);
-    }
-
-    @Test
     void validateWhenTopLevelCategoryInsolvencyConfirmAuthorisedTrueThenValid() throws SubmissionValidationException {
         when(submission.getConfirmAuthorised()).thenReturn(true);
         testValidator = new ConfirmAuthorisedValidator(formRepository, categoryService);

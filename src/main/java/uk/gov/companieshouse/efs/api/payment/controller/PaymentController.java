@@ -190,12 +190,12 @@ public class PaymentController {
         } else {
             final String companyNumber = submission.getCompany().getCompanyNumber();
             try {
-                URI selfUri = new URI(StringUtils.removeEnd(request.getRequestURL().toString(), "/"));
+                URI selfUri = new URI(StringUtils.stripEnd(request.getRequestURL().toString(), "/"));
                 URI parentUri = selfUri.resolve(".");
                 URL resourceUrl = parentUri.toURL();
 
                 paymentTemplate.setLinks(
-                    new PaymentTemplate.Links(StringUtils.removeEnd(resourceUrl.toString(), "/"), selfUri.toURL()));
+                    new PaymentTemplate.Links(StringUtils.stripEnd(resourceUrl.toString(), "/"), selfUri.toURL()));
                 paymentTemplate.setCompanyNumber(companyNumber);
 
             } catch (URISyntaxException | MalformedURLException e) {

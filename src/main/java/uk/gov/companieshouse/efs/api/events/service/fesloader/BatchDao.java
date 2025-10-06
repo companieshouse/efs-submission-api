@@ -18,12 +18,20 @@ public class BatchDao {
     }
 
     public long getNextBatchId() {
-        return jdbc.queryForObject("SELECT BATCH_ID_SEQ.nextval from dual", Long.class);
+        Long result = jdbc.queryForObject("SELECT BATCH_ID_SEQ.nextval from dual", Long.class);
+        if (result == null) {
+            throw new IllegalStateException("No value returned for next batch id");
+        }
+        return result;
     }
 
     public long getBatchNameId(String batchNamePrefix) {
-        return jdbc.queryForObject("SELECT fes_common_pkg.F_GETNEXTREFID(?, ?) from DUAL", Long.class,
-                batchNamePrefix, 16);
+        Long result = jdbc.queryForObject("SELECT fes_common_pkg.F_GETNEXTREFID(?, ?) from DUAL", Long.class,
+            batchNamePrefix, 16);
+        if (result == null) {
+            throw new IllegalStateException("No value returned for batch name id");
+        }
+        return result;
     }
 
     /**

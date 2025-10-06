@@ -11,21 +11,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 
 @ExtendWith(MockitoExtension.class)
 class CurrentTimestampGeneratorTest {
 
     private CurrentTimestampGenerator timestampGenerator;
-    
-    private Logger logger;
+
     private Clock clock;
     private LocalDateTime nowUTC;
 
     @BeforeEach
     void setUp() {
-        logger =  LoggerFactory.getLogger(CurrentTimestampGeneratorTest.class.getSimpleName());
 
         nowUTC = LocalDateTime.now(Clock.systemUTC());
         

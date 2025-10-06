@@ -8,8 +8,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +23,7 @@ class RandomPatternGeneratorImplTest {
     private SecureRandom secureRandom;
 
     @BeforeEach
-    void setUp() throws NoSuchProviderException, NoSuchAlgorithmException {
+    void setUp() {
         testGenerator = new RandomPatternGeneratorImpl(secureRandom, "###-###", "AAA");
     }
 

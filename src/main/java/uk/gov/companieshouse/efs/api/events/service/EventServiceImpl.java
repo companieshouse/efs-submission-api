@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -130,7 +129,7 @@ public class EventServiceImpl implements EventService {
                             new InternalFailedConversionModel(submission,
                                     submission.getFormDetails().getFileDetailsList().stream()
                                             .filter(fileDetail -> fileDetail.getConversionStatus() == FileConversionStatus.FAILED)
-                                            .map(FileDetails::getFileName).collect(Collectors.toList()));
+                                            .map(FileDetails::getFileName).toList());
                     emailService.sendInternalFailedConversion(internalFailedConversionModel);
                 } catch (EmailServiceException ex) {
                     LOGGER.errorContext(submissionId,

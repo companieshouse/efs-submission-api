@@ -71,7 +71,7 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
                     .orElseGet(submission::getCreatedAt)
                     .format(FORMATTER),
                 submission.getPresenter().getEmail(), submission.getCompany().getCompanyNumber()))
-            .collect(Collectors.toList());
+            .toList();
 
         if (!supportModels.isEmpty()) {
             emailService.sendDelayedSubmissionSupportEmail(

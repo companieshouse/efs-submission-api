@@ -72,21 +72,21 @@ class SubmissionRepositoryImplTest {
     @Test
     void testCreate() {
         // given
-        Submission submission = Mockito.mock(Submission.class);
+        Submission testSubmission = Mockito.mock(Submission.class);
         // when
-        repository.create(submission);
+        repository.create(testSubmission);
         // then
-        verify(template).insert(submission);
+        verify(template).insert(testSubmission);
     }
 
     @Test
     void testUpdateSubmission() {
         // given
-        Submission submission = Mockito.mock(Submission.class);
+        Submission testSubmission = Mockito.mock(Submission.class);
         // when
-        repository.updateSubmission(submission);
+        repository.updateSubmission(testSubmission);
         // then
-        verify(template).save(submission);
+        verify(template).save(testSubmission);
     }
 
     @Test

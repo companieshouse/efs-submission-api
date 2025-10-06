@@ -99,12 +99,12 @@ public class Config {
         return SecureRandom.getInstance(algorithm, provider);
     }
 
-    @Bean("ref-pattern")
+    @Bean("pattern")
     String pattern() {
         return pattern;
     }
 
-    @Bean("ref-symbol-set")
+    @Bean("refSymbolSet")
     String symbolSet() {
         return symbolSet;
     }
@@ -129,12 +129,12 @@ public class Config {
         return S3Client.create();
     }
 
-    @Bean("file-bucket-name")
+    @Bean("fileBucketName")
     String fileBucketName() {
         return fileBucketName;
     }
 
-    @Bean("payment-report-bucket-name")
+    @Bean("paymentReportBucketName")
     String paymentReportBucketName() {
         return paymentReportBucketName;
     }

@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -65,7 +64,7 @@ public class SameDayServiceDelayedHandler implements DelayedSubmissionHandlerStr
                     .orElseGet(submission::getCreatedAt)
                     .format(FORMATTER), submission.getPresenter().getEmail(),
                 submission.getCompany().getCompanyNumber()))
-            .collect(Collectors.toList());
+            .toList();
 
         if (!supportModels.isEmpty()) {
             emailService.sendDelayedSH19SubmissionSupportEmail(
