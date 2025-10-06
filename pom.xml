@@ -69,6 +69,8 @@
         <tomcat-embed-core.version>10.1.46</tomcat-embed-core.version>
         <!-- CVE-2025-52520(7.5), CVE-2025-53506(7.5), CVE-2025-48989 as a sub dependency of spring-boot-starter-web 3.5.3-->
         <tomcat-embed-websocket.version>11.0.11</tomcat-embed-websocket.version>
+        <!-- CVE-2025-55163(8.2), CVE-2025-58056(2.9), CVE-2025-58057(6.9) -->
+        <netty-transport.version>4.1.127.Final</netty-transport.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -275,6 +277,11 @@
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-websocket</artifactId>
             <version>${tomcat-embed-websocket.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>${netty-transport.version}</version>
         </dependency>
         <!-- SDKs -->
         <dependency>
