@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,6 +48,15 @@ class BatchDaoTest {
     }
 
     @Test
+    void getNextBatchIdThrowsExceptionWhenQueryReturnsNull() {
+        // given
+        when(this.template.queryForObject(anyString(), eq(Long.class))).thenReturn(null);
+
+        // when & then
+        assertThrows(IllegalStateException.class, () -> this.batchDao.getNextBatchId());
+    }
+
+    @Test
     void testBatchDaoObtainsNextBatchNameIdFromSequence() {
         //given
         when(this.template.queryForObject(anyString(), eq(Long.class), any(Object[].class))).thenReturn(BATCH_NAME_ID);
@@ -56,6 +66,15 @@ class BatchDaoTest {
 
         //then
         assertEquals(BATCH_NAME_ID, actual);
+    }
+
+    @Test
+    void getBatchNameIdThrowsExceptionWhenQueryReturnsNull() {
+        //given
+        when(this.template.queryForObject(anyString(), eq(Long.class), eq("EFS_200511"), eq(16))).thenReturn(null);
+
+        //when & then
+        assertThrows(IllegalStateException.class, () -> this.batchDao.getBatchNameId("EFS_200511"));
     }
 
     @Test

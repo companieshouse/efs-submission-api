@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -39,6 +40,19 @@ class EnvelopeDaoTest {
         //then
         assertEquals(ENVELOPE_ID, actual);
         verify(this.jdbcTemplate).queryForObject(anyString(), eq(Long.class));
+    }
+
+    @Test
+    void testGetNextEnvelopeIdThrowsExceptionWhenNullReturned() {
+        when(jdbcTemplate.queryForObject(anyString(), eq(Long.class))).thenReturn(null);
+
+        IllegalStateException exception = assertThrows(
+            IllegalStateException.class,
+            () -> envelopeDao.getNextEnvelopeId()
+        );
+
+        assertEquals("No value returned for next envelope id", exception.getMessage());
+        verify(jdbcTemplate).queryForObject(anyString(), eq(Long.class));
     }
 
     @Test
