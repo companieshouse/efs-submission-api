@@ -21,11 +21,11 @@
         <api-helper-java.version>3.0.1</api-helper-java.version>
         <avro.version>1.12.0</avro.version>
         <aws-java-sdk-core.version>1.12.787</aws-java-sdk-core.version>
-        <software.amazon.awssdk.version>2.31.68</software.amazon.awssdk.version>
+        <software.amazon.awssdk.version>2.35.1</software.amazon.awssdk.version>
         <ch-kafka.version>3.0.2</ch-kafka.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <commons-io.version>2.19.0</commons-io.version>
-        <commons-lang3.version>3.17.0</commons-lang3.version>
+        <commons-lang3.version>3.19.0</commons-lang3.version>
         <environment-reader-library.version>3.0.1</environment-reader-library.version>
         <equalsverifier.version>4.0.2</equalsverifier.version>
         <google-oauth-client.version>1.39.0</google-oauth-client.version>
@@ -57,7 +57,7 @@
         <sdk-manager-java.version>3.0.10</sdk-manager-java.version>
         <snakeyaml.version>2.4</snakeyaml.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
-        <spring-boot.version>3.5.3</spring-boot.version>
+        <spring-boot.version>3.5.6</spring-boot.version>
         <spring-test.version>6.2.8</spring-test.version>
         <structured-logging.version>3.0.32</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>
@@ -65,7 +65,6 @@
         <testcontainers.version>1.21.2</testcontainers.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <opentelemetry-instrumentation-bom.version>2.16.0</opentelemetry-instrumentation-bom.version>
-
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -263,7 +262,6 @@
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>${nimbus-jose-jwt.version}</version>
         </dependency>
-
         <!-- SDKs -->
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
