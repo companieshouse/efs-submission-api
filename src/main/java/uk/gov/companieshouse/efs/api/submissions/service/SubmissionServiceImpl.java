@@ -258,7 +258,7 @@ public class SubmissionServiceImpl implements SubmissionService {
             updateSubmission(updatedSubmission);
             LOGGER.debug(String.format("Successfully completed submission for id: [%s]", id));
 
-            submission = getSubmissionWithCheckedStatus(id, ImmutableSet.of(SubmissionStatus.SUBMITTED));
+            submission = getSubmissionWithCheckedStatus(id, Set.of(SubmissionStatus.SUBMITTED));
 
             emailService.sendExternalConfirmation(new ExternalNotificationEmailModel(submission));
         }
@@ -345,7 +345,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
 
     private Submission getSubmissionWithCheckedStatus(String id,
-        final ImmutableSet<SubmissionStatus> acceptableStatusSet) {
+        final Set<SubmissionStatus> acceptableStatusSet) {
 
         Submission submission = submissionRepository.read(id);
 
