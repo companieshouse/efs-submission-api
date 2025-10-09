@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +23,8 @@ public class PendStatusController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
-    private static final ImmutableSet<SubmissionStatus> PENDABLE_STATUSES
-        = ImmutableSet.of(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED);
+    private static final Set<SubmissionStatus> PENDABLE_STATUSES
+        = Set.of(SubmissionStatus.OPEN, SubmissionStatus.PAYMENT_REQUIRED, SubmissionStatus.PAYMENT_FAILED);
 
     private SubmissionService submissionService;
 
