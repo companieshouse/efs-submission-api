@@ -5,7 +5,6 @@ import com.google.common.collect.Streams;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,7 +55,7 @@ public class SqsMessageService implements MessageService {
                 .stream()
                 .map(Decision::getSubmission)
                 .flatMap(this::getMessageBatchRequestEntries)
-                .collect(Collectors.toList());
+                .toList();
         entries.forEach(entry -> LOGGER.debug(
                 String.format("Sending message for submission [%s] and file [%s] with message id [%s]",
                         entry.messageAttributes().get(SUBMISSION_KEY).stringValue(),

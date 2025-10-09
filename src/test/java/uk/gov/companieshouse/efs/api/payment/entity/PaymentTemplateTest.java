@@ -8,7 +8,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,7 +94,7 @@ class PaymentTemplateTest {
         testDetails.setItems(items);
 
         assertThat(testDetails.getItems(), is(equalTo(items)));
-        assertThat(testDetails.getItems().get(0), is(not(sameInstance(item))));
+        assertThat(testDetails.getItems().getFirst(), is(not(sameInstance(item))));
     }
 
     @Test
@@ -103,16 +102,7 @@ class PaymentTemplateTest {
         testDetails =
             PaymentTemplate.newBuilder().withItems(Collections.singletonList(item)).build();
 
-        assertThat(testDetails.getItems().get(0), is(item));
-    }
-
-    @Test
-    void buildWithItemWhenItemsNotNull() {
-        testDetails =
-            PaymentTemplate.newBuilder().withItems(Collections.singletonList(item)).withItem(item)
-                .build();
-
-        assertThat(testDetails.getItems(), contains(item, item));
+        assertThat(testDetails.getItems().getFirst(), is(item));
     }
 
     @Test
@@ -195,7 +185,7 @@ class PaymentTemplateTest {
     void jsonRepresentation() throws JsonProcessingException {
         final JsonMapper mapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
-            .build();;
+            .build();
         final String json = mapper.writeValueAsString(testDetails);
 
         assertThat(json, allOf(

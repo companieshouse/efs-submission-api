@@ -41,6 +41,19 @@ class ImageDaoTest {
     }
 
     @Test
+    void testGetNextImageIdThrowsExceptionWhenNullReturned() {
+        when(jdbcTemplate.queryForObject(anyString(), eq(Long.class))).thenReturn(null);
+
+        IllegalStateException exception =
+            org.junit.jupiter.api.Assertions.assertThrows(
+                IllegalStateException.class,
+                () -> imageDao.getNextImageId()
+            );
+
+        assertEquals("No value returned for next image id", exception.getMessage());
+    }
+
+    @Test
     void testImageDaoInsertsNewImage() {
         //when
         imageDao.insertImage(IMAGE_ID, "Hello".getBytes());

@@ -24,7 +24,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,7 +84,7 @@ public class PaymentReportServiceImpl implements PaymentReportService {
     @Autowired
     public PaymentReportServiceImpl(final EmailService emailService, final ReportQueryServiceImpl reportQueryService,
         final OutputStreamWriterFactory outputStreamWriterFactory, S3ClientService s3ClientService,
-        final Clock clock, @Qualifier("payment-report-bucket-name") String paymentReportBucketName) {
+        final Clock clock, @Qualifier("paymentReportBucketName") String paymentReportBucketName) {
 
         this.emailService = emailService;
         this.paymentReportMapper = reportQueryService.getPaymentReportMapper();
@@ -100,7 +99,7 @@ public class PaymentReportServiceImpl implements PaymentReportService {
     public void sendScotlandPaymentReport() throws IOException {
         List<PaymentTransaction> scottishPaymentTransactions =
             findPaymentTransactions(SUCCESSFUL_STATUSES).stream().filter(p -> scotlandForms.contains(p.getFormType()))
-                .collect(Collectors.toList());
+                .toList();
 
         createReport(scotlandReportPattern, scottishPaymentTransactions);
     }
@@ -110,7 +109,7 @@ public class PaymentReportServiceImpl implements PaymentReportService {
         List<PaymentTransaction> sh19Transactions =
             findPaymentTransactions(SUCCESSFUL_STATUSES).stream()
                 .filter(p -> StringUtils.startsWith(p.getFormType(), "SH19"))
-                .collect(Collectors.toList());
+                .toList();
         createReport(sh19FinanceReportPattern, sh19Transactions);
         createReport(failedTransactionsFinanceReportPattern, findPaymentTransactions(FAILED_STATUSES));
     }
@@ -120,7 +119,7 @@ public class PaymentReportServiceImpl implements PaymentReportService {
         final LocalDate endDate = startDate.plusDays(1); // report period should be 1 day long
         final List<Submission> submissions = repository.findPaidSubmissions(statuses, startDate, endDate);
 
-        return submissions.stream().map(paymentReportMapper::map).collect(Collectors.toList());
+        return submissions.stream().map(paymentReportMapper::map).toList();
     }
 
     @Override

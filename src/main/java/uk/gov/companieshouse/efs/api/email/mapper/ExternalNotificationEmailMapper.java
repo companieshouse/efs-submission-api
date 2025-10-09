@@ -3,7 +3,6 @@ package uk.gov.companieshouse.efs.api.email.mapper;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
@@ -63,7 +62,7 @@ public class ExternalNotificationEmailMapper {
     }
 
     private List<EmailFileDetails> createEmailFileDetailsList(final List<FileDetails> fileDetailsList) {
-        return fileDetailsList.stream().map(this::emailFileDetails).collect(Collectors.toList());
+        return fileDetailsList.stream().map(this::emailFileDetails).toList();
     }
 
     private EmailFileDetails emailFileDetails(FileDetails fileDetails) {

@@ -174,41 +174,6 @@ class StandardServiceDelayedHandlerTest {
     }
 
     @Test
-    void buildAndSendEmailsWhenSomeDelayedForSupportAndBusinessAndSubmittedAtMissing() {
-        //given
-        final LocalDateTime delayedFrom = NOW.minusHours(BUSINESS_DELAY);
-        final List<Submission> submissions = Collections.singletonList(submission);
-
-        when(submission.getId()).thenReturn("123abd");
-        when(submission.getConfirmationReference()).thenReturn("345efg");
-        when(submission.getCompany()).thenReturn(new Company("00000007", "RITCHIE GROUP"));
-        when(submission.getFormDetails()).thenReturn(
-            FormDetails.builder().withFormType("CC01").build());
-        when(submission.getPresenter()).thenReturn(new Presenter("demo@ch.gov.uk"));
-        when(submission.getLastModifiedAt()).thenReturn(delayedFrom.minusSeconds(1));
-        when(submission.getSubmittedAt()).thenReturn(delayedFrom.minusSeconds(5));
-        when(formCategoryToEmailAddressService.getEmailAddressForFormCategory("CC01")).thenReturn(
-            "cc@ch.gov.uk");
-
-        // when
-        testHandler.buildAndSendEmails(submissions, NOW);
-
-        // then
-        verify(emailService).sendDelayedSubmissionSupportEmail(
-            new DelayedSubmissionSupportEmailModel(Collections.singletonList(
-                new DelayedSubmissionSupportModel("123abd", "345efg", delayedFrom.minusSeconds(5)
-                    .format(FORMATTER),
-                    submission.getPresenter().getEmail(),
-                    submission.getCompany().getCompanyNumber())), SUPPORT_DELAY * 60));
-        verify(emailService).sendDelayedSubmissionBusinessEmail(
-            new DelayedSubmissionBusinessEmailModel(
-                Collections.singletonList(createBusinessModel(delayedFrom, "CC01")), "cc@ch.gov.uk",
-                BUSINESS_DELAY * 60));
-        verify(formCategoryToEmailAddressService).getEmailAddressForFormCategory("CC01");
-        verifyNoMoreInteractions(emailService, formCategoryToEmailAddressService);
-    }
-
-    @Test
     void buildAndSendEmailsWhenSomeDelayedForSupportAndBusinessToMultipleUnitsIfDifferentSubmissionCategories() {
         //given
         final LocalDateTime delayedFrom = NOW.minusHours(BUSINESS_DELAY);

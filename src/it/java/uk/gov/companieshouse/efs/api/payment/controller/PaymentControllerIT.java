@@ -51,8 +51,6 @@ class PaymentControllerIT {
     private static final LocalDateTime FIXED_NOW = LocalDateTime.parse("2019-01-08T00:00");
     private static final String FORM_TEMPLATE = "FORM_BEARING_FEE";
     private static final String FEE_TEMPLATE = "FEE_TEMPLATE";
-    private static final String AMOUNT_OUTGOING = "10";
-    private static final String AMOUNT_INCOMING = "20";
     private static final String PASSTHROUGH_HEADER = "passthrough";
     private static final String USER = "user";
     private static final String KEY = "key";
@@ -203,12 +201,12 @@ class PaymentControllerIT {
 
         SubmissionFormApi submissionFormApiBlank = new SubmissionFormApi();
 
-        SubmissionApi submissionApi = new SubmissionApi();
-        submissionApi.setId(SUB_ID);
-        submissionApi.setCompany(companyApi);
-        submissionApi.setSubmissionForm(submissionFormApiBlank);
+        SubmissionApi testSubmissionApi = new SubmissionApi();
+        testSubmissionApi.setId(SUB_ID);
+        testSubmissionApi.setCompany(companyApi);
+        testSubmissionApi.setSubmissionForm(submissionFormApiBlank);
 
-        when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApi);
+        when(submissionService.readSubmission(SUB_ID)).thenReturn(testSubmissionApi);
 
         mockMvc.perform(get(PAYMENT_URL_TEMPLATE, SUB_ID).headers(httpHeaders))
                 .andDo(print())

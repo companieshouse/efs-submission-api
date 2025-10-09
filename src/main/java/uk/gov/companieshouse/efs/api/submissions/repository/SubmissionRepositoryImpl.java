@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -84,7 +83,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
         LOGGER.debug(
                 String.format("Found [%d] non-SAMEDAY submissions with status: [%s]", nonSamedayList.size(), status));
         final List<Submission> priorityList =
-                Stream.concat(samedayList.stream(), nonSamedayList.stream()).collect(Collectors.toList());
+                Stream.concat(samedayList.stream(), nonSamedayList.stream()).toList();
         LOGGER.debug(String.format("Found in all [%d] submissions with status: [%s]", priorityList.size(), status));
 
         return priorityList;

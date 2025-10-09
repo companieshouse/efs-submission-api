@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.efs.api.submissions.mapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +29,7 @@ public class FileDetailsMapper {
                         null,
                         FileConversionStatus.WAITING,
                         null,
-                        currentTimestampGenerator.generateTimestamp())).collect(Collectors.toList());
+                        currentTimestampGenerator.generateTimestamp())).toList();
     }
 
 }

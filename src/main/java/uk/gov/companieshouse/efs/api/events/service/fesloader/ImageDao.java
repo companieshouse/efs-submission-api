@@ -16,7 +16,11 @@ public class ImageDao {
     }
 
     public long getNextImageId() {
-        return jdbc.queryForObject("SELECT IMAGE_ID_SEQ.nextval FROM dual", Long.class);
+        Long result = jdbc.queryForObject("SELECT IMAGE_ID_SEQ.nextval FROM dual", Long.class);
+        if (result == null) {
+            throw new IllegalStateException("No value returned for next image id");
+        }
+        return result;
     }
 
     public void insertImage(long imageId, byte[] image) {

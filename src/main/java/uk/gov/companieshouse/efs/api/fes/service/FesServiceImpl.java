@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,7 +75,7 @@ public class FesServiceImpl implements FesService {
         try {
             if (status.equals(FesSubmissionStatus.REJECTED)) {
                 List<String> rejectReasons = getRejectReasons(barcode, submission.getId());
-                updatedSubmission = Submission.builder(updatedSubmission).withChipsRejectReasons(rejectReasons.stream().map(RejectReason::new).collect(Collectors.toList())).build();
+                updatedSubmission = Submission.builder(updatedSubmission).withChipsRejectReasons(rejectReasons.stream().map(RejectReason::new).toList()).build();
 
                 emailService.sendExternalReject(new ExternalRejectEmailModel(updatedSubmission, rejectReasons));
             } else {

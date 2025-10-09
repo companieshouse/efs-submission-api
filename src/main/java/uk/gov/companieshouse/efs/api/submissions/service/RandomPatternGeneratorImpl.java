@@ -28,8 +28,8 @@ public class RandomPatternGeneratorImpl implements ConfirmationReferenceGenerato
      * @param symbolSet    String containing set of symbolSet to be chosen at random from symbolSet
      */
     @Autowired
-    public RandomPatternGeneratorImpl(final SecureRandom secureRandom, @Qualifier("ref-pattern") final String pattern,
-        @Qualifier("ref-symbol-set") final String symbolSet) {
+    public RandomPatternGeneratorImpl(final SecureRandom secureRandom, @Qualifier("pattern") final String pattern,
+        @Qualifier("refSymbolSet") final String symbolSet) {
         this.pattern = pattern;
         this.symbolSet = symbolSet;
         this.secureRandom = secureRandom;

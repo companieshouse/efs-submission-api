@@ -3,7 +3,6 @@ package uk.gov.companieshouse.efs.api.submissions.mapper;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.efs.submissions.CompanyApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileDetailApi;
@@ -50,7 +49,7 @@ public class SubmissionApiMapper {
         return fileDetailList.getList()
             .stream()
             .map(this::mapFileDetails)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private FileDetails mapFileDetails(final FileDetailApi details) {
@@ -77,6 +76,6 @@ public class SubmissionApiMapper {
     private List<RejectReason> mapRejectReasonList(List<RejectReasonApi> rejectReasonList) {
         return rejectReasonList.stream()
             .map(rejectReasonApi -> new RejectReason(rejectReasonApi.getReason()))
-            .collect(Collectors.toList());
+            .toList();
     }
 }

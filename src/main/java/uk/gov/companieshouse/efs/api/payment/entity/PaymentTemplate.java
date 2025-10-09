@@ -9,7 +9,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import jakarta.persistence.EmbeddedId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -240,7 +239,7 @@ public final class PaymentTemplate {
         private static List<String> cloneStringList(final List<String> list) {
             return list == null
                 ? null
-                : list.stream().map(String::new).collect(Collectors.toList());
+                : list.stream().map(String::new).toList();
         }
 
         /**
@@ -489,7 +488,7 @@ public final class PaymentTemplate {
     }
 
     private static List<Item> cloneItems(final List<Item> list) {
-        return list == null ? null : list.stream().map(Item::new).collect(Collectors.toList());
+        return list == null ? null : list.stream().map(Item::new).toList();
     }
 
 

@@ -16,7 +16,11 @@ public class EnvelopeDao {
     }
 
     public long getNextEnvelopeId() {
-        return jdbc.queryForObject("SELECT ENVELOPE_ID_SEQ.nextval FROM dual", Long.class);
+        Long result = jdbc.queryForObject("SELECT ENVELOPE_ID_SEQ.nextval FROM dual", Long.class);
+        if (result == null) {
+            throw new IllegalStateException("No value returned for next envelope id");
+        }
+        return result;
     }
 
     public void insertEnvelope(long envelopeId, long batchId) {

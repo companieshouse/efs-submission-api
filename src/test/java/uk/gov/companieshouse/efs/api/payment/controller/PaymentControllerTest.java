@@ -84,7 +84,7 @@ class PaymentControllerTest {
     private HttpServletRequest request;
 
     @Mock
-    private SubmissionResponseApi response;
+    private SubmissionResponseApi testResponse;
 
     @Mock
     private Clock clock;
@@ -339,14 +339,14 @@ class PaymentControllerTest {
     void testSubmitPaymentSessionsReturnsId() {
         //given
         paymentSessions = new SessionListApi();
-        when(submissionService.updateSubmissionWithPaymentSessions("123", paymentSessions)).thenReturn(response);
+        when(submissionService.updateSubmissionWithPaymentSessions("123", paymentSessions)).thenReturn(testResponse);
 
         //when
         ResponseEntity<SubmissionResponseApi> actual =
             paymentController.submitPaymentSessions("123", paymentSessions, result);
 
         //then
-        assertThat(actual.getBody(), is(equalTo(response)));
+        assertThat(actual.getBody(), is(equalTo(testResponse)));
         assertThat(actual.getStatusCode(), is(HttpStatus.OK));
     }
 
@@ -512,13 +512,14 @@ class PaymentControllerTest {
         final FormDetails formDetails = new FormDetails(FORM, CHARGED, null);
         final Submission submission = new Submission.Builder().withFormDetails(formDetails)
             .withCompany(company)
-            .withStatus(SubmissionStatus.OPEN)
+            .withStatus(SubmissionStatus.PAYMENT_REQUIRED)
             .build();
         final SubmissionApi submissionApi = new SubmissionMapper().map(submission);
         final SubmissionResponseApi submissionResponse = new SubmissionResponseApi(SUB_ID);
 
         when(submissionService.readSubmission(SUB_ID)).thenReturn(submissionApi);
         when(submissionService.updateSubmissionWithPaymentOutcome(SUB_ID, paymentClose)).thenReturn(submissionResponse);
+        when(paymentClose.isFailed()).thenReturn(false);
 
         // when
         ResponseEntity<SubmissionResponseApi> actual =

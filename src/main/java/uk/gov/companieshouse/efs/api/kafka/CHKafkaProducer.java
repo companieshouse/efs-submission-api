@@ -60,9 +60,9 @@ public class CHKafkaProducer {
      */
     public void send(Message msg) throws ExecutionException, InterruptedException {
 
-        ProducerRecord<String, byte[]> record = getProducerRecordFromMessage(msg);
+        ProducerRecord<String, byte[]> producerRecord = getProducerRecordFromMessage(msg);
 
-        kafkaProducer.send(record).get();
+        kafkaProducer.send(producerRecord).get();
     }
 
     /**
@@ -75,9 +75,9 @@ public class CHKafkaProducer {
      */
     public Future<RecordMetadata> sendAndReturnFuture(Message msg) {
 
-        ProducerRecord<String, byte[]> record = getProducerRecordFromMessage(msg);
+        ProducerRecord<String, byte[]> producerRecord = getProducerRecordFromMessage(msg);
 
-        return kafkaProducer.send(record);
+        return kafkaProducer.send(producerRecord);
     }
 
     private ProducerRecord<String, byte[]> getProducerRecordFromMessage(Message msg) {

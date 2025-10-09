@@ -116,10 +116,10 @@ class NewSubmissionControllerTest {
         other.setEmail("demo@ch.gov.uk");
 
         //when
-        PresenterApi presenter = new PresenterApi(other);
+        PresenterApi testPresenter = new PresenterApi(other);
 
         //then
-        assertEquals("demo@ch.gov.uk", presenter.getEmail());
+        assertEquals("demo@ch.gov.uk", testPresenter.getEmail());
     }
 
     @Test

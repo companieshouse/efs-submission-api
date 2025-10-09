@@ -69,7 +69,7 @@ class EmailSerialiserTest {
     }
 
     @Test
-    void ExternalEmailSerialiserSuccessTest() throws IOException {
+    void ExternalEmailSerialiserSuccessTest() {
         //given
         when(encoderFactory.binaryEncoder(any(), any())).thenReturn(binaryEncoder);
         when(genericRecordFactory.getGenericRecord(schema)).thenReturn(genericRecord);
