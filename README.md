@@ -107,7 +107,7 @@ Planned maintenance format: `d MMM yy HH:mm z|x` where
 
 1. Enable the `efs` module
 
-1. Run `tilt up` and wait for all services to start
+1. Run `chs-dev up` and wait for all services to start
 
 ### To make local changes
 
