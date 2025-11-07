@@ -242,19 +242,10 @@
   "isFesEnabled" : false,
   "messageTextIdList": [3]
 }, {
-  "_id" : "RPCH01",
-  "formName" : "RPCH01 - Correct a director's date of birth",
-  "formCategory" : "RP",
-  "orderIndex": 6,
-  "fee" : "",
-  "isAuthenticationRequired" : false,
-  "isFesEnabled" : false,
-  "messageTextIdList": [1,2]
-}, {
   "_id" : "LLRP02A",
   "formName" : "LL RP02A - Apply for rectification by the registrar for a limited liability partnership",
   "formCategory" : "RP",
-  "orderIndex": 7,
+  "orderIndex": 6,
   "fee" : "",
   "isAuthenticationRequired" : false,
   "isFesEnabled" : false,
@@ -263,7 +254,7 @@
   "_id" : "LLRP02B",
   "formName" : "LL RP02B - Apply for rectification of change of registered address of a limited liability partnership",
   "formCategory" : "RP",
-  "orderIndex": 8,
+  "orderIndex": 7,
   "fee" : "",
   "isAuthenticationRequired" : false,
   "isFesEnabled" : false,
@@ -272,7 +263,7 @@
   "_id" : "LLRP03",
   "formName" : "LL RP03 - Object to a request to rectify the register of a limited liability partnership",
   "formCategory" : "RP",
-  "orderIndex": 9,
+  "orderIndex": 8,
   "fee" : "",
   "isAuthenticationRequired" : false,
   "isFesEnabled" : false,
@@ -281,20 +272,11 @@
   "_id" : "LLRP07",
   "formName" : "LL RP07 - Apply to change a disputed registered office address of a limited liability partnership",
   "formCategory" : "RP",
-  "orderIndex": 10,
+  "orderIndex": 9,
   "fee" : "",
   "isAuthenticationRequired" : false,
   "isFesEnabled" : false,
   "messageTextIdList": [3]
-}, {
-  "_id" : "LLRPCH01",
-  "formName" : "RP LL CH01 - Correct the date of birth of an LLP member",
-  "formCategory" : "RP",
-  "orderIndex": 11,
-  "fee" : "",
-  "isAuthenticationRequired" : false,
-  "isFesEnabled" : false,
-  "messageTextIdList": [1,2]
 }, {
   "_id" : "CC01",
   "formName" : "CC01 - Give notice of restriction on the company's articles",
