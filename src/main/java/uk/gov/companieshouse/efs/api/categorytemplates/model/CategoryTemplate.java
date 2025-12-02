@@ -4,131 +4,58 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
- * Builder class for the {@code CategoryTemplate}.
+ * Represents a category template document stored in the MongoDB collection "category_templates".
+ * <p>
+ * This record is used to model category metadata for forms, including type, name, parent category,
+ * display order, hints, and associated guidance text IDs. It is annotated for use with Spring Data MongoDB
+ * and Jackson for serialization/deserialization.
+ * </p>
+ *
+ * <ul>
+ *   <li>{@code categoryType}: Unique identifier for the category type.</li>
+ *   <li>{@code orderIndex}: Display order index for sorting categories.</li>
+ *   <li>{@code categoryName}: Human-readable name of the category.</li>
+ *   <li>{@code parent}: Parent category type, if applicable.</li>
+ *   <li>{@code categoryHint}: Optional hint or description for the category.</li>
+ *   <li>{@code guidanceTexts}: List of guidance text IDs associated with the category. Never null.</li>
+ * </ul>
  */
 @Document(collection = "category_templates")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CategoryTemplate {
-
-    private CategoryTemplate() {
-        // required by Spring Data
-    }
-
+public record CategoryTemplate(
     @JsonProperty("category_type")
     @Id
-    private String categoryType;
+    String categoryType,
 
     @JsonProperty("order_index")
     @Field
-    private Integer orderIndex;
+    Integer orderIndex,
 
     @JsonProperty("category_name")
     @Field
-    private String categoryName;
+    String categoryName,
 
     @JsonProperty("parent")
     @Field
-    private String parent;
+    String parent,
 
     @JsonProperty("category_hint")
     @Field
-    private String categoryHint;
+    String categoryHint,
 
     @JsonProperty("guidance_text_list")
     @Field
-    private List<Integer> guidanceTexts;
-
-    /**
-     * Constructor which sets the submission form category data.
-     *
-     * @param categoryType  the category type
-     * @param orderIndex    the ordering within the category
-     * @param categoryName  the category name
-     * @param parent        used when the category has a parent category
-     * @param categoryHint  the category hint
-     * @param guidanceTexts a list of id's of guidance fragments to show on the category
-     *                      selection screen
-     */
-    public CategoryTemplate(String categoryType, final Integer orderIndex, String categoryName,
-            String parent, String categoryHint, final List<Integer> guidanceTexts) {
-        this.categoryType = categoryType;
-        this.orderIndex = orderIndex;
-        this.categoryName = categoryName;
-        this.parent = parent;
-        this.categoryHint = categoryHint;
-        this.guidanceTexts = guidanceTexts;
-    }
-
-    public String getCategoryType() {
-        return categoryType;
-    }
-
-    public Integer getOrderIndex() {
-        return orderIndex;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public String getParent() {
-        return parent;
-    }
-
-    public String getCategoryHint() {
-        return categoryHint;
-    }
-
-    public List<Integer> getGuidanceTexts() {
-        return Optional.ofNullable(guidanceTexts)
-                .orElse(Collections.emptyList());
-    }
-
-    public void setGuidanceTexts(List<Integer> guidanceTexts) {
-        this.guidanceTexts = guidanceTexts;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
+    List<Integer> guidanceTexts
+) {
+    public CategoryTemplate {
+        // Ensure guidanceTexts is never null
+        if (guidanceTexts == null) {
+            guidanceTexts = Collections.emptyList();
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final CategoryTemplate that = (CategoryTemplate) o;
-        return Objects.equals(getCategoryType(), that.getCategoryType()) &&
-                Objects.equals(getOrderIndex(), that.getOrderIndex()) &&
-                Objects.equals(getCategoryName(), that.getCategoryName()) &&
-                Objects.equals(getParent(), that.getParent()) &&
-                Objects.equals(getCategoryHint(), that.getCategoryHint()) &&
-                Objects.equals(getGuidanceTexts(), that.getGuidanceTexts());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getCategoryType(), getOrderIndex(), getCategoryName(), getParent(),
-                getCategoryHint(), getGuidanceTexts());
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("categoryType", getCategoryType())
-                .append("orderIndex", getOrderIndex())
-                .append("categoryName", getCategoryName())
-                .append("parent", getParent())
-                .append("categoryHint", getCategoryHint())
-                .append("guidanceTexts", getGuidanceTexts())
-                .toString();
     }
 }

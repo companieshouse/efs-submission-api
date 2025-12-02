@@ -45,12 +45,7 @@ class CategoryTemplateMapperTest {
     }
 
     private CategoryTemplate getCategory() {
-        final CategoryTemplate category =
-                new CategoryTemplate("MA", 1, "New Incorporation", "", "", null);
-
-        category.setGuidanceTexts(Collections.singletonList(3000));
-
-        return category;
+        return new CategoryTemplate("MA", 1, "New Incorporation", "", "", Collections.singletonList(3000));
     }
 
     private CategoryTemplateListApi expectedList() {
@@ -60,8 +55,7 @@ class CategoryTemplateMapperTest {
     }
 
     private CategoryTemplateApi expectedSingle() {
-        CategoryTemplateApi element = new CategoryTemplateApi("MA", "New Incorporation", "", "",
+        return new CategoryTemplateApi("MA", "New Incorporation", "", "",
                 Collections.singletonList(3000));
-        return new CategoryTemplateApi(element);
     }
 }
