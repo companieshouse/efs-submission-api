@@ -22,7 +22,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
  *   <li>{@code categoryName}: Human-readable name of the category.</li>
  *   <li>{@code parent}: Parent category type, if applicable.</li>
  *   <li>{@code categoryHint}: Optional hint or description for the category.</li>
- *   <li>{@code guidanceTexts}: List of guidance text IDs associated with the category. Never null.</li>
+ *   <li>{@code guidanceTexts}: List of guidance text IDs associated with the category and converted to an empty list if null.</li>
  * </ul>
  */
 @Document(collection = "category_templates")
