@@ -16,6 +16,16 @@ import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
+/**
+ * Maps {@link ExternalNotificationEmailModel} to {@link EmailDocument} for external notification emails.
+ * <p>
+ * This class is responsible for transforming submission data into the format required for sending
+ * external notification emails. It uses configuration, identifier and timestamp generators, and services
+ * for category and form templates to build the email payload.
+ * <p>
+ * Typical usage involves calling {@link #map(ExternalNotificationEmailModel)} with a model containing
+ * submission details, which returns a fully populated {@link EmailDocument} ready for sending.
+ */
 public class ExternalNotificationEmailMapper {
 
     private final NotificationConfig config;
