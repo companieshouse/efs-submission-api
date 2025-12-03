@@ -18,11 +18,11 @@ import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
 public class ExternalNotificationEmailMapper {
 
-    private NotificationConfig config;
-    private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
-    private CategoryTemplateService categoryTemplateService;
-    private FormTemplateService formTemplateService;
+    private final NotificationConfig config;
+    private final IdentifierGeneratable idGenerator;
+    private final TimestampGenerator<LocalDateTime> timestampGenerator;
+    private final CategoryTemplateService categoryTemplateService;
+    private final FormTemplateService formTemplateService;
 
     public ExternalNotificationEmailMapper(NotificationConfig config,
         IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator,
