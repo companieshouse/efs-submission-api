@@ -39,7 +39,7 @@ public class ExternalNotificationEmailMapper {
         return EmailDocument.<ExternalConfirmationEmailData>builder()
                 .withTopic(config.getTopic())
                 .withMessageId(idGenerator.generateId())
-                .withRecipientEmailAddress(model.getSubmission().getPresenter().getEmail())
+                .withRecipientEmailAddress(model.submission().getPresenter().getEmail())
                 .withEmailTemplateAppId(config.getAppId())
                 .withEmailTemplateMessageType(config.getMessageType())
                 .withData(fromSubmission(model))
@@ -49,15 +49,15 @@ public class ExternalNotificationEmailMapper {
 
     private ExternalConfirmationEmailData fromSubmission(ExternalNotificationEmailModel model) {
         return ExternalConfirmationEmailData.builder()
-                .withTo(model.getSubmission().getPresenter().getEmail())
-                .withPresenter(model.getSubmission().getPresenter())
+                .withTo(model.submission().getPresenter().getEmail())
+                .withPresenter(model.submission().getPresenter())
                 .withSubject(config.getSubject())
-                .withCompany(model.getSubmission().getCompany())
-                .withConfirmationReference(model.getSubmission().getConfirmationReference())
-                .withFormType(model.getSubmission().getFormDetails().getFormType())
+                .withCompany(model.submission().getCompany())
+                .withConfirmationReference(model.submission().getConfirmationReference())
+                .withFormType(model.submission().getFormDetails().getFormType())
                 .withTopLevelCategory(getTopLevelCategoryForFormType(model))
-                .withEmailFileDetailsList(createEmailFileDetailsList(model.getSubmission().getFormDetails().getFileDetailsList()))
-                .withFeeOnSubmission(model.getSubmission().getFeeOnSubmission())
+                .withEmailFileDetailsList(createEmailFileDetailsList(model.submission().getFormDetails().getFileDetailsList()))
+                .withFeeOnSubmission(model.submission().getFeeOnSubmission())
                 .build();
     }
 
@@ -71,7 +71,7 @@ public class ExternalNotificationEmailMapper {
 
     private CategoryTypeConstants getTopLevelCategoryForFormType(final ExternalNotificationEmailModel model) {
         FormTemplateApi formTemplate = formTemplateService
-            .getFormTemplate(model.getSubmission().getFormDetails().getFormType());
+            .getFormTemplate(model.submission().getFormDetails().getFormType());
         return categoryTemplateService.getTopLevelCategory(formTemplate.getFormCategory());
     }
 }
