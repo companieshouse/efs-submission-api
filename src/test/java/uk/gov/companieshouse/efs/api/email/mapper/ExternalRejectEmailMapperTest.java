@@ -111,17 +111,18 @@ class ExternalRejectEmailMapperTest {
                 .withCreatedAt("02 June 2020")
                 .withTopic("email-send")
                 .withData(
-                        ExternalRejectEmailData.builder()
-                                .withTo("demo@ch.gov.uk")
-                                .withSubject("EFS Submission rejected")
-                                .withCompanyNumber("12345678")
-                                .withCompanyName("ABC Co Ltd")
-                                .withFormType("SH01")
-                                .withConfirmationReference("abcd3434343efsfg")
-                                .withRejectionDate("02 May 2020")
-                                .withRejectReasons(Collections.singletonList("ReasonList"))
-                                .withIsPaidForm(hasFee)
-                                .build())
+                        new ExternalRejectEmailData(
+                                "demo@ch.gov.uk",
+                                "EFS Submission rejected",
+                                "12345678",
+                                "ABC Co Ltd",
+                                "abcd3434343efsfg",
+                                "SH01",
+                                "02 May 2020",
+                                Collections.singletonList("ReasonList"),
+                                hasFee
+                        )
+                )
                 .build();
     }
 

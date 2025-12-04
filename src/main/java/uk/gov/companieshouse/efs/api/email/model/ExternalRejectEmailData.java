@@ -1,155 +1,33 @@
 package uk.gov.companieshouse.efs.api.email.model;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
 
-public class ExternalRejectEmailData {
-    private String to;
-    private String subject;
-    private String companyNumber;
-    private String companyName;
-    private String confirmationReference;
-    private String formType;
-    private String rejectionDate;
-    private List<String> rejectReasons;
-    private boolean isPaidForm;
-
-    private ExternalRejectEmailData() {
-        // no direct instantiation
-    }
-
-    public String getTo() {
-        return to;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public String getCompanyNumber() {
-        return companyNumber;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public String getConfirmationReference() {
-        return confirmationReference;
-    }
-
-    public String getFormType() {
-        return formType;
-    }
-
-    public String getRejectionDate() {
-        return rejectionDate;
-    }
-
-    public List<String> getRejectReasons() {
-        return Optional.ofNullable(rejectReasons).map(ArrayList::new).orElse(null);
-    }
-
-    public boolean isPaidForm() {
-        return isPaidForm;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final ExternalRejectEmailData that = (ExternalRejectEmailData) o;
-        return Objects.equals(getTo(), that.getTo()) && Objects
-            .equals(getSubject(), that.getSubject()) && Objects
-                   .equals(getCompanyNumber(), that.getCompanyNumber()) && Objects
-                   .equals(getCompanyName(), that.getCompanyName()) && Objects
-                   .equals(getConfirmationReference(), that.getConfirmationReference()) && Objects
-                   .equals(getFormType(), that.getFormType()) && Objects
-                   .equals(getRejectionDate(), that.getRejectionDate()) && Objects
-                   .equals(getRejectReasons(), that.getRejectReasons()) && Objects
-                   .equals(isPaidForm(), that.isPaidForm());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getTo(), getSubject(), getCompanyNumber(), getCompanyName(),
-            getConfirmationReference(), getFormType(), getRejectionDate(), getRejectReasons(),
-                isPaidForm());
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-
-        private final List<Consumer<ExternalRejectEmailData>> buildSteps;
-
-        private Builder() {
-            buildSteps = new ArrayList<>();
-        }
-
-        public Builder withTo(String to) {
-            buildSteps.add(data -> data.to = to);
-            return this;
-        }
-
-        public Builder withSubject(String subject) {
-            buildSteps.add(data -> data.subject = subject);
-            return this;
-        }
-
-        public Builder withCompanyNumber(String companyNumber) {
-            buildSteps.add(data -> data.companyNumber = companyNumber);
-            return this;
-        }
-
-        public Builder withCompanyName(String companyName) {
-            buildSteps.add(data -> data.companyName = companyName);
-            return this;
-        }
-
-        public Builder withConfirmationReference(String confirmationReference) {
-            buildSteps.add(data -> data.confirmationReference = confirmationReference);
-            return this;
-        }
-
-        public Builder withFormType(String formType) {
-            buildSteps.add(data -> data.formType = formType);
-            return this;
-        }
-
-        public Builder withRejectionDate(String rejectionDate) {
-            buildSteps.add(data -> data.rejectionDate = rejectionDate);
-            return this;
-        }
-
-        public Builder withRejectReasons(List<String> rejectReasons) {
-            buildSteps.add(data -> data.rejectReasons = new ArrayList<>(rejectReasons));
-            return this;
-        }
-
-        public Builder withIsPaidForm(boolean isPaidForm) {
-            buildSteps.add(data -> data.isPaidForm = isPaidForm);
-            return this;
-        }
-
-        public ExternalRejectEmailData build() {
-            final ExternalRejectEmailData data = new ExternalRejectEmailData();
-
-            buildSteps.forEach(step -> step.accept(data));
-
-            return data;
-        }
-
+/**
+ * Represents the data for an external reject email.
+ * @param to recipient email address
+ * @param subject email subject
+ * @param companyNumber company number
+ * @param companyName company name
+ * @param confirmationReference confirmation reference
+ * @param formType form type
+ * @param rejectionDate rejection date
+ * @param rejectReasons immutable list of reject reasons - if none, an empty list is created
+ * @param isPaidForm whether the form is paid
+ */
+public record ExternalRejectEmailData(
+    String to,
+    String subject,
+    String companyNumber,
+    String companyName,
+    String confirmationReference,
+    String formType,
+    String rejectionDate,
+    List<String> rejectReasons,
+    boolean isPaidForm
+) {
+    public ExternalRejectEmailData {
+        rejectReasons = List.copyOf(Objects.requireNonNullElse(rejectReasons, Collections.emptyList()));
     }
 }
-
-

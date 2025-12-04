@@ -14,9 +14,9 @@ import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
 @Component
 public class ExternalRejectEmailMapper {
-    private ExternalRejectedEmailConfig config;
-    private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private final ExternalRejectedEmailConfig config;
+    private final IdentifierGeneratable idGenerator;
+    private final TimestampGenerator<LocalDateTime> timestampGenerator;
 
     public ExternalRejectEmailMapper(ExternalRejectedEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator) {
         this.config = config;
@@ -37,16 +37,16 @@ public class ExternalRejectEmailMapper {
     }
 
     private ExternalRejectEmailData fromSubmission(ExternalRejectEmailModel model) {
-        return ExternalRejectEmailData.builder()
-                .withTo(model.getSubmission().getPresenter().getEmail())
-                .withSubject(config.getSubject())
-                .withCompanyNumber(model.getSubmission().getCompany().getCompanyNumber())
-                .withCompanyName(model.getSubmission().getCompany().getCompanyName())
-                .withConfirmationReference(model.getSubmission().getConfirmationReference())
-                .withFormType(model.getSubmission().getFormDetails().getFormType())
-                .withRejectionDate(model.getSubmission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())))
-                .withRejectReasons(model.getRejectReasons())
-                .withIsPaidForm(!Strings.isNullOrEmpty(model.getSubmission().getFeeOnSubmission()))
-                .build();
+        return new ExternalRejectEmailData(
+            model.getSubmission().getPresenter().getEmail(),
+            config.getSubject(),
+            model.getSubmission().getCompany().getCompanyNumber(),
+            model.getSubmission().getCompany().getCompanyName(),
+            model.getSubmission().getConfirmationReference(),
+            model.getSubmission().getFormDetails().getFormType(),
+            model.getSubmission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())),
+            model.getRejectReasons(),
+            !Strings.isNullOrEmpty(model.getSubmission().getFeeOnSubmission())
+        );
     }
 }
