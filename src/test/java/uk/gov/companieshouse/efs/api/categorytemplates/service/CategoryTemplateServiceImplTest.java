@@ -136,7 +136,7 @@ class CategoryTemplateServiceImplTest {
         final CategoryTypeConstants expected = CategoryTypeConstants.nameOf(result).orElse(OTHER);
 
         when(categoryRepository.findById(anyString())).thenReturn(Optional.of(categoryTemplate));
-        when(categoryTemplate.getParent()).thenReturn(parent).thenReturn(grandParent);
+        when(categoryTemplate.parent()).thenReturn(parent).thenReturn(grandParent);
 
         //when
         final CategoryTypeConstants topLevelCategory = service.getTopLevelCategory(category);
@@ -160,12 +160,12 @@ class CategoryTemplateServiceImplTest {
         final CategoryTemplate category =
             new CategoryTemplate("SELF_PARENT", 0, "parent is self", "SELF_PARENT", null, null);
 
-        when(categoryRepository.findById(category.getCategoryType())).thenReturn(
+        when(categoryRepository.findById(category.categoryType())).thenReturn(
             Optional.of(category));
 
         //when
         final CategoryTypeConstants topLevelCategory =
-            service.getTopLevelCategory(category.getCategoryType());
+            service.getTopLevelCategory(category.categoryType());
 
         assertThat(topLevelCategory.getValue(), is(OTHER.getValue()));
     }

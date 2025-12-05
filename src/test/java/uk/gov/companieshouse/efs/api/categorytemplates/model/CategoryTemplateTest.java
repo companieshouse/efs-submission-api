@@ -1,14 +1,14 @@
 package uk.gov.companieshouse.efs.api.categorytemplates.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,26 +27,34 @@ class CategoryTemplateTest {
 
     @Test
     void categoryTemplate() {
-
-        assertThat(testCategoryTemplate.getCategoryType(), is("CC01"));
-        assertThat(testCategoryTemplate.getOrderIndex(), is(5));
-        assertThat(testCategoryTemplate.getCategoryName(), is("Category01"));
-        assertThat(testCategoryTemplate.getParent(), is(""));
-        assertThat(testCategoryTemplate.getCategoryHint(), is(""));
+        assertThat(testCategoryTemplate.categoryType(), is("CC01"));
+        assertThat(testCategoryTemplate.orderIndex(), is(5));
+        assertThat(testCategoryTemplate.categoryName(), is("Category01"));
+        assertThat(testCategoryTemplate.parent(), is(""));
+        assertThat(testCategoryTemplate.categoryHint(), is(""));
+        assertThat(testCategoryTemplate.guidanceTexts(), is(Collections.emptyList()));
     }
 
     @Test
-    void equalsAndHashCode() {
-        EqualsVerifier.forClass(CategoryTemplate.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
-        // EqualsVerifier does the asserts
+    void guidanceTextsIsNeverNull() {
+        CategoryTemplate categoryTemplate = new CategoryTemplate("CC02", 10, "Category02", "", "", null);
+        assertThat(categoryTemplate.guidanceTexts(), is(Collections.emptyList()));
     }
 
     @Test
-    void toStringTest() {
-        assertThat(testCategoryTemplate.toString(), Matchers.is(
-                //@formatter:off
-                "CategoryTemplate[categoryType=CC01,orderIndex=5,categoryName=Category01,parent=,categoryHint=,guidanceTexts=[]]"
-                //@formatter:on
-        ));
+    void recordDefaultBehavior() {
+        CategoryTemplate a = new CategoryTemplate("CC01", 5, "Category01", "", "", null);
+        CategoryTemplate b = new CategoryTemplate("CC01", 5, "Category01", "", "", null);
+        CategoryTemplate c = new CategoryTemplate("CC02", 10, "Category02", "", "", null);
+
+        // equals and hashCode
+        assertThat(a, is(b));
+        assertThat(a.hashCode(), is(b.hashCode()));
+        assertThat(a, Matchers.not(c));
+
+        // toString
+        assertThat(a.toString(), is(b.toString()));
+        assertThat(a.toString(), Matchers.not(c.toString()));
     }
 }
+

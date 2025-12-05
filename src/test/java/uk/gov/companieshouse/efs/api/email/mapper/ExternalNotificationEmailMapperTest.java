@@ -100,7 +100,7 @@ class ExternalNotificationEmailMapperTest {
         when(submission.getFeeOnSubmission()).thenReturn("17");
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
 
-        when(externalNotificationEmailModel.getSubmission()).thenReturn(submission);
+        when(externalNotificationEmailModel.submission()).thenReturn(submission);
         when(formTemplateService.getFormTemplate("SH01")).thenReturn(formTemplateApi);
         when(formTemplateApi.getFormCategory()).thenReturn("SH");
         when(categoryTemplateService.getTopLevelCategory("SH")).thenReturn(CategoryTypeConstants.SHARE_CAPITAL);
