@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -53,9 +55,6 @@ public record CategoryTemplate(
     List<Integer> guidanceTexts
 ) {
     public CategoryTemplate {
-        // Ensure guidanceTexts is never null
-        if (guidanceTexts == null) {
-            guidanceTexts = Collections.emptyList();
-        }
+        guidanceTexts = Objects.requireNonNullElse(guidanceTexts, Collections.emptyList());
     }
 }
