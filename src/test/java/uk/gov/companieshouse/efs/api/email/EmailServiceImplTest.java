@@ -214,7 +214,7 @@ class EmailServiceImplTest {
 
         when(emailMapperFactory.getInternalAvFailedEmailMapper()).thenReturn(internalAVFailedEmailMapper);
         when(internalAVFailedEmailMapper.map(internalAVFailedEmailModel)).thenReturn(emailDocument);
-        when(internalAVFailedEmailModel.getSubmission()).thenReturn(submission);
+        when(internalAVFailedEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
         ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
@@ -227,7 +227,7 @@ class EmailServiceImplTest {
         verify(emailMapperFactory, times(1)).getInternalAvFailedEmailMapper();
         verify(internalAVFailedEmailMapper, times(1)).map(internalAVFailedEmailModel);
         verify(submission, times(1)).getId();
-        verify(internalAVFailedEmailModel, times(1)).getSubmission();
+        verify(internalAVFailedEmailModel, times(1)).submission();
         verify(emailClient).sendEmail(emailDocumentCaptor.capture());
         verify(emailClient, times(1)).sendEmail(emailDocument);
 
@@ -289,7 +289,7 @@ class EmailServiceImplTest {
         // given
         when(emailMapperFactory.getInternalAvFailedEmailMapper()).thenReturn(internalAVFailedEmailMapper);
         when(internalAVFailedEmailMapper.map(any())).thenReturn(internalAVFailedEmailDocument);
-        when(internalAVFailedEmailModel.getSubmission()).thenReturn(submission);
+        when(internalAVFailedEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
         doThrow(EmailClientException.class).when(emailClient).sendEmail(any());
@@ -308,7 +308,7 @@ class EmailServiceImplTest {
         // given
         when(emailMapperFactory.getInternalAvFailedEmailMapper()).thenReturn(internalAVFailedEmailMapper);
         when(internalAVFailedEmailMapper.map(any())).thenReturn(internalAVFailedEmailDocument);
-        when(internalAVFailedEmailModel.getSubmission()).thenReturn(submission);
+        when(internalAVFailedEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
         ApiResponse<Void> apiResponse = new ApiResponse<>(400, Map.of());

@@ -13,10 +13,10 @@ import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
 @Component
 public class InternalAvFailedEmailMapper {
-    private InternalFailedAvEmailConfig config;
-    private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
-    private FormCategoryToEmailAddressService emailAddressService;
+    private final InternalFailedAvEmailConfig config;
+    private final IdentifierGeneratable idGenerator;
+    private final TimestampGenerator<LocalDateTime> timestampGenerator;
+    private final FormCategoryToEmailAddressService emailAddressService;
 
     /**
      * Constructor.
@@ -42,7 +42,7 @@ public class InternalAvFailedEmailMapper {
      * @return          EmailDocument&lt;InternalAvFailedEmailData&gt;
      */
     public EmailDocument<InternalAvFailedEmailData> map(InternalAvFailedEmailModel model) {
-        String emailAddress = emailAddressService.getEmailAddressForFormCategory(model.getSubmission().getFormDetails().getFormType());
+        String emailAddress = emailAddressService.getEmailAddressForFormCategory(model.submission().getFormDetails().getFormType());
         return EmailDocument.<InternalAvFailedEmailData>builder()
                 .withTopic(config.getTopic())
                 .withMessageId(idGenerator.generateId())
@@ -57,14 +57,14 @@ public class InternalAvFailedEmailMapper {
     private InternalAvFailedEmailData fromSubmission(InternalAvFailedEmailModel model, String emailAddress) {
         return InternalAvFailedEmailData.builder()
                 .withTo(emailAddress)
-                .withCompanyName(model.getSubmission().getCompany().getCompanyName())
-                .withCompanyNumber(model.getSubmission().getCompany().getCompanyNumber())
-                .withConfirmationReference(model.getSubmission().getConfirmationReference())
-                .withFormType(model.getSubmission().getFormDetails().getFormType())
+                .withCompanyName(model.submission().getCompany().getCompanyName())
+                .withCompanyNumber(model.submission().getCompany().getCompanyNumber())
+                .withConfirmationReference(model.submission().getConfirmationReference())
+                .withFormType(model.submission().getFormDetails().getFormType())
                 .withSubject(config.getSubject())
-                .withInfectedFiles(model.getInfectedFiles())
-                .withRejectionDate(model.getSubmission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())))
-                .withUserEmail(model.getSubmission().getPresenter().getEmail())
+                .withInfectedFiles(model.infectedFiles())
+                .withRejectionDate(model.submission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())))
+                .withUserEmail(model.submission().getPresenter().getEmail())
                 .build();
     }
 }

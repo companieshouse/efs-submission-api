@@ -93,8 +93,8 @@ class InternalAVFailedEmailMapperTest {
         when(submission.getConfirmationReference()).thenReturn("abcd3434343efsfg");
         when(emailAddressService.getEmailAddressForFormCategory(anyString())).thenReturn("internal_RP_demo@ch.gov.uk");
 
-        when(internalAVFailedEmailModel.getSubmission()).thenReturn(submission);
-        when(internalAVFailedEmailModel.getInfectedFiles()).thenReturn(Collections.singletonList("infected.pdf"));
+        when(internalAVFailedEmailModel.submission()).thenReturn(submission);
+        when(internalAVFailedEmailModel.infectedFiles()).thenReturn(Collections.singletonList("infected.pdf"));
 
         //when
         EmailDocument<InternalAvFailedEmailData> actual = internalAVFailedEmailMapper.map(internalAVFailedEmailModel);
