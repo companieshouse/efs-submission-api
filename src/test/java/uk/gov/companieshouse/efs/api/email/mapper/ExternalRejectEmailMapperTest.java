@@ -88,8 +88,8 @@ class ExternalRejectEmailMapperTest {
 
         when(submission.getConfirmationReference()).thenReturn("abcd3434343efsfg");
 
-        when(externalRejectEmailModel.getRejectReasons()).thenReturn(Collections.singletonList("ReasonList"));
-        when(externalRejectEmailModel.getSubmission()).thenReturn(submission);
+        when(externalRejectEmailModel.rejectReasons()).thenReturn(Collections.singletonList("ReasonList"));
+        when(externalRejectEmailModel.submission()).thenReturn(submission);
 
         when(submission.getFeeOnSubmission()).thenReturn(hasFee ? "10" : null);
 

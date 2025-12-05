@@ -171,7 +171,7 @@ class EmailServiceImplTest {
         when(emailMapperFactory.getRejectEmailMapper()).thenReturn(rejectEmailMapper);
         when(rejectEmailMapper.map(externalRejectEmailModel)).thenReturn(emailDocument);
         when(submission.getId()).thenReturn("abc");
-        when(externalRejectEmailModel.getSubmission()).thenReturn(submission);
+        when(externalRejectEmailModel.submission()).thenReturn(submission);
 
         ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
@@ -183,7 +183,7 @@ class EmailServiceImplTest {
         verify(emailMapperFactory, times(1)).getRejectEmailMapper();
         verify(rejectEmailMapper, times(1)).map(externalRejectEmailModel);
         verify(submission, times(1)).getId();
-        verify(externalRejectEmailModel, times(1)).getSubmission();
+        verify(externalRejectEmailModel, times(1)).submission();
         verify(emailClient).sendEmail(emailDocumentCaptor.capture());
         verify(emailClient, times(1)).sendEmail(emailDocument);
 

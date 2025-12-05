@@ -105,7 +105,7 @@ class FesServiceImplTest {
         verify(repository).readByBarcode(BARCODE);
         verify(chipsService).getRejectReasons("123");
         verify(emailService).sendExternalReject(rejectEmailCaptor.capture());
-        Submission expected = rejectEmailCaptor.getValue().getSubmission();
+        Submission expected = rejectEmailCaptor.getValue().submission();
         assertThat(expected.getStatus(), is(equalTo(SubmissionStatus.REJECTED)));
         assertThat(expected.getChipsRejectReasons(), contains(new RejectReason("test Reasons")));
         verify(submissionService).updateSubmission(expected);
@@ -127,7 +127,7 @@ class FesServiceImplTest {
         //then
         verify(chipsService).getRejectReasons("123");
         verify(emailService).sendExternalReject(rejectEmailCaptor.capture());
-        Submission expected = rejectEmailCaptor.getValue().getSubmission();
+        Submission expected = rejectEmailCaptor.getValue().submission();
         assertThat(expected.getStatus(), is(equalTo(SubmissionStatus.REJECTED)));
         assertThat(expected.getChipsRejectReasons(), contains(new RejectReason("test Reasons")));
         verify(submissionService).updateSubmission(expected);
@@ -146,7 +146,7 @@ class FesServiceImplTest {
         //then
         verify(chipsService).getRejectReasons("123");
         verify(emailService).sendExternalReject(rejectEmailCaptor.capture());
-        Submission expected = rejectEmailCaptor.getValue().getSubmission();
+        Submission expected = rejectEmailCaptor.getValue().submission();
         assertThat(expected.getStatus(), is(equalTo(SubmissionStatus.REJECTED)));
         assertThat(expected.getChipsRejectReasons(), is(empty()));
         verify(submissionService).updateSubmission(expected);

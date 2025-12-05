@@ -57,7 +57,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendExternalReject(ExternalRejectEmailModel emailModel) {
-        LOGGER.debug(format("Sending external email rejecting submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending external email rejecting submission [%s]", emailModel.submission().getId()));
         sendMessage(this.emailMapperFactory.getRejectEmailMapper().map(emailModel));
     }
 

@@ -28,7 +28,7 @@ public class ExternalRejectEmailMapper {
         return EmailDocument.<ExternalRejectEmailData>builder()
                 .withTopic(config.getTopic())
                 .withMessageId(idGenerator.generateId())
-                .withRecipientEmailAddress(model.getSubmission().getPresenter().getEmail())
+                .withRecipientEmailAddress(model.submission().getPresenter().getEmail())
                 .withEmailTemplateAppId(config.getAppId())
                 .withEmailTemplateMessageType(config.getMessageType())
                 .withData(fromSubmission(model))
@@ -38,15 +38,15 @@ public class ExternalRejectEmailMapper {
 
     private ExternalRejectEmailData fromSubmission(ExternalRejectEmailModel model) {
         return new ExternalRejectEmailData(
-            model.getSubmission().getPresenter().getEmail(),
+            model.submission().getPresenter().getEmail(),
             config.getSubject(),
-            model.getSubmission().getCompany().getCompanyNumber(),
-            model.getSubmission().getCompany().getCompanyName(),
-            model.getSubmission().getConfirmationReference(),
-            model.getSubmission().getFormDetails().getFormType(),
-            model.getSubmission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())),
-            model.getRejectReasons(),
-            !Strings.isNullOrEmpty(model.getSubmission().getFeeOnSubmission())
+            model.submission().getCompany().getCompanyNumber(),
+            model.submission().getCompany().getCompanyName(),
+            model.submission().getConfirmationReference(),
+            model.submission().getFormDetails().getFormType(),
+            model.submission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())),
+            model.rejectReasons(),
+            !Strings.isNullOrEmpty(model.submission().getFeeOnSubmission())
         );
     }
 }
