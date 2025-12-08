@@ -6,6 +6,10 @@ API users (including [efs-submission-web](https://github.com/companieshouse/efs-
 
 The service integrates with a number of internal and external systems. This includes [FES](https://github.com/companieshouse/fes-control), [chs-notification-api](https://github.com/companieshouse/chs-notification-api) (via Kafka) and [efs-document-processor](https://github.com/companieshouse/efs-document-processor) (via AWS SQS) to notify applicants and internal users if/when an application has been submitted, converted, accepted or rejected.
 
+## Fees
+
+See this document for details and how to implement a change: [Upload a Document (EFS) Service - Fees](https://companieshouse.atlassian.net/wiki/spaces/S5/pages/5522260008/Upload+a+Document+EFS+Service+-+Fees).
+
 Requirements
 ------------
 
