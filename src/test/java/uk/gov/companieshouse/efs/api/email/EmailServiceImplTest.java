@@ -154,17 +154,17 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSubmissionRejected() throws EmailServiceException{
         //given
-        ExternalRejectEmailData emailData = new ExternalRejectEmailData(
-                "unit@test.gov.uk",
-                "My Subject Line",
-                "CN000123",
-                "My Company Name",
-                "CONREF-001",
-                "Form-Type",
-                LocalDateTime.now().toString(),
-                List.of("Not fussed"),
-                true
-        );
+        ExternalRejectEmailData emailData = ExternalRejectEmailData.builder()
+                .withTo("unit@test.gov.uk")
+                .withSubject("My Subject Line")
+                .withCompanyNumber("CN000123")
+                .withCompanyName("My Company Name")
+                .withConfirmationReference("CONREF-001")
+                .withFormType("Form-Type")
+                .withRejectionDate(LocalDateTime.now().toString())
+                .withRejectReasons(List.of("Not fussed"))
+                .withIsPaidForm(true)
+                .build();
 
         EmailDocument<ExternalRejectEmailData> emailDocument = createEmailDocument(emailData);
 

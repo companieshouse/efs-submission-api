@@ -37,16 +37,16 @@ public class ExternalRejectEmailMapper {
     }
 
     private ExternalRejectEmailData fromSubmission(ExternalRejectEmailModel model) {
-        return new ExternalRejectEmailData(
-            model.submission().getPresenter().getEmail(),
-            config.getSubject(),
-            model.submission().getCompany().getCompanyNumber(),
-            model.submission().getCompany().getCompanyName(),
-            model.submission().getConfirmationReference(),
-            model.submission().getFormDetails().getFormType(),
-            model.submission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())),
-            model.rejectReasons(),
-            !Strings.isNullOrEmpty(model.submission().getFeeOnSubmission())
-        );
+        return ExternalRejectEmailData.builder()
+                .withTo(model.submission().getPresenter().getEmail())
+                .withSubject(config.getSubject())
+                .withCompanyNumber(model.submission().getCompany().getCompanyNumber())
+                .withCompanyName(model.submission().getCompany().getCompanyName())
+                .withConfirmationReference(model.submission().getConfirmationReference())
+                .withFormType(model.submission().getFormDetails().getFormType())
+                .withRejectionDate(model.submission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())))
+                .withRejectReasons(model.rejectReasons())
+                .withIsPaidForm(!Strings.isNullOrEmpty(model.submission().getFeeOnSubmission()))
+                .build();
     }
 }

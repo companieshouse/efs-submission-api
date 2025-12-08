@@ -22,17 +22,17 @@ class ExternalRejectEmailDataTest {
 
     @BeforeEach
     void setUp() {
-        testData = new ExternalRejectEmailData(
-            "recipient",
-            "subject",
-            COMPANY.getCompanyNumber(),
-            COMPANY.getCompanyName(),
-            "reference",
-            "form",
-            "2020-02-20",
-            Arrays.asList("reason1", "reason2"),
-            false
-        );
+        final ExternalRejectEmailData.Builder builder = ExternalRejectEmailData.builder();
+
+        testData = builder.withTo("recipient")
+            .withSubject("subject")
+            .withConfirmationReference("reference")
+            .withCompanyName(COMPANY.getCompanyName())
+            .withCompanyNumber(COMPANY.getCompanyNumber())
+            .withFormType("form")
+            .withRejectionDate("2020-02-20")
+            .withRejectReasons(Arrays.asList("reason1", "reason2"))
+            .build();
     }
 
     @Test
