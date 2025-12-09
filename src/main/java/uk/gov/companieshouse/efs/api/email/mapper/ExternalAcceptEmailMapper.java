@@ -36,15 +36,15 @@ public class ExternalAcceptEmailMapper {
 
     private ExternalAcceptEmailData fromSubmission(ExternalAcceptEmailModel model) {
         LocalDateTime submittedAt = model.getSubmission().getSubmittedAt() == null ? model.getSubmission().getCreatedAt() : model.getSubmission().getSubmittedAt();
-        return ExternalAcceptEmailData.builder()
-                .withTo(model.getSubmission().getPresenter().getEmail())
-                .withSubject(config.getSubject())
-                .withCompanyNumber(model.getSubmission().getCompany().getCompanyNumber())
-                .withCompanyName(model.getSubmission().getCompany().getCompanyName())
-                .withConfirmationReference(model.getSubmission().getConfirmationReference())
-                .withFormType(model.getSubmission().getFormDetails().getFormType())
-                .withSubmittedDate(submittedAt.format(DateTimeFormatter.ofPattern(config.getDateFormat())))
-                .build();
+        return new ExternalAcceptEmailData(
+            model.getSubmission().getPresenter().getEmail(),
+            config.getSubject(),
+            model.getSubmission().getCompany().getCompanyNumber(),
+            model.getSubmission().getCompany().getCompanyName(),
+            model.getSubmission().getConfirmationReference(),
+            model.getSubmission().getFormDetails().getFormType(),
+            submittedAt.format(DateTimeFormatter.ofPattern(config.getDateFormat()))
+        );
     }
 
 }

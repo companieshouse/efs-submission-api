@@ -26,9 +26,9 @@ public class InternalAvFailedEmailMapper {
      * @param timestampGenerator    dependency
      * @param emailAddressService   dependency
      */
-    public InternalAvFailedEmailMapper(InternalFailedAvEmailConfig config, IdentifierGeneratable idGenerator,
-                                       TimestampGenerator<LocalDateTime> timestampGenerator,
-                                       FormCategoryToEmailAddressService emailAddressService) {
+    public InternalAvFailedEmailMapper(final InternalFailedAvEmailConfig config, final IdentifierGeneratable idGenerator,
+                                       final TimestampGenerator<LocalDateTime> timestampGenerator,
+                                       final FormCategoryToEmailAddressService emailAddressService) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;
@@ -41,8 +41,8 @@ public class InternalAvFailedEmailMapper {
      * @param model     the email model
      * @return          EmailDocument&lt;InternalAvFailedEmailData&gt;
      */
-    public EmailDocument<InternalAvFailedEmailData> map(InternalAvFailedEmailModel model) {
-        String emailAddress = emailAddressService.getEmailAddressForFormCategory(model.submission().getFormDetails().getFormType());
+    public EmailDocument<InternalAvFailedEmailData> map(final InternalAvFailedEmailModel model) {
+        final String emailAddress = emailAddressService.getEmailAddressForFormCategory(model.submission().getFormDetails().getFormType());
         return EmailDocument.<InternalAvFailedEmailData>builder()
                 .withTopic(config.getTopic())
                 .withMessageId(idGenerator.generateId())
@@ -54,17 +54,17 @@ public class InternalAvFailedEmailMapper {
                         .format(DateTimeFormatter.ofPattern(config.getDateFormat()))).build();
     }
 
-    private InternalAvFailedEmailData fromSubmission(InternalAvFailedEmailModel model, String emailAddress) {
-        return InternalAvFailedEmailData.builder()
-                .withTo(emailAddress)
-                .withCompanyName(model.submission().getCompany().getCompanyName())
-                .withCompanyNumber(model.submission().getCompany().getCompanyNumber())
-                .withConfirmationReference(model.submission().getConfirmationReference())
-                .withFormType(model.submission().getFormDetails().getFormType())
-                .withSubject(config.getSubject())
-                .withInfectedFiles(model.infectedFiles())
-                .withRejectionDate(model.submission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())))
-                .withUserEmail(model.submission().getPresenter().getEmail())
-                .build();
+    private InternalAvFailedEmailData fromSubmission(final InternalAvFailedEmailModel model, final String emailAddress) {
+        return new InternalAvFailedEmailData(
+            emailAddress,
+            model.submission().getCompany().getCompanyNumber(),
+            model.submission().getCompany().getCompanyName(),
+            model.submission().getConfirmationReference(),
+            model.submission().getFormDetails().getFormType(),
+            model.submission().getPresenter().getEmail(),
+            model.submission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())),
+            config.getSubject(),
+            model.infectedFiles()
+        );
     }
 }

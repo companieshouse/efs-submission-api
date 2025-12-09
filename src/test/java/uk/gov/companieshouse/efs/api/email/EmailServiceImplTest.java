@@ -154,17 +154,17 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSubmissionRejected() throws EmailServiceException{
         //given
-        ExternalRejectEmailData emailData = ExternalRejectEmailData.builder()
-                .withTo("unit@test.gov.uk")
-                .withSubject("My Subject Line")
-                .withCompanyNumber("CN000123")
-                .withCompanyName("My Company Name")
-                .withConfirmationReference("CONREF-001")
-                .withFormType("Form-Type")
-                .withRejectionDate(LocalDateTime.now().toString())
-                .withRejectReasons(List.of("Not fussed"))
-                .withIsPaidForm(true)
-                .build();
+        ExternalRejectEmailData emailData = new ExternalRejectEmailData(
+            "unit@test.gov.uk",
+            "My Subject Line",
+            "CN000123",
+            "My Company Name",
+            "CONREF-001",
+            "Form-Type",
+            LocalDateTime.now().toString(),
+            List.of("Not fussed"),
+            true
+        );
 
         EmailDocument<ExternalRejectEmailData> emailDocument = createEmailDocument(emailData);
 
@@ -199,16 +199,17 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSubmissionHasInfectedFiles() throws EmailServiceException {
         //given
-        InternalAvFailedEmailData emailData = InternalAvFailedEmailData.builder()
-                .withTo("unit@test.gov.uk")
-                .withSubject("My Subject Line")
-                .withCompanyNumber("CN000123")
-                .withCompanyName("My Company Name")
-                .withConfirmationReference("CONREF-001")
-                .withFormType("Form-Type")
-                .withRejectionDate(LocalDateTime.now().toString())
-                .withInfectedFiles(List.of("file-1", "file-2"))
-                .build();
+        InternalAvFailedEmailData emailData = new InternalAvFailedEmailData(
+            "unit@test.gov.uk",
+            "CN000123",
+            "My Company Name",
+            "CONREF-001",
+            "Form-Type",
+            "unit-test@ch.gov.uk",
+            LocalDateTime.now().toString(),
+            "My Subject Line",
+            List.of("file-1", "file-2")
+        );
 
         EmailDocument<InternalAvFailedEmailData> emailDocument = createEmailDocument(emailData);
 

@@ -60,7 +60,7 @@ class ExternalAcceptEmailMapperTest {
     @Test
     void mapSubmissionDataToAcceptEmailModel() {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        final LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 
         when(config.getSubject()).thenReturn("EFS Submission accepted");
         when(config.getAppId()).thenReturn("efs-submission-api.efs_submission_external_accept");
@@ -79,7 +79,7 @@ class ExternalAcceptEmailMapperTest {
 
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
 
-        LocalDateTime localDateTime = LocalDateTime.of(2020, Month.MAY, 2, 0, 0);
+        final LocalDateTime localDateTime = LocalDateTime.of(2020, Month.MAY, 2, 0, 0);
         when(submission.getSubmittedAt()).thenReturn(localDateTime);
 
         when(submission.getConfirmationReference()).thenReturn("abcd3434343efsfg");
@@ -87,7 +87,7 @@ class ExternalAcceptEmailMapperTest {
         when(externalAcceptEmailModel.getSubmission()).thenReturn(submission);
 
         //when
-        EmailDocument<ExternalAcceptEmailData> actual = acceptEmailMapper.map(externalAcceptEmailModel);
+        final EmailDocument<ExternalAcceptEmailData> actual = acceptEmailMapper.map(externalAcceptEmailModel);
 
         //then
         assertEquals(expectedAcceptEmailDocument(), actual);
@@ -103,15 +103,16 @@ class ExternalAcceptEmailMapperTest {
                 .withCreatedAt("02 June 2020")
                 .withTopic("email-send")
                 .withData(
-                        ExternalAcceptEmailData.builder()
-                                .withTo("demo@ch.gov.uk")
-                                .withSubject("EFS Submission accepted")
-                                .withCompanyNumber("12345678")
-                                .withCompanyName("ABC Co Ltd")
-                                .withFormType("SH01")
-                                .withConfirmationReference("abcd3434343efsfg")
-                                .withSubmittedDate("02 May 2020")
-                                .build())
+                        new ExternalAcceptEmailData(
+                                "demo@ch.gov.uk",
+                                "EFS Submission accepted",
+                                "12345678",
+                                "ABC Co Ltd",
+                                "abcd3434343efsfg",
+                                "SH01",
+                                "02 May 2020"
+                        )
+                )
                 .build();
     }
 
