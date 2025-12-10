@@ -17,6 +17,7 @@ import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -528,10 +529,16 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSubmissionVeryDelayed() throws EmailServiceException {
         //given
-        final DelayedSubmissionBusinessEmailData emailData = DelayedSubmissionBusinessEmailData.builder()
-                .withTo("unit@test.gov.uk")
-                .withSubject("My Subject Line")
-                .build();
+        final List<DelayedSubmissionBusinessModel> submissions = Collections.singletonList(
+                new DelayedSubmissionBusinessModel("confirmationRef", "companyNo",
+                        "formType", "email@address.com", "2025-01-01T10:00:00"));
+
+        final DelayedSubmissionBusinessEmailData emailData = new DelayedSubmissionBusinessEmailData(
+            "unit@test.gov.uk",
+            "My Subject Line",
+            submissions,
+            20L
+        );
 
         final EmailDocument<DelayedSubmissionBusinessEmailData> emailDocument = createEmailDocument(emailData);
 

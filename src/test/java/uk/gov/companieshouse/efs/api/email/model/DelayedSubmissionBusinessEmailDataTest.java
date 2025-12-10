@@ -3,8 +3,6 @@ package uk.gov.companieshouse.efs.api.email.model;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.isA;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,42 +17,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class DelayedSubmissionBusinessEmailDataTest {
     private DelayedSubmissionBusinessEmailData testData;
 
-    private List<DelayedSubmissionBusinessModel> submissions;
-
     @BeforeEach
     void setUp() {
-        submissions = Collections.emptyList();
+        final List<DelayedSubmissionBusinessModel> submissions = Collections.emptyList();
         testData = new DelayedSubmissionBusinessEmailData("to", "subject", submissions, 3L);
-    }
-
-    @Test
-    void setGetTo() {
-        testData.setTo("expected");
-
-        assertThat(testData.getTo(), is("expected"));
-    }
-
-    @Test
-    void setGetSubject() {
-        testData.setSubject("expected");
-
-        assertThat(testData.getSubject(), is("expected"));
-    }
-
-    @Test
-    void setGetSubmissions() {
-        final DelayedSubmissionBusinessModel expected =
-            new DelayedSubmissionBusinessModel(null, null, null, null, null);
-        testData.setSubmissions(Collections.singletonList(expected));
-
-        assertThat(testData.getSubmissions(), contains(expected));
-    }
-
-    @Test
-    void setGetDelayInDays() {
-        testData.setDelayInDays(30L);
-
-        assertThat(testData.getDelayInDays(), is(30L));
     }
 
     @Test
@@ -65,26 +31,48 @@ class DelayedSubmissionBusinessEmailDataTest {
             .verify();
     }
 
+    //String confirmationReference, String companyNumber, String formType, String email, String submissionDate
+
     @Test
-    void builder() {
-        assertThat(DelayedSubmissionBusinessEmailData.builder(),
-            isA(DelayedSubmissionBusinessEmailData.Builder.class));
+    void testConstructorAndAccessors() {
+        final DelayedSubmissionBusinessModel submissionBusinessModel = new DelayedSubmissionBusinessModel("confRef", "compNum", "formType", "email", "2024-01-01");
+        final List<DelayedSubmissionBusinessModel> submissions = Collections.singletonList(submissionBusinessModel);
+        final DelayedSubmissionBusinessEmailData data = new DelayedSubmissionBusinessEmailData("to", "subject", submissions, 5L);
+        assertThat(data.to(), is("to"));
+        assertThat(data.subject(), is("subject"));
+        assertThat(data.submissions(), is(submissions));
+        assertThat(data.delayInDays(), is(5L));
     }
 
     @Test
-    void builtWithBuilder() {
-        final DelayedSubmissionBusinessEmailData emailData =
-            DelayedSubmissionBusinessEmailData.builder()
-                .withTo("builder.to")
-                .withSubject("builder.subject")
-                .withDelayedSubmissions(submissions)
-                .withDelayInDays(55L)
-                .build();
-
-        DelayedSubmissionBusinessEmailData expected =
-            new DelayedSubmissionBusinessEmailData("builder.to", "builder.subject", submissions,
-                55L);
-
-        assertThat(emailData, is(equalTo(expected)));
+    void testToStringContainsAllFields() {
+        final String result = testData.toString();
+        assertThat(result, is(equalTo("DelayedSubmissionBusinessEmailData[to=to, subject=subject, submissions=[], delayInDays=3]")));
     }
+
+    @Test
+    void testNullFields() {
+        final DelayedSubmissionBusinessEmailData data = new DelayedSubmissionBusinessEmailData(null, null, null, 0L);
+        assertThat(data.to(), is((String) null));
+        assertThat(data.subject(), is((String) null));
+        assertThat(data.submissions(), is((List<DelayedSubmissionBusinessModel>) null));
+        assertThat(data.delayInDays(), is(0L));
+    }
+
+    @Test
+    void testImmutability() {
+        // Records are immutable, so we cannot change fields after construction
+        // This test is just a compile-time guarantee, but we assert the value remains unchanged
+        assertThat(testData.delayInDays(), is(3L));
+    }
+
+    @Test
+    void testEdgeCases() {
+        final DelayedSubmissionBusinessEmailData data = new DelayedSubmissionBusinessEmailData("", "", Collections.emptyList(), Long.MAX_VALUE);
+        assertThat(data.to(), is(""));
+        assertThat(data.subject(), is(""));
+        assertThat(data.submissions(), is(Collections.emptyList()));
+        assertThat(data.delayInDays(), is(Long.MAX_VALUE));
+    }
+
 }

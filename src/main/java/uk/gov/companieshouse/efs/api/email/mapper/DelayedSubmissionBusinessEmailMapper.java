@@ -27,13 +27,13 @@ public class DelayedSubmissionBusinessEmailMapper {
      * @param timestampGenerator    dependency
      */
     @Autowired
-    public DelayedSubmissionBusinessEmailMapper(DelayedSubmissionBusinessEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator) {
+    public DelayedSubmissionBusinessEmailMapper(final DelayedSubmissionBusinessEmailConfig config, final IdentifierGeneratable idGenerator, final TimestampGenerator<LocalDateTime> timestampGenerator) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;
     }
 
-    public EmailDocument<DelayedSubmissionBusinessEmailData> map(DelayedSubmissionBusinessEmailModel model) {
+    public EmailDocument<DelayedSubmissionBusinessEmailData> map(final DelayedSubmissionBusinessEmailModel model) {
         return EmailDocument.<DelayedSubmissionBusinessEmailData>builder()
                 .withTopic(config.getTopic())
                 .withMessageId(idGenerator.generateId())
@@ -46,13 +46,12 @@ public class DelayedSubmissionBusinessEmailMapper {
 
     }
 
-    private DelayedSubmissionBusinessEmailData fromDelayedSubmissions(DelayedSubmissionBusinessEmailModel model) {
-        return DelayedSubmissionBusinessEmailData.builder()
-                .withTo(model.getEmailAddress())
-                .withSubject(config.getSubject())
-                .withDelayedSubmissions(model.getDelayedSubmissions())
-                .withDelayInDays(Duration.ofHours(model.getDelayInHours()).toDays())
-                .build();
-
+    private DelayedSubmissionBusinessEmailData fromDelayedSubmissions(final DelayedSubmissionBusinessEmailModel model) {
+        return new DelayedSubmissionBusinessEmailData(
+            model.getEmailAddress(),
+            config.getSubject(),
+            model.getDelayedSubmissions(),
+            Duration.ofHours(model.getDelayInHours()).toDays()
+        );
     }
 }
