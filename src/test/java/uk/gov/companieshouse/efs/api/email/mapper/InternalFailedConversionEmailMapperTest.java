@@ -66,7 +66,7 @@ class InternalFailedConversionEmailMapperTest {
     @Test
     void mapSubmissionDataToAcceptEmailModel() {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        final LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 
         when(config.getSubject()).thenReturn("EFS Submission Failed Conversion");
         when(config.getAppId()).thenReturn("efs-submission-api.efs_submission_internal_failed_conversion");
@@ -85,17 +85,17 @@ class InternalFailedConversionEmailMapperTest {
 
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
 
-        LocalDateTime localDateTime = LocalDateTime.of(2020, Month.MAY, 2, 0, 0);
+        final LocalDateTime localDateTime = LocalDateTime.of(2020, Month.MAY, 2, 0, 0);
         when(submission.getLastModifiedAt()).thenReturn(localDateTime);
 
         when(submission.getConfirmationReference()).thenReturn("abcd3434343efsfg");
         when(emailAddressService.getEmailAddressForFormCategory(anyString())).thenReturn("internal_RP_demo@ch.gov.uk");
 
-        when(internalFailedConversionModel.getSubmission()).thenReturn(submission);
-        when(internalFailedConversionModel.getFailedToConvert()).thenReturn(Collections.singletonList("failed.pdf"));
+        when(internalFailedConversionModel.submission()).thenReturn(submission);
+        when(internalFailedConversionModel.failedToConvert()).thenReturn(Collections.singletonList("failed.pdf"));
 
         //when
-        EmailDocument<InternalFailedConversionEmailData> actual = mapper.map(internalFailedConversionModel);
+        final EmailDocument<InternalFailedConversionEmailData> actual = mapper.map(internalFailedConversionModel);
 
         //then
         assertEquals(expectedFailedConversionDocument(), actual);

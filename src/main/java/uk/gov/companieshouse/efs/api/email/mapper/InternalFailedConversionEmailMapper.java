@@ -21,15 +21,15 @@ public class InternalFailedConversionEmailMapper {
     private FormCategoryToEmailAddressService emailAddressService;
 
     @Autowired
-    public InternalFailedConversionEmailMapper(InternalFailedConversionEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator, FormCategoryToEmailAddressService emailAddressService) {
+    public InternalFailedConversionEmailMapper(final InternalFailedConversionEmailConfig config, final IdentifierGeneratable idGenerator, final TimestampGenerator<LocalDateTime> timestampGenerator, final FormCategoryToEmailAddressService emailAddressService) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;
         this.emailAddressService = emailAddressService;
     }
 
-    public EmailDocument<InternalFailedConversionEmailData> map(InternalFailedConversionModel model) {
-        String emailAddress = emailAddressService.getEmailAddressForFormCategory(model.getSubmission().getFormDetails().getFormType());
+    public EmailDocument<InternalFailedConversionEmailData> map(final InternalFailedConversionModel model) {
+        final String emailAddress = emailAddressService.getEmailAddressForFormCategory(model.submission().getFormDetails().getFormType());
         return EmailDocument.<InternalFailedConversionEmailData>builder()
                 .withTopic(config.getTopic())
                 .withMessageId(idGenerator.generateId())
@@ -41,17 +41,17 @@ public class InternalFailedConversionEmailMapper {
                         .format(DateTimeFormatter.ofPattern(config.getDateFormat()))).build();
     }
 
-    private InternalFailedConversionEmailData fromSubmission(InternalFailedConversionModel model, String emailAddress) {
+    private InternalFailedConversionEmailData fromSubmission(final InternalFailedConversionModel model, final String emailAddress) {
         return InternalFailedConversionEmailData.builder()
                 .withTo(emailAddress)
-                .withCompanyName(model.getSubmission().getCompany().getCompanyName())
-                .withCompanyNumber(model.getSubmission().getCompany().getCompanyNumber())
-                .withConfirmationReference(model.getSubmission().getConfirmationReference())
-                .withFormType(model.getSubmission().getFormDetails().getFormType())
+                .withCompanyName(model.submission().getCompany().getCompanyName())
+                .withCompanyNumber(model.submission().getCompany().getCompanyNumber())
+                .withConfirmationReference(model.submission().getConfirmationReference())
+                .withFormType(model.submission().getFormDetails().getFormType())
                 .withSubject(config.getSubject())
-                .withFailedToConvert(model.getFailedToConvert())
-                .withRejectionDate(model.getSubmission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())))
-                .withUserEmail(model.getSubmission().getPresenter().getEmail())
+                .withFailedToConvert(model.failedToConvert())
+                .withRejectionDate(model.submission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())))
+                .withUserEmail(model.submission().getPresenter().getEmail())
                 .build();
     }
 

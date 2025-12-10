@@ -75,7 +75,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendInternalFailedConversion(final InternalFailedConversionModel emailModel) {
-        LOGGER.debug(format("Sending internal failed conversion email rejecting submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending internal failed conversion email rejecting submission [%s]", emailModel.submission().getId()));
         sendMessage(this.emailMapperFactory.getInternalFailedConversionEmailMapper().map(emailModel));
     }
 

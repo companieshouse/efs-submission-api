@@ -259,7 +259,7 @@ class EmailServiceImplTest {
 
         when(emailMapperFactory.getInternalFailedConversionEmailMapper()).thenReturn(internalFailedConversionEmailMapper);
         when(internalFailedConversionEmailMapper.map(internalFailedConversionModel)).thenReturn(emailDocument);
-        when(internalFailedConversionModel.getSubmission()).thenReturn(submission);
+        when(internalFailedConversionModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
         final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
@@ -272,7 +272,7 @@ class EmailServiceImplTest {
         verify(emailMapperFactory, times(1)).getInternalFailedConversionEmailMapper();
         verify(internalFailedConversionEmailMapper, times(1)).map(internalFailedConversionModel);
         verify(submission, times(1)).getId();
-        verify(internalFailedConversionModel, times(1)).getSubmission();
+        verify(internalFailedConversionModel, times(1)).submission();
         verify(emailClient).sendEmail(emailDocumentCaptor.capture());
         verify(emailClient, times(1)).sendEmail(emailDocument);
 
