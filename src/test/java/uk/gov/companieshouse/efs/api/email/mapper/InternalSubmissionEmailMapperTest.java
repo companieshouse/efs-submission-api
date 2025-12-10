@@ -89,7 +89,7 @@ class InternalSubmissionEmailMapperTest {
     @Test
     void mapSubmissionDataToConfirmationEmailModel() {
         // given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        final LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 
         when(config.getSubject()).thenReturn("Your document has been submitted");
         when(config.getAppId()).thenReturn("efs-submission-api.efs_submission_confirmation");
@@ -100,10 +100,10 @@ class InternalSubmissionEmailMapperTest {
         when(idGenerator.generateId()).thenReturn("123");
         when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
 
-        when(model.getEmailFileDetailsList()).thenReturn(Collections.singletonList(emailFileDetails));
+        when(model.emailFileDetailsList()).thenReturn(Collections.singletonList(emailFileDetails));
         when(emailFileDetails.getFileLink()).thenReturn("/file/link");
         when(emailFileDetails.getFileDetails()).thenReturn(fileDetails);
-        when(model.getSubmission()).thenReturn(submission);
+        when(model.submission()).thenReturn(submission);
         when(submission.getConfirmationReference()).thenReturn("abcd3434343efsfg");
         when(submission.getCompany()).thenReturn(company);
         when(submission.getFormDetails()).thenReturn(formDetails);
@@ -116,7 +116,7 @@ class InternalSubmissionEmailMapperTest {
         when(categoryTemplateService.getTopLevelCategory("SH")).thenReturn(CategoryTypeConstants.SHARE_CAPITAL);
 
         // when
-        EmailDocument<InternalSubmissionEmailData> actual = mapper.map(model);
+        final EmailDocument<InternalSubmissionEmailData> actual = mapper.map(model);
 
         // then
         assertEquals(expectedInternalSubmissionEmailDocument(), actual);
@@ -133,20 +133,22 @@ class InternalSubmissionEmailMapperTest {
                 .withRecipientEmailAddress("internal_demo@ch.gov.uk")
                 .withCreatedAt("02 June 2020")
                 .withTopic("email-send")
-                .withData(InternalSubmissionEmailData.builder()
-                        .withTo("internal_demo@ch.gov.uk")
-                        .withSubject("Your document has been submitted").withCompany(company).withFormType("SH01")
-                        .withConfirmationReference("abcd3434343efsfg")
-                        .withEmailFileDetailsList(
-                                Collections.singletonList(new EmailFileDetails(fileDetails, "/file/link")))
-                        .withPresenter(presenter).withFormType("SH01").build())
+                .withData(new InternalSubmissionEmailData(
+                        "internal_demo@ch.gov.uk",
+                        "Your document has been submitted",
+                        "abcd3434343efsfg",
+                        presenter,
+                        company,
+                        "SH01",
+                        Collections.singletonList(new EmailFileDetails(fileDetails, "/file/link"))
+                ))
                 .build();
     }
 
     @Test
     void mapSubmissionDataToConfirmationEmailModelRegPowers() {
         // given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        final LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 
         when(config.getSubject()).thenReturn("Your document has been submitted");
         when(config.getAppId()).thenReturn("efs-submission-api.efs_submission_confirmation");
@@ -157,10 +159,10 @@ class InternalSubmissionEmailMapperTest {
         when(idGenerator.generateId()).thenReturn("123");
         when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
 
-        when(model.getEmailFileDetailsList()).thenReturn(Collections.singletonList(emailFileDetails));
+        when(model.emailFileDetailsList()).thenReturn(Collections.singletonList(emailFileDetails));
         when(emailFileDetails.getFileLink()).thenReturn("/file/link");
         when(emailFileDetails.getFileDetails()).thenReturn(fileDetails);
-        when(model.getSubmission()).thenReturn(submission);
+        when(model.submission()).thenReturn(submission);
         when(submission.getConfirmationReference()).thenReturn("abcd3434343efsfg");
         when(submission.getCompany()).thenReturn(company);
         when(company.getCompanyNumber()).thenReturn("12345678");
@@ -175,7 +177,7 @@ class InternalSubmissionEmailMapperTest {
         when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.REGISTRAR_POWERS);
 
         // when
-        EmailDocument<InternalSubmissionEmailData> actual = mapper.map(model);
+        final EmailDocument<InternalSubmissionEmailData> actual = mapper.map(model);
 
         // then
         assertEquals(expectedInternalSubmissionEmailDocumentRegPowers(), actual);
@@ -192,20 +194,22 @@ class InternalSubmissionEmailMapperTest {
                 .withRecipientEmailAddress("internal_RP_demo@ch.gov.uk")
                 .withCreatedAt("02 June 2020")
                 .withTopic("email-send")
-                .withData(InternalSubmissionEmailData.builder()
-                        .withTo("internal_RP_demo@ch.gov.uk")
-                        .withSubject("Your document has been submitted").withCompany(company).withFormType("RP02A")
-                        .withConfirmationReference("abcd3434343efsfg")
-                        .withEmailFileDetailsList(
-                                Collections.singletonList(new EmailFileDetails(fileDetails, "/file/link")))
-                        .withPresenter(presenter).withFormType("RP02A").build())
+                .withData(new InternalSubmissionEmailData(
+                        "internal_RP_demo@ch.gov.uk",
+                        "Your document has been submitted",
+                        "abcd3434343efsfg",
+                        presenter,
+                        company,
+                        "RP02A",
+                        Collections.singletonList(new EmailFileDetails(fileDetails, "/file/link"))
+                ))
                 .build();
     }
 
     @Test
     void mapSubmissionDataToConfirmationEmailModelRegPowersScot() {
         // given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        final LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 
         when(config.getSubject()).thenReturn("Your document has been submitted");
         when(config.getAppId()).thenReturn("efs-submission-api.efs_submission_confirmation");
@@ -216,10 +220,10 @@ class InternalSubmissionEmailMapperTest {
         when(idGenerator.generateId()).thenReturn("123");
         when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
 
-        when(model.getEmailFileDetailsList()).thenReturn(Collections.singletonList(emailFileDetails));
+        when(model.emailFileDetailsList()).thenReturn(Collections.singletonList(emailFileDetails));
         when(emailFileDetails.getFileLink()).thenReturn("/file/link");
         when(emailFileDetails.getFileDetails()).thenReturn(fileDetails);
-        when(model.getSubmission()).thenReturn(submission);
+        when(model.submission()).thenReturn(submission);
         when(submission.getConfirmationReference()).thenReturn("abcd3434343efsfg");
         when(submission.getCompany()).thenReturn(company);
         when(company.getCompanyNumber()).thenReturn("SC12345678");
@@ -234,7 +238,7 @@ class InternalSubmissionEmailMapperTest {
         when(categoryTemplateService.getTopLevelCategory("RP")).thenReturn(CategoryTypeConstants.REGISTRAR_POWERS);
 
         // when
-        EmailDocument<InternalSubmissionEmailData> actual = mapper.map(model);
+        final EmailDocument<InternalSubmissionEmailData> actual = mapper.map(model);
 
         // then
         assertEquals(expectedInternalSubmissionEmailDocumentRegPowersScot(), actual);
@@ -251,13 +255,15 @@ class InternalSubmissionEmailMapperTest {
                 .withRecipientEmailAddress("internal_RP_Scot_demo@ch.gov.uk")
                 .withCreatedAt("02 June 2020")
                 .withTopic("email-send")
-                .withData(InternalSubmissionEmailData.builder()
-                        .withTo("internal_RP_Scot_demo@ch.gov.uk")
-                        .withSubject("Your document has been submitted").withCompany(company).withFormType("RP02A")
-                        .withConfirmationReference("abcd3434343efsfg")
-                        .withEmailFileDetailsList(
-                                Collections.singletonList(new EmailFileDetails(fileDetails, "/file/link")))
-                        .withPresenter(presenter).withFormType("RP02A").build())
+                .withData(new InternalSubmissionEmailData(
+                        "internal_RP_Scot_demo@ch.gov.uk",
+                        "Your document has been submitted",
+                        "abcd3434343efsfg",
+                        presenter,
+                        company,
+                        "RP02A",
+                        Collections.singletonList(new EmailFileDetails(fileDetails, "/file/link"))
+                ))
                 .build();
     }
 }

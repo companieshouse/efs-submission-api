@@ -21,18 +21,18 @@ import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryType
 @Component
 public class InternalSubmissionEmailMapper {
 
-    private InternalSubmissionEmailConfig internalSubmissionEmailConfig;
-    private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
-    private FormCategoryToEmailAddressService emailAddressService;
-    private CategoryTemplateService categoryTemplateService;
-    private FormTemplateService formTemplateService;
+    private final InternalSubmissionEmailConfig internalSubmissionEmailConfig;
+    private final IdentifierGeneratable idGenerator;
+    private final TimestampGenerator<LocalDateTime> timestampGenerator;
+    private final FormCategoryToEmailAddressService emailAddressService;
+    private final CategoryTemplateService categoryTemplateService;
+    private final FormTemplateService formTemplateService;
 
-    public InternalSubmissionEmailMapper(InternalSubmissionEmailConfig internalSubmissionEmailConfig, IdentifierGeneratable idGenerator,
-                                         TimestampGenerator<LocalDateTime> timestampGenerator,
-                                         FormCategoryToEmailAddressService emailAddressService,
-                                         CategoryTemplateService categoryTemplateService,
-                                         FormTemplateService formTemplateService) {
+    public InternalSubmissionEmailMapper(final InternalSubmissionEmailConfig internalSubmissionEmailConfig, final IdentifierGeneratable idGenerator,
+                                         final TimestampGenerator<LocalDateTime> timestampGenerator,
+                                         final FormCategoryToEmailAddressService emailAddressService,
+                                         final CategoryTemplateService categoryTemplateService,
+                                         final FormTemplateService formTemplateService) {
         this.internalSubmissionEmailConfig = internalSubmissionEmailConfig;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;
@@ -41,17 +41,17 @@ public class InternalSubmissionEmailMapper {
         this.formTemplateService = formTemplateService;
     }
 
-    public EmailDocument<InternalSubmissionEmailData> map(InternalSubmissionEmailModel model) {
+    public EmailDocument<InternalSubmissionEmailData> map(final InternalSubmissionEmailModel model) {
 
-        String emailAddress;
-        String formType = model.getSubmission().getFormDetails().getFormType();
-        CategoryTypeConstants categoryType =
+        final String emailAddress;
+        final String formType = model.submission().getFormDetails().getFormType();
+        final CategoryTypeConstants categoryType =
                 categoryTemplateService.getTopLevelCategory(
                         formTemplateService.getFormTemplate(formType).getFormCategory());
 
         if (categoryType.getValue().equals(REGISTRAR_POWERS.getValue())) {
 
-            String companyNumber = model.getSubmission().getCompany().getCompanyNumber();
+            final String companyNumber = model.submission().getCompany().getCompanyNumber();
             emailAddress = emailAddressService.getEmailAddressForRegPowersFormCategory(formType, companyNumber);
 
         } else {
@@ -67,15 +67,16 @@ public class InternalSubmissionEmailMapper {
                         .format(DateTimeFormatter.ofPattern(internalSubmissionEmailConfig.getDateFormat()))).build();
     }
 
-    private InternalSubmissionEmailData fromSubmission(InternalSubmissionEmailModel model, String emailAddress) {
-        return InternalSubmissionEmailData.builder()
-                .withTo(emailAddress)
-                .withPresenter(model.getSubmission().getPresenter()).withSubject(internalSubmissionEmailConfig.getSubject())
-                .withCompany(model.getSubmission().getCompany())
-                .withConfirmationReference(model.getSubmission().getConfirmationReference())
-                .withFormType(model.getSubmission().getFormDetails().getFormType())
-                .withEmailFileDetailsList(model.getEmailFileDetailsList())
-                .build();
+    private InternalSubmissionEmailData fromSubmission(final InternalSubmissionEmailModel model, final String emailAddress) {
+        return new InternalSubmissionEmailData(
+            emailAddress,
+            internalSubmissionEmailConfig.getSubject(),
+            model.submission().getConfirmationReference(),
+            model.submission().getPresenter(),
+            model.submission().getCompany(),
+            model.submission().getFormDetails().getFormType(),
+            model.emailFileDetailsList()
+        );
     }
 
 }
