@@ -18,6 +18,16 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
+/**
+ * Service implementation for sending various types of email notifications related to submissions.
+ * <p>
+ * This class coordinates the mapping of submission models to email documents and delegates the actual
+ * sending of emails to the {@link EmailClient}. It supports external and internal notifications, payment
+ * reports, delayed submission notifications, and more. Each public method corresponds to a specific type
+ * of email notification and uses the appropriate mapper from {@link EmailMapperFactory}.
+ * <p>
+ * Error handling is performed for failed email sends, and all operations are logged for traceability.
+ */
 @Service
 public class EmailServiceImpl implements EmailService {
 
@@ -39,13 +49,13 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendExternalConfirmation(ExternalNotificationEmailModel emailModel) {
-        LOGGER.debug(format("Sending external email confirming submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending external email confirming submission [%s]", emailModel.submission().getId()));
         sendMessage(this.emailMapperFactory.getConfirmationEmailMapper().map(emailModel));
     }
 
     @Override
     public void sendExternalPaymentFailedNotification(ExternalNotificationEmailModel emailModel) {
-        LOGGER.debug(format("Sending external email notifying payment failed for submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending external email notifying payment failed for submission [%s]", emailModel.submission().getId()));
         sendMessage(this.emailMapperFactory.getPaymentFailedEmailMapper().map(emailModel));
     }
 

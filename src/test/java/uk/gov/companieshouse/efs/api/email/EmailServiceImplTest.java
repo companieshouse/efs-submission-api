@@ -337,7 +337,7 @@ class EmailServiceImplTest {
 
         EmailDocument<ExternalConfirmationEmailData> emailDocument = createEmailDocument(emailData);
 
-        when(externalNotificationEmailModel.getSubmission()).thenReturn(submission);
+        when(externalNotificationEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("123");
         when(emailMapperFactory.getConfirmationEmailMapper()).thenReturn(notificationEmailMapper);
         when(notificationEmailMapper.map(externalNotificationEmailModel)).thenReturn(emailDocument);
@@ -352,7 +352,7 @@ class EmailServiceImplTest {
         verify(emailMapperFactory, times(1)).getConfirmationEmailMapper();
         verify(notificationEmailMapper, times(1)).map(externalNotificationEmailModel);
         verify(submission, times(1)).getId();
-        verify(externalNotificationEmailModel, times(1)).getSubmission();
+        verify(externalNotificationEmailModel, times(1)).submission();
         verify(emailClient).sendEmail(emailDocumentCaptor.capture());
         verify(emailClient, times(1)).sendEmail(emailDocument);
 
@@ -378,7 +378,7 @@ class EmailServiceImplTest {
 
         EmailDocument<ExternalConfirmationEmailData> emailDocument = createEmailDocument(emailData);
 
-        when(externalNotificationEmailModel.getSubmission()).thenReturn(submission);
+        when(externalNotificationEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("123");
         when(emailMapperFactory.getPaymentFailedEmailMapper()).thenReturn(notificationEmailMapper);
         when(notificationEmailMapper.map(externalNotificationEmailModel)).thenReturn(emailDocument);
@@ -393,7 +393,7 @@ class EmailServiceImplTest {
         verify(emailMapperFactory, times(1)).getPaymentFailedEmailMapper();
         verify(notificationEmailMapper, times(1)).map(externalNotificationEmailModel);
         verify(submission, times(1)).getId();
-        verify(externalNotificationEmailModel, times(1)).getSubmission();
+        verify(externalNotificationEmailModel, times(1)).submission();
         verify(emailClient).sendEmail(emailDocumentCaptor.capture());
         verify(emailClient, times(1)).sendEmail(emailDocument);
 
