@@ -49,13 +49,13 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendExternalConfirmation(final ExternalNotificationEmailModel emailModel) {
-        LOGGER.debug(format("Sending external email confirming submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending external email confirming submission [%s]", emailModel.submission().getId()));
         sendMessage(this.emailMapperFactory.getConfirmationEmailMapper().map(emailModel));
     }
 
     @Override
     public void sendExternalPaymentFailedNotification(final ExternalNotificationEmailModel emailModel) {
-        LOGGER.debug(format("Sending external email notifying payment failed for submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending external email notifying payment failed for submission [%s]", emailModel.submission().getId()));
         sendMessage(this.emailMapperFactory.getPaymentFailedEmailMapper().map(emailModel));
     }
 
