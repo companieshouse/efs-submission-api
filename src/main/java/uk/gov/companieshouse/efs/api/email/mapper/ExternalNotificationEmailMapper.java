@@ -16,13 +16,23 @@ import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
+/**
+ * Maps {@link ExternalNotificationEmailModel} to {@link EmailDocument} for external notification emails.
+ * <p>
+ * This class is responsible for transforming submission data into the format required for sending
+ * external notification emails. It uses configuration, identifier and timestamp generators, and services
+ * for category and form templates to build the email payload.
+ * <p>
+ * Typical usage involves calling {@link #map(ExternalNotificationEmailModel)} with a model containing
+ * submission details, which returns a fully populated {@link EmailDocument} ready for sending.
+ */
 public class ExternalNotificationEmailMapper {
 
-    private NotificationConfig config;
-    private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
-    private CategoryTemplateService categoryTemplateService;
-    private FormTemplateService formTemplateService;
+    private final NotificationConfig config;
+    private final IdentifierGeneratable idGenerator;
+    private final TimestampGenerator<LocalDateTime> timestampGenerator;
+    private final CategoryTemplateService categoryTemplateService;
+    private final FormTemplateService formTemplateService;
 
     public ExternalNotificationEmailMapper(NotificationConfig config,
         IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator,
@@ -39,7 +49,7 @@ public class ExternalNotificationEmailMapper {
         return EmailDocument.<ExternalConfirmationEmailData>builder()
                 .withTopic(config.getTopic())
                 .withMessageId(idGenerator.generateId())
-                .withRecipientEmailAddress(model.getSubmission().getPresenter().getEmail())
+                .withRecipientEmailAddress(model.submission().getPresenter().getEmail())
                 .withEmailTemplateAppId(config.getAppId())
                 .withEmailTemplateMessageType(config.getMessageType())
                 .withData(fromSubmission(model))
@@ -49,15 +59,15 @@ public class ExternalNotificationEmailMapper {
 
     private ExternalConfirmationEmailData fromSubmission(ExternalNotificationEmailModel model) {
         return ExternalConfirmationEmailData.builder()
-                .withTo(model.getSubmission().getPresenter().getEmail())
-                .withPresenter(model.getSubmission().getPresenter())
+                .withTo(model.submission().getPresenter().getEmail())
+                .withPresenter(model.submission().getPresenter())
                 .withSubject(config.getSubject())
-                .withCompany(model.getSubmission().getCompany())
-                .withConfirmationReference(model.getSubmission().getConfirmationReference())
-                .withFormType(model.getSubmission().getFormDetails().getFormType())
+                .withCompany(model.submission().getCompany())
+                .withConfirmationReference(model.submission().getConfirmationReference())
+                .withFormType(model.submission().getFormDetails().getFormType())
                 .withTopLevelCategory(getTopLevelCategoryForFormType(model))
-                .withEmailFileDetailsList(createEmailFileDetailsList(model.getSubmission().getFormDetails().getFileDetailsList()))
-                .withFeeOnSubmission(model.getSubmission().getFeeOnSubmission())
+                .withEmailFileDetailsList(createEmailFileDetailsList(model.submission().getFormDetails().getFileDetailsList()))
+                .withFeeOnSubmission(model.submission().getFeeOnSubmission())
                 .build();
     }
 
@@ -71,7 +81,7 @@ public class ExternalNotificationEmailMapper {
 
     private CategoryTypeConstants getTopLevelCategoryForFormType(final ExternalNotificationEmailModel model) {
         FormTemplateApi formTemplate = formTemplateService
-            .getFormTemplate(model.getSubmission().getFormDetails().getFormType());
+            .getFormTemplate(model.submission().getFormDetails().getFormType());
         return categoryTemplateService.getTopLevelCategory(formTemplate.getFormCategory());
     }
 }

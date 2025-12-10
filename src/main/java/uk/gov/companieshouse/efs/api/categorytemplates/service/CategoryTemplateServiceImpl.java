@@ -22,8 +22,8 @@ import uk.gov.companieshouse.efs.api.config.Config;
 @Import(Config.class)
 public class CategoryTemplateServiceImpl implements CategoryTemplateService {
 
-    private CategoryTemplateRepository repository;
-    private CategoryTemplateMapper mapper;
+    private final CategoryTemplateRepository repository;
+    private final CategoryTemplateMapper mapper;
 
     /**
      * FormTemplateService constructor.
@@ -63,7 +63,7 @@ public class CategoryTemplateServiceImpl implements CategoryTemplateService {
             CategoryTemplate categoryTemplate = repository.findById(currentCategory).orElse(null);
 
             if (categoryTemplate != null) {
-                final String parentCategory = categoryTemplate.getParent();
+                final String parentCategory = categoryTemplate.parent();
                 final CategoryTypeConstants parentCategoryType =
                     CategoryTypeConstants.nameOf(parentCategory).orElse(OTHER);
 
