@@ -93,8 +93,8 @@ class InternalAVFailedEmailMapperTest {
         when(submission.getConfirmationReference()).thenReturn("abcd3434343efsfg");
         when(emailAddressService.getEmailAddressForFormCategory(anyString())).thenReturn("internal_RP_demo@ch.gov.uk");
 
-        when(internalAVFailedEmailModel.getSubmission()).thenReturn(submission);
-        when(internalAVFailedEmailModel.getInfectedFiles()).thenReturn(Collections.singletonList("infected.pdf"));
+        when(internalAVFailedEmailModel.submission()).thenReturn(submission);
+        when(internalAVFailedEmailModel.infectedFiles()).thenReturn(Collections.singletonList("infected.pdf"));
 
         //when
         EmailDocument<InternalAvFailedEmailData> actual = internalAVFailedEmailMapper.map(internalAVFailedEmailModel);
@@ -114,17 +114,18 @@ class InternalAVFailedEmailMapperTest {
                 .withCreatedAt("02 June 2020")
                 .withTopic("email-send")
                 .withData(
-                        InternalAvFailedEmailData.builder()
-                                .withTo("internal_RP_demo@ch.gov.uk")
-                                .withSubject("EFS Submission AV Failed")
-                                .withCompanyNumber("12345678")
-                                .withCompanyName("ABC Co Ltd")
-                                .withFormType("SH01")
-                                .withConfirmationReference("abcd3434343efsfg")
-                                .withRejectionDate("02 May 2020")
-                                .withInfectedFiles(Collections.singletonList("infected.pdf"))
-                                .withUserEmail("demo@ch.gov.uk")
-                                .build())
+                        new InternalAvFailedEmailData(
+                                "internal_RP_demo@ch.gov.uk",
+                                "12345678",
+                                "ABC Co Ltd",
+                                "abcd3434343efsfg",
+                                "SH01",
+                                "demo@ch.gov.uk",
+                                "02 May 2020",
+                                "EFS Submission AV Failed",
+                                Collections.singletonList("infected.pdf")
+                        )
+                )
                 .build();
     }
 

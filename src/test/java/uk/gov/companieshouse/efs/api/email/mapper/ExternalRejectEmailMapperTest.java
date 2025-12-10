@@ -62,9 +62,9 @@ class ExternalRejectEmailMapperTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void mapSubmissionDataToRejectEmailModel(boolean hasFee) {
+    void mapSubmissionDataToRejectEmailModel(final boolean hasFee) {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        final LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 
         when(config.getSubject()).thenReturn("EFS Submission rejected");
         when(config.getAppId()).thenReturn("efs-submission-api.efs_submission_external_reject");
@@ -83,18 +83,18 @@ class ExternalRejectEmailMapperTest {
 
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
 
-        LocalDateTime localDateTime = LocalDateTime.of(2020, Month.MAY, 2, 0, 0);
+        final LocalDateTime localDateTime = LocalDateTime.of(2020, Month.MAY, 2, 0, 0);
         when(submission.getLastModifiedAt()).thenReturn(localDateTime);
 
         when(submission.getConfirmationReference()).thenReturn("abcd3434343efsfg");
 
-        when(externalRejectEmailModel.getRejectReasons()).thenReturn(Collections.singletonList("ReasonList"));
-        when(externalRejectEmailModel.getSubmission()).thenReturn(submission);
+        when(externalRejectEmailModel.rejectReasons()).thenReturn(Collections.singletonList("ReasonList"));
+        when(externalRejectEmailModel.submission()).thenReturn(submission);
 
         when(submission.getFeeOnSubmission()).thenReturn(hasFee ? "10" : null);
 
         //when
-        EmailDocument<ExternalRejectEmailData> actual = rejectEmailMapper.map(externalRejectEmailModel);
+        final EmailDocument<ExternalRejectEmailData> actual = rejectEmailMapper.map(externalRejectEmailModel);
 
         //then
         assertEquals(expectedRejectEmailDocument(hasFee), actual);
@@ -111,17 +111,18 @@ class ExternalRejectEmailMapperTest {
                 .withCreatedAt("02 June 2020")
                 .withTopic("email-send")
                 .withData(
-                        ExternalRejectEmailData.builder()
-                                .withTo("demo@ch.gov.uk")
-                                .withSubject("EFS Submission rejected")
-                                .withCompanyNumber("12345678")
-                                .withCompanyName("ABC Co Ltd")
-                                .withFormType("SH01")
-                                .withConfirmationReference("abcd3434343efsfg")
-                                .withRejectionDate("02 May 2020")
-                                .withRejectReasons(Collections.singletonList("ReasonList"))
-                                .withIsPaidForm(hasFee)
-                                .build())
+                        new ExternalRejectEmailData(
+                                "demo@ch.gov.uk",
+                                "EFS Submission rejected",
+                                "12345678",
+                                "ABC Co Ltd",
+                                "abcd3434343efsfg",
+                                "SH01",
+                                "02 May 2020",
+                                Collections.singletonList("ReasonList"),
+                                hasFee
+                        )
+                )
                 .build();
     }
 

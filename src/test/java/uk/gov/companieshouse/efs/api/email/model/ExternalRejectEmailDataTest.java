@@ -22,17 +22,17 @@ class ExternalRejectEmailDataTest {
 
     @BeforeEach
     void setUp() {
-        final ExternalRejectEmailData.Builder builder = ExternalRejectEmailData.builder();
-
-        testData = builder.withTo("recipient")
-            .withSubject("subject")
-            .withConfirmationReference("reference")
-            .withCompanyName(COMPANY.getCompanyName())
-            .withCompanyNumber(COMPANY.getCompanyNumber())
-            .withFormType("form")
-            .withRejectionDate("2020-02-20")
-            .withRejectReasons(Arrays.asList("reason1", "reason2"))
-            .build();
+        testData = new ExternalRejectEmailData(
+            "recipient",
+            "subject",
+            COMPANY.getCompanyNumber(),
+            COMPANY.getCompanyName(),
+            "reference",
+            "form",
+            "2020-02-20",
+            Arrays.asList("reason1", "reason2"),
+            false
+        );
     }
 
     @Test
@@ -42,41 +42,41 @@ class ExternalRejectEmailDataTest {
 
     @Test
     void getTo() {
-        assertThat(testData.getTo(), is("recipient"));
+        assertThat(testData.to(), is("recipient"));
     }
 
     @Test
     void getSubject() {
-        assertThat(testData.getSubject(), is("subject"));
+        assertThat(testData.subject(), is("subject"));
     }
 
     @Test
     void getCompanyNumber() {
-        assertThat(testData.getCompanyNumber(), is(COMPANY.getCompanyNumber()));
+        assertThat(testData.companyNumber(), is(COMPANY.getCompanyNumber()));
     }
 
     @Test
     void getCompanyName() {
-        assertThat(testData.getCompanyName(), is(COMPANY.getCompanyName()));
+        assertThat(testData.companyName(), is(COMPANY.getCompanyName()));
     }
 
     @Test
     void getConfirmationReference() {
-        assertThat(testData.getConfirmationReference(), is("reference"));
+        assertThat(testData.confirmationReference(), is("reference"));
     }
     @Test
     void getFormType() {
-        assertThat(testData.getFormType(), is("form"));
+        assertThat(testData.formType(), is("form"));
     }
 
     @Test
     void getRejectionDate() {
-        assertThat(testData.getRejectionDate(), is("2020-02-20"));
+        assertThat(testData.rejectionDate(), is("2020-02-20"));
     }
 
     @Test
     void getRejectReasons() {
-        assertThat(testData.getRejectReasons(), contains("reason1", "reason2"));
+        assertThat(testData.rejectReasons(), contains("reason1", "reason2"));
     }
 
     @Test

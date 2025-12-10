@@ -14,21 +14,21 @@ import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 
 @Component
 public class ExternalRejectEmailMapper {
-    private ExternalRejectedEmailConfig config;
-    private IdentifierGeneratable idGenerator;
-    private TimestampGenerator<LocalDateTime> timestampGenerator;
+    private final ExternalRejectedEmailConfig config;
+    private final IdentifierGeneratable idGenerator;
+    private final TimestampGenerator<LocalDateTime> timestampGenerator;
 
-    public ExternalRejectEmailMapper(ExternalRejectedEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator) {
+    public ExternalRejectEmailMapper(final ExternalRejectedEmailConfig config, final IdentifierGeneratable idGenerator, final TimestampGenerator<LocalDateTime> timestampGenerator) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;
     }
 
-    public EmailDocument<ExternalRejectEmailData> map(ExternalRejectEmailModel model) {
+    public EmailDocument<ExternalRejectEmailData> map(final ExternalRejectEmailModel model) {
         return EmailDocument.<ExternalRejectEmailData>builder()
                 .withTopic(config.getTopic())
                 .withMessageId(idGenerator.generateId())
-                .withRecipientEmailAddress(model.getSubmission().getPresenter().getEmail())
+                .withRecipientEmailAddress(model.submission().getPresenter().getEmail())
                 .withEmailTemplateAppId(config.getAppId())
                 .withEmailTemplateMessageType(config.getMessageType())
                 .withData(fromSubmission(model))
@@ -36,17 +36,17 @@ public class ExternalRejectEmailMapper {
                         .format(DateTimeFormatter.ofPattern(config.getDateFormat()))).build();
     }
 
-    private ExternalRejectEmailData fromSubmission(ExternalRejectEmailModel model) {
-        return ExternalRejectEmailData.builder()
-                .withTo(model.getSubmission().getPresenter().getEmail())
-                .withSubject(config.getSubject())
-                .withCompanyNumber(model.getSubmission().getCompany().getCompanyNumber())
-                .withCompanyName(model.getSubmission().getCompany().getCompanyName())
-                .withConfirmationReference(model.getSubmission().getConfirmationReference())
-                .withFormType(model.getSubmission().getFormDetails().getFormType())
-                .withRejectionDate(model.getSubmission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())))
-                .withRejectReasons(model.getRejectReasons())
-                .withIsPaidForm(!Strings.isNullOrEmpty(model.getSubmission().getFeeOnSubmission()))
-                .build();
+    private ExternalRejectEmailData fromSubmission(final ExternalRejectEmailModel model) {
+        return new ExternalRejectEmailData(
+            model.submission().getPresenter().getEmail(),
+            config.getSubject(),
+            model.submission().getCompany().getCompanyNumber(),
+            model.submission().getCompany().getCompanyName(),
+            model.submission().getConfirmationReference(),
+            model.submission().getFormDetails().getFormType(),
+            model.submission().getLastModifiedAt().format(DateTimeFormatter.ofPattern(config.getDateFormat())),
+            model.rejectReasons(),
+            !Strings.isNullOrEmpty(model.submission().getFeeOnSubmission())
+        );
     }
 }

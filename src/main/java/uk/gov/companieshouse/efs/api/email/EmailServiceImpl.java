@@ -57,13 +57,13 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendExternalReject(ExternalRejectEmailModel emailModel) {
-        LOGGER.debug(format("Sending external email rejecting submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending external email rejecting submission [%s]", emailModel.submission().getId()));
         sendMessage(this.emailMapperFactory.getRejectEmailMapper().map(emailModel));
     }
 
     @Override
     public void sendInternalFailedAV(InternalAvFailedEmailModel emailModel) {
-        LOGGER.debug(format("Sending internal av failed email rejecting submission [%s]", emailModel.getSubmission().getId()));
+        LOGGER.debug(format("Sending internal av failed email rejecting submission [%s]", emailModel.submission().getId()));
         sendMessage(this.emailMapperFactory.getInternalAvFailedEmailMapper().map(emailModel));
     }
 
