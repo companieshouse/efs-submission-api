@@ -17,6 +17,7 @@ import uk.gov.companieshouse.efs.api.submissions.model.Company;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +113,7 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSubmissionAccepted() throws EmailServiceException {
         //given
-        ExternalAcceptEmailData emailData = new ExternalAcceptEmailData(
+        final ExternalAcceptEmailData emailData = new ExternalAcceptEmailData(
                 "unit@test.gov.uk",
                 "My Subject Line",
                 "CN000123",
@@ -121,14 +122,14 @@ class EmailServiceImplTest {
                 "Form-Type",
                 LocalDateTime.now().toString());
 
-        EmailDocument<ExternalAcceptEmailData> emailDocument = createEmailDocument(emailData);
+        final EmailDocument<ExternalAcceptEmailData> emailDocument = createEmailDocument(emailData);
 
         when(emailMapperFactory.getAcceptEmailMapper()).thenReturn(acceptEmailMapper);
         when(acceptEmailMapper.map(externalAcceptEmailModel)).thenReturn(emailDocument);
         when(submission.getId()).thenReturn("abc");
         when(externalAcceptEmailModel.getSubmission()).thenReturn(submission);
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
@@ -154,7 +155,7 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSubmissionRejected() throws EmailServiceException{
         //given
-        ExternalRejectEmailData emailData = new ExternalRejectEmailData(
+        final ExternalRejectEmailData emailData = new ExternalRejectEmailData(
             "unit@test.gov.uk",
             "My Subject Line",
             "CN000123",
@@ -166,14 +167,14 @@ class EmailServiceImplTest {
             true
         );
 
-        EmailDocument<ExternalRejectEmailData> emailDocument = createEmailDocument(emailData);
+        final EmailDocument<ExternalRejectEmailData> emailDocument = createEmailDocument(emailData);
 
         when(emailMapperFactory.getRejectEmailMapper()).thenReturn(rejectEmailMapper);
         when(rejectEmailMapper.map(externalRejectEmailModel)).thenReturn(emailDocument);
         when(submission.getId()).thenReturn("abc");
         when(externalRejectEmailModel.submission()).thenReturn(submission);
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
@@ -199,7 +200,7 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSubmissionHasInfectedFiles() throws EmailServiceException {
         //given
-        InternalAvFailedEmailData emailData = new InternalAvFailedEmailData(
+        final InternalAvFailedEmailData emailData = new InternalAvFailedEmailData(
             "unit@test.gov.uk",
             "CN000123",
             "My Company Name",
@@ -211,14 +212,14 @@ class EmailServiceImplTest {
             List.of("file-1", "file-2")
         );
 
-        EmailDocument<InternalAvFailedEmailData> emailDocument = createEmailDocument(emailData);
+        final EmailDocument<InternalAvFailedEmailData> emailDocument = createEmailDocument(emailData);
 
         when(emailMapperFactory.getInternalAvFailedEmailMapper()).thenReturn(internalAVFailedEmailMapper);
         when(internalAVFailedEmailMapper.map(internalAVFailedEmailModel)).thenReturn(emailDocument);
         when(internalAVFailedEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
@@ -244,7 +245,7 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenFilesFailConversion() throws EmailServiceException {
         //given
-        InternalFailedConversionEmailData emailData = InternalFailedConversionEmailData.builder()
+        final InternalFailedConversionEmailData emailData = InternalFailedConversionEmailData.builder()
                 .withTo("unit@test.gov.uk")
                 .withSubject("My Subject Line")
                 .withCompanyNumber("CN000123")
@@ -255,14 +256,14 @@ class EmailServiceImplTest {
                 .withFailedToConvert(List.of("file-1", "file-2"))
                 .build();
 
-        EmailDocument<InternalFailedConversionEmailData> emailDocument = createEmailDocument(emailData);
+        final EmailDocument<InternalFailedConversionEmailData> emailDocument = createEmailDocument(emailData);
 
         when(emailMapperFactory.getInternalFailedConversionEmailMapper()).thenReturn(internalFailedConversionEmailMapper);
         when(internalFailedConversionEmailMapper.map(internalFailedConversionModel)).thenReturn(emailDocument);
-        when(internalFailedConversionModel.getSubmission()).thenReturn(submission);
+        when(internalFailedConversionModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
@@ -272,7 +273,7 @@ class EmailServiceImplTest {
         verify(emailMapperFactory, times(1)).getInternalFailedConversionEmailMapper();
         verify(internalFailedConversionEmailMapper, times(1)).map(internalFailedConversionModel);
         verify(submission, times(1)).getId();
-        verify(internalFailedConversionModel, times(1)).getSubmission();
+        verify(internalFailedConversionModel, times(1)).submission();
         verify(emailClient).sendEmail(emailDocumentCaptor.capture());
         verify(emailClient, times(1)).sendEmail(emailDocument);
 
@@ -296,7 +297,7 @@ class EmailServiceImplTest {
         doThrow(EmailClientException.class).when(emailClient).sendEmail(any());
 
         // when
-        EmailServiceException expected = assertThrows(EmailServiceException.class, () ->
+        final EmailServiceException expected = assertThrows(EmailServiceException.class, () ->
                 emailService.sendInternalFailedAV(internalAVFailedEmailModel)
         );
 
@@ -312,11 +313,11 @@ class EmailServiceImplTest {
         when(internalAVFailedEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(400, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(400, Map.of());
         when(emailClient.sendEmail(any())).thenReturn(apiResponse);
 
         // when
-        EmailServiceException expected = assertThrows(EmailServiceException.class, () ->
+        final EmailServiceException expected = assertThrows(EmailServiceException.class, () ->
                 emailService.sendInternalFailedAV(internalAVFailedEmailModel)
         );
 
@@ -327,7 +328,7 @@ class EmailServiceImplTest {
     @Test
     void testSendExternalConfirmation() throws EmailServiceException {
         //given
-        ExternalConfirmationEmailData emailData = ExternalConfirmationEmailData.builder()
+        final ExternalConfirmationEmailData emailData = ExternalConfirmationEmailData.builder()
                 .withTo("unit@test.gov.uk")
                 .withSubject("My Subject Line")
                 .withCompany(new Company("CN000123","My Company Name"))
@@ -335,14 +336,14 @@ class EmailServiceImplTest {
                 .withFormType("Form-Type")
                 .build();
 
-        EmailDocument<ExternalConfirmationEmailData> emailDocument = createEmailDocument(emailData);
+        final EmailDocument<ExternalConfirmationEmailData> emailDocument = createEmailDocument(emailData);
 
         when(externalNotificationEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("123");
         when(emailMapperFactory.getConfirmationEmailMapper()).thenReturn(notificationEmailMapper);
         when(notificationEmailMapper.map(externalNotificationEmailModel)).thenReturn(emailDocument);
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         //when
@@ -368,7 +369,7 @@ class EmailServiceImplTest {
     @Test
     void testSendExternalPaymentFailedNotification() throws EmailServiceException {
         //given
-        ExternalConfirmationEmailData emailData = ExternalConfirmationEmailData.builder()
+        final ExternalConfirmationEmailData emailData = ExternalConfirmationEmailData.builder()
                 .withTo("unit@test.gov.uk")
                 .withSubject("My Subject Line")
                 .withCompany(new Company("CN000123","My Company Name"))
@@ -376,14 +377,14 @@ class EmailServiceImplTest {
                 .withFormType("Form-Type")
                 .build();
 
-        EmailDocument<ExternalConfirmationEmailData> emailDocument = createEmailDocument(emailData);
+        final EmailDocument<ExternalConfirmationEmailData> emailDocument = createEmailDocument(emailData);
 
         when(externalNotificationEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("123");
         when(emailMapperFactory.getPaymentFailedEmailMapper()).thenReturn(notificationEmailMapper);
         when(notificationEmailMapper.map(externalNotificationEmailModel)).thenReturn(emailDocument);
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         //when
@@ -409,22 +410,24 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSubmissionNotFesEnabled() throws EmailServiceException {
         //given
-        InternalSubmissionEmailData emailData = InternalSubmissionEmailData.builder()
-                .withTo("unit@test.gov.uk")
-                .withSubject("My Subject Line")
-                .withCompany(new Company("CN000123","My Company Name"))
-                .withConfirmationReference("CONREF-001")
-                .withFormType("Form-Type")
-                .build();
+        final InternalSubmissionEmailData emailData = new InternalSubmissionEmailData(
+                "unit@test.gov.uk", // to
+                "My Subject Line", // subject
+                "CONREF-001", // confirmationReference
+                null, // presenter
+                new Company("CN000123","My Company Name"), // company
+                "Form-Type", // formType
+                List.of() // emailFileDetailsList
+        );
 
-        EmailDocument<InternalSubmissionEmailData> emailDocument = createEmailDocument(emailData);
+        final EmailDocument<InternalSubmissionEmailData> emailDocument = createEmailDocument(emailData);
 
         when(emailMapperFactory.getInternalSubmissionEmailMapper()).thenReturn(internalSubmissionEmailMapper);
         when(internalSubmissionEmailMapper.map(internalSubmissionEmailModel)).thenReturn(emailDocument);
-        when(internalSubmissionEmailModel.getSubmission()).thenReturn(submission);
+        when(internalSubmissionEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
@@ -434,7 +437,7 @@ class EmailServiceImplTest {
         verify(emailMapperFactory, times(1)).getInternalSubmissionEmailMapper();
         verify(internalSubmissionEmailMapper, times(1)).map(internalSubmissionEmailModel);
         verify(submission, times(1)).getId();
-        verify(internalSubmissionEmailModel, times(1)).getSubmission();
+        verify(internalSubmissionEmailModel, times(1)).submission();
         verify(emailClient).sendEmail(emailDocumentCaptor.capture());
         verify(emailClient, times(1)).sendEmail(emailDocument);
 
@@ -450,17 +453,17 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSubmissionDelayed() throws EmailServiceException {
         //given
-        DelayedSubmissionSupportEmailData emailData = DelayedSubmissionSupportEmailData.builder()
+        final DelayedSubmissionSupportEmailData emailData = DelayedSubmissionSupportEmailData.builder()
                 .withTo("unit@test.gov.uk")
                 .withSubject("My Subject Line")
                 .build();
 
-        EmailDocument<DelayedSubmissionSupportEmailData> emailDocument = createEmailDocument(emailData);
+        final EmailDocument<DelayedSubmissionSupportEmailData> emailDocument = createEmailDocument(emailData);
 
         when(emailMapperFactory.getDelayedSubmissionSupportEmailMapper()).thenReturn(delayedSubmissionSupportEmailMapper);
         when(delayedSubmissionSupportEmailMapper.map(delayedSubmissionSupportEmailModel)).thenReturn(emailDocument);
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
@@ -484,17 +487,17 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSH19SameDaySubmissionDelayed() throws EmailServiceException {
         //given
-        DelayedSubmissionSupportEmailData emailData = DelayedSubmissionSupportEmailData.builder()
+        final DelayedSubmissionSupportEmailData emailData = DelayedSubmissionSupportEmailData.builder()
                 .withTo("unit@test.gov.uk")
                 .withSubject("My Subject Line")
                 .build();
 
-        EmailDocument<DelayedSubmissionSupportEmailData> emailDocument = createEmailDocument(emailData);
+        final EmailDocument<DelayedSubmissionSupportEmailData> emailDocument = createEmailDocument(emailData);
 
         when(emailMapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper()).thenReturn(delayedSH19SameDaySubmissionSupportEmailMapper);
         when(delayedSH19SameDaySubmissionSupportEmailMapper.map(delayedSubmissionSupportEmailModel)).thenReturn(emailDocument);
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(org.mockito.ArgumentMatchers.<EmailDocument<?>>any())).thenReturn(apiResponse);
 
         // when
@@ -507,7 +510,7 @@ class EmailServiceImplTest {
         verify(emailClient, times(1)).sendEmail(emailDocument);
 
         for (int i = 0; i < 2; ++i) {
-            EmailDocument<?> emailDocumentValue = emailDocumentCaptor.getAllValues().get(i);
+            final EmailDocument<?> emailDocumentValue = emailDocumentCaptor.getAllValues().get(i);
 
             assertEquals("email-template-app-id", emailDocumentValue.getAppId());
             assertEquals("dfb90835-c7cc-4293-a407-b18d2723a92e", emailDocumentValue.getMessageId());
@@ -515,7 +518,7 @@ class EmailServiceImplTest {
             assertThat(emailDocument.getData(), is(emailData));
 
             // Service sends 2 emails, but the 2nd one has the "supplied" email address.
-            String expectedEmailAddress = (i == 0) ? "unit-test@ch.gov.uk" : "businessEmail";
+            final String expectedEmailAddress = (i == 0) ? "unit-test@ch.gov.uk" : "businessEmail";
             assertEquals(expectedEmailAddress, emailDocumentValue.getEmailAddress());
 
             assertEquals("test-email-topic", emailDocumentValue.getTopic());
@@ -526,17 +529,23 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenSubmissionVeryDelayed() throws EmailServiceException {
         //given
-        DelayedSubmissionBusinessEmailData emailData = DelayedSubmissionBusinessEmailData.builder()
-                .withTo("unit@test.gov.uk")
-                .withSubject("My Subject Line")
-                .build();
+        final List<DelayedSubmissionBusinessModel> submissions = Collections.singletonList(
+                new DelayedSubmissionBusinessModel("confirmationRef", "companyNo",
+                        "formType", "email@address.com", "2025-01-01T10:00:00"));
 
-        EmailDocument<DelayedSubmissionBusinessEmailData> emailDocument = createEmailDocument(emailData);
+        final DelayedSubmissionBusinessEmailData emailData = new DelayedSubmissionBusinessEmailData(
+            "unit@test.gov.uk",
+            "My Subject Line",
+            submissions,
+            20L
+        );
+
+        final EmailDocument<DelayedSubmissionBusinessEmailData> emailDocument = createEmailDocument(emailData);
 
         when(emailMapperFactory.getDelayedSubmissionBusinessEmailMapper()).thenReturn(delayedSubmissionBusinessEmailMapper);
         when(delayedSubmissionBusinessEmailMapper.map(delayedSubmissionBusinessEmailModel)).thenReturn(emailDocument);
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
@@ -560,17 +569,17 @@ class EmailServiceImplTest {
     @Test
     void testEmailServiceSendsMessageToKafkaApiWhenPaymentReportRequested() throws EmailServiceException {
         //given
-        PaymentReportEmailData emailData = PaymentReportEmailData.builder()
+        final PaymentReportEmailData emailData = PaymentReportEmailData.builder()
                 .withTo("unit@test.gov.uk")
                 .withSubject("My Subject Line")
                 .build();
 
-        EmailDocument<PaymentReportEmailData> emailDocument = createEmailDocument(emailData);
+        final EmailDocument<PaymentReportEmailData> emailDocument = createEmailDocument(emailData);
 
         when(emailMapperFactory.getPaymentReportEmailMapper()).thenReturn(paymentReportEmailMapper);
         when(paymentReportEmailMapper.map(paymentReportEmailModel)).thenReturn(emailDocument);
 
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when

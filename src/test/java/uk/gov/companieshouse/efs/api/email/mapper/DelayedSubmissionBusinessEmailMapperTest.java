@@ -49,7 +49,7 @@ class DelayedSubmissionBusinessEmailMapperTest {
     @Test
     void testMapBusinessModelToEmailDocument() {
         //given
-        LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
+        final LocalDateTime createAtLocalDateTime = LocalDateTime.of(2020, Month.JUNE, 2, 0, 0);
 
         when(config.getSubject()).thenReturn("EFS Submission delayed submission");
         when(config.getAppId()).thenReturn("efs-submission-api.efs_submission_delayed_submission_business");
@@ -63,7 +63,7 @@ class DelayedSubmissionBusinessEmailMapperTest {
         when(delayedSubmissionBusinessEmailModel.getDelayInHours()).thenReturn(72);
 
         //when
-        EmailDocument<DelayedSubmissionBusinessEmailData> actual = delayedSubmissionBusinessEmailMapper.map(delayedSubmissionBusinessEmailModel);
+        final EmailDocument<DelayedSubmissionBusinessEmailData> actual = delayedSubmissionBusinessEmailMapper.map(delayedSubmissionBusinessEmailModel);
 
         //then
         assertEquals(expectedDelayedSubmissionBusinessDocument(), actual);
@@ -72,20 +72,19 @@ class DelayedSubmissionBusinessEmailMapperTest {
     }
 
     private EmailDocument<DelayedSubmissionBusinessEmailData> expectedDelayedSubmissionBusinessDocument() {
-        return EmailDocument.<DelayedSubmissionBusinessEmailData>builder()
-                .withEmailTemplateAppId("efs-submission-api.efs_submission_delayed_submission_business")
-                .withMessageId("123")
-                .withEmailTemplateMessageType("efs_submission_delayed_submission_business")
-                .withRecipientEmailAddress("internal_RP_demo@ch.gov.uk")
-                .withCreatedAt("02 June 2020")
-                .withTopic("email-send")
-                .withData(
-                        DelayedSubmissionBusinessEmailData.builder()
-                                .withTo("internal_RP_demo@ch.gov.uk")
-                                .withSubject("EFS Submission delayed submission")
-                                .withDelayedSubmissions(Collections.singletonList(delayedSubmissionBusinessModel))
-                                .withDelayInDays(3)
-                                .build())
-                .build();
+        return new EmailDocument<>(
+                "efs-submission-api.efs_submission_delayed_submission_business",
+                "123",
+                "efs_submission_delayed_submission_business",
+                new DelayedSubmissionBusinessEmailData(
+                        "internal_RP_demo@ch.gov.uk",
+                        "EFS Submission delayed submission",
+                        Collections.singletonList(delayedSubmissionBusinessModel),
+                        3
+                ),
+                "internal_RP_demo@ch.gov.uk",
+                "02 June 2020",
+                "email-send"
+        );
     }
 }
