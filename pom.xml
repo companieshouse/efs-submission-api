@@ -69,8 +69,6 @@
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
         <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
-        <sonar.login></sonar.login>
-        <sonar.password></sonar.password>
         <sonar.projectKey>uk.gov.companieshouse:efs-submission-api</sonar.projectKey>
         <sonar.projectName>efs-submission-api</sonar.projectName>
         <sonar.coverage.exclusions>**/PaymentFeatureTestingFeesController.java</sonar.coverage.exclusions>
