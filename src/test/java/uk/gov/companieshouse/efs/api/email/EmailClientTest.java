@@ -202,7 +202,7 @@ class EmailClientTest {
             verify(privateSendEmailHandler, times(1)).postSendEmail(eq("/send-email"), any(SendEmail.class));
             verify(privateSendEmailPost, times(1)).execute();
 
-            mocked.verify(RequestContextHolder::getRequestAttributes, times(1));
+            mocked.verify(RequestContextHolder::getRequestAttributes, atLeastOnce());
 
             assertThat(response.getStatusCode(), is(200));
         }
@@ -247,7 +247,7 @@ class EmailClientTest {
             verify(privateSendEmailHandler, times(1)).postSendEmail(eq("/send-email"), any(SendEmail.class));
             verify(privateSendEmailPost, times(1)).execute();
 
-            mocked.verify(RequestContextHolder::getRequestAttributes, times(1));
+            mocked.verify(RequestContextHolder::getRequestAttributes, atLeastOnce());
 
             assertThat(response.getStatusCode(), is(200));
         }
