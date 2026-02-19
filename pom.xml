@@ -18,7 +18,7 @@
         <skip.integration.tests>false</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
         <java.version>21</java.version>
-        <api-helper-java.version>3.0.1</api-helper-java.version>
+        <api-helper-java.version>3.0.3</api-helper-java.version>
         <avro.version>1.12.0</avro.version>
         <aws-java-sdk-core.version>1.12.787</aws-java-sdk-core.version>
         <software.amazon.awssdk.version>2.35.1</software.amazon.awssdk.version>
@@ -35,13 +35,13 @@
         <jackson.version>2.19.1</jackson.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
         <jakarta.persistence.version>3.2.0</jakarta.persistence.version>
-        <java-session-handler.version>4.1.7</java-session-handler.version>
+        <java-session-handler.version>4.1.15</java-session-handler.version>
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
         <json.version>20250517</json.version>
         <junit-jupiter.version>5.13.1</junit-jupiter.version>
         <kafka-clients.version>4.0.0</kafka-clients.version>
         <kafka-models.version>3.0.18</kafka-models.version>
-        <log4j-bom.version>2.25.0</log4j-bom.version>
+        <log4j-bom.version>2.25.3</log4j-bom.version>
         <ojdbc11.version>23.8.0.25.04</ojdbc11.version>
         <!-- Maven -->
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
@@ -53,13 +53,13 @@
         <mockito-junit-jupiter.version>5.2.0</mockito-junit-jupiter.version>
         <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
         <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
-        <private-api-sdk-java.version>4.0.313</private-api-sdk-java.version>
-        <sdk-manager-java.version>3.0.10</sdk-manager-java.version>
+        <private-api-sdk-java.version>4.0.454</private-api-sdk-java.version>
+        <sdk-manager-java.version>3.0.14</sdk-manager-java.version>
         <snakeyaml.version>2.4</snakeyaml.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
-        <spring-boot.version>3.5.6</spring-boot.version>
+        <spring-boot.version>3.5.10</spring-boot.version>
         <spring-test.version>6.2.8</spring-test.version>
-        <structured-logging.version>3.0.32</structured-logging.version>
+        <structured-logging.version>3.0.50</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>
         <rest-service-common-library.version>2.0.4</rest-service-common-library.version>
         <testcontainers.version>1.21.2</testcontainers.version>
@@ -69,8 +69,6 @@
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
         <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
-        <sonar.login></sonar.login>
-        <sonar.password></sonar.password>
         <sonar.projectKey>uk.gov.companieshouse:efs-submission-api</sonar.projectKey>
         <sonar.projectName>efs-submission-api</sonar.projectName>
         <sonar.coverage.exclusions>**/PaymentFeatureTestingFeesController.java</sonar.coverage.exclusions>
