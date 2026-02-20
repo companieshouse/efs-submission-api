@@ -24,7 +24,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -108,7 +108,7 @@ public class PaymentReportServiceImpl implements PaymentReportService {
     public void sendFinancePaymentReports() throws IOException {
         List<PaymentTransaction> sh19Transactions =
             findPaymentTransactions(SUCCESSFUL_STATUSES).stream()
-                .filter(p -> StringUtils.startsWith(p.getFormType(), "SH19"))
+                .filter(p -> (p.getFormType().startsWith("SH19")))
                 .toList();
         createReport(sh19FinanceReportPattern, sh19Transactions);
         createReport(failedTransactionsFinanceReportPattern, findPaymentTransactions(FAILED_STATUSES));
