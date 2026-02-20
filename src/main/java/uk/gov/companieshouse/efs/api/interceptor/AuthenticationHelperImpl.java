@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.efs.api.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * Helper class for user authentication.

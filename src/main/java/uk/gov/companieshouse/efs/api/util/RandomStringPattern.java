@@ -3,7 +3,8 @@ package uk.gov.companieshouse.efs.api.util;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Class to generate different types of random strings using a template pattern.

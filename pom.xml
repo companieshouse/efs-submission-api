@@ -19,10 +19,10 @@
         <skip.unit.tests>false</skip.unit.tests>
         <java.version>21</java.version>
         <api-helper-java.version>3.0.3</api-helper-java.version>
-        <avro.version>1.12.0</avro.version>
+        <avro.version>1.12.1</avro.version>
         <aws-java-sdk-core.version>1.12.787</aws-java-sdk-core.version>
         <software.amazon.awssdk.version>2.35.1</software.amazon.awssdk.version>
-        <ch-kafka.version>3.0.2</ch-kafka.version>
+        <ch-kafka.version>3.0.7</ch-kafka.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <commons-io.version>2.19.0</commons-io.version>
         <commons-lang3.version>3.19.0</commons-lang3.version>
@@ -52,12 +52,13 @@
 
         <mockito-junit-jupiter.version>5.2.0</mockito-junit-jupiter.version>
         <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
+        <bcprov-jdk180n.version>1.83</bcprov-jdk180n.version>
         <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
         <private-api-sdk-java.version>4.0.454</private-api-sdk-java.version>
         <sdk-manager-java.version>3.0.14</sdk-manager-java.version>
         <snakeyaml.version>2.4</snakeyaml.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
-        <spring-boot.version>3.5.10</spring-boot.version>
+        <spring-boot.version>3.5.11</spring-boot.version>
         <spring-test.version>6.2.8</spring-test.version>
         <structured-logging.version>3.0.50</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>
@@ -234,6 +235,10 @@
                     <groupId>org.sonarsource.scanner.api</groupId>
                     <artifactId>sonar-scanner-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -401,6 +406,14 @@
             <artifactId>oracle-xe</artifactId>
             <version>${testcontainers.version}</version>
             <scope>test</scope>
+        </dependency>
+        <!-- update from version 1.72 with 7 vulnerabilities,
+        in transitive dependency of mockserver-client-java 5.15.0 -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${bcprov-jdk180n.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mock-server</groupId>

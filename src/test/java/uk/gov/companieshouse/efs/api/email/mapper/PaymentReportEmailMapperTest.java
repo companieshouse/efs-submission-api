@@ -8,7 +8,8 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import org.apache.commons.lang.StringUtils;
+import java.util.Objects;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -62,9 +63,9 @@ class PaymentReportEmailMapperTest {
         when(config.getAppId()).thenReturn("efs-submission-api.payment_report");
         when(config.getMessageType()).thenReturn("efs_payment_report");
         when(config.getDateFormat()).thenReturn("dd MMMM yyyy");
-        if (StringUtils.equals("scottish", reportType)) {
+        if (Objects.equals("scottish", reportType)) {
             when(config.getScottishEmailAddress()).thenReturn("scot_internal_demo@ch.gov.uk");
-        } else if (StringUtils.equals("specCap", reportType)) {
+        } else if (Objects.equals("specCap", reportType)) {
             when(config.getSpecialCapitalEmailAddress()).thenReturn("specCap_internal_demo@ch.gov.uk");
         }
         when(config.getFinanceEmailAddress()).thenReturn("internal_demo@ch.gov.uk");
@@ -72,9 +73,9 @@ class PaymentReportEmailMapperTest {
         when(timestampGenerator.generateTimestamp()).thenReturn(createAtLocalDateTime);
 
         when(model.getFileLink()).thenReturn("file-link");
-        if (StringUtils.equals("scottish", reportType)) {
+        if (Objects.equals("scottish", reportType)) {
             when(model.getFileName()).thenReturn("file-nameScottish");
-        } else if (StringUtils.equals("specCap", reportType)) {
+        } else if (Objects.equals("specCap", reportType)) {
             when(model.getFileName()).thenReturn("file-nameSH19");
         } else {
             when(model.getFileName()).thenReturn("file-name");
@@ -83,9 +84,9 @@ class PaymentReportEmailMapperTest {
 
     private EmailDocument<PaymentReportEmailData> expectedPaymentReportEmailDocument(final String reportType) {
         final String fileName;
-        if (StringUtils.equals("scottish", reportType)) {
+        if (Objects.equals("scottish", reportType)) {
             fileName = "file-nameScottish";
-        } else if (StringUtils.equals("specCap", reportType)) {
+        } else if (Objects.equals("specCap", reportType)) {
             fileName = "file-nameSH19";
         } else {
             fileName = "file-name";
@@ -100,9 +101,9 @@ class PaymentReportEmailMapperTest {
     }
 
     private String getReportEmailAddress(final String reportType) {
-        if (StringUtils.equals("scottish", reportType)) {
+        if (Objects.equals("scottish", reportType)) {
             return ("scot_internal_demo@ch.gov.uk");
-        } else if (StringUtils.equals("specCap", reportType)) {
+        } else if (Objects.equals("specCap", reportType)) {
             return ("specCap_internal_demo@ch.gov.uk");
         } else {
             return ("internal_demo@ch.gov.uk");
