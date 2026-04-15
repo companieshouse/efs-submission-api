@@ -52,13 +52,14 @@
 
         <mockito-junit-jupiter.version>5.2.0</mockito-junit-jupiter.version>
         <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
+        <netty.version>4.2.12.Final</netty.version>
         <bcprov-jdk180n.version>1.83</bcprov-jdk180n.version>
         <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
         <private-api-sdk-java.version>4.0.454</private-api-sdk-java.version>
         <sdk-manager-java.version>3.0.14</sdk-manager-java.version>
         <snakeyaml.version>2.4</snakeyaml.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
-        <spring-boot.version>3.5.11</spring-boot.version>
+        <spring-boot.version>3.5.13</spring-boot.version>
         <spring-test.version>6.2.8</spring-test.version>
         <structured-logging.version>3.0.50</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>
@@ -76,6 +77,14 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <!-- Use netty-bom to manage all Netty dependencies at version 4.2.12.Final -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>io.opentelemetry.instrumentation</groupId>
                 <artifactId>opentelemetry-instrumentation-bom</artifactId>
