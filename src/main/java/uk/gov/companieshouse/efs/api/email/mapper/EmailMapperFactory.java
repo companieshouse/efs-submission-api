@@ -229,15 +229,12 @@ public class EmailMapperFactory {
 
         public void validate(EmailMapperFactory data) {
             checkNotNull(data.getAcceptEmailMapper(), "acceptEmailMapper");
-            checkNotNull(data.getConfirmationEmailMapper(),
-                    "confirmationEmailMapper");
-            checkNotNull(data.getPaymentFailedEmailMapper(),
-                    "paymentFailedEmailMapper");
-            checkNotNull(data.getDelayedSubmissionBusinessEmailMapper(),
-                    "delayedSubmissionBusinessEmailMapper");
+            checkNotNull(data.getConfirmationEmailMapper(), "confirmationEmailMapper");
+            checkNotNull(data.getPaymentFailedEmailMapper(), "paymentFailedEmailMapper");
+            checkNotNull(data.getDelayedSubmissionBusinessEmailMapper(), "delayedSubmissionBusinessEmailMapper");
             checkNotNull(data.getDelayedSubmissionSupportEmailMapper(), "delayedSubmissionSupportEmailMapper");
             checkNotNull(data.getDelayedSH19SameDaySubmissionSupportEmailMapper(),
-                    "delayedSH19SameDaySubmissionSupportEmailMapper");
+                "delayedSH19SameDaySubmissionSupportEmailMapper");
             checkNotNull(data.getInternalAvFailedEmailMapper(), "internalAVFailedEmailMapper");
             checkNotNull(data.getInternalFailedConversionEmailMapper(), "internalFailedConversionEmailMapper");
             checkNotNull(data.getInternalSubmissionEmailMapper(), "internalSubmissionEmailMapper");
@@ -245,12 +242,11 @@ public class EmailMapperFactory {
             checkNotNull(data.getRejectEmailMapper(), "rejectEmailMapper");
         }
 
-        private static <T> T checkNotNull(T t, String fieldName) {
+        private static <T> void checkNotNull(final T t, final String fieldName) {
             if (t == null) {
-                String msg = String.format("'%s' must not be null", fieldName);
+                final var msg = "'%s' must not be null".formatted(fieldName);
                 throw new IllegalArgumentException(msg);
             }
-            return t;
         }
 
 

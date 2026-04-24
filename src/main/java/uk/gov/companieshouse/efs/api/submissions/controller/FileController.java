@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
-import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.util.stream.Collectors;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ public class FileController {
      * Endpoint to upload file details.
      *
      * @param id        submission id
-     * @param files     lits of file details
+     * @param files     list of file details
      * @param result    bindingResult
      * @return          ResponseEntity&lt;SubmissionResponseApi&gt;
      */
@@ -46,8 +46,8 @@ public class FileController {
                                                             @RequestBody @Valid @NotNull FileListApi files, BindingResult result) {
 
         if (result.hasErrors()) {
-            LOGGER.info(String.format("File list details are invalid: %s", result.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(","))));
+            LOGGER.info("File list details are invalid: %s".formatted(result.getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(","))));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 

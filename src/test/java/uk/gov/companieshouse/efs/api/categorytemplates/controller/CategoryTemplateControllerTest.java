@@ -1,5 +1,11 @@
 package uk.gov.companieshouse.efs.api.categorytemplates.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,18 +13,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateApi;
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateListApi;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.logging.Logger;
-
-import jakarta.servlet.http.HttpServletRequest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryTemplateControllerTest {
@@ -46,7 +44,7 @@ class CategoryTemplateControllerTest {
         when(service.getCategoryTemplates()).thenReturn(expected);
 
         //when
-        ResponseEntity<CategoryTemplateListApi> actual = controller.getCategoryTemplates(null, request);
+        final var actual = controller.getCategoryTemplates(null);
 
         //then
         assertEquals(expected, actual.getBody());
@@ -62,7 +60,7 @@ class CategoryTemplateControllerTest {
         when(service.getCategoryTemplatesByCategory(categoryId)).thenReturn(expected);
 
         //when
-        ResponseEntity<CategoryTemplateListApi> actual = controller.getCategoryTemplates(categoryId, request);
+        final var actual = controller.getCategoryTemplates(categoryId);
 
         //then
         assertEquals(expected, actual.getBody());
@@ -77,7 +75,7 @@ class CategoryTemplateControllerTest {
         when(service.getCategoryTemplatesByCategory(categoryId)).thenThrow(new RuntimeException("Test exception scenario"));
 
         //when
-        final ResponseEntity<CategoryTemplateListApi> actual = controller.getCategoryTemplates(categoryId, request);
+        final var actual = controller.getCategoryTemplates(categoryId);
 
         //then
         assertEquals(status, actual.getStatusCode());
@@ -92,7 +90,7 @@ class CategoryTemplateControllerTest {
         when(service.getCategoryTemplate(categoryId)).thenReturn(expected);
 
         //when
-        ResponseEntity<CategoryTemplateApi> actual = controller.getCategoryTemplate(categoryId, request);
+        final var actual = controller.getCategoryTemplate(categoryId);
 
         //then
         assertEquals(expected, actual.getBody());
@@ -107,7 +105,7 @@ class CategoryTemplateControllerTest {
         when(service.getCategoryTemplate(categoryId)).thenThrow(new RuntimeException("Test exception scenario"));
 
         //when
-        final ResponseEntity<CategoryTemplateApi> actual = controller.getCategoryTemplate(categoryId, request);
+        final var actual = controller.getCategoryTemplate(categoryId);
 
         //then
         assertEquals(status, actual.getStatusCode());
@@ -115,7 +113,7 @@ class CategoryTemplateControllerTest {
 
     @Test
     void testGetRootCategoryTest() {
-        controller.getRootCategory(request);
+        controller.getRootCategory();
 
         verify(service).getCategoryTemplate("ROOT");
         verifyNoMoreInteractions(service);

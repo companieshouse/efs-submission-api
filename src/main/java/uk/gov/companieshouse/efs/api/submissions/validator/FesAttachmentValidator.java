@@ -22,8 +22,8 @@ public class FesAttachmentValidator extends ValidatorImpl<Submission> implements
 
             // don't throw if !template.isPresent()
             if (template.isPresent() && template.filter(FormTemplate::isFesEnabled).isPresent() && hasAttachments) {
-                throw new SubmissionValidationException(String
-                    .format("Attachments present in submission [%s] for FES enabled form [%s]", input.getId(),
+                throw new SubmissionValidationException("Attachments present in submission [%s] for FES enabled form [%s]"
+                    .formatted(input.getId(),
                         template.get().getFormType()));
             }
         }

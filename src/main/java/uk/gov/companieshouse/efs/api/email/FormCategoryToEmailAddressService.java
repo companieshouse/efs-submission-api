@@ -8,12 +8,11 @@ import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryType
 import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.SHARE_CAPITAL;
 import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.SHARE_CAPITAL_REDUCTION;
 
+import jakarta.annotation.PostConstruct;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants;
@@ -73,9 +72,8 @@ public class FormCategoryToEmailAddressService {
 
     }
 
-    @Autowired
-    public FormCategoryToEmailAddressService(FormTemplateRepository formTemplateRepository,
-        CategoryTemplateService categoryTemplateService) {
+    public FormCategoryToEmailAddressService(final FormTemplateRepository formTemplateRepository,
+        final CategoryTemplateService categoryTemplateService) {
         this.formTemplateRepository = formTemplateRepository;
         this.categoryTemplateService = categoryTemplateService;
     }

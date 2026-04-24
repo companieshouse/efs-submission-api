@@ -13,13 +13,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.ModelAndView;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.LogContext;
 import uk.gov.companieshouse.logging.util.LogContextProperties;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class LoggingInterceptorTest {
     private LoggingInterceptor interceptor;
 
@@ -42,7 +42,6 @@ class LoggingInterceptorTest {
     @BeforeEach
     public void setUp() {
         interceptor = new LoggingInterceptor(logger);
-        when(session.getAttribute(LogContextProperties.START_TIME_KEY.value())).thenReturn(1L);
         when(request.getSession()).thenReturn(session);
     }
 
@@ -56,6 +55,8 @@ class LoggingInterceptorTest {
 
     @Test
     void postHandle() {
+        // given
+        when(session.getAttribute(LogContextProperties.START_TIME_KEY.value())).thenReturn(1L);
         // when
         interceptor.postHandle(request, response, handler, modelAndView);
         // then

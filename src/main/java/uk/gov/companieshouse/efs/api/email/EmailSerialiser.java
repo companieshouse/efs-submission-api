@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.efs.api.email;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.apache.avro.Schema;
@@ -9,8 +7,9 @@ import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.EncoderFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.efs.api.email.exception.EmailServiceException;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.fes.service.GenericDatumWriterFactory;
@@ -35,11 +34,10 @@ public class EmailSerialiser {
      * @param datumWriterFactory    dependency
      * @param genericRecordFactory  dependency
      */
-    @Autowired
-    public EmailSerialiser(ObjectMapper mapper,
-                           EncoderFactory encoderFactory,
-                           GenericDatumWriterFactory datumWriterFactory,
-                           GenericRecordFactory genericRecordFactory) {
+    public EmailSerialiser(final ObjectMapper mapper,
+                           final EncoderFactory encoderFactory,
+                           final GenericDatumWriterFactory datumWriterFactory,
+                           final GenericRecordFactory genericRecordFactory) {
         this.mapper = mapper;
         this.encoderFactory = encoderFactory;
         this.datumWriterFactory = datumWriterFactory;
@@ -54,14 +52,14 @@ public class EmailSerialiser {
             datumWriter.write(buildAvroGenericRecord(document, schema), encoder);
             encoder.flush();
             return stream.toByteArray();
-        } catch (IOException ex) {
+        } catch (final IOException | JacksonException ex) {
             throw new EmailServiceException("Error serializing email", ex);
         }
     }
 
-    private GenericRecord buildAvroGenericRecord(EmailDocument<?> document, Schema schema)
-            throws JsonProcessingException {
-        GenericRecord documentData = genericRecordFactory.getGenericRecord(schema);
+    private GenericRecord buildAvroGenericRecord(final EmailDocument<?> document, final Schema schema)
+            throws JacksonException {
+        final var documentData = genericRecordFactory.getGenericRecord(schema);
         documentData.put("app_id", document.getAppId());
         documentData.put("message_id", document.getMessageId());
         documentData.put("message_type", document.getMessageType());

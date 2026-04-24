@@ -1,17 +1,12 @@
 package uk.gov.companieshouse.efs.api.payment.controller;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -42,9 +37,8 @@ public class PaymentFeatureTestingFeesController {
     private final Logger logger;
     private final PaymentTemplateService paymentTemplateService;
 
-    @Autowired
     public PaymentFeatureTestingFeesController(final PaymentTemplateService paymentTemplateService,
-            Logger logger) {
+            final Logger logger) {
         this.paymentTemplateService = paymentTemplateService;
         this.logger = logger;
     }
@@ -66,8 +60,7 @@ public class PaymentFeatureTestingFeesController {
     public ResponseEntity<List<PaymentTemplate>> getPaymentTemplates(
         @RequestParam(value = "type", required = false) String fee,
         @RequestParam(value = "activeAt", required = false) @DateTimeFormat(
-            iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime activeAt,
-        HttpServletRequest request) {
+            iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime activeAt) {
 
         Map<String, Object> info = new HashMap<>();
         info.put("fee", fee);
@@ -98,44 +91,19 @@ public class PaymentFeatureTestingFeesController {
     }
 
     /**
-     * DTO class used as request body by {@link #createPaymentTemplate}
-     */
-    public static class TestingFeesPaymentTemplate {
-        final String fee;
-        final LocalDateTime activeFrom;
-        final String amount;
-
-        @JsonCreator
-        public TestingFeesPaymentTemplate(@JsonProperty("fee") final String fee,
-            @JsonProperty("active_from") final LocalDateTime activeFrom,
-            @JsonProperty("amount") final String amount) {
-            this.fee = fee;
-            this.activeFrom = activeFrom;
-            this.amount = amount;
+         * DTO class used as request body by {@link #createPaymentTemplate}
+         */
+        public record TestingFeesPaymentTemplate(
+            @JsonProperty("fee") String fee,
+            @JsonProperty("active_from") LocalDateTime activeFrom,
+            @JsonProperty("amount") String amount
+        ) {
+            @Override
+            public String toString() {
+                return "TestingFeesPaymentTemplate[fee='%s', activeFrom=%s, amount='%s']"
+                    .formatted(fee, activeFrom, amount);
+            }
         }
-
-        public String getFee() {
-            return fee;
-        }
-
-        @JsonProperty("active_from")
-        public LocalDateTime getActiveFrom() {
-            return activeFrom;
-        }
-
-        public String getAmount() {
-            return amount;
-        }
-
-        @Override
-        public String toString() {
-            return new StringJoiner(", ", TestingFeesPaymentTemplate.class.getSimpleName() + "[", "]")
-                .add("fee='" + fee + "'")
-                .add("activeFrom=" + activeFrom)
-                .add("amount='" + amount + "'")
-                .toString();
-        }
-    }
 
     /**
      * Create and store a bare-bones payment template for test purposes.
@@ -155,18 +123,18 @@ public class PaymentFeatureTestingFeesController {
     public ResponseEntity<PaymentTemplate> createPaymentTemplate(
         @RequestBody final TestingFeesPaymentTemplate templateDetails) {
 
-        final PaymentTemplate.Item item = PaymentTemplate.Item.newBuilder()
-            .withAmount(templateDetails.getAmount())
+        final var item = PaymentTemplate.Item.newBuilder()
+            .withAmount(templateDetails.amount())
             .build();
-        final PaymentTemplate paymentTemplate = PaymentTemplate.newBuilder()
+        final var paymentTemplate = PaymentTemplate.newBuilder()
             .withId(
-                new PaymentTemplateId(templateDetails.getFee(), templateDetails.getActiveFrom()))
+                new PaymentTemplateId(templateDetails.fee(), templateDetails.activeFrom()))
             .withItem(item)
             .build();
 
-        final PaymentTemplate saved = paymentTemplateService.postTemplate(paymentTemplate);
+        final var saved = paymentTemplateService.postTemplate(paymentTemplate);
 
-        final URI location = ServletUriComponentsBuilder
+        final var location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
             .buildAndExpand(saved.getId())

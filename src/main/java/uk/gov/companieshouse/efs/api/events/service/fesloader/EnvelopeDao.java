@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.efs.api.events.service.fesloader;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,8 +9,7 @@ public class EnvelopeDao {
 
     private JdbcTemplate jdbc;
 
-    @Autowired
-    public EnvelopeDao(@Qualifier("fesJdbc") JdbcTemplate jdbc) {
+    public EnvelopeDao(@Qualifier("fesJdbc") final JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
@@ -23,7 +21,7 @@ public class EnvelopeDao {
         return result;
     }
 
-    public void insertEnvelope(long envelopeId, long batchId) {
+    public void insertEnvelope(final long envelopeId, final long batchId) {
         jdbc.update("insert into ENVELOPE(ENVELOPE_ID, ENVELOPE_BATCH_ID) " + "values(?,?)",
             envelopeId, batchId);
     }

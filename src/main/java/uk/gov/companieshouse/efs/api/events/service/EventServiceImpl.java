@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.efs.events.FileConversionStatusApi;
@@ -61,13 +60,12 @@ public class EventServiceImpl implements EventService {
     private ExecutionEngine executionEngine;
     private DelayedSubmissionHandlerContext delayedSubmissionHandlerContext;
 
-    @Autowired
-    public EventServiceImpl(SubmissionService submissionService,
-        final FormTemplateService formTemplateService, EmailService emailService,
-        SubmissionRepository repository, CurrentTimestampGenerator currentTimestampGenerator,
-        @Value("${max.queue.messages}") int maxQueuedMessages, DecisionEngine decisionEngine,
-        BarcodeGeneratorService barcodeGeneratorService, TiffDownloadService tiffDownloadService,
-        FesLoaderService fesLoaderService, ExecutionEngine executionEngine, DelayedSubmissionHandlerContext delayedSubmissionHandlerContext) {
+    public EventServiceImpl(final SubmissionService submissionService,
+        final FormTemplateService formTemplateService, final EmailService emailService,
+        final SubmissionRepository repository, final CurrentTimestampGenerator currentTimestampGenerator,
+        @Value("${max.queue.messages}") final int maxQueuedMessages, final DecisionEngine decisionEngine,
+        final BarcodeGeneratorService barcodeGeneratorService, final TiffDownloadService tiffDownloadService,
+        final FesLoaderService fesLoaderService, final ExecutionEngine executionEngine, final DelayedSubmissionHandlerContext delayedSubmissionHandlerContext) {
         this.submissionService = submissionService;
         this.formTemplateService = formTemplateService;
         this.emailService = emailService;
@@ -162,7 +160,7 @@ public class EventServiceImpl implements EventService {
                 if (barcode == null) {
                     barcode = barcodeGeneratorService.getBarcode(submittedAt);
                     LOGGER.debug(
-                            String.format("Generated barcode for submission [%s]: %s", submission.getId(), barcode));
+                        "Generated barcode for submission [%s]: %s".formatted(submission.getId(), barcode));
                     submissionService.updateSubmissionBarcode(submission.getId(), barcode);
                 }
 
@@ -171,12 +169,12 @@ public class EventServiceImpl implements EventService {
                 
                 if (formTemplate == null) {
                     throw new SubmissionIncorrectStateException(
-                        String.format("Unrecognised form type '%s' in form details", efsFormId));
+                        "Unrecognised form type '%s' in form details".formatted(efsFormId));
                 }
                 
                 final String fesDocType =
                     Optional.ofNullable(formTemplate.getFesDocType()).orElseGet(formTemplate::getFormType);
-                LOGGER.debug(String.format("Submit to FES: [%s]", fesDocType));
+                LOGGER.debug("Submit to FES: [%s]".formatted(fesDocType));
 
                 // retrieve TIFF file
                 List<FesFileModel> tiffFiles = new ArrayList<>();
@@ -184,7 +182,7 @@ public class EventServiceImpl implements EventService {
                         file -> tiffFiles.add(
                                 new FesFileModel(
                                         tiffDownloadService.downloadTiffFile(file.getConvertedFileId()), file.getNumberOfPages())));
-                LOGGER.debug(String.format("Retrieved [%d] files for submission [%s] from S3", tiffFiles.size(), submission.getId()));
+                LOGGER.debug("Retrieved [%d] files for submission [%s] from S3".formatted(tiffFiles.size(), submission.getId()));
 
                 // insert into FES DB
 
@@ -192,8 +190,7 @@ public class EventServiceImpl implements EventService {
                     new FesLoaderModel(barcode, submission.getCompany().getCompanyName(),
                         submission.getCompany().getCompanyNumber(), fesDocType,
                         formTemplate.isSameDay(), tiffFiles, submittedAt));
-                LOGGER.debug(String.format(
-                    "Inserted submission details into FES DB for submission [%s], form [%s], same-day [%s]",
+                LOGGER.debug("Inserted submission details into FES DB for submission [%s], form [%s], same-day [%s]".formatted(
                     submission.getId(), fesDocType, formTemplate.isSameDay() ? "Y" : "N"));
 
                 submissionService.updateSubmissionStatus(submission.getId(),
@@ -232,14 +229,14 @@ public class EventServiceImpl implements EventService {
         debug.put("fileId", fileId);
         if (submission == null) {
             LOGGER.errorContext(submissionId,
-                    String.format(SUBMISSION_NOT_FOUND_MESSAGE, submissionId), null, debug);
-            throw new SubmissionNotFoundException(String.format(SUBMISSION_NOT_FOUND_MESSAGE, submissionId));
+                SUBMISSION_NOT_FOUND_MESSAGE.formatted(submissionId), null, debug);
+            throw new SubmissionNotFoundException(SUBMISSION_NOT_FOUND_MESSAGE.formatted(submissionId));
         } else if (submission.getStatus() != SubmissionStatus.PROCESSING) {
             LOGGER.errorContext(submissionId,
-                    String.format(SUBMISSION_INCORRECT_STATE_MESSAGE, submissionId,
-                            SubmissionStatus.PROCESSING), null, debug);
+                SUBMISSION_INCORRECT_STATE_MESSAGE.formatted(submissionId,
+                    SubmissionStatus.PROCESSING), null, debug);
             throw new SubmissionIncorrectStateException(
-                    String.format(SUBMISSION_INCORRECT_STATE_MESSAGE, submissionId, SubmissionStatus.PROCESSING));
+                SUBMISSION_INCORRECT_STATE_MESSAGE.formatted(submissionId, SubmissionStatus.PROCESSING));
         }
 
         Optional<FileDetails> fileDetailsOpt = submission.getFormDetails().getFileDetailsList().stream()
@@ -247,15 +244,15 @@ public class EventServiceImpl implements EventService {
 
         if (fileDetailsOpt.isPresent()) {
             if (fileDetailsOpt.get().getConversionStatus() != FileConversionStatus.QUEUED) {
-                LOGGER.errorContext(submissionId, String.format(FILE_INCORRECT_STATE_MESSAGE, fileId,
-                        FileConversionStatus.QUEUED, submissionId), null, debug);
+                LOGGER.errorContext(submissionId, FILE_INCORRECT_STATE_MESSAGE.formatted(fileId,
+                    FileConversionStatus.QUEUED, submissionId), null, debug);
                 throw new FileIncorrectStateException(
-                        String.format(FILE_INCORRECT_STATE_MESSAGE, fileId, FileConversionStatus.QUEUED, submissionId));
+                    FILE_INCORRECT_STATE_MESSAGE.formatted(fileId, FileConversionStatus.QUEUED, submissionId));
             }
         } else {
-            LOGGER.errorContext(submissionId, String.format(FILE_NOT_FOUND_MESSAGE, fileId,
-                    submissionId), null, debug);
-            throw new FileNotFoundException(String.format(FILE_NOT_FOUND_MESSAGE, fileId, submissionId));
+            LOGGER.errorContext(submissionId, FILE_NOT_FOUND_MESSAGE.formatted(fileId,
+                submissionId), null, debug);
+            throw new FileNotFoundException(FILE_NOT_FOUND_MESSAGE.formatted(fileId, submissionId));
         }
         return submission;
     }

@@ -9,13 +9,13 @@ public class CompanyDetailsValidator extends ValidatorImpl<Submission> implement
     public void validate(final Submission input) throws SubmissionValidationException {
         if (input.getCompany() == null) {
             throw new SubmissionValidationException(
-                String.format("Company details are absent in submission [%s]", input.getId()));
+                "Company details are absent in submission [%s]".formatted(input.getId()));
         } else if (StringUtils.isBlank(input.getCompany().getCompanyNumber())) {
             throw new SubmissionValidationException(
-                String.format("Company number is absent in submission [%s]", input.getId()));
+                "Company number is absent in submission [%s]".formatted(input.getId()));
         } else if (StringUtils.isBlank(input.getCompany().getCompanyName())) {
             throw new SubmissionValidationException(
-                String.format("Company name is absent in submission [%s]", input.getId()));
+                "Company name is absent in submission [%s]".formatted(input.getId()));
         }
         super.validate(input);
 

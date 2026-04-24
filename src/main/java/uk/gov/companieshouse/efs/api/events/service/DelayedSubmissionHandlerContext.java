@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.logging.Logger;
 
@@ -18,7 +17,6 @@ public class DelayedSubmissionHandlerContext {
         STANDARD, SAMEDAY
     }
 
-    @Autowired
     public DelayedSubmissionHandlerContext(
         final Set<DelayedSubmissionHandlerStrategy> implementationSet,
         final Logger logger) {

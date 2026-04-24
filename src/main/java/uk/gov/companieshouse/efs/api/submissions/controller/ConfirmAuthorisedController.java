@@ -46,7 +46,7 @@ public class ConfirmAuthorisedController {
             String message = Optional.ofNullable(result.getFieldError())
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .orElse(confirmAuthorised.getConfirmAuthorised().toString());
-            LOGGER.info(String.format("Presenter must confirm authorisation: %s", message));
+            LOGGER.info("Presenter must confirm authorisation: %s".formatted(message));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 

@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.efs.api.formtemplates.service;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
@@ -26,7 +25,6 @@ public class FormTemplateServiceImpl implements FormTemplateService {
      *
      * @param repository the {@link FormTemplateRepository}
      */
-    @Autowired
     public FormTemplateServiceImpl(final FormTemplateRepository repository, final FormTemplateMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;

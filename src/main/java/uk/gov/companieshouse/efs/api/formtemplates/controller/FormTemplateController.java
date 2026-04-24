@@ -2,8 +2,6 @@ package uk.gov.companieshouse.efs.api.formtemplates.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +30,6 @@ public class FormTemplateController {
      * @param formService service used to store the form template
      * @param logger the service logger
      */
-    @Autowired
     public FormTemplateController(final FormTemplateService formService, final Logger logger) {
         this.formService = formService;
         this.logger = logger;
@@ -47,7 +44,7 @@ public class FormTemplateController {
      */
     @GetMapping(value = "/form-templates", produces = {"application/json"})
     public ResponseEntity<FormTemplateListApi> getFormTemplates(
-        @RequestParam(value = "category", required = false) String categoryId, HttpServletRequest request) {
+        @RequestParam(value = "category", required = false) final String categoryId) {
 
         try {
             return categoryId == null
@@ -70,8 +67,7 @@ public class FormTemplateController {
      * @return responseEntity
      */
     @GetMapping(value = "/form-template", produces = {"application/json"})
-    public ResponseEntity<FormTemplateApi> getFormTemplate(@RequestParam("type") String id,
-        HttpServletRequest request) {
+    public ResponseEntity<FormTemplateApi> getFormTemplate(@RequestParam("type") final String id) {
 
         try {
             return ResponseEntity.ok().body(formService.getFormTemplate(id));

@@ -1,16 +1,16 @@
 package uk.gov.companieshouse.efs.api.util;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.Test;
 
 
-public class UUIDGeneratorTest {
+class UUIDGeneratorTest {
 
     private UuidGenerator uuidGenerator = new UuidGenerator();
 
     @Test
-    public void testGenerateId(){
+    void testGenerateId(){
         String testId = uuidGenerator.generateId();
         assertNotNull(testId);
     }

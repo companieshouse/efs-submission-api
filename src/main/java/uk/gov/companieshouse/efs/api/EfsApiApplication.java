@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.efs.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -19,9 +18,8 @@ public class EfsApiApplication implements WebMvcConfigurer {
      * @param userAuthenticationInterceptor responsible for validating a user is authenticated
      * @param loggingInterceptor responsible for logging the start and end of the requests
      */
-    @Autowired
     public EfsApiApplication(final UserAuthenticationInterceptor userAuthenticationInterceptor,
-        LoggingInterceptor loggingInterceptor) {
+        final LoggingInterceptor loggingInterceptor) {
         this.userAuthenticationInterceptor = userAuthenticationInterceptor;
         this.loggingInterceptor = loggingInterceptor;
     }

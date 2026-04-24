@@ -14,7 +14,7 @@ public class RestClient {
     }
 
     public byte[] getSchema(String schemaRegistryUrl, String emailSchemaUri) {
-        String schemaUrl = String.format("%s%s", schemaRegistryUrl, emailSchemaUri);
+        String schemaUrl = "%s%s".formatted(schemaRegistryUrl, emailSchemaUri);
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<byte[]>

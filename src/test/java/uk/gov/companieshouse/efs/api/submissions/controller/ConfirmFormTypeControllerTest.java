@@ -1,5 +1,10 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,11 +20,6 @@ import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionIncorrectStateException;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNotFoundException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ConfirmFormTypeControllerTest {

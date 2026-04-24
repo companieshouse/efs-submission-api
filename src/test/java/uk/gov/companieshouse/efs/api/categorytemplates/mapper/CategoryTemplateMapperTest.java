@@ -1,15 +1,14 @@
 package uk.gov.companieshouse.efs.api.categorytemplates.mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateApi;
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateListApi;
 import uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTemplate;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CategoryTemplateMapperTest {
 

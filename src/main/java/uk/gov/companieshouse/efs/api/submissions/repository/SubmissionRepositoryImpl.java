@@ -70,21 +70,21 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
      */
     @Override
     public List<Submission> findByStatusOrderByPriority(final SubmissionStatus status, final int maxBatchSize) {
-        LOGGER.debug(String.format("Fetching submissions with status: [%s]", status));
+        LOGGER.debug("Fetching submissions with status: [%s]".formatted(status));
         final Sort createdOrder = Sort.by(Sort.Direction.ASC, CREATED_AT);
         List<Submission> samedayList = template.find(
                 Query.query(Criteria.where(STATUS).is(status).and(FORM_TYPE).regex(SAMEDAY_FORM_PATTERN))
                         .with(createdOrder).limit(maxBatchSize), Submission.class, SUBMISSIONS_COLLECTION);
-        LOGGER.debug(String.format("Found [%d] SAMEDAY submissions with status: [%s]", samedayList.size(), status));
+        LOGGER.debug("Found [%d] SAMEDAY submissions with status: [%s]".formatted(samedayList.size(), status));
         List<Submission> nonSamedayList = template.find(
                 Query.query(Criteria.where(STATUS).is(status).and(FORM_TYPE).not().regex(SAMEDAY_FORM_PATTERN))
                         .with(createdOrder).limit(maxBatchSize - samedayList.size()), Submission.class,
                 SUBMISSIONS_COLLECTION);
         LOGGER.debug(
-                String.format("Found [%d] non-SAMEDAY submissions with status: [%s]", nonSamedayList.size(), status));
-        final List<Submission> priorityList =
+            "Found [%d] non-SAMEDAY submissions with status: [%s]".formatted(nonSamedayList.size(), status));
+        final var priorityList =
                 Stream.concat(samedayList.stream(), nonSamedayList.stream()).toList();
-        LOGGER.debug(String.format("Found in all [%d] submissions with status: [%s]", priorityList.size(), status));
+        LOGGER.debug("Found in all [%d] submissions with status: [%s]".formatted(priorityList.size(), status));
 
         return priorityList;
     }
@@ -107,7 +107,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
         template.updateFirst(Query.query(Criteria.where(ID).is(id)),
             new Update().set(STATUS, submissionStatus).set(LAST_MODIFIED_AT, lastModified),
             String.class, SUBMISSIONS_COLLECTION);
-        LOGGER.debug(String.format("Updated submission status [%s] at [%s]", submissionStatus,
+        LOGGER.debug("Updated submission status [%s] at [%s]".formatted(submissionStatus,
             DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
     }
 
@@ -119,24 +119,24 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
     @Override
     public void updateSubmissionStatusByBarcode(String barcode, FesSubmissionStatus fesSubmissionStatus) {
         LOGGER.debug(
-            String.format("Updating submission status [%s] for barcode [%s]", fesSubmissionStatus,
+            "Updating submission status [%s] for barcode [%s]".formatted(fesSubmissionStatus,
                 barcode));
         final LocalDateTime lastModified = timestampGenerator.generateTimestamp();
         template.updateFirst(Query.query(Criteria.where(BARCODE).is(barcode)),
             new Update().set(STATUS, fesSubmissionStatus).set(LAST_MODIFIED_AT, lastModified),
             String.class, SUBMISSIONS_COLLECTION);
-        LOGGER.debug(String.format("Updated submission status [%s] for barcode [%s] at [%s]",
+        LOGGER.debug("Updated submission status [%s] for barcode [%s] at [%s]".formatted(
             fesSubmissionStatus, barcode,
             DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
     }
 
     @Override
     public Submission readByBarcode(String barcode) {
-        LOGGER.debug(String.format("Fetching submissions with barcode: [%s]", barcode));
+        LOGGER.debug("Fetching submissions with barcode: [%s]".formatted(barcode));
         Submission submission = template.findOne(Query.query(Criteria.where(BARCODE).is(barcode)), Submission.class,
                 SUBMISSIONS_COLLECTION);
         if (submission != null) {
-            LOGGER.debug(String.format("Found submission [%s] with barcode: [%s]", submission.getId(), barcode));
+            LOGGER.debug("Found submission [%s] with barcode: [%s]".formatted(submission.getId(), barcode));
         }
         return submission;
     }
@@ -147,14 +147,14 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
         template.updateFirst(Query.query(Criteria.where(ID).is(id)),
             new Update().set(BARCODE, barcode).set(LAST_MODIFIED_AT, lastModified), String.class,
             SUBMISSIONS_COLLECTION);
-        LOGGER.debug(String.format("Updated submission barcode to [%s] at [%s]", barcode,
+        LOGGER.debug("Updated submission barcode to [%s] at [%s]".formatted(barcode,
             DateTimeFormatter.ISO_INSTANT.format(lastModified.atZone(ZoneId.of("UTC")))));
     }
 
     @Override
     public List<Submission> findDelayedSubmissions(SubmissionStatus status, LocalDateTime before) {
         LOGGER.debug(
-            String.format("Fetching submissions with status: [%s] last modified before [%s]",
+            "Fetching submissions with status: [%s] last modified before [%s]".formatted(
                 status, before.toString()));
         List<Submission> submissions = template.find(Query.query(Criteria.where(STATUS)
             .is(status)
@@ -163,7 +163,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
             .and(FORM_TYPE)
             .ne("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
         LOGGER.debug(
-            String.format("Found [%d] submissions with status: [%s] last modified before [%s]",
+            "Found [%d] submissions with status: [%s] last modified before [%s]".formatted(
                 submissions.size(), status, before));
         return submissions;
     }
@@ -179,7 +179,7 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
             .lte(submittedBefore)
             .and(FORM_TYPE)
             .is("SH19_SAMEDAY")), Submission.class, SUBMISSIONS_COLLECTION);
-        LOGGER.debug(String.format("Found [%d] sameday submissions with statuses: %s submitted before [%s]",
+        LOGGER.debug("Found [%d] sameday submissions with statuses: %s submitted before [%s]".formatted(
             submissions.size(), statusesString, submittedBefore));
         return submissions;
     }
@@ -187,14 +187,14 @@ public class SubmissionRepositoryImpl implements SubmissionRepository {
     @Override
     public List<Submission> findPaidSubmissions(final Collection<SubmissionStatus> statuses, final LocalDate startDate,
         final LocalDate endDate) {
-        LOGGER.debug(String
-            .format("Fetching paid submissions with statuses: [%s] and submitted between [%s] and [%s] (exclusive)",
+        LOGGER.debug("Fetching paid submissions with statuses: [%s] and submitted between [%s] and [%s] (exclusive)"
+            .formatted(
                 statuses, startDate.toString(), endDate.toString()));
         List<Submission> submissions = template.find(Query.query(
             Criteria.where(STATUS).in(statuses).and(SUBMITTED_AT).gte(startDate).lt(endDate).and(FEE_ON_SUBMISSION)
                 .exists(true)), Submission.class, SUBMISSIONS_COLLECTION);
-        LOGGER.debug(String
-            .format("Found [%d] paid submissions with statuses: [%s] and submitted [%s] and [%s] (exclusive)",
+        LOGGER.debug("Found [%d] paid submissions with statuses: [%s] and submitted [%s] and [%s] (exclusive)"
+            .formatted(
                 submissions.size(), statuses, startDate, endDate));
         return submissions;
     }

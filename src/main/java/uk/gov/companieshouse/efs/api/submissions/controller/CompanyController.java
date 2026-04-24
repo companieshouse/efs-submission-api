@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
-import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.util.stream.Collectors;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,11 +45,11 @@ public class CompanyController {
      * @return          ResponseEntity&lt;SubmissionResponseApi&gt;
      */
     @PutMapping
-    public ResponseEntity<SubmissionResponseApi> submitCompany(@PathVariable("id") String id,
-                                                               @RequestBody @Valid @NotNull CompanyApi company, BindingResult result) {
+    public ResponseEntity<SubmissionResponseApi> submitCompany(@PathVariable final String id,
+                                                               @RequestBody @Valid @NotNull final CompanyApi company, final BindingResult result) {
         if (result.hasErrors()) {
-            LOGGER.info(String.format("Company details are invalid: %s", result.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(","))));
+            LOGGER.info("Company details are invalid: %s".formatted(result.getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(","))));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 

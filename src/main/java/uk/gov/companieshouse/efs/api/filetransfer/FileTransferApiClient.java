@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.efs.api.filetransfer;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -38,11 +37,10 @@ public class FileTransferApiClient {
      * @param fileTransferApiUrl    dependency
      * @param fileTransferApiKey    dependency
      */
-    @Autowired
-    public FileTransferApiClient(RestTemplate restTemplate,
-                                 FileTransferApiResponseHandler responseHandler,
-                                 @Value("${file.transfer.api.url}") String fileTransferApiUrl,
-                                 @Value("${file.transfer.api.key}") String fileTransferApiKey) {
+    public FileTransferApiClient(final RestTemplate restTemplate,
+                                 final FileTransferApiResponseHandler responseHandler,
+                                 @Value("${file.transfer.api.url}") final String fileTransferApiUrl,
+                                 @Value("${file.transfer.api.key}") final String fileTransferApiKey) {
         this.fileTransferApiUrl = fileTransferApiUrl;
         this.responseHandler = responseHandler;
         this.fileTransferApiKey = fileTransferApiKey;

@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.efs.api.events.service.model.Decision;
 import uk.gov.companieshouse.efs.api.events.service.model.DecisionResult;
@@ -82,9 +80,8 @@ public class DecisionEngine {
             debug.put("fileId", fileDetails.getFileId());
             debug.put("status", response.getHttpStatus());
 
-            LOGGER.errorContext(submissionId, String.format(
-                    "File transfer API returned status [%s] for file id [%s] in submission [%s]",
-                    response.getHttpStatus(), fileDetails.getFileId(), submissionId), null, debug);
+            LOGGER.errorContext(submissionId, "File transfer API returned status [%s] for file id [%s] in submission [%s]".formatted(
+                response.getHttpStatus(), fileDetails.getFileId(), submissionId), null, debug);
         } else if (AV_FAILED.equals(response.getFileStatus())) {
             fileDetails.setConversionStatus(FileConversionStatus.FAILED_AV);
             fileDetails.setLastModifiedAt(timestampGenerator.generateTimestamp());
@@ -105,7 +102,7 @@ public class DecisionEngine {
             decision.setDecisionResult(DecisionResult.NO_DECISION);
         } else if (decision.containsInfectedFile()) {
             decision.setDecisionResult(DecisionResult.NOT_CLEAN);
-        } else if (!formTemplate.isPresent()) {
+        } else if (formTemplate.isEmpty()) {
             decision.setDecisionResult(DecisionResult.FORM_TYPE_DOES_NOT_EXIST);
         } else if (formTemplate.get().isFesEnabled()) {
             decision.setDecisionResult(DecisionResult.FES_ENABLED);
