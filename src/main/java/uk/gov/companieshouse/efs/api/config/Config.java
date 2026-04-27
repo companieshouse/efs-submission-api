@@ -1,11 +1,21 @@
 package uk.gov.companieshouse.efs.api.config;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.sql.DataSource;
 import org.apache.avro.io.EncoderFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.jdbc.autoconfigure.DataSourceProperties;
+import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -37,16 +47,6 @@ import uk.gov.companieshouse.efs.api.util.IdentifierGeneratable;
 import uk.gov.companieshouse.efs.api.util.TimestampGenerator;
 import uk.gov.companieshouse.efs.api.util.UuidGenerator;
 import uk.gov.companieshouse.logging.Logger;
-
-import javax.sql.DataSource;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
-import java.util.function.Supplier;
 
 /**
  * Configuration class used by api for validation and id generation.
@@ -248,6 +248,7 @@ public class Config {
     }
 
     @Bean("fesTransactionManager")
+    @DependsOnDatabaseInitialization
     DataSourceTransactionManager fesTransactionManager(@Qualifier("fesDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }

@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.efs.api.events.service.fesloader;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,8 +9,7 @@ public class ImageDao {
 
     private JdbcTemplate jdbc;
 
-    @Autowired
-    public ImageDao(@Qualifier("fesJdbc") JdbcTemplate jdbc) {
+    public ImageDao(@Qualifier("fesJdbc") final JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
@@ -23,7 +21,13 @@ public class ImageDao {
         return result;
     }
 
-    public void insertImage(long imageId, byte[] image) {
-        jdbc.update("INSERT INTO image(IMAGE_ID, IMAGE_IMAGE) VALUES(?, ?)", imageId, image);
+    public void insertImage(final long imageId, final byte[] image) {
+        jdbc.update("""
+                INSERT INTO image(
+                    IMAGE_ID,
+                    IMAGE_IMAGE
+                )
+                VALUES(?, ?)
+                """, imageId, image);
     }
 }

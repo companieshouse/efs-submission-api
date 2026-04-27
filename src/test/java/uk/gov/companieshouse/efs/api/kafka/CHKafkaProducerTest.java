@@ -1,27 +1,26 @@
 package uk.gov.companieshouse.efs.api.kafka;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Properties;
+import java.util.concurrent.Future;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
 import uk.gov.companieshouse.kafka.producer.factory.KafkaProducerFactory;
 
-import java.util.Properties;
-import java.util.concurrent.Future;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-public class CHKafkaProducerTest {
+@ExtendWith(MockitoExtension.class)
+class CHKafkaProducerTest {
 
     private static final int TEST_RETRIES = 5;
     private static final String TEST_BROKER = "test-broker";
@@ -46,62 +45,60 @@ public class CHKafkaProducerTest {
     @Mock
     private KafkaProducerFactory mockProducerFactory;
 
-    @Before
-    public void test() {
-        MockitoAnnotations.openMocks(this);
+    @BeforeEach
+    public void setUp() {
         createTestMessage();
 
-        when(mockProducerFactory.getProducer(any(Properties.class))).thenReturn(mockKafkaProducer);
-        given(mockKafkaProducer.send(any(ProducerRecord.class))).willReturn(recordMetadataFuture);
+        when(mockProducerFactory.getProducer(any())).thenReturn(mockKafkaProducer);
     }
 
     @Test
-    public void testSendAndReturnFuture() {
+    void testSendAndReturnFuture() {
 
         createTestProducer(true, Acks.NO_RESPONSE);
         producer.sendAndReturnFuture(message);
 
-        verify(mockKafkaProducer).send(any(ProducerRecord.class));
+        verify(mockKafkaProducer).send(any());
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void testSendRoundRobinAcksNoResponse() throws Exception {
+    void testSendRoundRobinAcksNoResponse() throws Exception {
+        when(mockKafkaProducer.send(any())).thenReturn(recordMetadataFuture);
         createTestProducer(true, Acks.NO_RESPONSE);
         producer.send(message);
-        verify(mockKafkaProducer).send(any(ProducerRecord.class));
+        verify(mockKafkaProducer).send(any());
         verify(recordMetadataFuture, times(1)).get();
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void testSendManualPartitionAcksNoResponse() throws Exception {
+    void testSendManualPartitionAcksNoResponse() throws Exception {
+        when(mockKafkaProducer.send(any())).thenReturn(recordMetadataFuture);
         createTestProducer(false, Acks.NO_RESPONSE);
         producer.send(message);
-        verify(mockKafkaProducer).send(any(ProducerRecord.class));
+        verify(mockKafkaProducer).send(any());
         verify(recordMetadataFuture, times(1)).get();
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void testSendRoundRobinAcksWaitForLocal() throws Exception {
+    void testSendRoundRobinAcksWaitForLocal() throws Exception {
+        when(mockKafkaProducer.send(any())).thenReturn(recordMetadataFuture);
         createTestProducer(true, Acks.WAIT_FOR_LOCAL);
         producer.send(message);
-        verify(mockKafkaProducer).send(any(ProducerRecord.class));
+        verify(mockKafkaProducer).send(any());
         verify(recordMetadataFuture, times(1)).get();
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void testSendRoundRobinAcksWaitForAll() throws Exception {
+    void testSendRoundRobinAcksWaitForAll() throws Exception {
+        when(mockKafkaProducer.send(any())).thenReturn(recordMetadataFuture);
         createTestProducer(true, Acks.WAIT_FOR_ALL);
         producer.send(message);
-        verify(mockKafkaProducer).send(any(ProducerRecord.class));
+        verify(mockKafkaProducer).send(any());
         verify(recordMetadataFuture, times(1)).get();
     }
 
     @Test
-    public void testCloseRoundRobinAcksNoResponse() {
+    void testCloseRoundRobinAcksNoResponse() {
         createTestProducer(true, Acks.NO_RESPONSE);
         producer.close();
         verify(mockKafkaProducer).close();
@@ -110,8 +107,8 @@ public class CHKafkaProducerTest {
     /**
      * Create the test configuration and a producer to test
      *
-     * @param roundRobinPartitioner
-     * @param acks
+     * @param roundRobinPartitioner whether to use the round robin partitioner or not
+     * @param acks the acks configuration to use
      */
     private void createTestProducer(boolean roundRobinPartitioner, Acks acks) {
         mockApacheKafkaIntegration(roundRobinPartitioner, acks.getCode());
@@ -127,13 +124,13 @@ public class CHKafkaProducerTest {
 
     /**
      * Mock interactions with Apache Kafka.
-     *
+     * <p>
      * Powermock will expect the values in the Properties generated in the test class from the
      * ProducerConfig to match the values in the Properties used as the argument to mock the
      * Kafka producer.
-     *
-     * @param roundRobinPartitioner
-     * @param acksCode
+     * </p>
+     * @param roundRobinPartitioner whether to use the round robin partitioner or not
+     * @param acksCode  the acks configuration string to use
      */
     private void mockApacheKafkaIntegration(boolean roundRobinPartitioner, String acksCode) {
         Properties props = new Properties();

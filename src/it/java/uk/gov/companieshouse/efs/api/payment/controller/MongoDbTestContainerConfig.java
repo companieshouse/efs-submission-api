@@ -9,7 +9,7 @@ import org.testcontainers.junit.jupiter.Container;
 @EnableMongoRepositories
 public class MongoDbTestContainerConfig {
     @Container
-    public static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:5")
+    public static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:7")
         .withExposedPorts(27017);
 
     static {

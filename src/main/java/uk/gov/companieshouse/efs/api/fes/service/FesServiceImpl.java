@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import uk.gov.companieshouse.api.model.efs.fes.FesSubmissionStatus;
@@ -39,8 +38,7 @@ public class FesServiceImpl implements FesService {
     private static final String SUBMISSION_NOT_FOUND = "Submission not found for barcode [%s]";
     private static final String SUBMISSION_INVALID_STATUS = "Submission [%s] has invalid status: [%s]";
 
-    @Autowired
-    public FesServiceImpl(SubmissionRepository repository, EmailService emailService, ChipsService chipsService, SubmissionService submissionService) {
+    public FesServiceImpl(final SubmissionRepository repository, final EmailService emailService, final ChipsService chipsService, final SubmissionService submissionService) {
         this.repository = repository;
         this.emailService = emailService;
         this.chipsService = chipsService;
@@ -60,12 +58,12 @@ public class FesServiceImpl implements FesService {
 
         // check if submission exists
         if (submission == null) {
-            LOGGER.info(String.format(SUBMISSION_NOT_FOUND, barcode));
-            throw new SubmissionNotFoundException(String.format(String.format(SUBMISSION_NOT_FOUND, barcode)));
+            LOGGER.info(SUBMISSION_NOT_FOUND.formatted(barcode));
+            throw new SubmissionNotFoundException(SUBMISSION_NOT_FOUND.formatted(barcode));
 
         } else if (!submission.getStatus().equals(SubmissionStatus.SENT_TO_FES)) {
-            LOGGER.info(String.format(SUBMISSION_INVALID_STATUS, submission.getId(), submission.getStatus()));
-            throw new SubmissionIncorrectStateException(String.format(SUBMISSION_INVALID_STATUS, submission.getId(), submission.getStatus()));
+            LOGGER.info(SUBMISSION_INVALID_STATUS.formatted(submission.getId(), submission.getStatus()));
+            throw new SubmissionIncorrectStateException(SUBMISSION_INVALID_STATUS.formatted(submission.getId(), submission.getStatus()));
         }
 
         // update submission status

@@ -76,7 +76,8 @@ public class PaymentClose {
 
         private String value;
 
-        Status(String value) {
+        @JsonCreator
+        Status(final String value) {
             this.value = value;
         }
 

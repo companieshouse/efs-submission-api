@@ -2,17 +2,16 @@ package uk.gov.companieshouse.efs.api.interceptor;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import java.text.MessageFormat;
 import jakarta.servlet.http.HttpServletRequest;
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Assertions;
+import java.text.MessageFormat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +44,7 @@ class AuthenticationHelperImplTest {
     @Test
     void getAuthorisedIdentityWhenRequestNull() {
 
-        MatcherAssert.assertThat(testHelper.getAuthorisedIdentity(null), is(nullValue()));
+        assertThat(testHelper.getAuthorisedIdentity(null), is(nullValue()));
     }
 
     @Test
@@ -54,7 +53,7 @@ class AuthenticationHelperImplTest {
 
         when(request.getHeader("ERIC-Identity")).thenReturn(expected);
 
-        Assertions.assertEquals(testHelper.getAuthorisedIdentity(request), expected);
+        assertEquals(expected, testHelper.getAuthorisedIdentity(request));
     }
 
     @Test
@@ -63,7 +62,7 @@ class AuthenticationHelperImplTest {
 
         when(request.getHeader("ERIC-Identity-Type")).thenReturn(expected);
 
-        Assertions.assertEquals(testHelper.getAuthorisedIdentityType(request), expected);
+        assertEquals(expected, testHelper.getAuthorisedIdentityType(request));
     }
 
     @Test
@@ -92,7 +91,7 @@ class AuthenticationHelperImplTest {
 
         when(request.getHeader(AUTHORISED_USER)).thenReturn(expected);
 
-        assertEquals(testHelper.getAuthorisedUser(request), expected);
+        assertEquals(expected, testHelper.getAuthorisedUser(request));
     }
 
     @Test
@@ -192,7 +191,7 @@ class AuthenticationHelperImplTest {
 
         when(request.getHeader("ERIC-Authorised-Scope")).thenReturn(expected);
 
-        assertEquals(testHelper.getAuthorisedScope(request), expected);
+        assertEquals(expected, testHelper.getAuthorisedScope(request));
     }
 
     @Test
@@ -201,7 +200,7 @@ class AuthenticationHelperImplTest {
 
         when(request.getHeader(AUTHORISED_ROLES)).thenReturn(expected);
 
-        assertEquals(testHelper.getAuthorisedRoles(request), expected);
+        assertEquals(expected, testHelper.getAuthorisedRoles(request));
     }
 
     @Test
@@ -275,7 +274,7 @@ class AuthenticationHelperImplTest {
 
         when(request.getHeader(AUTHORISED_KEY_ROLES)).thenReturn(expected);
 
-        assertEquals(testHelper.getAuthorisedKeyRoles(request), expected);
+        assertEquals(expected, testHelper.getAuthorisedKeyRoles(request));
 
     }
 

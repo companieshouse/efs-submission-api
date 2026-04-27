@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
@@ -30,7 +29,6 @@ public class SameDayServiceDelayedHandler implements DelayedSubmissionHandlerStr
     private int supportDelayInMinutes;
     private String businessEmail;
 
-    @Autowired
     public SameDayServiceDelayedHandler(final SubmissionRepository repository,
         final EmailService emailService,
         @Value("${submission.sameday.support.minutes}") final int supportDelayInMinutes,

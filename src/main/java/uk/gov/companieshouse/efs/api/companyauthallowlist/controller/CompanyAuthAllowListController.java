@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.efs.api.companyauthallowlist.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +27,6 @@ public class CompanyAuthAllowListController {
      * @param service service used to query the allow list store
      * @param logger the logger
      */
-    @Autowired
     public CompanyAuthAllowListController(final CompanyAuthAllowListService service, final Logger logger) {
         this.service = service;
         this.logger = logger;

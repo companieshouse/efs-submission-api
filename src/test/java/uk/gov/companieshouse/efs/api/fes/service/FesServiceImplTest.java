@@ -1,7 +1,10 @@
 package uk.gov.companieshouse.efs.api.fes.service;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,10 +12,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.hamcrest.CoreMatchers.is;
 
 import java.util.Collections;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +22,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import uk.gov.companieshouse.api.model.efs.fes.FesSubmissionStatus;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
@@ -164,7 +164,7 @@ class FesServiceImplTest {
         //then
         SubmissionIncorrectStateException ex =
                 assertThrows(SubmissionIncorrectStateException.class, actual);
-        assertEquals(String.format("Submission [%s] has invalid status: [%s]", null, SubmissionStatus.OPEN), ex.getMessage());
+        assertEquals("Submission [%s] has invalid status: [%s]".formatted(null, SubmissionStatus.OPEN), ex.getMessage());
         verifyNoInteractions(emailService);
         verifyNoInteractions(chipsService);
         verifyNoInteractions(submissionService);
@@ -181,7 +181,7 @@ class FesServiceImplTest {
         //then
         SubmissionNotFoundException ex =
                 assertThrows(SubmissionNotFoundException.class, actual);
-        assertEquals(String.format("Submission not found for barcode [%s]", BARCODE), ex.getMessage());
+        assertEquals("Submission not found for barcode [%s]".formatted(BARCODE), ex.getMessage());
         verifyNoInteractions(emailService);
         verifyNoInteractions(chipsService);
         verifyNoInteractions(submissionService);

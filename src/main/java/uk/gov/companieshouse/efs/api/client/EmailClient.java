@@ -1,13 +1,13 @@
 package uk.gov.companieshouse.efs.api.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.chskafka.SendEmail;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -51,12 +51,12 @@ public class EmailClient {
 
             ApiResponse<Void> response = emailPost.execute();
 
-            LOGGER.info(String.format("Posted '%s' email to CHS Kafka API (RequestId: %s): (Response %d)",
-                    sendEmail.getMessageType(), apiClient.getHttpClient().getRequestId(), response.getStatusCode()));
+            LOGGER.info("Posted '%s' email to CHS Kafka API (RequestId: %s): (Response %d)".formatted(
+                sendEmail.getMessageType(), apiClient.getHttpClient().getRequestId(), response.getStatusCode()));
 
             return response;
 
-        } catch(JsonProcessingException ex) {
+        } catch(final JacksonException ex) {
             LOGGER.error("Error creating payload", ex);
             throw new EmailClientException("Error creating payload for CHS Kafka API: ", ex);
 

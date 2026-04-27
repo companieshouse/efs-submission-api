@@ -1,18 +1,35 @@
 package uk.gov.companieshouse.efs.api.email;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.chskafka.SendEmail;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -25,20 +42,9 @@ import uk.gov.companieshouse.efs.api.client.exception.EmailClientException;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
 import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailData;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 class EmailClientTest {
+
 
     @Mock
     private Supplier<InternalApiClient> internalApiClientSupplier;
@@ -46,18 +52,18 @@ class EmailClientTest {
     @Mock
     private InternalApiClient internalApiClient;
 
-    @InjectMocks
     private EmailClient emailClient;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(emailClient, "objectMapper", new ObjectMapper());
+        // By default, use a real JsonMapper unless a test overrides it
+        emailClient = new EmailClient(internalApiClientSupplier, JsonMapper.builder().build());
     }
 
     @Test
     void givenValidPayload_whenEmailRequested_thenReturnSuccess() throws ApiErrorResponseException {
         // Arrange:
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final var apiResponse = new ApiResponse<Void>(200, Map.of());
 
         PrivateSendEmailPost privateSendEmailPost = mock(PrivateSendEmailPost.class);
         when(privateSendEmailPost.execute()).thenReturn(apiResponse);
@@ -86,7 +92,7 @@ class EmailClientTest {
     @Test
     void givenInvalidPayload_whenEmailRequested_thenReturnBadRequest() throws ApiErrorResponseException {
         // Arrange:
-        ApiResponse<Void> apiResponse = new ApiResponse<>(400, Map.of());
+        final var apiResponse = new ApiResponse<Void>(400, Map.of());
 
         PrivateSendEmailPost privateSendEmailPost = mock(PrivateSendEmailPost.class);
         when(privateSendEmailPost.execute()).thenReturn(apiResponse);
@@ -142,12 +148,15 @@ class EmailClientTest {
     }
 
     @Test
-    void givenInvalidPayload_whenEmailClientThrowsJsonException_thenReturnError() throws JsonProcessingException {
-        // Arrange:
-        ObjectMapper mockObjectMapper = mock(ObjectMapper.class);
-        when(mockObjectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
-
-        ReflectionTestUtils.setField(emailClient, "objectMapper", mockObjectMapper);
+    void givenInvalidPayload_whenEmailClientThrowsJsonException_thenReturnError() throws JacksonException {
+        // Arrange: Use a custom ObjectMapper that always throws JacksonException
+        final var throwingMapper = new ObjectMapper() {
+            @Override
+            public String writeValueAsString(final Object value) throws JacksonException {
+                throw new JacksonException("Stubbed for test") {};
+            }
+        };
+        emailClient = new EmailClient(internalApiClientSupplier, throwingMapper);
 
         PaymentReportEmailData emailData = new PaymentReportEmailData("unit@test.com", "My Payment Subject", "file://file-link", "filename.pdf", false);
         EmailDocument<PaymentReportEmailData> document = getPaymentEmailDocument(emailData);
@@ -166,7 +175,7 @@ class EmailClientTest {
     @Test
     void givenValidPayload_whenHttpRequestIdUnavailable_thenReturnEmptyRequestId() throws ApiErrorResponseException {
         // Arrange:
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final var apiResponse = new ApiResponse<Void>(200, Map.of());
 
         PrivateSendEmailPost privateSendEmailPost = mock(PrivateSendEmailPost.class);
         when(privateSendEmailPost.execute()).thenReturn(apiResponse);
@@ -211,7 +220,7 @@ class EmailClientTest {
     @Test
     void givenValidPayload_whenHttpRequestIdAvailable_thenReturnEmptyRequestId() throws ApiErrorResponseException {
         // Arrange:
-        ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final var apiResponse = new ApiResponse<Void>(200, Map.of());
 
         PrivateSendEmailPost privateSendEmailPost = mock(PrivateSendEmailPost.class);
         when(privateSendEmailPost.execute()).thenReturn(apiResponse);

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.ContextConfiguration;
@@ -86,7 +86,7 @@ class PaymentControllerDatabaseIT {
                 FEE_ID, NOW_LDT);
 
         assertThat(result.isPresent(), is(true));
-        assertThat(result.get().getItems().get(0).getAmount(), is("present"));
+        assertThat(result.get().getItems().getFirst().getAmount(), is("present"));
     }
 
     @Test

@@ -4,17 +4,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.persistence.EmbeddedId;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import jakarta.persistence.EmbeddedId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Builder class for the {@code PaymentTemplate}
@@ -28,6 +28,7 @@ public final class PaymentTemplate {
     // required by Spring Data
     }
 
+    @JsonCreator
     private PaymentTemplate(final Builder builder) {
         this.id = builder.id;
         this.description = builder.description;
@@ -110,6 +111,7 @@ public final class PaymentTemplate {
             this.productType = other.productType;
         }
 
+        @JsonCreator
         private Item(final Builder builder) {
             this.amount = builder.amount;
             this.availablePaymentMethods = builder.availablePaymentMethods;
@@ -415,7 +417,8 @@ public final class PaymentTemplate {
 
         private final String value;
 
-        Status(String value) {
+        @JsonCreator
+        Status(final String value) {
             this.value = value;
         }
 
@@ -549,12 +552,12 @@ public final class PaymentTemplate {
             return false;
         }
         final PaymentTemplate that = (PaymentTemplate) o;
-        return com.google.common.base.Objects.equal(getId(), that.getId());
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return com.google.common.base.Objects.hashCode(getId());
+        return Objects.hashCode(getId());
     }
 
     @Override

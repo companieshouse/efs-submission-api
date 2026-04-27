@@ -1,5 +1,13 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,13 +22,6 @@ import uk.gov.companieshouse.api.model.efs.submissions.SubmissionApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PendSubmissionControllerTest {
@@ -56,9 +57,10 @@ class PendSubmissionControllerTest {
         when(service.updateSubmissionStatus(SUBMISSION_ID, SubmissionStatus.PAYMENT_REQUIRED)).thenReturn(response);
 
         //when
-        ResponseEntity<SubmissionResponseApi> actual = pendStatusController.submitPendingPaymentStatus(SUBMISSION_ID, request);
+        ResponseEntity<SubmissionResponseApi> actual = pendStatusController.submitPendingPaymentStatus(SUBMISSION_ID);
 
         //then
+        assertNotNull(actual.getBody());
         assertEquals(SUBMISSION_ID, actual.getBody().getId());
 
         assertEquals(HttpStatus.OK, actual.getStatusCode());
@@ -72,7 +74,7 @@ class PendSubmissionControllerTest {
         when(submissionApi.getStatus()).thenReturn(SubmissionStatus.PAYMENT_REQUIRED);
 
         //when
-        ResponseEntity<SubmissionResponseApi> actual = pendStatusController.submitPendingPaymentStatus(SUBMISSION_ID, request);
+        ResponseEntity<SubmissionResponseApi> actual = pendStatusController.submitPendingPaymentStatus(SUBMISSION_ID);
 
         //then
         assertNull(actual.getBody());
@@ -88,7 +90,7 @@ class PendSubmissionControllerTest {
         when(submissionApi.getStatus()).thenReturn(SubmissionStatus.SUBMITTED);
 
         //when
-        ResponseEntity<SubmissionResponseApi> actual = pendStatusController.submitPendingPaymentStatus(SUBMISSION_ID, request);
+        ResponseEntity<SubmissionResponseApi> actual = pendStatusController.submitPendingPaymentStatus(SUBMISSION_ID);
 
         //then
         assertNull(actual.getBody());
@@ -101,7 +103,7 @@ class PendSubmissionControllerTest {
         when(service.readSubmission(any())).thenReturn(null);
 
         //when
-        ResponseEntity<SubmissionResponseApi> actual = pendStatusController.submitPendingPaymentStatus(SUBMISSION_ID, request);
+        ResponseEntity<SubmissionResponseApi> actual = pendStatusController.submitPendingPaymentStatus(SUBMISSION_ID);
 
         //then
         assertNull(actual.getBody());

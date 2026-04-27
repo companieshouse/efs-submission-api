@@ -2,8 +2,6 @@ package uk.gov.companieshouse.efs.api.submissions.controller;
 
 import java.util.Set;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,14 +26,12 @@ public class PendStatusController {
 
     private SubmissionService submissionService;
 
-    @Autowired
-    public PendStatusController(SubmissionService submissionService) {
+    public PendStatusController(final SubmissionService submissionService) {
         this.submissionService = submissionService;
     }
 
     @PutMapping("{id}/pend")
-    public ResponseEntity<SubmissionResponseApi> submitPendingPaymentStatus(@PathVariable("id") final String id,
-                                                     final HttpServletRequest request) {
+    public ResponseEntity<SubmissionResponseApi> submitPendingPaymentStatus(@PathVariable final String id) {
 
         final SubmissionApi submission = submissionService.readSubmission(id);
 

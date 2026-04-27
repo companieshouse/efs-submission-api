@@ -28,8 +28,8 @@ public class ConfirmAuthorisedValidator extends ValidatorImpl<Submission> implem
             if (CategoryTypeConstants.INSOLVENCY.equals(topLevelCategory) && !Boolean.TRUE
                 .equals(input.getConfirmAuthorised())) {
 
-                throw new SubmissionValidationException(String
-                    .format("Presenter must confirm they are authorised in submission [%s] for Insolvency form [%s]",
+                throw new SubmissionValidationException("Presenter must confirm they are authorised in submission [%s] for Insolvency form [%s]"
+                    .formatted(
                         input.getId(), template.map(FormTemplate::getFormType).orElse(null)));
             }
         }

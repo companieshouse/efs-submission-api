@@ -10,9 +10,6 @@ import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.R
 import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.SENT_TO_FES;
 import static uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus.SUBMITTED;
 
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.io.BufferedOutputStream;
@@ -24,11 +21,12 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.dataformat.csv.CsvMapper;
+import tools.jackson.dataformat.csv.CsvSchema;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.model.PaymentReportEmailModel;
@@ -81,10 +79,9 @@ public class PaymentReportServiceImpl implements PaymentReportService {
 
     private final String paymentReportBucketName;
 
-    @Autowired
     public PaymentReportServiceImpl(final EmailService emailService, final ReportQueryServiceImpl reportQueryService,
-        final OutputStreamWriterFactory outputStreamWriterFactory, S3ClientService s3ClientService,
-        final Clock clock, @Qualifier("paymentReportBucketName") String paymentReportBucketName) {
+        final OutputStreamWriterFactory outputStreamWriterFactory, final S3ClientService s3ClientService,
+        final Clock clock, @Qualifier("paymentReportBucketName") final String paymentReportBucketName) {
 
         this.emailService = emailService;
         this.paymentReportMapper = reportQueryService.getPaymentReportMapper();
@@ -132,7 +129,7 @@ public class PaymentReportServiceImpl implements PaymentReportService {
         try (final OutputStreamWriter woStream = outputStreamWriterFactory.createFor(
             new BufferedOutputStream(content))) {
             csvMapper.writer(csvSchema).writeValue(woStream, paymentTransactions);
-            return content.toString(StandardCharsets.UTF_8.toString());
+            return content.toString(StandardCharsets.UTF_8);
         } catch (IOException ex) {
             LOGGER.error("Error when creating Payment csv content: ", ex);
             throw ex;
@@ -148,7 +145,7 @@ public class PaymentReportServiceImpl implements PaymentReportService {
             formatReportName(LocalDate.now(clock).minusDays(reportPeriodDaysBeforeToday), reportPattern);
         String csvContent = generateCsvFileContent(paymentTransactions);
         s3ClientService.uploadToS3(reportName, csvContent, paymentReportBucketName);
-        LOGGER.info(String.format("Sending payment report email [%s] to Finance", reportName));
+        LOGGER.info("Sending payment report email [%s] to Finance".formatted(reportName));
 
         final boolean hasNoPaymentTransactions = paymentTransactions.isEmpty();
 

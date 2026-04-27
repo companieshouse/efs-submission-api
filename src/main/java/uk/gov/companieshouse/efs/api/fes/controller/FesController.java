@@ -1,7 +1,9 @@
 package uk.gov.companieshouse.efs.api.fes.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,10 +20,6 @@ import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNot
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 @RestController
 public class FesController {
 
@@ -29,8 +27,7 @@ public class FesController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
-    @Autowired
-    public FesController(FesService fesService) {
+    public FesController(final FesService fesService) {
         this.fesService = fesService;
     }
 
@@ -44,8 +41,8 @@ public class FesController {
      */
     @PostMapping(value = "/efs-submission-api/fes/submissions/{barcode}/complete", produces = {"application/json"},
             consumes = {"application/json"})
-    public ResponseEntity<SubmissionResponseApi> updateSubmissionStatusByBarcode(@PathVariable("barcode") String barcode,
-            @RequestBody @Valid StatusApi status, BindingResult result) {
+    public ResponseEntity<SubmissionResponseApi> updateSubmissionStatusByBarcode(@PathVariable final String barcode,
+            @RequestBody @Valid final StatusApi status, final BindingResult result) {
 
         if (result.hasErrors()) {
             Map<String, Object> debug = new HashMap<>();

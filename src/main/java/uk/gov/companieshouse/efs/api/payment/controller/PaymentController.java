@@ -2,6 +2,9 @@ package uk.gov.companieshouse.efs.api.payment.controller;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,11 +15,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -60,7 +59,6 @@ public class PaymentController {
     private final EmailService emailService;
     private final SubmissionApiMapper submissionApiMapper;
 
-    @Autowired
     public PaymentController(final SubmissionService submissionService,
         final FormTemplateService formTemplateService,
         final PaymentTemplateService paymentTemplateService, final EmailService emailService,
@@ -82,7 +80,7 @@ public class PaymentController {
      * @return the payment template details
      */
     @GetMapping(value = "{id}/payment", produces = {"application/json"})
-    public ResponseEntity<PaymentTemplate> getPaymentDetails(@PathVariable("id") final String id,
+    public ResponseEntity<PaymentTemplate> getPaymentDetails(@PathVariable final String id,
         final HttpServletRequest request) {
 
         logger.debug(MessageFormat.format("Fetching submission with id: {0}", id));
@@ -134,8 +132,7 @@ public class PaymentController {
      * @return the payment template details
      */
     @PatchMapping(value = "{id}/payment", produces = {"application/json"})
-    public ResponseEntity<SubmissionResponseApi> patchPaymentSession(
-        @PathVariable("id") final String id, @RequestBody PaymentClose paymentClose,
+    public ResponseEntity<SubmissionResponseApi> patchPaymentSession(@PathVariable final String id, @RequestBody final PaymentClose paymentClose,
         final HttpServletRequest request) {
 
         final Map<String, Object> debug = new HashMap<>();

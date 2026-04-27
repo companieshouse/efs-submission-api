@@ -2,7 +2,7 @@ package uk.gov.companieshouse.efs.api.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,21 +20,20 @@ public class LoggingInterceptor implements HandlerInterceptor, RequestLogger {
      * Sets the logger used to log out request information.
      * @param logger the configured logger
      */
-    @Autowired
-    public LoggingInterceptor(Logger logger) {
+    public LoggingInterceptor(final Logger logger) {
         this.logger = logger;
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-        Object handler) {
+    public boolean preHandle(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response,
+        final @NonNull Object handler) {
         logStartRequestProcessing(request, logger);
         return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-        ModelAndView modelAndView) {
+    public void postHandle(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response, final @NonNull Object handler,
+        final ModelAndView modelAndView) {
         logEndRequestProcessing(request, response, logger);
     }
 

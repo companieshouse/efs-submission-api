@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.efs.api.events.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,8 +12,7 @@ public class SubmissionPollingController {
 
     private EventService eventService;
 
-    @Autowired
-    public SubmissionPollingController(EventService eventService) {
+    public SubmissionPollingController(final EventService eventService) {
         this.eventService = eventService;
     }
 

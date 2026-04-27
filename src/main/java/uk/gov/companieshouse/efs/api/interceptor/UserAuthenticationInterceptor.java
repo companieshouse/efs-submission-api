@@ -3,7 +3,7 @@ package uk.gov.companieshouse.efs.api.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jspecify.annotations.NonNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import uk.gov.companieshouse.logging.Logger;
@@ -13,12 +13,9 @@ import uk.gov.companieshouse.logging.Logger;
  */
 public class UserAuthenticationInterceptor implements HandlerInterceptor {
 
-    private Logger logger;
-    public static final int USER_EMAIL_INDEX = 0;
-    public static final int USER_FORNAME_INDEX = 1;
-    public static final int USER_SURNAME_INDEX = 2;
+    private final Logger logger;
 
-    private AuthenticationHelper authHelper;
+    private final AuthenticationHelper authHelper;
 
     /**
      * Constructor which configures the logger and authentication helper class.
@@ -26,7 +23,6 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
      * @param authHelper the {@link AuthenticationHelper}
      * @param logger the specified logger
      */
-    @Autowired
     public UserAuthenticationInterceptor(final AuthenticationHelper authHelper, final Logger logger) {
         this.authHelper = authHelper;
         this.logger = logger;
@@ -36,8 +32,8 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
      * Ensure requests are authenticated for a user.
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-        Object handler) {
+    public boolean preHandle(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response,
+        final @NonNull Object handler) {
 
         final String identityType = authHelper.getAuthorisedIdentityType(request);
         boolean shouldContinue = false;
@@ -70,12 +66,12 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
         return shouldContinue;
     }
 
-    private boolean validateOAuth2Identity(HttpServletRequest request, String identity) {
+    private boolean validateOAuth2Identity(final HttpServletRequest request, final String identity) {
 
         request.setAttribute("user_id", identity);
 
         final String authorisedUser = authHelper.getAuthorisedUser(request);
-        if (authorisedUser == null || authorisedUser.trim().length() == 0) {
+        if (authorisedUser == null || authorisedUser.trim().isEmpty()) {
             logger.debugRequest(request, "UserAuthenticationInterceptor error: no authorised user", null);
 
             return false;
@@ -98,8 +94,8 @@ public class UserAuthenticationInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-        Exception ex) {
+    public void afterCompletion(final HttpServletRequest request, final @NonNull HttpServletResponse response, final @NonNull Object handler,
+        final Exception ex) {
         // cleanup request attributes to ensure user details are never leaked
         // into another request
         request.setAttribute("user_id", null);

@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,14 +9,12 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.http.AbortableInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -54,7 +52,7 @@ class TiffDownloadServiceImplTest {
         ByteArrayInputStream in = new ByteArrayInputStream("Hello".getBytes());
         AbortableInputStream ais = AbortableInputStream.create(in);
         when(s3Client.getObject((GetObjectRequest) any()))
-                .thenReturn(new ResponseInputStream<GetObjectResponse>(resp, ais));
+                .thenReturn(new ResponseInputStream<>(resp, ais));
 
         // when
         byte[] actual = service.downloadTiffFile(fileId);
@@ -62,7 +60,7 @@ class TiffDownloadServiceImplTest {
         // then
         assertArrayEquals("Hello".getBytes(), actual);
         verify(s3Client).getObject(GetObjectRequest.builder().bucket(bucket)
-                .key(String.format("%s/%s", "converted-tiffs", fileId)).build());
+                .key("%s/%s".formatted("converted-tiffs", fileId)).build());
     }
 
     @Test

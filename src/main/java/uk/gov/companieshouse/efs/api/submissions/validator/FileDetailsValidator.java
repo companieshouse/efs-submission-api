@@ -12,13 +12,13 @@ public class FileDetailsValidator extends ValidatorImpl<Submission> implements V
 
         if (details == null) {
             throw new SubmissionValidationException(
-                String.format("File details are absent in submission [%s]", input.getId()));
+                "File details are absent in submission [%s]".formatted(input.getId()));
         } else if (details.isEmpty()) {
             throw new SubmissionValidationException(
-                String.format("File details are empty in submission [%s]", input.getId()));
+                "File details are empty in submission [%s]".formatted(input.getId()));
         } else if (details.contains(null)) {
             throw new SubmissionValidationException(
-                String.format("File details contains null in submission [%s]", input.getId()));
+                "File details contains null in submission [%s]".formatted(input.getId()));
         }
         super.validate(input);
     }
