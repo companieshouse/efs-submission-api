@@ -59,7 +59,7 @@ public class FesServiceImpl implements FesService {
         // check if submission exists
         if (submission == null) {
             LOGGER.info(SUBMISSION_NOT_FOUND.formatted(barcode));
-            throw new SubmissionNotFoundException(SUBMISSION_NOT_FOUND.formatted(barcode).formatted());
+            throw new SubmissionNotFoundException(SUBMISSION_NOT_FOUND.formatted(barcode));
 
         } else if (!submission.getStatus().equals(SubmissionStatus.SENT_TO_FES)) {
             LOGGER.info(SUBMISSION_INVALID_STATUS.formatted(submission.getId(), submission.getStatus()));
