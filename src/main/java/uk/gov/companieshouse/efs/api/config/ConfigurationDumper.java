@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.EventListener;
@@ -27,7 +26,6 @@ public class ConfigurationDumper {
      *
      * @param logger the configured logger
      */
-    @Autowired
     public ConfigurationDumper(final Logger logger) {
         this.logger = logger;
     }

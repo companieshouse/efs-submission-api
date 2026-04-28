@@ -1,15 +1,17 @@
 package uk.gov.companieshouse.efs.api.fes.service;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.util.Collections;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
+@ExtendWith(MockitoExtension.class)
 class GenericRecordFactoryTest {
 
     private GenericRecordFactory genericRecordFactory;

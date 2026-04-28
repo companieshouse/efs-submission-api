@@ -2,9 +2,8 @@ package uk.gov.companieshouse.efs.api.formtemplates.model;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsIterableContainingInOrder.*;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.databind.json.JsonMapper;
 
 @ExtendWith(SpringExtension.class)
 class FormTemplateTest {
@@ -34,7 +34,7 @@ class FormTemplateTest {
             .withSameDay(true)
             .withMessageTextIdList(Arrays.asList(1, 2, 3))
             .build();
-        JacksonTester.initFields(this, new ObjectMapper());
+        JacksonTester.initFields(this, JsonMapper.builder().build());
     }
 
     @Test

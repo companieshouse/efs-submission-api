@@ -1,9 +1,9 @@
 package uk.gov.companieshouse.efs.api.companyauthallowlist.controller;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class CompanyAuthAllowListControllerTest {
         final ResponseEntity<Boolean> emailAddressOnAllowList = testController.getIsOnAllowList(
             USER1_EMAIL_ADDRESS);
 
-        MatcherAssert.assertThat(emailAddressOnAllowList.getBody(), is(false));
+        assertThat(emailAddressOnAllowList.getBody(), is(false));
     }
 
     @Test
@@ -52,7 +52,7 @@ class CompanyAuthAllowListControllerTest {
         final ResponseEntity<Boolean> emailAddressOnAllowList = testController.getIsOnAllowList(
             USER1_EMAIL_ADDRESS);
 
-        MatcherAssert.assertThat(emailAddressOnAllowList.getBody(), is(true));
+        assertThat(emailAddressOnAllowList.getBody(), is(true));
     }
 
     @Test

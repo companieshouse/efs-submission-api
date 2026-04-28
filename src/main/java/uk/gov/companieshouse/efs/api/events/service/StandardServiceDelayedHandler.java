@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
@@ -35,7 +34,6 @@ public class StandardServiceDelayedHandler implements DelayedSubmissionHandlerSt
     private int supportDelayInHours;
     private int businessDelayInHours;
 
-    @Autowired
     public StandardServiceDelayedHandler(final SubmissionRepository repository,
         final EmailService emailService,
         final FormCategoryToEmailAddressService formCategoryToEmailAddressService,

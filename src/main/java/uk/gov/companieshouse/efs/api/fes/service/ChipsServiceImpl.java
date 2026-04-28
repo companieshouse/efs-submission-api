@@ -23,13 +23,13 @@ public class ChipsServiceImpl implements ChipsService {
     @Override
     public List<String> getRejectReasons(String barcode) {
         try {
-            LOGGER.debug(String.format("Attempting to read reject reasons for barcode [%s]", barcode));
-            List<String> rejectReasons = chipsDao.readRejectReasonsForBarcode(barcode);
+            LOGGER.debug("Attempting to read reject reasons for barcode [%s]".formatted(barcode));
+            final var rejectReasons = chipsDao.readRejectReasonsForBarcode(barcode);
             if (rejectReasons.isEmpty()) {
-                LOGGER.error(String.format("No reject reasons found for barcode [%s]", barcode));
+                LOGGER.error("No reject reasons found for barcode [%s]".formatted(barcode));
             } else {
                 rejectReasons.forEach(LOGGER::debug);
-                LOGGER.debug(String.format("Successfully read reject reasons for barcode [%s]", barcode));
+                LOGGER.debug("Successfully read reject reasons for barcode [%s]".formatted(barcode));
             }
             return rejectReasons;
         } catch (DataAccessException ex) {

@@ -3,7 +3,6 @@ package uk.gov.companieshouse.efs.api.payment.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.efs.api.config.Config;
@@ -18,7 +17,6 @@ import uk.gov.companieshouse.efs.api.payment.repository.PaymentTemplateRepositor
 public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     private final PaymentTemplateRepository repository;
 
-    @Autowired
     public PaymentTemplateServiceImpl(final PaymentTemplateRepository repository) {
         this.repository = repository;
     }

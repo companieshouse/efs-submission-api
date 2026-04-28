@@ -1,10 +1,11 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,14 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-
 import uk.gov.companieshouse.api.model.efs.submissions.FileListApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionIncorrectStateException;
 import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNotFoundException;
-
-import java.util.Arrays;
 
 @ExtendWith(MockitoExtension.class)
 class FileControllerTest {

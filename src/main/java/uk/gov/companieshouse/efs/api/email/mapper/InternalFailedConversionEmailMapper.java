@@ -2,7 +2,6 @@ package uk.gov.companieshouse.efs.api.email.mapper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.email.FormCategoryToEmailAddressService;
 import uk.gov.companieshouse.efs.api.email.config.InternalFailedConversionEmailConfig;
@@ -20,7 +19,6 @@ public class InternalFailedConversionEmailMapper {
     private TimestampGenerator<LocalDateTime> timestampGenerator;
     private FormCategoryToEmailAddressService emailAddressService;
 
-    @Autowired
     public InternalFailedConversionEmailMapper(final InternalFailedConversionEmailConfig config, final IdentifierGeneratable idGenerator, final TimestampGenerator<LocalDateTime> timestampGenerator, final FormCategoryToEmailAddressService emailAddressService) {
         this.config = config;
         this.idGenerator = idGenerator;

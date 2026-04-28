@@ -2,8 +2,6 @@ package uk.gov.companieshouse.efs.api.categorytemplates.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +31,6 @@ public class CategoryTemplateController {
      * @param categoryService service used to store the category template
      * @param logger the service logger
      */
-    @Autowired
     public CategoryTemplateController(final CategoryTemplateService categoryService, final Logger logger) {
         this.categoryService = categoryService;
         this.logger = logger;
@@ -48,7 +45,7 @@ public class CategoryTemplateController {
      */
     @GetMapping(value = "/category-templates", produces = {"application/json"})
     public ResponseEntity<CategoryTemplateListApi> getCategoryTemplates(
-        @RequestParam(value = "parent", required = false) String categoryId, final HttpServletRequest request) {
+        @RequestParam(value = "parent", required = false) String categoryId) {
 
         try {
             return categoryId == null
@@ -71,11 +68,11 @@ public class CategoryTemplateController {
      * @return responseEntity
      */
     @GetMapping(value = "/category-template/{id}", produces = {"application/json"})
-    public ResponseEntity<CategoryTemplateApi> getCategoryTemplate(@PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<CategoryTemplateApi> getCategoryTemplate(@PathVariable String id) {
         try {
             return ResponseEntity.ok().body(categoryService.getCategoryTemplate(id));
-        } catch (Exception ex) {
-            Map<String, Object> debug = new HashMap<>();
+        } catch (final Exception ex) {
+            final Map<String, Object> debug = new HashMap<>();
 
             debug.put("id", id);
             logger.error("Failed to get category template", ex, debug);
@@ -84,8 +81,8 @@ public class CategoryTemplateController {
     }
 
     @GetMapping(value = "/category-template/", produces = {"application/json"})
-    public ResponseEntity<CategoryTemplateApi> getRootCategory(HttpServletRequest request) {
+    public ResponseEntity<CategoryTemplateApi> getRootCategory() {
         final String id = "ROOT";
-        return getCategoryTemplate(id, request);
+        return getCategoryTemplate(id);
     }
 }

@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateApi;
 import uk.gov.companieshouse.api.model.efs.formtemplates.FormTemplateListApi;
 import uk.gov.companieshouse.efs.api.formtemplates.service.FormTemplateService;
@@ -44,7 +43,7 @@ class FormTemplateTemplateControllerTest {
         when(service.getFormTemplates()).thenReturn(expected);
 
         //when
-        ResponseEntity<FormTemplateListApi> actual = controller.getFormTemplates(null, request);
+        final var actual = controller.getFormTemplates(null);
 
         //then
         assertEquals(expected, actual.getBody());
@@ -59,7 +58,7 @@ class FormTemplateTemplateControllerTest {
         when(service.getFormTemplatesByCategory(categoryId)).thenReturn(expected);
 
         //when
-        ResponseEntity<FormTemplateListApi> actual = controller.getFormTemplates(categoryId, request);
+        final var actual = controller.getFormTemplates(categoryId);
 
         //then
         assertEquals(expected, actual.getBody());
@@ -74,7 +73,7 @@ class FormTemplateTemplateControllerTest {
         when(service.getFormTemplatesByCategory(categoryId)).thenThrow(new RuntimeException("Test exception scenario"));
 
         //when
-        final ResponseEntity<FormTemplateListApi> actual = controller.getFormTemplates(categoryId, request);
+        final var actual = controller.getFormTemplates(categoryId);
 
         //then
         assertEquals(actual.getStatusCode(), status);
@@ -88,7 +87,7 @@ class FormTemplateTemplateControllerTest {
         when(service.getFormTemplate(formType)).thenReturn(expected);
 
         //when
-        ResponseEntity<FormTemplateApi> actual = controller.getFormTemplate(formType, request);
+        final var actual = controller.getFormTemplate(formType);
 
         //then
         assertEquals(expected, actual.getBody());
@@ -103,7 +102,7 @@ class FormTemplateTemplateControllerTest {
         when(service.getFormTemplate(formType)).thenThrow(new RuntimeException("Test exception scenario"));
 
         //when
-        final ResponseEntity<FormTemplateApi> actual = controller.getFormTemplate(formType, request);
+        final var actual = controller.getFormTemplate(formType);
 
         //then
         assertEquals(actual.getStatusCode(), status);

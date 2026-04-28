@@ -2,7 +2,6 @@ package uk.gov.companieshouse.efs.api.events.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,8 +21,7 @@ public class DocumentConvertedController {
 
     private EventService eventService;
 
-    @Autowired
-    public DocumentConvertedController(EventService eventService) {
+    public DocumentConvertedController(final EventService eventService) {
         this.eventService = eventService;
     }
 

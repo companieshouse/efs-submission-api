@@ -4,7 +4,6 @@ import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryType
 import static uk.gov.companieshouse.efs.api.categorytemplates.model.CategoryTypeConstants.ROOT;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.efs.categorytemplates.CategoryTemplateApi;
@@ -30,7 +29,6 @@ public class CategoryTemplateServiceImpl implements CategoryTemplateService {
      *
      * @param repository the {@link CategoryTemplateRepository}
      */
-    @Autowired
     public CategoryTemplateServiceImpl(final CategoryTemplateRepository repository, final CategoryTemplateMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;

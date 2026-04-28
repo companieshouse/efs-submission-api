@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.efs.api.events.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,9 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.companieshouse.efs.api.events.service.DelayedSubmissionHandlerContext;
 import uk.gov.companieshouse.efs.api.events.service.EventService;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class HandleDelayedSubmissionsControllerTest {

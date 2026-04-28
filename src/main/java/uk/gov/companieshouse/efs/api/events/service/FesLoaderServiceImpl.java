@@ -2,9 +2,7 @@ package uk.gov.companieshouse.efs.api.events.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionTimedOutException;
@@ -43,9 +41,8 @@ public class FesLoaderServiceImpl implements FesLoaderService {
      * @param imageDao              dependency
      * @param formDao               dependency
      */
-    @Autowired
-    public FesLoaderServiceImpl(BatchDao batchDao, EnvelopeDao envelopeDao, CurrentTimestampGenerator timestampGenerator,
-                                ImageDao imageDao, FormDao formDao) {
+    public FesLoaderServiceImpl(final BatchDao batchDao, final EnvelopeDao envelopeDao, final CurrentTimestampGenerator timestampGenerator,
+                                final ImageDao imageDao, final FormDao formDao) {
         this.batchDao = batchDao;
         this.envelopeDao = envelopeDao;
         this.timestampGenerator = timestampGenerator;
@@ -60,7 +57,7 @@ public class FesLoaderServiceImpl implements FesLoaderService {
         StopWatch timer = new StopWatch(getClass().getSimpleName());
 
         try {
-            LOGGER.debug(String.format("Inserting records into FES DB for submission with barcode [%s]", model.getBarcode()));
+            LOGGER.debug("Inserting records into FES DB for submission with barcode [%s]".formatted(model.getBarcode()));
             timer.start(FES_INSERT_TIMER_TASK_NAME);
 
             long nextBatchId = insertBatchRecord();
@@ -74,12 +71,11 @@ public class FesLoaderServiceImpl implements FesLoaderService {
             timer.stop();
             final String timeToInsertAsString = DurationFormatUtils.formatDuration(
                     timer.getTotalTimeMillis(), DURATION_FORMAT);
-            LOGGER.debug(String.format(
-                    "Inserted records into FES DB for submission with barcode [%s] in %s",
-                    model.getBarcode(),
-                    timeToInsertAsString));
+            LOGGER.debug("Inserted records into FES DB for submission with barcode [%s] in %s".formatted(
+                model.getBarcode(),
+                timeToInsertAsString));
         } catch (DataAccessException | TransactionTimedOutException ex) {
-            throw new FesLoaderException(String.format("Error inserting submission - message [%s]", ex.getMessage()), ex);
+            throw new FesLoaderException("Error inserting submission - message [%s]".formatted(ex.getMessage()), ex);
         } finally {
             if (timer.isRunning()) {
                 timer.stop();
@@ -114,7 +110,7 @@ public class FesLoaderServiceImpl implements FesLoaderService {
 
         LocalDateTime currentDate = timestampGenerator.generateTimestamp();
         String formattedCurrentDate = currentDate.format(DateTimeFormatter.ofPattern("yyMMdd"));
-        String batchNamePrefix = String.format("EFS_%s", formattedCurrentDate);
+        String batchNamePrefix = "EFS_%s".formatted(formattedCurrentDate);
         LOGGER.debug("Prefix " + batchNamePrefix);
         Long nextBatchNameId = batchDao.getBatchNameId(batchNamePrefix);
         LOGGER.debug("next batch name id " + nextBatchNameId);

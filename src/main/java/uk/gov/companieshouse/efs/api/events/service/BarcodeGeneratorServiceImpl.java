@@ -3,7 +3,6 @@ package uk.gov.companieshouse.efs.api.events.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
@@ -20,9 +19,8 @@ public class BarcodeGeneratorServiceImpl implements BarcodeGeneratorService {
 
     private String barcodeGeneratorServiceUrl;
 
-    @Autowired
-    public BarcodeGeneratorServiceImpl(RestTemplate template,
-        @Qualifier("barcodeGeneratorServiceUrl") String barcodeGeneratorServiceUrl) {
+    public BarcodeGeneratorServiceImpl(final RestTemplate template,
+        @Qualifier("barcodeGeneratorServiceUrl") final String barcodeGeneratorServiceUrl) {
         this.template = template;
         this.barcodeGeneratorServiceUrl = barcodeGeneratorServiceUrl;
     }
@@ -45,11 +43,11 @@ public class BarcodeGeneratorServiceImpl implements BarcodeGeneratorService {
                     .orElseThrow(() -> new BarcodeException("No content in response from Barcode service"));
             if (!barcode.startsWith("Y")) {
                 throw new BarcodeException(
-                        String.format("Error generating barcode - generated barcode [%s] not valid for EFS", barcode));
+                    "Error generating barcode - generated barcode [%s] not valid for EFS".formatted(barcode));
             }
             return barcode;
-        } catch (RestClientException ex) {
-            throw new BarcodeException(String.format("Error generating barcode - message [%s]", ex.getMessage()), ex);
+        } catch (final RestClientException ex) {
+            throw new BarcodeException("Error generating barcode - message [%s]".formatted(ex.getMessage()), ex);
         }
 
     }

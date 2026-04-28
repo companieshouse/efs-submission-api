@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.efs.api.events.controller;
 
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,8 +12,7 @@ import uk.gov.companieshouse.efs.api.events.service.EventService;
 public class HandleDelayedSubmissionsController {
     private EventService eventService;
 
-    @Autowired
-    public HandleDelayedSubmissionsController(EventService eventService) {
+    public HandleDelayedSubmissionsController(final EventService eventService) {
         this.eventService = eventService;
     }
 

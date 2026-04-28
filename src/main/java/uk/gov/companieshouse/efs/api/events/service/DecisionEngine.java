@@ -96,7 +96,7 @@ public class DecisionEngine {
             decision.setDecisionResult(DecisionResult.NO_DECISION);
         } else if (decision.containsInfectedFile()) {
             decision.setDecisionResult(DecisionResult.NOT_CLEAN);
-        } else if (!formTemplate.isPresent()) {
+        } else if (formTemplate.isEmpty()) {
             decision.setDecisionResult(DecisionResult.FORM_TYPE_DOES_NOT_EXIST);
         } else if (formTemplate.get().isFesEnabled()) {
             decision.setDecisionResult(DecisionResult.FES_ENABLED);

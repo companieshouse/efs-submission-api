@@ -9,10 +9,10 @@ public class FormDetailsValidator extends ValidatorImpl<Submission> implements V
     public void validate(final Submission input) throws SubmissionValidationException {
         if (input.getFormDetails() == null) {
             throw new SubmissionValidationException(
-                String.format("Form details are absent in submission [%s]", input.getId()));
+                "Form details are absent in submission [%s]".formatted(input.getId()));
         } else if (StringUtils.isBlank(input.getFormDetails().getFormType())) {
             throw new SubmissionValidationException(
-                String.format("Form type is absent in submission [%s]", input.getId()));
+                "Form type is absent in submission [%s]".formatted(input.getId()));
         }
         super.validate(input);
     }

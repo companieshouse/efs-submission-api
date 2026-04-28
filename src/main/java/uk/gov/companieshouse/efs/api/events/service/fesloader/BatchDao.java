@@ -2,7 +2,6 @@ package uk.gov.companieshouse.efs.api.events.service.fesloader;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,8 +11,7 @@ public class BatchDao {
 
     private JdbcTemplate jdbc;
 
-    @Autowired
-    public BatchDao(@Qualifier("fesJdbc") JdbcTemplate jdbc) {
+    public BatchDao(@Qualifier("fesJdbc") final JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
@@ -41,12 +39,13 @@ public class BatchDao {
      * @param batchName EFS batch name
      * @param timestamp timestamp
      */
-    public void insertBatch(long batchId, String batchName, LocalDateTime timestamp) {
-        jdbc.update(
-            "insert into BATCH(BATCH_ID, BATCH_SCANNED, BATCH_STATUS_ID, BATCH_SCANNER_NAME, "
-            + "BATCH_SCAN_PERSON, BATCH_NAME, BATCH_SCANNED_LOCATION) "
-            + "values(?,?,?,?,?,?,?)", batchId, Timestamp.valueOf(timestamp), 1, "efs_batch",
-            "efs_filing", batchName, 1);
+    public void insertBatch(final long batchId, final String batchName, final LocalDateTime timestamp) {
+        final var INSERT_SQL = """
+            insert into BATCH(BATCH_ID, BATCH_SCANNED, BATCH_STATUS_ID, BATCH_SCANNER_NAME, 
+            BATCH_SCAN_PERSON, BATCH_NAME, BATCH_SCANNED_LOCATION) 
+            values(?,?,?,?,?,?,?)""";
+
+        jdbc.update(INSERT_SQL, batchId, Timestamp.valueOf(timestamp), 1, "efs_batch", "efs_filing", batchName, 1);
     }
 
 }

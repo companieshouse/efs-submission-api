@@ -20,50 +20,47 @@
         <java.version>21</java.version>
         <api-helper-java.version>3.0.3</api-helper-java.version>
         <avro.version>1.12.1</avro.version>
-        <aws-java-sdk-core.version>1.12.787</aws-java-sdk-core.version>
+        <aws-java-sdk-core.version>1.12.797</aws-java-sdk-core.version>
         <software.amazon.awssdk.version>2.35.1</software.amazon.awssdk.version>
         <ch-kafka.version>3.0.7</ch-kafka.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <commons-io.version>2.19.0</commons-io.version>
-        <commons-lang3.version>3.19.0</commons-lang3.version>
         <environment-reader-library.version>3.0.1</environment-reader-library.version>
         <equalsverifier.version>4.0.2</equalsverifier.version>
         <google-oauth-client.version>1.39.0</google-oauth-client.version>
-        <grpc-context.version>1.73.0</grpc-context.version>
         <guava.version>33.4.8-jre</guava.version>
         <imageio.version>1.4.0</imageio.version>
-        <jackson.version>2.19.1</jackson.version>
-        <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
-        <jakarta.persistence.version>3.2.0</jakarta.persistence.version>
+        <jackson.version>3.1.2</jackson.version>
+        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <java-session-handler.version>4.1.15</java-session-handler.version>
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
         <json.version>20250517</json.version>
         <junit-jupiter.version>5.13.1</junit-jupiter.version>
-        <kafka-clients.version>4.0.0</kafka-clients.version>
+        <kafka-clients.version>4.0.2</kafka-clients.version>
         <kafka-models.version>3.0.18</kafka-models.version>
         <log4j-bom.version>2.25.3</log4j-bom.version>
         <ojdbc11.version>23.8.0.25.04</ojdbc11.version>
+        <tomcat.version>11.0.21</tomcat.version>
         <!-- Maven -->
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
-        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
 
-        <mockito-junit-jupiter.version>5.2.0</mockito-junit-jupiter.version>
+        <mockito-junit-jupiter.version>5.23.0</mockito-junit-jupiter.version>
         <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
+        <netty.version>4.2.12.Final</netty.version>
         <bcprov-jdk180n.version>1.83</bcprov-jdk180n.version>
         <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
-        <private-api-sdk-java.version>4.0.492</private-api-sdk-java.version>
+        <private-api-sdk-java.version>4.0.494</private-api-sdk-java.version>
         <sdk-manager-java.version>3.0.14</sdk-manager-java.version>
-        <snakeyaml.version>2.4</snakeyaml.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
-        <spring-boot.version>3.5.11</spring-boot.version>
-        <spring-test.version>6.2.8</spring-test.version>
-        <structured-logging.version>3.0.50</structured-logging.version>
+        <spring-boot.version>4.0.5</spring-boot.version>
+        <structured-logging.version>3.0.54</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>
         <rest-service-common-library.version>2.0.4</rest-service-common-library.version>
-        <testcontainers.version>1.21.2</testcontainers.version>
+        <testcontainers.version>1.21.3</testcontainers.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <opentelemetry-instrumentation-bom.version>2.16.0</opentelemetry-instrumentation-bom.version>
         <!--sonar configuration-->
@@ -76,10 +73,18 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <!-- Use netty-bom to manage all Netty dependencies at version 4.2.12.Final -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>io.opentelemetry.instrumentation</groupId>
                 <artifactId>opentelemetry-instrumentation-bom</artifactId>
-                <version>${opentelemetry-instrumentation-bom.version}</version>
+                <version>2.26.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -105,11 +110,42 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>bom</artifactId>
                 <version>${software.amazon.awssdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- CVE-2026-33186 -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>1.80.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Override Tomcat version until spring-boot releases patch for tomcat-embed 11.0.20 CVEs -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -137,35 +173,34 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-opentelemetry</artifactId>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
-            <artifactId>opentelemetry-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-csv</artifactId>
-            <version>${jackson.version}</version>
+            <artifactId>opentelemetry-logback-appender-1.0</artifactId>
+            <version>2.26.1-alpha</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
-            <version>${jakarta.persistence.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient</artifactId>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -186,7 +221,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
@@ -239,6 +273,10 @@
                     <groupId>commons-lang</groupId>
                     <artifactId>commons-lang</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -251,6 +289,11 @@
             <version>${guava.version}</version>
         </dependency>
         <dependency>
+            <groupId>tools.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
             <version>${ojdbc11.version}</version>
@@ -258,7 +301,6 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml.version}</version>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>
@@ -301,19 +343,15 @@
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-webapp</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.ee9</groupId>
+                    <artifactId>jetty-ee9-webapp</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.ee10</groupId>
+                    <artifactId>jetty-ee10-webapp</artifactId>
+                </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <!-- update from version in transient dependency of private-api-sdk-java -->
-            <groupId>com.google.oauth-client</groupId>
-            <artifactId>google-oauth-client</artifactId>
-            <version>${google-oauth-client.version}</version>
-        </dependency>
-        <dependency>
-            <!-- update from version in transient dependency of google-oauth-client-->
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-context</artifactId>
-            <version>${grpc-context.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -350,13 +388,23 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
+            <artifactId>mockito-core</artifactId>
             <version>${mockito-junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -368,43 +416,36 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mockserver</artifactId>
-            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>localstack</artifactId>
-            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
-            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>kafka</artifactId>
-            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>oracle-xe</artifactId>
-            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- update from version 1.72 with 7 vulnerabilities,
@@ -561,7 +602,6 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>

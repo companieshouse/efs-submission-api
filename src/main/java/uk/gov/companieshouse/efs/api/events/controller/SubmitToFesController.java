@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.efs.api.events.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +13,7 @@ public class SubmitToFesController {
 
     private EventService eventService;
 
-    @Autowired
-    public SubmitToFesController(EventService eventService) {
+    public SubmitToFesController(final EventService eventService) {
         this.eventService = eventService;
     }
 

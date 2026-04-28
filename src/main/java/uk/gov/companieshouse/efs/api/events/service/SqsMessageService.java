@@ -41,8 +41,8 @@ public class SqsMessageService implements MessageService {
      * @param queueUrl              dependency
      * @param messagePartitionSize  dependency
      */
-    public SqsMessageService(SqsClient client, @Qualifier("idGenerator") IdentifierGeneratable idGenerator,
-        @Value("${aws.sqs.queue.url}") String queueUrl, @Value("${message.partition.size}") int messagePartitionSize) {
+    public SqsMessageService(final SqsClient client, @Qualifier("idGenerator") final IdentifierGeneratable idGenerator,
+        @Value("${aws.sqs.queue.url}") final String queueUrl, @Value("${message.partition.size}") final int messagePartitionSize) {
         this.client = client;
         this.idGenerator = idGenerator;
         this.queueUrl = queueUrl;
@@ -57,17 +57,17 @@ public class SqsMessageService implements MessageService {
                 .flatMap(this::getMessageBatchRequestEntries)
                 .toList();
         entries.forEach(entry -> LOGGER.debug(
-                String.format("Sending message for submission [%s] and file [%s] with message id [%s]",
-                        entry.messageAttributes().get(SUBMISSION_KEY).stringValue(),
-                        entry.messageAttributes().get(FILE_KEY).stringValue(),
-                        entry.id())));
+            "Sending message for submission [%s] and file [%s] with message id [%s]".formatted(
+                entry.messageAttributes().get(SUBMISSION_KEY).stringValue(),
+                entry.messageAttributes().get(FILE_KEY).stringValue(),
+                entry.id())));
 
         Streams.stream(Iterables.partition(entries, messagePartitionSize))
                 .forEach(partition -> client.sendMessageBatch(SendMessageBatchRequest.builder()
                         .queueUrl(queueUrl)
                         .entries(partition)
                         .build()));
-        LOGGER.debug(String.format("Sent %d messages to SQS", entries.size()));
+        LOGGER.debug("Sent %d messages to SQS".formatted(entries.size()));
     }
 
     private Stream<SendMessageBatchRequestEntry> getMessageBatchRequestEntries(Submission submission) {

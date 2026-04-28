@@ -1,17 +1,16 @@
 package uk.gov.companieshouse.efs.api.categorytemplates.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.Collections;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.Collections;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import tools.jackson.databind.json.JsonMapper;
 
 
 @ExtendWith(SpringExtension.class)
@@ -22,7 +21,7 @@ class CategoryTemplateTest {
     @BeforeEach
     void setUp() {
         testCategoryTemplate = new CategoryTemplate("CC01", 5, "Category01", "", "", null);
-        JacksonTester.initFields(this, new ObjectMapper());
+        JacksonTester.initFields(this,JsonMapper.builder().build());
     }
 
     @Test

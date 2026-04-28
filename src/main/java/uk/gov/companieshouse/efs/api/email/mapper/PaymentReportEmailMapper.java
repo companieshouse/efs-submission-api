@@ -2,7 +2,6 @@ package uk.gov.companieshouse.efs.api.email.mapper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.email.config.PaymentReportEmailConfig;
 import uk.gov.companieshouse.efs.api.email.model.EmailDocument;
@@ -18,8 +17,7 @@ public class PaymentReportEmailMapper {
     private IdentifierGeneratable idGenerator;
     private TimestampGenerator<LocalDateTime> timestampGenerator;
 
-    @Autowired
-    public PaymentReportEmailMapper(final PaymentReportEmailConfig config, IdentifierGeneratable idGenerator, TimestampGenerator<LocalDateTime> timestampGenerator) {
+    public PaymentReportEmailMapper(final PaymentReportEmailConfig config, final IdentifierGeneratable idGenerator, final TimestampGenerator<LocalDateTime> timestampGenerator) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;

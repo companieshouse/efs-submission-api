@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -112,7 +112,7 @@ class NewSubmissionControllerTest {
     @Test
     void testPresenterApiConstructorWithOther() {
         //given
-        uk.gov.companieshouse.api.model.efs.submissions.PresenterApi other = new uk.gov.companieshouse.api.model.efs.submissions.PresenterApi();
+        PresenterApi other = new uk.gov.companieshouse.api.model.efs.submissions.PresenterApi();
         other.setEmail("demo@ch.gov.uk");
 
         //when

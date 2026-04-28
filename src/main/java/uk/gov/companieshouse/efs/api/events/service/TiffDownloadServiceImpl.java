@@ -3,7 +3,6 @@ package uk.gov.companieshouse.efs.api.events.service;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +18,8 @@ public class TiffDownloadServiceImpl implements TiffDownloadService {
 
     private String bucketName;
 
-    @Autowired
-    public TiffDownloadServiceImpl(S3Client that,
-                                   @Value("${tiff.bucket.name}") String bucketName) {
+    public TiffDownloadServiceImpl(final S3Client that,
+                                   @Value("${tiff.bucket.name}") final String bucketName) {
         this.s3 = that;
         this.bucketName = bucketName;
     }
@@ -31,7 +29,7 @@ public class TiffDownloadServiceImpl implements TiffDownloadService {
         try {
             return IOUtils.toByteArray(s3.getObject(GetObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(String.format("%s/%s", "converted-tiffs", fileId))
+                    .key("%s/%s".formatted("converted-tiffs", fileId))
                     .build()));
         } catch (IOException ex) {
             throw new TiffDownloadException("Failed to convert TIFF to byteArray", ex);

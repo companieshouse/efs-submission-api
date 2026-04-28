@@ -2,9 +2,10 @@ package uk.gov.companieshouse.efs.api.payment.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
+import jakarta.persistence.Embeddable;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import jakarta.persistence.Embeddable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -21,6 +22,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Embeddable
 public final class PaymentTemplateId implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3666317728117130710L;
 
     private String fee;

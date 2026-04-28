@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.efs.api.paymentreports.service;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,6 +24,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +33,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import tools.jackson.core.exc.JacksonIOException;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.api.model.paymentsession.SessionApi;
 import uk.gov.companieshouse.api.model.paymentsession.SessionListApi;
@@ -197,9 +200,9 @@ class PaymentReportServiceImplTest {
         doThrow(new IOException("expected failure")).when(outputStreamWriter)
             .write(any(char[].class), anyInt(), anyInt());
 
-        final IOException exception = assertThrows(IOException.class, () -> testService.sendScotlandPaymentReport());
+        final var exception = assertThrows(JacksonIOException.class, () -> testService.sendScotlandPaymentReport());
 
-        assertThat(exception.getMessage(), is("expected failure"));
+        assertThat(exception.getMessage(), containsString("expected failure"));
     }
 
     @Test
@@ -223,7 +226,7 @@ class PaymentReportServiceImplTest {
 
         final List<PaymentReportEmailModel> values = emailCaptor.getAllValues();
 
-        assertThat(values.get(0).getHasNoPaymentTransactions(), is(false));
+        assertThat(values.getFirst().getHasNoPaymentTransactions(), is(false));
         assertThat(values.get(0).getFileLink(), is(successFileLink));
         assertThat(values.get(0).getFileName(), is(sh19ReportName.replace(".csv", "")));
         assertThat(values.get(1).getFileLink(), is(failedFileLink));
@@ -252,7 +255,7 @@ class PaymentReportServiceImplTest {
 
         final List<PaymentReportEmailModel> values = emailCaptor.getAllValues();
 
-        assertThat(values.get(0).getHasNoPaymentTransactions(), is(false));
+        assertThat(values.getFirst().getHasNoPaymentTransactions(), is(false));
         assertThat(values.get(0).getFileLink(), is(successFileLink));
         assertThat(values.get(0).getFileName(), is(sh19ReportName.replace(".csv", "")));
         assertThat(values.get(1).getHasNoPaymentTransactions(), is(false));
@@ -280,7 +283,7 @@ class PaymentReportServiceImplTest {
 
         final List<PaymentReportEmailModel> values = emailCaptor.getAllValues();
 
-        assertThat(values.get(0).getHasNoPaymentTransactions(), is(true));
+        assertThat(values.getFirst().getHasNoPaymentTransactions(), is(true));
         assertThat(values.get(0).getFileLink(), is(successFileLink));
         assertThat(values.get(0).getFileName(), is(sh19ReportName.replace(".csv", "")));
         assertThat(values.get(1).getHasNoPaymentTransactions(), is(true));
@@ -292,9 +295,8 @@ class PaymentReportServiceImplTest {
 
     @Test
     void generateCsvFileContent() throws IOException {
-        final List<PaymentTransaction> transactions = Arrays.asList(submissionSFF, submissionNSFF,
+        final var transactions = Stream.of(submissionSFF, submissionNSFF,
                 submissionSH19SameDay)
-            .stream()
             .map(this::buildTransaction)
             .toList();
         final String expectedCsvContent = """
@@ -318,8 +320,10 @@ class PaymentReportServiceImplTest {
         doThrow(new IOException("test exception")).
             when(outputStreamWriter).write(any(char[].class), anyInt(), anyInt());
 
-        assertThrows(IOException.class,
-            () -> testService.generateCsvFileContent(Collections.emptyList()));
+        final var emptyList = Collections.<PaymentTransaction>emptyList();
+
+        assertThrows(JacksonIOException.class,
+            () -> testService.generateCsvFileContent(emptyList));
     }
 
     private void expectReportUpload(final String failedFileLink, final String failedReportName) {

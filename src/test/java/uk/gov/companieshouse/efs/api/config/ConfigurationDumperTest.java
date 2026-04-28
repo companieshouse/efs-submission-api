@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.efs.api.config;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.ArgumentMatchers.eq;
@@ -8,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,8 +65,8 @@ class ConfigurationDumperTest {
         logOrder.verify(logger).trace("Active profiles: " + "[test]");
         logOrder.verify(logger).trace(eq("PROPERTIES"), propertyMap.capture());
         logOrder.verifyNoMoreInteractions();
-        MatcherAssert.assertThat(propertyMap.getValue().keySet(), hasSize(1));
-        MatcherAssert.assertThat(propertyMap.getValue(), hasEntry("VAR_ONE", "1"));
+        assertThat(propertyMap.getValue().keySet(), hasSize(1));
+        assertThat(propertyMap.getValue(), hasEntry("VAR_ONE", "1"));
     }
 
 }

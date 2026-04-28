@@ -9,7 +9,7 @@ public class ConfirmationReferenceValidator extends ValidatorImpl<Submission> im
     public void validate(final Submission input) throws SubmissionValidationException {
         if (StringUtils.isBlank(input.getConfirmationReference())) {
             throw new SubmissionValidationException(
-                String.format("Confirmation reference is absent in submission [%s]", input.getId()));
+                "Confirmation reference is absent in submission [%s]".formatted(input.getId()));
         }
         super.validate(input);
     }

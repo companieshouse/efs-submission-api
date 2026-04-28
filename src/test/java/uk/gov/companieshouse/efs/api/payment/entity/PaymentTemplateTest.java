@@ -9,10 +9,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.sameInstance;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,6 +22,8 @@ import nl.jqno.equalsverifier.Warning;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 class PaymentTemplateTest {
     private static final String COMPANY_NUMBER = "00000000";
@@ -182,9 +180,8 @@ class PaymentTemplateTest {
     }
 
     @Test
-    void jsonRepresentation() throws JsonProcessingException {
+    void jsonRepresentation() throws JacksonException {
         final JsonMapper mapper = JsonMapper.builder()
-            .addModule(new JavaTimeModule())
             .build();
         final String json = mapper.writeValueAsString(testDetails);
 
@@ -295,8 +292,8 @@ class PaymentTemplateTest {
     }
 
     @Test
-    void itemJsonRepresentation() throws JsonProcessingException {
-        final String json = new ObjectMapper().writeValueAsString(item);
+    void itemJsonRepresentation() throws JacksonException {
+        final String json = new tools.jackson.databind.json.JsonMapper().writeValueAsString(item);
         assertThat(json, allOf(
             //formatter:off
             containsString("amount"), containsString("available_payment_methods"),
@@ -322,9 +319,12 @@ class PaymentTemplateTest {
     }
 
     @Test
-    void linksEqualsAndHashcode() {
+    void linksEqualsAndHashcode() throws URISyntaxException, MalformedURLException {
         EqualsVerifier.forClass(PaymentTemplate.Links.class).usingGetClass()
-            .suppress(Warning.NONFINAL_FIELDS).verify();
+            .suppress(Warning.NONFINAL_FIELDS)
+            // use prefab URLs to avoid slow test execution; URL.equals() tries to resolve hostnames using DNS.
+            .withPrefabValues(URL.class, new URI("http://self1").toURL(), new URI("http://self2").toURL())
+            .verify();
     }
 
     @Test
@@ -337,8 +337,8 @@ class PaymentTemplateTest {
     }
 
     @Test
-    void linksJsonRepresentation() throws JsonProcessingException {
-        assertThat(new ObjectMapper().writeValueAsString(links), allOf(
+    void linksJsonRepresentation() throws JacksonException {
+        assertThat(new tools.jackson.databind.json.JsonMapper().writeValueAsString(links), allOf(
             //@formatter:off
                 containsString("resource"),
                 containsString("self")));

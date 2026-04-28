@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.efs.api.companyauthallowlist.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.efs.api.companyauthallowlist.repository.CompanyAuthAllowListRepository;
@@ -20,7 +19,6 @@ public class CompanyAuthAllowListServiceImpl implements CompanyAuthAllowListServ
      *
      * @param repository the {@link CompanyAuthAllowListRepository}
      */
-    @Autowired
     public CompanyAuthAllowListServiceImpl(final CompanyAuthAllowListRepository repository) {
         this.repository = repository;
     }

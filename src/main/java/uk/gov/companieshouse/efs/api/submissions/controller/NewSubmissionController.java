@@ -2,8 +2,9 @@ package uk.gov.companieshouse.efs.api.submissions.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -12,16 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.gov.companieshouse.api.model.efs.submissions.PresenterApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/efs-submission-api/submissions/new")
@@ -31,8 +27,7 @@ public class NewSubmissionController {
 
     private SubmissionService submissionService;
 
-    @Autowired
-    public NewSubmissionController(SubmissionService submissionService) {
+    public NewSubmissionController(final SubmissionService submissionService) {
         this.submissionService = submissionService;
     }
 

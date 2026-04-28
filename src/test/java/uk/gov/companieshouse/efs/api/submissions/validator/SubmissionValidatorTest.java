@@ -135,7 +135,7 @@ class SubmissionValidatorTest {
             SubmissionValidationException.class, () -> validator.validate(submission));
 
         assertThat(thrown.getMessage(),
-            is(String.format("Fee item is missing for form [%s] in submission [%s]", FEE_FORM,
+            is("Fee item is missing for form [%s] in submission [%s]".formatted(FEE_FORM,
                 SUB_ID)));
     }
 

@@ -3,7 +3,6 @@ package uk.gov.companieshouse.efs.api.email.mapper;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.email.config.DelayedSubmissionBusinessEmailConfig;
 import uk.gov.companieshouse.efs.api.email.model.DelayedSubmissionBusinessEmailData;
@@ -26,8 +25,8 @@ public class DelayedSubmissionBusinessEmailMapper {
      * @param idGenerator           dependency
      * @param timestampGenerator    dependency
      */
-    @Autowired
-    public DelayedSubmissionBusinessEmailMapper(final DelayedSubmissionBusinessEmailConfig config, final IdentifierGeneratable idGenerator, final TimestampGenerator<LocalDateTime> timestampGenerator) {
+    public DelayedSubmissionBusinessEmailMapper(final DelayedSubmissionBusinessEmailConfig config,
+        final IdentifierGeneratable idGenerator, final TimestampGenerator<LocalDateTime> timestampGenerator) {
         this.config = config;
         this.idGenerator = idGenerator;
         this.timestampGenerator = timestampGenerator;

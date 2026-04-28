@@ -1,7 +1,9 @@
 package uk.gov.companieshouse.efs.api.companyauthallowlist.model;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.hamcrest.Matchers;
@@ -10,9 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import tools.jackson.databind.json.JsonMapper;
 
 @ExtendWith(SpringExtension.class)
 class CompanyAuthAllowListEntryTest {
@@ -22,7 +22,7 @@ class CompanyAuthAllowListEntryTest {
     @BeforeEach
     void setUp() {
         testCompanyAuthAllowListEntry = new CompanyAuthAllowListEntry("test@email.co.uk");
-        JacksonTester.initFields(this, new ObjectMapper());
+        JacksonTester.initFields(this, JsonMapper.builder().build());
     }
 
     @Test

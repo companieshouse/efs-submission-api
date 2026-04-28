@@ -3,7 +3,6 @@ package uk.gov.companieshouse.efs.api.events.service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
@@ -30,9 +29,8 @@ public class ExecutionEngine {
     private S3ClientService s3ClientService;
     private String fileBucketName;
 
-    @Autowired
-    public ExecutionEngine(SubmissionService submissionService, MessageService messageService, EmailService emailService, S3ClientService s3ClientService,
-        @Qualifier("fileBucketName") String fileBucketName) {
+    public ExecutionEngine(final SubmissionService submissionService, final MessageService messageService, final EmailService emailService, final S3ClientService s3ClientService,
+        @Qualifier("fileBucketName") final String fileBucketName) {
         this.submissionService = submissionService;
         this.messageService = messageService;
         this.emailService = emailService;
@@ -50,16 +48,15 @@ public class ExecutionEngine {
 
     private void handleNoDecision(List<Decision> decisions) {
         decisions.forEach(decision ->
-                LOGGER.debug(String.format(
-                        "Submission with id: [%s] contains files still awaiting virus scan or encountered errors in file-transfer-api",
-                        decision.getSubmission().getId()))
+                LOGGER.debug("Submission with id: [%s] contains files still awaiting virus scan or encountered errors in file-transfer-api".formatted(
+                    decision.getSubmission().getId()))
         );
     }
 
     private void handleInvalidFormType(List<Decision> decisions) {
         decisions.forEach(decision ->
-                LOGGER.error(String.format("Submission with id: [%s] has unhandled form type [%s]",
-                        decision.getSubmission().getId(), decision.getSubmission().getFormDetails().getFormType()))
+                LOGGER.error("Submission with id: [%s] has unhandled form type [%s]".formatted(
+                    decision.getSubmission().getId(), decision.getSubmission().getFormDetails().getFormType()))
         );
     }
 
@@ -88,7 +85,7 @@ public class ExecutionEngine {
                 createEmailFileDetailsList(submission.getFormDetails().getFileDetailsList()));
         emailService.sendInternalSubmission(emailModel);
         submissionService.updateSubmissionStatus(submission.getId(), SubmissionStatus.PROCESSED_BY_EMAIL);
-        LOGGER.debug(String.format("Processed submission [%s] by email", submission.getId()));
+        LOGGER.debug("Processed submission [%s] by email".formatted(submission.getId()));
     }
 
     private List<EmailFileDetails> createEmailFileDetailsList(List<FileDetails> fileDetails) {

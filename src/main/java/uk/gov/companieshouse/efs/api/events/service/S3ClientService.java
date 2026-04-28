@@ -2,7 +2,8 @@ package uk.gov.companieshouse.efs.api.events.service;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.exception.SdkException;
@@ -16,9 +17,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Component
 public class S3ClientService {
 
@@ -29,9 +27,8 @@ public class S3ClientService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
-    @Autowired
-    public S3ClientService(S3Presigner presigner, @Value("${file.link.expiry.in.days}") Long expiryInDays,
-        S3Client s3Client, @Value("${env.name}") String envName) {
+    public S3ClientService(final S3Presigner presigner, @Value("${file.link.expiry.in.days}") final Long expiryInDays,
+        final S3Client s3Client, @Value("${env.name}") final String envName) {
         this.presigner = presigner;
         this.expiryInDays = expiryInDays;
         this.s3Client = s3Client;
@@ -40,7 +37,7 @@ public class S3ClientService {
 
     public void uploadToS3(final String reportName, final String csvContent, final String paymentReportBucketName) {
         try {
-            LOGGER.infoContext(reportName, String.format("Uploading [%s] to S3", reportName), null);
+            LOGGER.infoContext(reportName, "Uploading [%s] to S3".formatted(reportName), null);
             final PutObjectRequest request =
                     buildS3Request(reportName, paymentReportBucketName, "text/csv", StandardCharsets.UTF_8.name());
             final RequestBody body = setS3BodyContent(csvContent);

@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.efs.api.submissions.validator;
 
 import java.time.Clock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.efs.api.categorytemplates.service.CategoryTemplateService;
 import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
@@ -20,9 +19,8 @@ public class SubmissionValidator extends ValidatorImpl<Submission> implements Va
     private final Logger logger;
 
 
-    @Autowired
-    public SubmissionValidator(FormTemplateRepository formRepository, PaymentTemplateRepository paymentRepository,
-        CategoryTemplateService categoryTemplateService, final Clock clock, final Logger logger) {
+    public SubmissionValidator(final FormTemplateRepository formRepository, final PaymentTemplateRepository paymentRepository,
+        final CategoryTemplateService categoryTemplateService, final Clock clock, final Logger logger) {
         this.formRepository = formRepository;
         this.categoryTemplateService = categoryTemplateService;
         this.paymentRepository = paymentRepository;
