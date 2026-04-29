@@ -38,7 +38,7 @@
         <junit-jupiter.version>5.13.1</junit-jupiter.version>
         <kafka-clients.version>4.0.2</kafka-clients.version>
         <kafka-models.version>3.0.18</kafka-models.version>
-        <log4j-bom.version>2.25.3</log4j-bom.version>
+        <log4j-bom.version>2.25.4</log4j-bom.version>
         <ojdbc11.version>23.8.0.25.04</ojdbc11.version>
         <tomcat.version>11.0.21</tomcat.version>
         <!-- Maven -->
@@ -56,7 +56,7 @@
         <private-api-sdk-java.version>4.0.494</private-api-sdk-java.version>
         <sdk-manager-java.version>3.0.14</sdk-manager-java.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
-        <spring-boot.version>4.0.5</spring-boot.version>
+        <spring-boot.version>4.0.6</spring-boot.version>
         <structured-logging.version>3.0.54</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>
         <rest-service-common-library.version>2.0.4</rest-service-common-library.version>
@@ -130,22 +130,6 @@
                 <version>1.80.0</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <!-- Override Tomcat version until spring-boot releases patch for tomcat-embed 11.0.20 CVEs -->
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-websocket</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-el</artifactId>
-                <version>${tomcat.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
