@@ -5,9 +5,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import uk.gov.companieshouse.efs.api.kafka.CHKafkaProducer;
-import uk.gov.companieshouse.efs.api.client.RestClient;
+import uk.gov.companieshouse.efs.api.client.EfsRestClient;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
 import uk.gov.companieshouse.kafka.producer.ProducerConfigHelper;
@@ -33,34 +33,44 @@ public class KafkaConfig {
     @Value("${kafka.schema.uri.email-send}")
     private String emailSchemaUri;
 
+    /**
+     * Default no-argument constructor required by Spring for instantiating the configuration class.
+     */
     public KafkaConfig() {
-        // blank no-arg constructor
+        // Intentionally blank
     }
 
     @Bean
-    CHKafkaProducer producer(ProducerConfig producerConfig) {
+    CHKafkaProducer producer(final ProducerConfig producerConfig) {
         return new CHKafkaProducer(producerConfig);
     }
 
     @Bean
     ProducerConfig producerConfig() {
-        ProducerConfig config = new ProducerConfig();
+        final var config = new ProducerConfig();
+
         ProducerConfigHelper.assignBrokerAddresses(config);
         config.setAcks(Acks.valueOf(acks));
         config.setRoundRobinPartitioner(isRoundRobin);
         config.setRetries(retries);
+
         return config;
     }
 
+    /**
+     * Provides an EfsRestClient bean that wraps Spring's RestClient for HTTP operations.
+     * All errors are surfaced as exceptions and must be handled by the caller.
+     */
     @Bean
-    public RestClient restClient(RestTemplate restTemplate) {
-        return new RestClient(restTemplate);
+    public EfsRestClient efsRestClient(final RestClient restClient) {
+        return new EfsRestClient(restClient);
     }
 
     @Bean
-    public Schema fetchSchema(RestClient restClient) {
-        byte[] bytes = restClient.getSchema(schemaRegistryUrl, emailSchemaUri);
-        String schemaJson = new JSONObject(new String(bytes)).getString("schema");
+    public Schema fetchSchema(final EfsRestClient efsRestClient) {
+        final var bytes = efsRestClient.getSchema(schemaRegistryUrl, emailSchemaUri);
+        final var schemaJson = new JSONObject(new String(bytes)).getString("schema");
+
         return new Schema.Parser().parse(schemaJson);
     }
 

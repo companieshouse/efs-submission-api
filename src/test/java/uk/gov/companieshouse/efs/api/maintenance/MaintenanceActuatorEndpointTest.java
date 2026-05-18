@@ -18,8 +18,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import uk.gov.companieshouse.api.model.efs.maintenance.MaintenanceCheckApi;
-import uk.gov.companieshouse.api.model.efs.maintenance.ServiceStatus;
+import uk.gov.companieshouse.api.model.common.ServiceStatus;
 import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +46,7 @@ class MaintenanceActuatorEndpointTest {
     void resultWhenTimesAreBlank(final String start, final String end, final String message) {
         setupPeriodConfigValues(start, end, message);
 
-        final MaintenanceCheckApi resultNow = testEndpoint.check();
+        final var resultNow = testEndpoint.check();
 
         assertThat(resultNow.getStatus(), is(ServiceStatus.UP));
         assertThat(resultNow.getMessage(), is("No planned maintenance is configured"));
@@ -58,7 +57,7 @@ class MaintenanceActuatorEndpointTest {
     void checkWhenPeriodSetForFuture() {
         setupPeriodConfigValues("3 Jan 24 00:30 GMT", "3 Jan 24 02:30 GMT", null);
 
-        final MaintenanceCheckApi resultNow = testEndpoint.check();
+        final var resultNow = testEndpoint.check();
 
         assertThat(resultNow.getStatus(), is(ServiceStatus.UP));
         assertThat(resultNow.getMessage(), is("Planned maintenance has been configured"));
@@ -71,7 +70,7 @@ class MaintenanceActuatorEndpointTest {
     void checkWhenPeriodSetForPast() {
         setupPeriodConfigValues("3 Dec 23 00:30 GMT", "3 Dec 23 02:30 GMT", null);
 
-        final MaintenanceCheckApi resultNow = testEndpoint.check();
+        final var resultNow = testEndpoint.check();
 
         assertThat(resultNow.getStatus(), is(ServiceStatus.UP));
         assertThat(resultNow.getMessage(), is("Planned maintenance has been configured"));
@@ -85,7 +84,7 @@ class MaintenanceActuatorEndpointTest {
         setupPeriodConfigValues("25 Dec 23 00:30 GMT", "25 Dec 23 02:30 GMT",
             "UNAVAILABLE - PLANNED MAINTENANCE");
 
-        final MaintenanceCheckApi resultNow = testEndpoint.check();
+        final var resultNow = testEndpoint.check();
 
         assertThat(resultNow.getStatus(), is(ServiceStatus.OUT_OF_SERVICE));
         assertThat(resultNow.getMessage(), is("UNAVAILABLE - PLANNED MAINTENANCE"));
@@ -99,7 +98,7 @@ class MaintenanceActuatorEndpointTest {
         setupPeriodConfigValues("25 Dec 23 00:30", "25 Dec 23 02:30 GMT",
             "UNAVAILABLE - PLANNED MAINTENANCE");
 
-        final MaintenanceCheckApi resultNow = testEndpoint.check();
+        final var resultNow = testEndpoint.check();
 
         assertThat(resultNow.getStatus(), is(ServiceStatus.UP));
         assertThat(resultNow.getMessage(),
@@ -116,7 +115,7 @@ class MaintenanceActuatorEndpointTest {
         setupPeriodConfigValues("25 Dec 23 00:30 GMT", "5 Jan 24 02:30+01",
             "UNAVAILABLE - PLANNED MAINTENANCE");
 
-        final MaintenanceCheckApi resultNow = testEndpoint.check();
+        final var resultNow = testEndpoint.check();
 
         assertThat(resultNow.getStatus(), is(ServiceStatus.UP));
         assertThat(resultNow.getMessage(),
@@ -131,7 +130,7 @@ class MaintenanceActuatorEndpointTest {
         setupPeriodConfigValues("", "5 Jan 24 02:30+01",
             "UNAVAILABLE - PLANNED MAINTENANCE");
 
-        final MaintenanceCheckApi resultNow = testEndpoint.check();
+        final var resultNow = testEndpoint.check();
 
         assertThat(resultNow.getStatus(), is(ServiceStatus.UP));
         assertThat(resultNow.getMessage(),

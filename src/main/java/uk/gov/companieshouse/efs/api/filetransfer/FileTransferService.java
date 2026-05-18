@@ -18,24 +18,24 @@ public class FileTransferService {
     private String fileTransferApiUrl;
     private final ApiClientUtil apiClientUtil;
 
-    private Logger logger;
+    private final Logger logger;
 
-    public FileTransferService(ApiClientUtil apiClientUtil, Logger logger) {
+    public FileTransferService(final ApiClientUtil apiClientUtil, final Logger logger) {
         this.apiClientUtil = apiClientUtil;
         this.logger = logger;
     }
 
     public Optional<FileDetailsApi> getFileDetails(final String id) {
         try {
-            ApiResponse<FileDetailsApi> response = details(id);
+            final var response = details(id);
             return Optional.ofNullable(response.getData());
-        } catch ( URIValidationException e) {
+        } catch ( final URIValidationException e) {
             throw new FileDetailsException(e.getMessage());
-        } catch (ApiErrorResponseException e) {
+        } catch (final ApiErrorResponseException e) {
             if (e.getStatusCode() == 404) {
                 return Optional.empty();
             }
-            var message = "Unexpected response status from file transfer api when getting file details.";
+            final var message = "Unexpected response status from file transfer api when getting file details.";
             logger.errorContext(id, message, null, Map.of(
                     "expected", "200",
                     "status", e.getStatusCode()

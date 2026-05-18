@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceProperties;
-import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,9 +22,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.client.DefaultResponseErrorHandler;
-import org.springframework.web.client.ResponseErrorHandler;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -173,27 +170,19 @@ public class Config {
     }
 
     /**
-     * Create default response error handler for the rest templates.
-     *
-     * @return A default response error handler
+     * Create a RestClient bean for service operations.
+     * <p>
+     * This replaces the previous RestTemplate bean. Note that RestClient uses a different error handling model:
+     * <ul>
+     *   <li>There is no setErrorHandler method; errors are handled via exceptions and fluent API.</li>
+     *   <li>Downstream consumers should continue to use try/catch for RestClientException and HttpStatusCodeException as before.</li>
+     *   <li>All error handling logic must be preserved in downstream classes.</li>
+     * </ul>
+     * </p>
      */
     @Bean
-    ResponseErrorHandler responseErrorHandler() {
-        return new DefaultResponseErrorHandler();
-    }
-
-    /**
-     * Create a rest template for service operations.
-     *
-     * @param handler A default response error handler
-     * @return A rest template for the service operation.
-     */
-    @Bean
-    RestTemplate restTemplate(final ResponseErrorHandler handler) {
-        final RestTemplate template = new RestTemplateBuilder().build();
-        template.setErrorHandler(handler);
-
-        return template;
+    RestClient restClient() {
+        return RestClient.builder().build();
     }
 
     @Bean
@@ -283,11 +272,26 @@ public class Config {
             timestampGenerator, categoryTemplateService, formTemplateService);
     }
 
+    /**
+     * Creates an EmailMapperFactory bean with all required mappers.
+     * <ul>
+     *   <li>AcceptEmailMapper</li>
+     *   <li>ConfirmationEmailMapper</li>
+     *   <li>PaymentFailedEmailMapper</li>
+     *   <li>DelayedSubmissionBusinessEmailMapper</li>
+     *   <li>DelayedSubmissionSupportEmailMapper</li>
+     *   <li>DelayedSH19SameDaySubmissionSupportEmailMapper</li>
+     *   <li>InternalAvFailedEmailMapper</li>
+     *   <li>InternalFailedConversionEmailMapper</li>
+     *   <li>InternalSubmissionEmailMapper</li>
+     *   <li>PaymentReportEmailMapper</li>
+     *   <li>RejectEmailMapper</li>
+     * </ul>
+     */
     @Bean
     EmailMapperFactory emailMapperFactory(
         final ExternalEmailMapperFactory externalEmailMapperFactory,
         final InternalEmailMapperFactory internalEmailMapperFactory) {
-
 
         return EmailMapperFactory.newBuilder()
             .withAcceptEmailMapper(externalEmailMapperFactory.getAcceptEmailMapper())

@@ -11,8 +11,8 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.api.model.common.ServiceStatus;
 import uk.gov.companieshouse.api.model.efs.maintenance.MaintenanceCheckApi;
-import uk.gov.companieshouse.api.model.efs.maintenance.ServiceStatus;
 import uk.gov.companieshouse.logging.Logger;
 
 @Component
@@ -48,15 +48,15 @@ public class MaintenanceActuatorEndpoint {
     @ReadOperation(produces = "application/json")
     @Bean
     public MaintenanceCheckApi check() {
-        ZonedDateTime startDateTime = null;
-        ZonedDateTime endDateTime = null;
+        final ZonedDateTime startDateTime;
+        final ZonedDateTime endDateTime;
 
         try {
             startDateTime = StringUtils.isBlank(outOfServiceStart) ? null : parseZonedDateTime(
                 outOfServiceStart);
         } catch (DateTimeParseException e) {
-            final String errorMessage = "Error parsing configuration: " +
-                "PLANNED_MAINTENANCE_START_TIME: " + e.getMessage();
+            final var errorMessage = "Error parsing configuration: PLANNED_MAINTENANCE_START_TIME: %s".formatted(
+                e.getMessage());
 
             logger.error(errorMessage);
             return new MaintenanceCheckApi(ServiceStatus.UP, errorMessage, outOfServiceStart,
@@ -66,8 +66,8 @@ public class MaintenanceActuatorEndpoint {
             endDateTime = StringUtils.isBlank(outOfServiceEnd) ? null : parseZonedDateTime(
                 outOfServiceEnd);
         } catch (DateTimeParseException e) {
-            final String errorMessage = "Error parsing configuration: " +
-                "PLANNED_MAINTENANCE_END_TIME: " + e.getMessage();
+            final var errorMessage = "Error parsing configuration: PLANNED_MAINTENANCE_END_TIME: %s".formatted(
+                e.getMessage());
 
             logger.error(errorMessage);
             return new MaintenanceCheckApi(ServiceStatus.UP, errorMessage,
@@ -75,7 +75,7 @@ public class MaintenanceActuatorEndpoint {
                 outOfServiceEnd);
         }
 
-        final ZonedDateTime now = ZonedDateTime.now(clock);
+        final var now = ZonedDateTime.now(clock);
 
         if (startDateTime != null && endDateTime != null) {
             // non-inclusive range: startDateTime < now < endDateTime
