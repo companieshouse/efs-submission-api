@@ -40,7 +40,7 @@
         <kafka-models.version>3.0.18</kafka-models.version>
         <log4j-bom.version>2.25.4</log4j-bom.version>
         <ojdbc11.version>23.8.0.25.04</ojdbc11.version>
-        <tomcat.version>11.0.21</tomcat.version>
+        <tomcat.version>11.0.22</tomcat.version>
         <!-- Maven -->
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
@@ -50,19 +50,19 @@
 
         <mockito-junit-jupiter.version>5.23.0</mockito-junit-jupiter.version>
         <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
-        <netty.version>4.2.12.Final</netty.version>
+        <netty.version>4.2.13.Final</netty.version>
         <bcprov-jdk180n.version>1.83</bcprov-jdk180n.version>
         <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
-        <private-api-sdk-java.version>4.0.494</private-api-sdk-java.version>
+        <private-api-sdk-java.version>6.0.15</private-api-sdk-java.version>
         <sdk-manager-java.version>3.0.14</sdk-manager-java.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
         <spring-boot.version>4.0.6</spring-boot.version>
         <structured-logging.version>3.0.54</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>
         <rest-service-common-library.version>2.0.4</rest-service-common-library.version>
-        <testcontainers.version>1.21.3</testcontainers.version>
+        <testcontainers.version>2.0.5</testcontainers.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
-        <opentelemetry-instrumentation-bom.version>2.16.0</opentelemetry-instrumentation-bom.version>
+        <opentelemetry-instrumentation-bom.version>2.26.1</opentelemetry-instrumentation-bom.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -84,7 +84,7 @@
             <dependency>
                 <groupId>io.opentelemetry.instrumentation</groupId>
                 <artifactId>opentelemetry-instrumentation-bom</artifactId>
-                <version>2.26.1</version>
+                <version>${opentelemetry-instrumentation-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -101,6 +101,27 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!--
+              PINNED: Fix security flaws in tomcat-embed-core-11.0.21 managed by spring-boot-4.0.6:
+              org.apache.tomcat.embed components with CVEs:
+              CVE-2026-41293(9.8), CVE-2026-41284(7.5), CVE-2026-43513(7.5), CVE-2026-43512(9.8), CVE-2026-42498(7.3), CVE-2026-43515(9.1)
+              Remove these overrides when a later version of spring-boot includes tomcat-embed-core 11.0.22+ with fixes for these vulnerabilities.
+            -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
@@ -404,32 +425,32 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>mockserver</artifactId>
+            <artifactId>testcontainers-mockserver</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>localstack</artifactId>
+            <artifactId>testcontainers-localstack</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>mongodb</artifactId>
+            <artifactId>testcontainers-mongodb</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>kafka</artifactId>
+            <artifactId>testcontainers-kafka</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>oracle-xe</artifactId>
+            <artifactId>testcontainers-oracle-xe</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- update from version 1.72 with 7 vulnerabilities,
@@ -460,26 +481,6 @@
         </dependency>
     </dependencies>
     <build>
-        <!--
-            Workaround for Tilt infinite rebuild loop:
-            1. mvn compile: copies src/main/resources/*.properties to target/classes (standard behaviour)
-            2. those copies files have a new ctime (creation timestamp)
-            3. Tiltfile.dev watches ./target/classes/*.properties and triggers live update
-            4. Live update runs mvn compile
-
-            Solution:
-            1. Prevent copying of resources above by excluding src/main/resources/*.properties from standard build
-            2. Instead of that, run maven-antrun-plugin <copy> task with its attribute preservelastmodified=true
-        -->
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>*.properties</exclude>
-                </excludes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -532,9 +533,16 @@
                     <skipTests>${skip.unit.tests}</skipTests>
                     <skipITs>${skip.integration.tests}</skipITs>
                     <includes>
-                        <include>**/*ITest.java</include>
+                        <include>**/*ITest</include>
                     </includes>
                     <trimStackTrace>false</trimStackTrace>
+                        <!--
+                          Ensures the main classes directory is available on the integration test classpath.
+                          Without this workaround, integration tests are failing with ClassNotFoundException for classes compiled in src/main/java.
+                        -->
+                        <additionalClasspathElements>
+                            <additionalClasspathElement>${project.build.directory}/classes</additionalClasspathElement>
+                        </additionalClasspathElements>
                 </configuration>
             </plugin>
             <plugin>
@@ -546,30 +554,6 @@
                         <arg>-parameters</arg>
                     </compilerArgs>
                 </configuration>
-            </plugin>
-            <!-- See Workaround Note above -->
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>${maven-antrun-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <configuration>
-                            <target>
-                                <!--suppress UnresolvedMavenProperty -->
-                                <!-- predefined maven property is not recognised by IDEA -->
-                                <copy todir="${project.build.outputDirectory}" preservelastmodified="true">
-                                    <fileset dir="src/main/resources">
-                                        <include name="*.properties"/>
-                                    </fileset>
-                                </copy>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -2,15 +2,17 @@ package uk.gov.companieshouse.efs.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.companieshouse.efs.api.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.efs.api.interceptor.UserAuthenticationInterceptor;
 
+@EnableMongoRepositories
 @SpringBootApplication
 public class EfsApiApplication implements WebMvcConfigurer {
-    private UserAuthenticationInterceptor userAuthenticationInterceptor;
-    private LoggingInterceptor loggingInterceptor;
+    private final UserAuthenticationInterceptor userAuthenticationInterceptor;
+    private final LoggingInterceptor loggingInterceptor;
 
     /**
      * Constructor for EfsApiApplication.

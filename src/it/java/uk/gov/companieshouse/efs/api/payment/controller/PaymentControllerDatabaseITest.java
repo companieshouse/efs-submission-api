@@ -27,7 +27,7 @@ import uk.gov.companieshouse.efs.api.payment.repository.PaymentTemplateRepositor
 @EnableMongoRepositories("uk.gov.companieshouse.efs.api.payment.repository")
 @Testcontainers(disabledWithoutDocker = true)
 @ContextConfiguration(classes = MongoDbTestContainerConfig.class)
-class PaymentControllerDatabaseIT {
+class PaymentControllerDatabaseITest {
     private static final String FEE_ID = "FEE";
     private static final LocalDateTime NOW_LDT = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
 
