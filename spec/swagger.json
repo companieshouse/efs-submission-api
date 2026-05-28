@@ -1197,15 +1197,15 @@
       }
     },
     "payment-provisional-status": {
-      "description": "Payment session status/outcome",
-      "title": "Payment session status",
+      "description": "Provisional payment session status",
+      "title": "Provisional payment session status",
       "type": "string",
       "enum": [
         "Paid",
         "Pending",
         "Failed"
       ],
-      "x-example": "Paid"
+      "example": "Pending"
     },
     "payment-outcome-status": {
       "description": "Payment session status/outcome",
@@ -1216,18 +1216,19 @@
         "Cancelled",
         "Failed"
       ],
-      "x-example": "Paid"
+      "example": "Paid"
     },
     "payment-session": {
       "description": "Payment session details",
       "title": "Payment Session details",
       "type": "object",
       "required": [
-        "sessionId",
-        "sessionState" 
+        "session_id",
+        "session_state",
+        "session_status"
       ],
       "properties": {
-        "sessionId": {
+        "session_id": {
           "type": "string",
           "minLength": 15,
           "maxLength": 15,
