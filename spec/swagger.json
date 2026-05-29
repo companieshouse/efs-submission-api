@@ -1235,13 +1235,16 @@
           "pattern": "[0-9a-zA-Z]{15}",
           "example": "yMxgdNVSdwyk7sN"
         },
-        "sessionState": {
+        "session_state": {
           "type": "string",
           "description": "secure random nonce",
           "minLength": 64,
           "maxLength": 64,
           "format": "Base64 encoded",
           "example": "FD_RlzcLp-xcK1YZGEbn3ZpRHGlwy7tNjn_zsjYVauoB8Ml3GkfpmbhPuPd093XM"
+        },
+        "session_status": {
+          "$ref": "#/definitions/payment-provisional-status"
         }
       }
     },
