@@ -39,15 +39,17 @@ public class FileController {
      * @param id        submission id
      * @param files     list of file details
      * @param result    bindingResult
-     * @return          ResponseEntity&lt;SubmissionResponseApi&gt;
+     * @return          {@link ResponseEntity<SubmissionResponseApi>};
      */
     @PutMapping
     public ResponseEntity<SubmissionResponseApi> uploadFile(@PathVariable String id,
                                                             @RequestBody @Valid @NotNull FileListApi files, BindingResult result) {
 
         if (result.hasErrors()) {
-            LOGGER.info("File list details are invalid: %s".formatted(result.getAllErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(","))));
+            final var errorMessage = result.getAllErrors().stream().map(
+                DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(", "));
+            LOGGER.info("File list details are invalid: %s".formatted(errorMessage));
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 

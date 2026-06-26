@@ -1,20 +1,25 @@
 package uk.gov.companieshouse.efs.api.submissions.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
+import jakarta.validation.Validation;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import uk.gov.companieshouse.api.model.efs.submissions.FileApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileListApi;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionResponseApi;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
@@ -24,76 +29,113 @@ import uk.gov.companieshouse.efs.api.submissions.service.exception.SubmissionNot
 @ExtendWith(MockitoExtension.class)
 class FileControllerTest {
 
-    @Mock
-    private FileListApi files;
-
-    private FileController controller;
+    private static final String SUBMISSION_ID = "SUB-001";
+    private static final String ENDPOINT = "/efs-submission-api/submission/{id}/files";
 
     @Mock
-    private SubmissionService service;
+    private SubmissionService submissionService;
 
-    @Mock
-    private SubmissionResponseApi response;
-
-    @Mock
-    private BindingResult result;
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
-        this.controller = new FileController(service);
+        final var fileController = new FileController(submissionService);
+        final SpringValidatorAdapter validator;
+        try (var validatorFactory = Validation.buildDefaultValidatorFactory()) {
+            validator = new SpringValidatorAdapter(validatorFactory.getValidator());
+        }
+        mockMvc = MockMvcBuilders.standaloneSetup(fileController)
+            .setValidator(validator)
+            .build();
+        objectMapper = JsonMapper.builder().build();
     }
 
     @Test
-    void testUploadFile() {
-        //given
-        when(service.updateSubmissionWithFileDetails(any(), any())).thenReturn(response);
+    void shouldAcceptValidFilenamesAndReturnOk() throws Exception {
+        final var expectedResponse = new SubmissionResponseApi(SUBMISSION_ID);
+        when(submissionService.updateSubmissionWithFileDetails(any(), any()))
+            .thenReturn(expectedResponse);
 
-        //when
-        ResponseEntity<SubmissionResponseApi> actual = controller.uploadFile("123", files, result);
+        final var fileList = new FileListApi(List.of(
+            new FileApi("file-1", "invoice_2024.pdf", 1024L),
+            new FileApi("file-2", "report-final.docx", 2048L),
+            new FileApi("file-3", "документ_2024.pdf", 512L)
+        ));
 
-        //then
-        assertEquals(response, actual.getBody());
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
+        mockMvc.perform(put(ENDPOINT, SUBMISSION_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(fileList)))
+            .andExpect(status().isOk());
     }
 
     @Test
-    void testUploadFileReturns409Conflict() {
-        //given
-        when(service.updateSubmissionWithFileDetails(any(), any())).thenThrow(new SubmissionIncorrectStateException("not OPEN"));
+    void shouldRejectXssPayloadInFilename() throws Exception {
+        final var fileList = new FileListApi(List.of(
+            new FileApi("file-1", "<script>alert('xss')</script>.pdf", 1024L)
+        ));
 
-        //when
-        ResponseEntity<SubmissionResponseApi> actual = controller.uploadFile("123", files, result);
-
-        //then
-        assertNull(actual.getBody());
-        assertEquals(HttpStatus.CONFLICT, actual.getStatusCode());
+        mockMvc.perform(put(ENDPOINT, SUBMISSION_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(fileList)))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(""));
     }
 
     @Test
-    void testUploadFileReturns400BadRequest() {
-        // given
-        when(result.hasErrors()).thenReturn(true);
-        when(result.getAllErrors()).thenReturn(Arrays.asList(new FieldError("a", "files[0].file_id", "invalid"), new FieldError("a", "files[0].file_size", "invalid")));
+    void shouldRejectSqlInjectionAttemptInFilename() throws Exception {
+        final var fileList = new FileListApi(List.of(
+            new FileApi("file-1", "file;DROP TABLE submissions;--.pdf", 1024L)
+        ));
 
-        // when
-        ResponseEntity<SubmissionResponseApi> actual = controller.uploadFile("123", files, result);
-
-        // then
-        assertNull(actual.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, actual.getStatusCode());
+        mockMvc.perform(put(ENDPOINT, SUBMISSION_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(fileList)))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(""));
     }
 
     @Test
-    void testUploadFileReturns404NotFound() {
-        // given
-        when(service.updateSubmissionWithFileDetails(any(), any())).thenThrow(new SubmissionNotFoundException("not found"));
+    void shouldRejectMixedValidAndInvalidFilenames() throws Exception {
+        final var fileList = new FileListApi(List.of(
+            new FileApi("file-1", "valid_document.pdf", 1024L),
+            new FileApi("file-2", "malicious\"onload=\"alert.pdf", 2048L)
+        ));
 
-        // when
-        ResponseEntity<SubmissionResponseApi> actual = controller.uploadFile("123", files, result);
-
-        // then
-        assertNull(actual.getBody());
-        assertEquals(HttpStatus.NOT_FOUND, actual.getStatusCode());
+        mockMvc.perform(put(ENDPOINT, SUBMISSION_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(fileList)))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string(""));
     }
 
+    @Test
+    void shouldReturnNotFoundWhenSubmissionDoesNotExist() throws Exception {
+        final var fileList = new FileListApi(List.of(
+            new FileApi("file-1", "document.pdf", 1024L)
+        ));
+        when(submissionService.updateSubmissionWithFileDetails(SUBMISSION_ID, fileList))
+            .thenThrow(new SubmissionNotFoundException("Submission not found"));
+
+        mockMvc.perform(put(ENDPOINT, SUBMISSION_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(fileList)))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string(""));
+    }
+
+    @Test
+    void shouldReturnConflictWhenSubmissionIsInIncorrectState() throws Exception {
+        final var fileList = new FileListApi(List.of(
+            new FileApi("file-1", "document.pdf", 1024L)
+        ));
+        when(submissionService.updateSubmissionWithFileDetails(SUBMISSION_ID, fileList))
+            .thenThrow(new SubmissionIncorrectStateException("Submission in incorrect state"));
+
+        mockMvc.perform(put(ENDPOINT, SUBMISSION_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(fileList)))
+            .andExpect(status().isConflict())
+            .andExpect(content().string(""));
+    }
 }
