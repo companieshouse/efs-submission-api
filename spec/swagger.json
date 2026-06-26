@@ -1197,15 +1197,15 @@
       }
     },
     "payment-provisional-status": {
-      "description": "Payment session status/outcome",
-      "title": "Payment session status",
+      "description": "Provisional payment session status",
+      "title": "Provisional payment session status",
       "type": "string",
       "enum": [
         "Paid",
         "Pending",
         "Failed"
       ],
-      "x-example": "Paid"
+      "example": "Pending"
     },
     "payment-outcome-status": {
       "description": "Payment session status/outcome",
@@ -1216,31 +1216,35 @@
         "Cancelled",
         "Failed"
       ],
-      "x-example": "Paid"
+      "example": "Paid"
     },
     "payment-session": {
       "description": "Payment session details",
       "title": "Payment Session details",
       "type": "object",
       "required": [
-        "sessionId",
-        "sessionState" 
+        "session_id",
+        "session_state",
+        "session_status"
       ],
       "properties": {
-        "sessionId": {
+        "session_id": {
           "type": "string",
           "minLength": 15,
           "maxLength": 15,
           "pattern": "[0-9a-zA-Z]{15}",
           "example": "yMxgdNVSdwyk7sN"
         },
-        "sessionState": {
+        "session_state": {
           "type": "string",
           "description": "secure random nonce",
           "minLength": 64,
           "maxLength": 64,
           "format": "Base64 encoded",
           "example": "FD_RlzcLp-xcK1YZGEbn3ZpRHGlwy7tNjn_zsjYVauoB8Ml3GkfpmbhPuPd093XM"
+        },
+        "session_status": {
+          "$ref": "#/definitions/payment-provisional-status"
         }
       }
     },
