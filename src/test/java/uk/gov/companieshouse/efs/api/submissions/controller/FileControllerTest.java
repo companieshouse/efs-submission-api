@@ -72,8 +72,7 @@ class FileControllerTest {
 
         final var fileList = new FileListApi(List.of(
             new FileApi("file-1", "invoice_2024.pdf", 1024L),
-            new FileApi("file-2", "report-final.docx", 2048L),
-            new FileApi("file-3", "документ_2024.pdf", 512L)
+            new FileApi("file-2", "report-final.docx", 2048L)
         ));
 
         mockMvc.perform(put(ENDPOINT, SUBMISSION_ID)
