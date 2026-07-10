@@ -18,10 +18,10 @@
         <skip.integration.tests>false</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
         <java.version>21</java.version>
-        <api-helper-java.version>3.0.3</api-helper-java.version>
+        <api-helper-java.version>3.0.4</api-helper-java.version>
         <avro.version>1.12.1</avro.version>
         <aws-java-sdk-core.version>1.12.797</aws-java-sdk-core.version>
-        <software.amazon.awssdk.version>2.35.1</software.amazon.awssdk.version>
+        <software.amazon.awssdk.version>2.47.2</software.amazon.awssdk.version>
         <ch-kafka.version>3.0.7</ch-kafka.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <commons-io.version>2.19.0</commons-io.version>
@@ -30,7 +30,7 @@
         <google-oauth-client.version>1.39.0</google-oauth-client.version>
         <guava.version>33.4.8-jre</guava.version>
         <imageio.version>1.4.0</imageio.version>
-        <jackson.version>3.1.2</jackson.version>
+        <jackson.version>3.2.0</jackson.version>
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <java-session-handler.version>4.1.15</java-session-handler.version>
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
@@ -40,7 +40,7 @@
         <kafka-models.version>3.0.18</kafka-models.version>
         <log4j-bom.version>2.25.4</log4j-bom.version>
         <ojdbc11.version>23.8.0.25.04</ojdbc11.version>
-        <tomcat.version>11.0.22</tomcat.version>
+        <tomcat.version>11.0.24</tomcat.version>
         <!-- Maven -->
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
@@ -50,19 +50,19 @@
 
         <mockito-junit-jupiter.version>5.23.0</mockito-junit-jupiter.version>
         <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
-        <netty.version>4.2.13.Final</netty.version>
-        <bcprov-jdk180n.version>1.83</bcprov-jdk180n.version>
+        <netty.version>4.2.16.Final</netty.version>
+        <bcprov-jdk180n.version>1.84</bcprov-jdk180n.version>
         <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
-        <private-api-sdk-java.version>7.0.7</private-api-sdk-java.version>
+        <private-api-sdk-java.version>7.0.10</private-api-sdk-java.version>
         <sdk-manager-java.version>3.0.14</sdk-manager-java.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
-        <spring-boot.version>4.0.6</spring-boot.version>
+        <spring-boot.version>4.1.0</spring-boot.version>
         <structured-logging.version>3.0.54</structured-logging.version>
         <sqs-common-version>0.0.1</sqs-common-version>
         <rest-service-common-library.version>2.0.4</rest-service-common-library.version>
         <testcontainers.version>2.0.5</testcontainers.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
-        <opentelemetry-instrumentation-bom.version>2.26.1</opentelemetry-instrumentation-bom.version>
+        <opentelemetry-instrumentation-bom.version>2.29.0</opentelemetry-instrumentation-bom.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -297,6 +297,40 @@
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+        <!-- update from version in transient dependency of tools.jackson.dataformat -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.22</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- update from version in transient dependency of tools.jackson.dataformat -->
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>3.2.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.22.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- update from version in transient dependency of software.amazon.awssdk:sqs -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5</artifactId>
+            <version>5.4.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- update from version in transient dependency of software.amazon.awssdk:sqs -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5-h2</artifactId>
+            <version>5.4.3</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
