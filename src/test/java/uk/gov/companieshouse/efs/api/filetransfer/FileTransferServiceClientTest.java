@@ -28,12 +28,12 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
-class FileTransferServiceTest {
+class FileTransferServiceClientTest {
 
     private static final String FILE_TRANSFER_URL = "http://file-transfer-api";
     private static final String FILE_ID = "file-id-123";
 
-    private FileTransferService fileTransferService;
+    private FileTransferServiceClient fileTransferServiceClient;
 
     @Mock
     private ApiClientUtil apiClientUtil;
@@ -52,8 +52,8 @@ class FileTransferServiceTest {
 
     @BeforeEach
     void setUp() {
-        fileTransferService = new FileTransferService(apiClientUtil, logger);
-        ReflectionTestUtils.setField(fileTransferService, "fileTransferApiUrl", FILE_TRANSFER_URL);
+        fileTransferServiceClient = new FileTransferServiceClient(apiClientUtil, logger);
+        ReflectionTestUtils.setField(fileTransferServiceClient, "fileTransferServiceUrl", FILE_TRANSFER_URL);
 
         when(apiClientUtil.getInternalFileTransferClient(FILE_TRANSFER_URL)).thenReturn(internalFileTransferClient);
     }
@@ -62,7 +62,7 @@ class FileTransferServiceTest {
     void detailsReturnsApiResponse() throws Exception {
         when(internalFileTransferClient.privateFileTransferHandler().details(FILE_ID).execute()).thenReturn(apiResponse);
 
-        final var response = fileTransferService.details(FILE_ID);
+        final var response = fileTransferServiceClient.details(FILE_ID);
 
         assertThat(response, sameInstance(apiResponse));
         verify(apiClientUtil).getInternalFileTransferClient(FILE_TRANSFER_URL);
@@ -73,7 +73,7 @@ class FileTransferServiceTest {
         when(internalFileTransferClient.privateFileTransferHandler().details(FILE_ID).execute()).thenReturn(apiResponse);
         when(apiResponse.getData()).thenReturn(fileDetailsApi);
 
-        final var result = fileTransferService.getFileDetails(FILE_ID);
+        final var result = fileTransferServiceClient.getFileDetails(FILE_ID);
 
         assertThat(result.isPresent(), is(true));
         assertThat(result.get(), sameInstance(fileDetailsApi));
@@ -84,7 +84,7 @@ class FileTransferServiceTest {
         when(internalFileTransferClient.privateFileTransferHandler().details(FILE_ID).execute()).thenReturn(apiResponse);
         when(apiResponse.getData()).thenReturn(null);
 
-        final var result = fileTransferService.getFileDetails(FILE_ID);
+        final var result = fileTransferServiceClient.getFileDetails(FILE_ID);
 
         assertThat(result.isEmpty(), is(true));
     }
@@ -95,7 +95,7 @@ class FileTransferServiceTest {
         when(apiError.getStatusCode()).thenReturn(404);
         when(internalFileTransferClient.privateFileTransferHandler().details(FILE_ID).execute()).thenThrow(apiError);
 
-        final var result = fileTransferService.getFileDetails(FILE_ID);
+        final var result = fileTransferServiceClient.getFileDetails(FILE_ID);
 
         assertThat(result.isEmpty(), is(true));
         verify(logger, never()).errorContext(anyString(), anyString(), isNull(), anyMap());
@@ -109,7 +109,7 @@ class FileTransferServiceTest {
             .thenThrow(uriValidationException);
 
         final var thrown = assertThrows(FileDetailsException.class,
-            () -> fileTransferService.getFileDetails(FILE_ID));
+            () -> fileTransferServiceClient.getFileDetails(FILE_ID));
 
         assertThat(thrown.getMessage(), is("invalid URI"));
     }
@@ -122,7 +122,7 @@ class FileTransferServiceTest {
         when(internalFileTransferClient.privateFileTransferHandler().details(FILE_ID).execute()).thenThrow(apiError);
 
         final var thrown = assertThrows(FileDetailsException.class,
-            () -> fileTransferService.getFileDetails(FILE_ID));
+            () -> fileTransferServiceClient.getFileDetails(FILE_ID));
 
         assertThat(thrown.getMessage(), is("server error"));
         verify(logger).errorContext(

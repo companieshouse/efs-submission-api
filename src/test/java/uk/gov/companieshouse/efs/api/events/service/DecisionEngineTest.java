@@ -22,7 +22,7 @@ import uk.gov.companieshouse.api.filetransfer.FileDetailsApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.efs.api.events.service.model.DecisionResult;
 import uk.gov.companieshouse.efs.api.filetransfer.FileDetailsException;
-import uk.gov.companieshouse.efs.api.filetransfer.FileTransferService;
+import uk.gov.companieshouse.efs.api.filetransfer.FileTransferServiceClient;
 import uk.gov.companieshouse.efs.api.formtemplates.model.FormTemplate;
 import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
@@ -44,7 +44,7 @@ class DecisionEngineTest {
     private DecisionEngine decisionEngine;
 
     @Mock
-    private FileTransferService transferService;
+    private FileTransferServiceClient transferService;
 
     @Mock
     private Submission submission;
