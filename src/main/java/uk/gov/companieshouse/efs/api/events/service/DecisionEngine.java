@@ -9,7 +9,7 @@ import uk.gov.companieshouse.api.filetransfer.FileDetailsApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
 import uk.gov.companieshouse.efs.api.events.service.model.Decision;
 import uk.gov.companieshouse.efs.api.events.service.model.DecisionResult;
-import uk.gov.companieshouse.efs.api.filetransfer.FileTransferService;
+import uk.gov.companieshouse.efs.api.filetransfer.FileTransferServiceClient;
 import uk.gov.companieshouse.efs.api.formtemplates.repository.FormTemplateRepository;
 import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
@@ -25,14 +25,14 @@ public class DecisionEngine {
     private static final String AV_CLEAN = "clean";
     private static final Logger LOGGER = LoggerFactory.getLogger("efs-submission-api");
 
-    private final FileTransferService fileTransferService;
+    private final FileTransferServiceClient fileTransferServiceClient;
     private final FormTemplateRepository repository;
     private final CurrentTimestampGenerator timestampGenerator;
     private final SubmissionService submissionService;
 
-    public DecisionEngine(final FileTransferService fileTransferService, final FormTemplateRepository repository,
+    public DecisionEngine(final FileTransferServiceClient fileTransferServiceClient, final FormTemplateRepository repository,
                           final CurrentTimestampGenerator timestampGenerator, final SubmissionService submissionService) {
-        this.fileTransferService = fileTransferService;
+        this.fileTransferServiceClient = fileTransferServiceClient;
         this.repository = repository;
         this.timestampGenerator = timestampGenerator;
         this.submissionService = submissionService;
@@ -61,7 +61,7 @@ public class DecisionEngine {
 
     private void checkAvStatus(final String submissionId, final Decision decision, final FileDetails fileDetails) {
         LOGGER.debug("Checking AV status for file with id [%s] in submission [%s]".formatted(fileDetails.getFileId(), submissionId));
-        fileTransferService.getFileDetails(fileDetails.getFileId())
+        fileTransferServiceClient.getFileDetails(fileDetails.getFileId())
             .map(FileDetailsApi::getAvStatus)
             .map(AvStatus::getValue)
             .ifPresent(avStatus -> handleAvStatus(avStatus, decision, fileDetails));

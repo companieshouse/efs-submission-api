@@ -12,15 +12,15 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.logging.Logger;
 
 @Service
-public class FileTransferService {
+public class FileTransferServiceClient {
 
-    @Value( "${file.transfer.api.url}" )
-    private String fileTransferApiUrl;
+    @Value( "${file.transfer.service.url}" )
+    private String fileTransferServiceUrl;
     private final ApiClientUtil apiClientUtil;
 
     private final Logger logger;
 
-    public FileTransferService(final ApiClientUtil apiClientUtil, final Logger logger) {
+    public FileTransferServiceClient(final ApiClientUtil apiClientUtil, final Logger logger) {
         this.apiClientUtil = apiClientUtil;
         this.logger = logger;
     }
@@ -45,7 +45,7 @@ public class FileTransferService {
     }
 
     public ApiResponse<FileDetailsApi> details( final String fileId ) throws ApiErrorResponseException, URIValidationException {
-        return apiClientUtil.getInternalFileTransferClient(fileTransferApiUrl)
+        return apiClientUtil.getInternalFileTransferClient(fileTransferServiceUrl)
                 .privateFileTransferHandler()
                 .details( fileId )
                 .execute();
