@@ -3281,8 +3281,8 @@
 , {
   "_id" : "SH19_SAMEDAY",
   "formName" : "SH19 - Statement of capital when reducing capital in a company",
-  "formCategory" : "SH-RED-SAMEDAY",
-  "orderIndex": 1,
+  "formCategory" : "SH-RED",
+  "orderIndex": 5,
   "fee" : "SH19_SAMEDAY",
   "isAuthenticationRequired" : true,
   "isFesEnabled" : true,
