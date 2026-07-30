@@ -121,6 +121,20 @@ Development mode is available for this service in [Docker CHS Development](https
 
 This will clone the efs-submission-api into the repositories folder inside of docker-chs-dev folder. Any changes to the code, or resources will automatically trigger a rebuild and reluanch.
 
+#### Reference Data
+
+#### docker-chs-development
+
+> **NOTE** The `docker-chs-development` container `execute-mongo-scripts` will automatically **drop** and populate the database collections with this reference data on startup.
+> Copies of the data in these files is located in scripts in the `docker-chs-development` repo. The `docker-chs-development` container `execute-mongo-scripts` will automatically drop and populate the database collections with this reference data on `cds-dev` startup.
+> 
+> **For any local changes you make to the reference data to survive a `chs-dev down` / `chs-dev up` cycle, make your changes to these files first:**
+> - services/modules/efs/assets/category_templates.mongo.js
+> - services/modules/efs/assets/form_templates.mongo.js
+
+
+Make changes to your local copies of these files, you will need to restart the container for the changes to take effect.
+
 ## Terraform ECS
 
 ### What does this code do?
