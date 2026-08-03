@@ -216,12 +216,6 @@
   "parent": "SH",
   "guidanceTexts": [0]
 }, {
-  "_id": "SH-RED-SAMEDAY",
-  "orderIndex": 1,
-  "categoryName": "Dummy category for SH19_SAMEDAY",
-  "categoryHint": "parent is self to exclude from category hierarchy",
-  "parent": "SH-RED-SAMEDAY"
-},{
   "_id": "SH-OTHER",
   "orderIndex": 2,
   "categoryName": "Other share capital documents",
