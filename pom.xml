@@ -20,8 +20,7 @@
         <java.version>21</java.version>
         <api-helper-java.version>3.0.4</api-helper-java.version>
         <avro.version>1.12.1</avro.version>
-        <aws-java-sdk-core.version>1.12.797</aws-java-sdk-core.version>
-        <software.amazon.awssdk.version>2.47.2</software.amazon.awssdk.version>
+        <software.amazon.awssdk.version>2.51.3</software.amazon.awssdk.version>
         <ch-kafka.version>3.0.7</ch-kafka.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <commons-io.version>2.19.0</commons-io.version>
@@ -41,6 +40,7 @@
         <log4j-bom.version>2.26.1</log4j-bom.version>
         <ojdbc11.version>23.8.0.25.04</ojdbc11.version>
         <tomcat.version>11.0.24</tomcat.version>
+        <httpclient5.version>5.6.4</httpclient5.version>
         <!-- Maven -->
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
@@ -53,16 +53,15 @@
         <netty.version>4.2.16.Final</netty.version>
         <bcprov-jdk180n.version>1.84</bcprov-jdk180n.version>
         <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
-        <private-api-sdk-java.version>7.0.10</private-api-sdk-java.version>
-        <sdk-manager-java.version>3.0.14</sdk-manager-java.version>
+        <private-api-sdk-java.version>7.2.10</private-api-sdk-java.version>
+        <sdk-manager-java.version>4.0.0</sdk-manager-java.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
         <spring-boot.version>4.1.0</spring-boot.version>
-        <structured-logging.version>3.0.54</structured-logging.version>
-        <sqs-common-version>0.0.1</sqs-common-version>
+        <structured-logging.version>4.0.2</structured-logging.version>
         <rest-service-common-library.version>2.0.4</rest-service-common-library.version>
         <testcontainers.version>2.0.5</testcontainers.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
-        <opentelemetry-instrumentation-bom.version>2.29.0</opentelemetry-instrumentation-bom.version>
+        <opentelemetry-instrumentation-bom.version>2.30.0</opentelemetry-instrumentation-bom.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -101,6 +100,16 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!--
+                PINNED: Fix security flaws in org.apache.httpcomponents.client5/httpclient5@5.6.1 introduced by software.amazon.awssdk:sqs:jar:2.51.3
+                CVE-2026-64607(5.3)
+                Remove these overrides when a later version of software.amazon.awssdk includes httpclient5 5.6.5+ with fixes for these vulnerabilities.
+            -->
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>${httpclient5.version}</version>
             </dependency>
             <!--
               PINNED: Fix security flaws in tomcat-embed-core-11.0.21 managed by spring-boot-4.0.6:
@@ -506,12 +515,6 @@
                     <artifactId>itu</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-core</artifactId>
-            <version>${aws-java-sdk-core.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
