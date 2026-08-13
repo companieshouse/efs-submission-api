@@ -84,7 +84,8 @@ public class ConfirmFormTypeController {
             final var submission = service.readSubmission(id);
 
             if (isFormTypeChanged(submission, formType.getFormType())) {
-                LOGGER.info("Form type has changed, deleting %s files uploaded for submission with id: [%s]".formatted(
+                LOGGER.info("Form type will change to %s: deleting uploaded files for %s submission with id: [%s]".formatted(
+                    formType.getFormType(),
                     submission.getSubmissionForm().getFormType(),
                     id));
                 deleteSubmissionFiles(id, submission);
