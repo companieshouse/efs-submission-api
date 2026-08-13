@@ -37,10 +37,17 @@ public class SpringAsyncConfig implements AsyncConfigurer {
     @Value("${async.executor.queue-capacity}")
     private int queueCapacity;
 
+    @Value("${async.executor.keep-alive-seconds}")
+    private int keepAliveSeconds;
+
+    @Value("${async.executor.allow-core-thread-timeout}")
+    private boolean allowCoreThreadTimeOut;
+
     /**
      * Thread pool used for async task execution.
      *
-     * <p>Pool sizes and queue capacity are configurable via {@code application.properties}</p>
+     * <p>Pool sizes, queue capacity, and scale-down settings are configurable via
+     * {@code application.properties}</p>
      * <p>Note: {@code @Bean} will manage bean initialization and invoke {@code executor.initialize()} automatically.</p>
      *
      * @return configured {@link ThreadPoolTaskExecutor}
@@ -53,6 +60,9 @@ public class SpringAsyncConfig implements AsyncConfigurer {
         executor.setMaxPoolSize(maxPoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setThreadNamePrefix("async-s3-");
+        executor.setKeepAliveSeconds(keepAliveSeconds);
+        executor.setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
+
         return executor;
     }
 
