@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -41,11 +43,11 @@ class S3FileDeleteServiceImplTest {
         service.deleteFile(SUBMISSION_ID, FILE_ID);
 
         verify(s3Client).deleteObject(deleteObjectRequestCaptor.capture());
+
         final var request = deleteObjectRequestCaptor.getValue();
-        org.junit.jupiter.api.Assertions.assertAll(
-            () -> org.junit.jupiter.api.Assertions.assertEquals(BUCKET_NAME, request.bucket()),
-            () -> org.junit.jupiter.api.Assertions.assertEquals(FILE_ID, request.key())
-        );
+
+        assertThat(request.bucket(), is(BUCKET_NAME));
+        assertThat(request.key(), is(FILE_ID));
     }
 
     @Test
@@ -53,6 +55,7 @@ class S3FileDeleteServiceImplTest {
         doThrow(SdkException.class).when(s3Client).deleteObject(any(DeleteObjectRequest.class));
 
         assertDoesNotThrow(() -> service.deleteFile(SUBMISSION_ID, FILE_ID));
+
         verify(s3Client).deleteObject(any(DeleteObjectRequest.class));
     }
 }

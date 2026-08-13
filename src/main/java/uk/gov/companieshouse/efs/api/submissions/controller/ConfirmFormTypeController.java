@@ -57,10 +57,10 @@ public class ConfirmFormTypeController {
      * Confirms or updates the form type for a submission.
      *
      * <p>If the submission already has a form type and it differs from the requested
-     * form type, all existing uploaded files for that submission are deleted from S3 and the submission's stored file
-     * list is cleared before the form update.</p>
-     * <p>If any S3 delete fails, the error is logged and processing continues on to remove the submission's files list
-     * and update the submission's form type.</p>
+     * form type, all existing uploaded files are deleted from S3 asynchronously.
+     * Regardless of whether any S3 deletes fail (errors are logged), the submission's
+     * file list is cleared and the form type is updated. S3 failures never block the
+     * submission update.</p>
      *
      * @param id       submission id
      * @param formType requested form type payload
@@ -82,6 +82,7 @@ public class ConfirmFormTypeController {
 
         try {
             final var submission = service.readSubmission(id);
+
             if (isFormTypeChanged(submission, formType.getFormType())) {
                 LOGGER.info("Form type has changed, deleting %s files uploaded for submission with id: [%s]".formatted(
                     submission.getSubmissionForm().getFormType(),

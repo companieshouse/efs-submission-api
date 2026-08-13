@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -14,8 +15,10 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 /**
  * Deletes uploaded submission files from the configured S3 file bucket.
  *
- * <p>Delete failures are logged with submission context and are not rethrown, so
- * callers can continue processing other files.</p>
+ * <p>Delete operations run asynchronously so callers return immediately without
+ * waiting for the S3 request to complete. Delete failures are logged with submission
+ * context and are not rethrown, so individual failures do not prevent remaining
+ * files from being deleted.</p>
  */
 @Component
 public class S3FileDeleteServiceImpl implements S3FileDeleteService {
@@ -37,27 +40,28 @@ public class S3FileDeleteServiceImpl implements S3FileDeleteService {
     }
 
     /**
-     * Deletes a single file object from S3 by file ID (object key).
+     * Asynchronously deletes a single file object from S3 by file ID (object key).
      *
-     * <p>If S3 deletion fails, the error is logged with the submission ID and file metadata,
-     * and processing continues without throwing.</p>
+     * <p>This method returns immediately; the S3 delete request is executed on a
+     * background thread. If S3 deletion fails, the error is logged with the submission
+     * ID and file metadata, and no exception is propagated to the caller.</p>
      *
      * @param submissionId submission identifier used for contextual logging
      * @param fileId S3 object key for the uploaded file
      */
+    @Async("threadPoolTaskExecutor")
     @Override
     public void deleteFile(final String submissionId, final String fileId) {
         final var debugMap = buildLogMap(fileId);
-        LOGGER.debugContext(submissionId, "Deleting file from S3", debugMap);
+        LOGGER.debugContext(submissionId,
+            "Deleting file from S3 using executor %s".formatted(Thread.currentThread().getName()),
+            debugMap);
         try {
-            final var request = DeleteObjectRequest.builder()
-                                                   .bucket(bucketName)
-                                                   .key(fileId)
-                                                   .build();
+            final var request = DeleteObjectRequest.builder().bucket(bucketName).key(fileId).build();
             s3.deleteObject(request);
+            LOGGER.infoContext(submissionId, "Successfully deleted file from S3", buildLogMap(fileId));
         } catch (SdkException ex) {
-            final var errorMap = buildLogMap(fileId);
-            LOGGER.errorContext(submissionId, "Unable to delete file from S3", ex, errorMap);
+            LOGGER.errorContext(submissionId, "Unable to delete file from S3", ex, buildLogMap(fileId));
         }
     }
 
