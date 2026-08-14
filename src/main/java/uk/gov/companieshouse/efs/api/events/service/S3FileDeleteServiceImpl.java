@@ -52,16 +52,15 @@ public class S3FileDeleteServiceImpl implements S3FileDeleteService {
     @Async("threadPoolTaskExecutor")
     @Override
     public void deleteFile(final String submissionId, final String fileId) {
-        final var debugMap = buildLogMap(fileId);
-        LOGGER.debugContext(submissionId,
-            "Deleting file from S3 using executor %s".formatted(Thread.currentThread().getName()),
-            debugMap);
+        final var logMap = buildLogMap(fileId);
+
+        LOGGER.debugContext(submissionId, "Deleting file from S3", logMap);
         try {
             final var request = DeleteObjectRequest.builder().bucket(bucketName).key(fileId).build();
             s3.deleteObject(request);
-            LOGGER.debugContext(submissionId, "Successfully deleted file from S3", buildLogMap(fileId));
+            LOGGER.debugContext(submissionId, "Successfully deleted file from S3", logMap);
         } catch (SdkException ex) {
-            LOGGER.errorContext(submissionId, "Unable to delete file from S3", ex, buildLogMap(fileId));
+            LOGGER.errorContext(submissionId, "Unable to delete file from S3", ex, logMap);
         }
     }
 
