@@ -43,6 +43,12 @@ public class SpringAsyncConfig implements AsyncConfigurer {
     @Value("${async.executor.allow-core-thread-timeout}")
     private boolean allowCoreThreadTimeOut;
 
+    @Value("${async.executor.wait-for-tasks-to-complete-on-shutdown}")
+    private boolean waitForTasksToCompleteOnShutdown;
+
+    @Value("${async.executor.await-termination-seconds}")
+    private int awaitTerminationSeconds;
+
     /**
      * Thread pool used for async task execution.
      *
@@ -62,6 +68,8 @@ public class SpringAsyncConfig implements AsyncConfigurer {
         executor.setThreadNamePrefix("async-s3-");
         executor.setKeepAliveSeconds(keepAliveSeconds);
         executor.setAllowCoreThreadTimeOut(allowCoreThreadTimeOut);
+        executor.setWaitForTasksToCompleteOnShutdown(waitForTasksToCompleteOnShutdown);
+        executor.setAwaitTerminationSeconds(awaitTerminationSeconds);
 
         return executor;
     }

@@ -59,7 +59,7 @@ public class S3FileDeleteServiceImpl implements S3FileDeleteService {
         try {
             final var request = DeleteObjectRequest.builder().bucket(bucketName).key(fileId).build();
             s3.deleteObject(request);
-            LOGGER.infoContext(submissionId, "Successfully deleted file from S3", buildLogMap(fileId));
+            LOGGER.debugContext(submissionId, "Successfully deleted file from S3", buildLogMap(fileId));
         } catch (SdkException ex) {
             LOGGER.errorContext(submissionId, "Unable to delete file from S3", ex, buildLogMap(fileId));
         }
