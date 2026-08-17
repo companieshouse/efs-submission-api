@@ -52,7 +52,8 @@ class S3FileDeleteServiceImplTest {
 
     @Test
     void shouldNotThrowWhenS3DeleteFails() {
-        doThrow(SdkException.class).when(s3Client).deleteObject(any(DeleteObjectRequest.class));
+        doThrow(SdkException.builder().message("S3 error").build()).when(s3Client)
+                                                                   .deleteObject(any(DeleteObjectRequest.class));
 
         assertDoesNotThrow(() -> service.deleteFile(SUBMISSION_ID, FILE_ID));
 
