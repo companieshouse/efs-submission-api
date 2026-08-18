@@ -22,6 +22,8 @@ public interface SubmissionService {
 
     SubmissionResponseApi updateSubmissionWithForm(String id, FormTypeApi formApi);
 
+    SubmissionResponseApi clearSubmissionFiles(String id);
+
     SubmissionResponseApi updateSubmissionWithFileDetails(String id, FileListApi fileListApi);
 
     SubmissionResponseApi updateSubmissionWithPaymentSessions(String id, SessionListApi paymentSessions);
