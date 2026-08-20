@@ -5,3 +5,4 @@ aws_profile = "live-eu-west-2"
 desired_task_count = 2
 min_task_count = 2
 
+s3_av_bucket_name = "s3-av-live"

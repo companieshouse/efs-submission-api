@@ -10,6 +10,9 @@ build.log
 .settings
 bin/
 
+#VSCode files
+.vscode/
+
 # IntelliJ files
 .idea/
 *.iml

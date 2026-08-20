@@ -69,3 +69,70 @@ data "aws_ssm_parameter" "global_secret" {
 data "vault_generic_secret" "shared_s3" {
   path = "aws-accounts/shared-services/s3"
 }
+
+# IAM
+data "aws_iam_policy_document" "task_assume" {
+  statement {
+    sid     = "AllowTaskAssumeRole"
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "task_policy" {
+  statement {
+    sid       = "AllowS3ListBuckets"
+    effect    = "Allow"
+    actions   = [
+      "s3:ListBucket",
+      "s3:GetBucketLocation"
+    ]
+    resources = [
+      data.aws_s3_bucket.s3_av_bucket.arn,
+      data.aws_s3_bucket.payments_reports_bucket.arn
+    ]
+  }
+
+  statement {
+    sid       = "AllowS3Objects"
+    effect    = "Allow"
+    actions   = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:DeleteObject"
+    ]
+    resources = [
+      "${data.aws_s3_bucket.s3_av_bucket.arn}/*",
+      "${data.aws_s3_bucket.payments_reports_bucket.arn}/${var.environment}/*"
+    ]
+  }
+
+  statement {
+    sid       = "AllowSQSPushPull"
+    effect    = "Allow"
+    actions   = [
+      "sqs:SendMessage",
+      "sqs:SendMessageBatch"
+    ]
+    resources = [
+      data.aws_sqs_queue.efs_doc_processor_queue.arn
+    ]
+  }
+}
+
+data "aws_s3_bucket" "s3_av_bucket" {
+  bucket = var.s3_av_bucket_name
+}
+
+data "aws_s3_bucket" "payments_reports_bucket" {
+  bucket = "${var.aws_profile}.${var.payments_reports_bucket_suffix}"
+}
+
+data "aws_sqs_queue" "efs_doc_processor_queue" {
+  name = "efs-document-processor-${var.environment}-queue.fifo"
+}
