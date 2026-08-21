@@ -152,18 +152,3 @@ variable "use_set_environment_files" {
   default     = true
   description = "Toggle default global and shared environment files"
 }
-
-# ------------------------------------------------------------------------------
-# IAM policy and role supporting config
-# ------------------------------------------------------------------------------
-
-variable "payments_reports_bucket_suffix" {
-  default     = "efs-payment-reports.ch.gov.uk"
-  type        = string
-  description = "The name of the S3 bucket for payments reports"
-}
-
-variable "s3_av_bucket_name" {
-  type        = string
-  description = "The name of the S3 bucket for uploads and av"
-}
