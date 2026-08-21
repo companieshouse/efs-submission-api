@@ -96,11 +96,10 @@ data "aws_iam_policy_document" "task_policy" {
   }
 
   statement {
-    sid       = "AllowSQSPushPull"
+    sid       = "AllowSQSPush"
     effect    = "Allow"
     actions   = [
-      "sqs:SendMessage",
-      "sqs:SendMessageBatch"
+      "sqs:SendMessage"
     ]
     resources = [
       data.aws_sqs_queue.efs_doc_processor_queue.arn
