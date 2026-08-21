@@ -42,18 +42,6 @@ data "aws_lb_listener" "service_lb_listener" {
   port = 443
 }
 
-
-# retrieve all secrets for this stack using the stack path
-data "aws_ssm_parameters_by_path" "secrets" {
-  path = "/${local.name_prefix}"
-}
-
-# create a list of secrets names to retrieve them in a nicer format and lookup each secret by name
-data "aws_ssm_parameter" "secret" {
-  for_each = toset(data.aws_ssm_parameters_by_path.secrets.names)
-  name = each.key
-}
-
 # retrieve all global secrets for this env using global path
 data "aws_ssm_parameters_by_path" "global_secrets" {
   path = "/${local.global_prefix}"
@@ -65,7 +53,68 @@ data "aws_ssm_parameter" "global_secret" {
   name     = each.key
 }
 
-// --- s3 bucket for shared services config ---
-data "vault_generic_secret" "shared_s3" {
-  path = "aws-accounts/shared-services/s3"
+# IAM
+data "aws_iam_policy_document" "task_assume" {
+  statement {
+    sid     = "AllowTaskAssumeRole"
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "task_policy" {
+  statement {
+    sid       = "AllowS3ListBuckets"
+    effect    = "Allow"
+    actions   = [
+      "s3:ListBucket",
+      "s3:GetBucketLocation"
+    ]
+    resources = [
+      data.aws_s3_bucket.s3_av_bucket.arn,
+      data.aws_s3_bucket.payments_reports_bucket.arn
+    ]
+  }
+
+  statement {
+    sid       = "AllowS3Objects"
+    effect    = "Allow"
+    actions   = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:DeleteObject"
+    ]
+    resources = [
+      "${data.aws_s3_bucket.s3_av_bucket.arn}/*",
+      "${data.aws_s3_bucket.payments_reports_bucket.arn}/${var.environment}/*"
+    ]
+  }
+
+  statement {
+    sid       = "AllowSQSPush"
+    effect    = "Allow"
+    actions   = [
+      "sqs:SendMessage"
+    ]
+    resources = [
+      data.aws_sqs_queue.efs_doc_processor_queue.arn
+    ]
+  }
+}
+
+data "aws_s3_bucket" "s3_av_bucket" {
+  bucket = local.av_bucket
+}
+
+data "aws_s3_bucket" "payments_reports_bucket" {
+  bucket = local.payments_reports_bucket
+}
+
+data "aws_sqs_queue" "efs_doc_processor_queue" {
+  name = "efs-document-processor-${var.environment}-queue.fifo"
 }

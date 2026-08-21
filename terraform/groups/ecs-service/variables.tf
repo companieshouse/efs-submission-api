@@ -152,4 +152,3 @@ variable "use_set_environment_files" {
   default     = true
   description = "Toggle default global and shared environment files"
 }
-

@@ -5,15 +5,15 @@ provider "aws" {
 terraform {
   backend "s3" {
   }
-  required_version = "~> 1.3"
+  required_version = ">= 1.3, < 2.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.54.0"
+      version = ">= 6.0, < 7.0"
     }
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.18.0"
+      version = ">= 5.0, < 6.0"
     }
   }
 }
@@ -37,6 +37,7 @@ module "ecs-service" {
   ecs_cluster_id          = data.aws_ecs_cluster.ecs_cluster.id
   environment             = var.environment
   task_execution_role_arn = data.aws_iam_role.ecs_cluster_iam_role.arn
+  task_role_arn           = aws_iam_role.task_role.arn
   vpc_id                  = data.aws_vpc.vpc.id
 
   # Load balancer configuration

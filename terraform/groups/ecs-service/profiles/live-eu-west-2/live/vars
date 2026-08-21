@@ -4,4 +4,3 @@ aws_profile = "live-eu-west-2"
 # service configs
 desired_task_count = 2
 min_task_count = 2
-
