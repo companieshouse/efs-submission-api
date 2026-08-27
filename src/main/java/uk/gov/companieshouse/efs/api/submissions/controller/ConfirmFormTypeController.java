@@ -102,15 +102,18 @@ public class ConfirmFormTypeController {
     /**
      * Checks whether the requested form type differs from the currently stored value.
      *
-     * @param submission submission being updated
+     * @param submission        submission being updated
      * @param requestedFormType requested form type value from the request payload
-     * @return {@code true} when an existing non-null form type differs from the request
+     * @return {@code true} when an existing non-null form type differs from the request;<br> {@code false} when the
+     *     requested form type differs from the submission form type.<br>Edge case: also when both the existing and
+     *     requested form types start with "SH19",", since "SH19" and "SH19_SAMEDAY" represent the same underlying form.
      */
     private boolean isFormTypeChanged(final SubmissionApi submission, final String requestedFormType) {
         return Optional.ofNullable(submission)
             .map(SubmissionApi::getSubmissionForm)
             .map(submissionForm -> submissionForm.getFormType() != null
-                && !submissionForm.getFormType().equals(requestedFormType))
+                && !submissionForm.getFormType().equals(requestedFormType)
+                && !(submissionForm.getFormType().startsWith("SH19") && requestedFormType.startsWith("SH19")))
             .orElse(false);
     }
 
