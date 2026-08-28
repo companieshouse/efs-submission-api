@@ -12,6 +12,8 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -136,25 +138,18 @@ class ConfirmFormTypeControllerTest {
         verify(service).clearSubmissionFiles(SUBMISSION_ID);
     }
 
-    @Test
-    void shouldNotDeleteFilesWhenFormTypeIsUnchanged() {
-        final var formType = createFormType("SAME-FORM-TYPE");
+    @ParameterizedTest(name = "existing={0}, requested={1}")
+    @CsvSource(nullValues = "NULL", value = {
+        "SAME-FORM-TYPE, SAME-FORM-TYPE",
+        "NULL,           NEW-FORM-TYPE",
+        "SH19,           SH19_SAMEDAY",
+        "SH19_SAMEDAY,   SH19"
+    })
+    void shouldNotDeleteFilesWhenFormTypeChangeDoesNotRequireFileDeletion(
+            final String existingFormType, final String requestedFormType) {
+        final var formType = createFormType(requestedFormType);
         stubNoValidationErrors();
-        stubExistingSubmissionFormType("SAME-FORM-TYPE");
-        stubSuccessfulFormUpdate();
-
-        final var actual = confirmFormTypeController.confirmFormType(SUBMISSION_ID, formType, result);
-
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        verifyNoInteractions(s3FileDeleteService);
-        verify(service, never()).clearSubmissionFiles(any());
-    }
-
-    @Test
-    void shouldNotDeleteFilesWhenExistingFormTypeIsNull() {
-        final var formType = createFormType("NEW-FORM-TYPE");
-        stubNoValidationErrors();
-        stubExistingSubmissionFormType(null);
+        stubExistingSubmissionFormType(existingFormType);
         stubSuccessfulFormUpdate();
 
         final var actual = confirmFormTypeController.confirmFormType(SUBMISSION_ID, formType, result);
