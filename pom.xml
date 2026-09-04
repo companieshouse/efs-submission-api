@@ -52,8 +52,8 @@
         <bcprov-jdk180n.version>1.84</bcprov-jdk180n.version>
         <private-api-sdk-java.version>7.2.17</private-api-sdk-java.version>
         <sdk-manager-java.version>4.0.0</sdk-manager-java.version>
+        <structured-logging.version>4.0.4</structured-logging.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
-        <structured-logging.version>4.0.2</structured-logging.version>
         <rest-service-common-library.version>2.0.4</rest-service-common-library.version>
         <testcontainers.version>2.0.5</testcontainers.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
@@ -68,6 +68,23 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>uk.gov.companieshouse</groupId>
+                <artifactId>structured-logging</artifactId>
+                <version>${structured-logging.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-simple</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>uk.gov.companieshouse</groupId>
+                <artifactId>private-api-sdk-java</artifactId>
+                <version>${private-api-sdk-java.version}</version>
+            </dependency>
+
             <!-- Use netty-bom to manage all Netty dependencies at version 4.2.12.Final -->
             <dependency>
                 <groupId>io.netty</groupId>
@@ -334,22 +351,7 @@
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
-            <artifactId>structured-logging</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-manager-java-library</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>uk.gov.companieshouse</groupId>
-            <artifactId>private-api-sdk-java</artifactId>
-            <version>${private-api-sdk-java.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
