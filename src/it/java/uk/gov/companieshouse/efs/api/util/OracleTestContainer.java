@@ -1,10 +1,10 @@
 package uk.gov.companieshouse.efs.api.util;
 
-import org.testcontainers.containers.OracleContainer;
+import org.testcontainers.oracle.OracleContainer;
 
 public class OracleTestContainer {
     public static final OracleTestContainer INSTANCE = new OracleTestContainer();
-    private static final String IMAGE = "gvenzl/oracle-xe:21-slim";
+    private static final String IMAGE = "gvenzl/oracle-free:23-slim-faststart";
     private final OracleContainer container;
 
     private OracleTestContainer() {
