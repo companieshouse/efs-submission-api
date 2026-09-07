@@ -18,6 +18,11 @@ variable "environment" {
   description = "The environment name, defined in envrionments vars."
 }
 
+variable "file_transfer_kms_alias" {
+  type        = string
+  description = "The alias of the KMS key used for file transfer encryption."
+}
+
 # ------------------------------------------------------------------------------
 # Docker Container
 # ------------------------------------------------------------------------------

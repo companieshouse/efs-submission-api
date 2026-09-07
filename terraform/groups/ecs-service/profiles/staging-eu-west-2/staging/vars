@@ -1,6 +1,6 @@
-environment = "staging"
-aws_profile = "staging-eu-west-2"
-
+environment             = "staging"
+aws_profile             = "staging-eu-west-2"
+file_transfer_kms_alias = "alias/file-transfer-api"
 
 # Scheduled scaling of tasks
 service_autoscale_enabled  = true
