@@ -1,5 +1,6 @@
-environment = "cidev"
-aws_profile = "development-eu-west-2"
+environment             = "cidev"
+aws_profile             = "development-eu-west-2"
+file_transfer_kms_alias = "alias/cidev-file-transfer"
 
 # service configs
 log_level = "debug"

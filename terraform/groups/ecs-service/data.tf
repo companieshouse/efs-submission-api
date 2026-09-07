@@ -105,6 +105,23 @@ data "aws_iam_policy_document" "task_policy" {
       data.aws_sqs_queue.efs_doc_processor_queue.arn
     ]
   }
+
+  statement {
+    sid       = "AllowKMSEncryption"
+    effect    = "Allow"
+    actions   = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:GenerateDataKey"
+    ]
+    resources = [
+      data.aws_kms_alias.file_transfer_encryption_key_alias.target_key_arn
+    ]
+  }
+}
+
+data "aws_kms_alias" "file_transfer_encryption_key_alias" {
+  name = var.file_transfer_kms_alias
 }
 
 data "aws_s3_bucket" "s3_av_bucket" {
