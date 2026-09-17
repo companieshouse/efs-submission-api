@@ -153,7 +153,7 @@ class PaymentReportServiceImplTest {
 
         when(s3ClientService.getResourceId(anyString()))
             .thenAnswer(invocation -> ENV_NAME + "/" + invocation.getArgument(0));
-        when(s3ClientService.generateFileLink(ENV_NAME + "/" + reportName, BUCKET_NAME)).thenReturn(fileLink);
+        when(s3ClientService.generateFileLink(ENV_NAME + "/" + reportName, "text/csv", BUCKET_NAME)).thenReturn(fileLink);
 
         testService.sendScotlandPaymentReport();
 
@@ -329,7 +329,7 @@ class PaymentReportServiceImplTest {
     private void expectReportUpload(final String failedFileLink, final String failedReportName) {
         when(s3ClientService.getResourceId(anyString()))
             .thenAnswer(invocation -> ENV_NAME + "/" + invocation.getArgument(0));
-        when(s3ClientService.generateFileLink(ENV_NAME + "/" + failedReportName, BUCKET_NAME))
+        when(s3ClientService.generateFileLink(ENV_NAME + "/" + failedReportName, "text/csv", BUCKET_NAME))
             .thenReturn(failedFileLink);
     }
 

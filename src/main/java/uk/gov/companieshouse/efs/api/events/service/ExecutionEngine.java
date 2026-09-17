@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
@@ -89,8 +90,12 @@ public class ExecutionEngine {
     }
 
     private List<EmailFileDetails> createEmailFileDetailsList(List<FileDetails> fileDetails) {
-        return fileDetails.stream()
-                .map(file -> new EmailFileDetails(file, s3ClientService.generateFileLink(file.getFileId(), fileBucketName)))
-            .toList();
+        return fileDetails
+                   .stream()
+                   .map(file -> new EmailFileDetails(file,
+                                                     s3ClientService.generateFileLink(file.getFileId(),
+                                                                                      MediaType.APPLICATION_PDF_VALUE,
+                                                                                      fileBucketName)))
+                   .toList();
     }
 }

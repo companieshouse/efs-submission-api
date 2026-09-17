@@ -151,7 +151,7 @@ public class PaymentReportServiceImpl implements PaymentReportService {
 
         emailService.sendPaymentReportEmail(
             new PaymentReportEmailModel(s3ClientService.generateFileLink(s3ClientService.getResourceId(reportName),
-                paymentReportBucketName), reportName.replace(".csv", ""), hasNoPaymentTransactions));
+                "text/csv", paymentReportBucketName), reportName.replace(".csv", ""), hasNoPaymentTransactions));
     }
 
 }

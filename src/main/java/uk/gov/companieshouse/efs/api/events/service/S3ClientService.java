@@ -13,7 +13,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -52,18 +51,18 @@ public class S3ClientService {
         }
     }
 
-    public String generateFileLink(String fileId, String bucketName) {
+    public String generateFileLink(final String fileId, final String contentType, final String bucketName) {
         try {
-            GetObjectPresignRequest objectPresignRequest = GetObjectPresignRequest.builder()
+            final var objectPresignRequest = GetObjectPresignRequest.builder()
                 .signatureDuration(Duration.ofDays(expiryInDays))
-                .getObjectRequest(getObjectRequest -> getObjectRequest.key(fileId).bucket(bucketName))
+                .getObjectRequest(req -> req.key(fileId).bucket(bucketName).responseContentType(contentType))
                 .build();
 
-            PresignedGetObjectRequest presignedGetObjectRequest = presigner.presignGetObject(objectPresignRequest);
-            String result = presignedGetObjectRequest.url().toString();
+            final var presignedGetObjectRequest = presigner.presignGetObject(objectPresignRequest);
+            final var result = presignedGetObjectRequest.url().toString();
             LOGGER.debug("Pre-Signed URL: " + result);
             return result;
-        }catch(SdkException ex){
+        } catch (SdkException ex) {
             Map<String, Object> debug = new HashMap<>();
             debug.put("fileId", fileId);
             debug.put("bucketName", bucketName);
