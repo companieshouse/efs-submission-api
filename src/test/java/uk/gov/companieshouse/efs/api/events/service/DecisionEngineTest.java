@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import uk.gov.companieshouse.api.filetransfer.AvStatus;
 import uk.gov.companieshouse.api.filetransfer.FileDetailsApi;
 import uk.gov.companieshouse.api.model.efs.submissions.FileConversionStatus;
@@ -37,7 +38,6 @@ class DecisionEngineTest {
     private static final String AV_TIMESTAMP = "2024-06-03T12:34:56Z";
     private static final String FILE_ID = "dummy-file-id";
     private static final String FILE_NAME = "dummy-file-name";
-    private static final String FILE_CONTENT_TYPE = "application/pdf";
     private static final Long FILE_SIZE = 1024L;
     private static final String FORM_TYPE = "CC01";
 
@@ -75,8 +75,14 @@ class DecisionEngineTest {
     @Test
     void testDecisionEngineReturnsNoDecisionIfFileUnscanned() {
         //given
-        final var unscannedResponse = new FileDetailsApi(FILE_ID, null, AvStatus.NOT_SCANNED, FILE_CONTENT_TYPE, FILE_SIZE,
-            FILE_NAME, FILE_TIMESTAMP, null);
+        final var unscannedResponse = new FileDetailsApi(FILE_ID,
+                                                         null,
+                                                         AvStatus.NOT_SCANNED,
+                                                         MediaType.APPLICATION_PDF_VALUE,
+                                                         FILE_SIZE,
+                                                         FILE_NAME,
+                                                         FILE_TIMESTAMP,
+                                                         null);
         final var fileDetails = getExpectedFileDetailsWaiting(FILE_ID, FileConversionStatus.WAITING);
 
         when(formTemplateRepository.findById(FORM_TYPE)).thenReturn(Optional.of(formTemplate));
@@ -125,8 +131,14 @@ class DecisionEngineTest {
     @Test
     void testDecisionEngineReturnsNoDecisionIfOneFileNotCleanOtherFilesUnscanned() {
         //given
-        final var fileDetails = new FileDetailsApi(FILE_ID, null, AvStatus.NOT_SCANNED,
-            FILE_CONTENT_TYPE, FILE_SIZE, FILE_NAME, FILE_TIMESTAMP, null);
+        final var fileDetails = new FileDetailsApi(FILE_ID,
+                                                   null,
+                                                   AvStatus.NOT_SCANNED,
+                                                   MediaType.APPLICATION_PDF_VALUE,
+                                                   FILE_SIZE,
+                                                   FILE_NAME,
+                                                   FILE_TIMESTAMP,
+                                                   null);
 
         when(formTemplateRepository.findById(FORM_TYPE)).thenReturn(Optional.of(formTemplate));
         when(transferService.getFileDetails(FILE_ID)).thenReturn(Optional.of(fileDetails));
@@ -148,8 +160,14 @@ class DecisionEngineTest {
         //given
         final var fileDetails = getExpectedFileDetailsWaiting(FILE_ID, FileConversionStatus.WAITING);
         final var now = LocalDateTime.now();
-        final var cleanFileDetailsApi = new FileDetailsApi(FILE_ID, AV_TIMESTAMP, AvStatus.CLEAN, FILE_CONTENT_TYPE,
-            FILE_SIZE, FILE_NAME, FILE_TIMESTAMP, null);
+        final var cleanFileDetailsApi = new FileDetailsApi(FILE_ID,
+                                                           AV_TIMESTAMP,
+                                                           AvStatus.CLEAN,
+                                                           MediaType.APPLICATION_PDF_VALUE,
+                                                           FILE_SIZE,
+                                                           FILE_NAME,
+                                                           FILE_TIMESTAMP,
+                                                           null);
 
         when(transferService.getFileDetails(FILE_ID)).thenReturn(Optional.of(cleanFileDetailsApi));
         formDetails = FormDetails.builder().withFileDetailsList(Collections.singletonList(fileDetails)).withFormType(
@@ -181,8 +199,14 @@ class DecisionEngineTest {
         //given
         final var fileDetails = getExpectedFileDetailsWaiting(FILE_ID, FileConversionStatus.WAITING);
         final var now = LocalDateTime.now();
-        final var cleanFileDetailsApi = new FileDetailsApi(FILE_ID, AV_TIMESTAMP, AvStatus.CLEAN, FILE_CONTENT_TYPE,
-            FILE_SIZE, FILE_NAME, FILE_TIMESTAMP, null);
+        final var cleanFileDetailsApi = new FileDetailsApi(FILE_ID,
+                                                           AV_TIMESTAMP,
+                                                           AvStatus.CLEAN,
+                                                           MediaType.APPLICATION_PDF_VALUE,
+                                                           FILE_SIZE,
+                                                           FILE_NAME,
+                                                           FILE_TIMESTAMP,
+                                                           null);
 
         when(transferService.getFileDetails(FILE_ID)).thenReturn(Optional.of(cleanFileDetailsApi));
         when(submission.getFormDetails()).thenReturn(FormDetails.builder()
@@ -213,8 +237,14 @@ class DecisionEngineTest {
         //given
         final var fileDetails = getExpectedFileDetailsWaiting(FILE_ID, FileConversionStatus.WAITING);
         final var now = LocalDateTime.now();
-        final var cleanFileDetailsApi = new FileDetailsApi(FILE_ID, AV_TIMESTAMP, AvStatus.CLEAN, FILE_CONTENT_TYPE,
-            FILE_SIZE, FILE_NAME, FILE_TIMESTAMP, null);
+        final var cleanFileDetailsApi = new FileDetailsApi(FILE_ID,
+                                                           AV_TIMESTAMP,
+                                                           AvStatus.CLEAN,
+                                                           MediaType.APPLICATION_PDF_VALUE,
+                                                           FILE_SIZE,
+                                                           FILE_NAME,
+                                                           FILE_TIMESTAMP,
+                                                           null);
 
         when(transferService.getFileDetails(FILE_ID)).thenReturn(Optional.of(cleanFileDetailsApi));
         formDetails = FormDetails.builder().withFileDetailsList(Collections.singletonList(fileDetails)).withFormType(

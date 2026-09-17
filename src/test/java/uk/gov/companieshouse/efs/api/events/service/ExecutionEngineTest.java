@@ -1,10 +1,17 @@
 package uk.gov.companieshouse.efs.api.events.service;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import uk.gov.companieshouse.api.model.efs.submissions.SubmissionStatus;
 import uk.gov.companieshouse.efs.api.email.EmailService;
 import uk.gov.companieshouse.efs.api.email.model.EmailFileDetails;
@@ -16,14 +23,6 @@ import uk.gov.companieshouse.efs.api.submissions.model.FileDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.FormDetails;
 import uk.gov.companieshouse.efs.api.submissions.model.Submission;
 import uk.gov.companieshouse.efs.api.submissions.service.SubmissionService;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ExecutionEngineTest {
@@ -137,7 +136,7 @@ class ExecutionEngineTest {
         when(submission.getFormDetails()).thenReturn(formDetails);
         when(formDetails.getFileDetailsList()).thenReturn(Collections.singletonList(fileDetails));
         when(fileDetails.getFileId()).thenReturn("abc123");
-        when(s3ClientService.generateFileLink(anyString(), anyString())).thenReturn("http://chs-dev.internal:4001");
+        when(s3ClientService.generateFileLink("abc123", MediaType.APPLICATION_PDF_VALUE, BUCKET_NAME)).thenReturn("http://chs-dev.internal:4001");
 
         // when
         executionEngine.execute(Collections.singletonMap(DecisionResult.NOT_FES_ENABLED, expectedDecisions));
@@ -145,7 +144,7 @@ class ExecutionEngineTest {
         // then
         verify(submissionService).updateSubmissionStatus("123", SubmissionStatus.PROCESSED_BY_EMAIL);
         verify(emailService).sendInternalSubmission(new InternalSubmissionEmailModel(submission, Collections.singletonList(new EmailFileDetails(fileDetails, "http://chs-dev.internal:4001"))));
-        verify(s3ClientService).generateFileLink("abc123", BUCKET_NAME);
+        verify(s3ClientService).generateFileLink("abc123", MediaType.APPLICATION_PDF_VALUE, BUCKET_NAME);
         verifyNoInteractions(messageService);
     }
 }

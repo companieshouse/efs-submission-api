@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -73,7 +74,7 @@ class S3ClientServiceTest {
         when(presignedGetObjectRequest.url()).thenReturn(new URI("http://chs-dev.internal:4001").toURL());
 
         //when
-        String actual = spyService.generateFileLink("12345678", BUCKET_NAME);
+        String actual = spyService.generateFileLink("12345678", MediaType.APPLICATION_PDF_VALUE, BUCKET_NAME);
 
         //then
         assertEquals("http://chs-dev.internal:4001", actual);
@@ -81,6 +82,7 @@ class S3ClientServiceTest {
         assertEquals("12345678", captor.getValue().getObjectRequest().key());
         assertEquals(BUCKET_NAME, captor.getValue().getObjectRequest().bucket());
         assertEquals(Duration.ofDays(7L), captor.getValue().signatureDuration());
+        assertEquals(MediaType.APPLICATION_PDF_VALUE, captor.getValue().getObjectRequest().responseContentType());
     }
 
     @Test
@@ -89,10 +91,27 @@ class S3ClientServiceTest {
         when(presigner.presignGetObject(any(GetObjectPresignRequest.class))).thenThrow(SdkException.class);
 
         //when
-        Executable actual = () -> spyService.generateFileLink("12345678", BUCKET_NAME);
+        Executable actual = () -> spyService.generateFileLink("12345678", MediaType.APPLICATION_PDF_VALUE, BUCKET_NAME);
 
         //then
         assertThrows(SdkException.class, actual);
+    }
+
+    @Test
+    void testS3ClientServiceGeneratesLinkWithCsvContentType() throws MalformedURLException, URISyntaxException {
+        //given
+        when(presigner.presignGetObject(any(GetObjectPresignRequest.class))).thenReturn(presignedGetObjectRequest);
+        when(presignedGetObjectRequest.url()).thenReturn(new URI("http://chs-dev.internal:4001").toURL());
+
+        //when
+        String actual = spyService.generateFileLink("report.csv", "text/csv", BUCKET_NAME);
+
+        //then
+        assertEquals("http://chs-dev.internal:4001", actual);
+        verify(presigner).presignGetObject(captor.capture());
+        assertEquals("report.csv", captor.getValue().getObjectRequest().key());
+        assertEquals(BUCKET_NAME, captor.getValue().getObjectRequest().bucket());
+        assertEquals("text/csv", captor.getValue().getObjectRequest().responseContentType());
     }
 
     @Test
