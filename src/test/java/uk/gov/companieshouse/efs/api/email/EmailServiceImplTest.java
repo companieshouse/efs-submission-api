@@ -129,8 +129,7 @@ class EmailServiceImplTest {
         when(submission.getId()).thenReturn("abc");
         when(externalAcceptEmailModel.getSubmission()).thenReturn(submission);
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendExternalAccept(externalAcceptEmailModel);
@@ -174,8 +173,7 @@ class EmailServiceImplTest {
         when(submission.getId()).thenReturn("abc");
         when(externalRejectEmailModel.submission()).thenReturn(submission);
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendExternalReject(externalRejectEmailModel);
@@ -219,8 +217,7 @@ class EmailServiceImplTest {
         when(internalAVFailedEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendInternalFailedAV(internalAVFailedEmailModel);
@@ -263,7 +260,7 @@ class EmailServiceImplTest {
         when(internalFailedConversionModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());
         when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
@@ -343,8 +340,7 @@ class EmailServiceImplTest {
         when(emailMapperFactory.getConfirmationEmailMapper()).thenReturn(notificationEmailMapper);
         when(notificationEmailMapper.map(externalNotificationEmailModel)).thenReturn(emailDocument);
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         //when
         this.emailService.sendExternalConfirmation(externalNotificationEmailModel);
@@ -384,8 +380,7 @@ class EmailServiceImplTest {
         when(emailMapperFactory.getPaymentFailedEmailMapper()).thenReturn(notificationEmailMapper);
         when(notificationEmailMapper.map(externalNotificationEmailModel)).thenReturn(emailDocument);
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         //when
         this.emailService.sendExternalPaymentFailedNotification(externalNotificationEmailModel);
@@ -427,8 +422,7 @@ class EmailServiceImplTest {
         when(internalSubmissionEmailModel.submission()).thenReturn(submission);
         when(submission.getId()).thenReturn("abc");
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendInternalSubmission(internalSubmissionEmailModel);
@@ -463,8 +457,7 @@ class EmailServiceImplTest {
         when(emailMapperFactory.getDelayedSubmissionSupportEmailMapper()).thenReturn(delayedSubmissionSupportEmailMapper);
         when(delayedSubmissionSupportEmailMapper.map(delayedSubmissionSupportEmailModel)).thenReturn(emailDocument);
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendDelayedSubmissionSupportEmail(delayedSubmissionSupportEmailModel);
@@ -497,8 +490,7 @@ class EmailServiceImplTest {
         when(emailMapperFactory.getDelayedSH19SameDaySubmissionSupportEmailMapper()).thenReturn(delayedSH19SameDaySubmissionSupportEmailMapper);
         when(delayedSH19SameDaySubmissionSupportEmailMapper.map(delayedSubmissionSupportEmailModel)).thenReturn(emailDocument);
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-        when(emailClient.sendEmail(org.mockito.ArgumentMatchers.<EmailDocument<?>>any())).thenReturn(apiResponse);
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());        when(emailClient.sendEmail(org.mockito.ArgumentMatchers.<EmailDocument<?>>any())).thenReturn(apiResponse);
 
         // when
         this.emailService.sendDelayedSH19SubmissionSupportEmail(delayedSubmissionSupportEmailModel, "businessEmail");
@@ -545,8 +537,7 @@ class EmailServiceImplTest {
         when(emailMapperFactory.getDelayedSubmissionBusinessEmailMapper()).thenReturn(delayedSubmissionBusinessEmailMapper);
         when(delayedSubmissionBusinessEmailMapper.map(delayedSubmissionBusinessEmailModel)).thenReturn(emailDocument);
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendDelayedSubmissionBusinessEmail(delayedSubmissionBusinessEmailModel);
@@ -579,8 +570,7 @@ class EmailServiceImplTest {
         when(emailMapperFactory.getPaymentReportEmailMapper()).thenReturn(paymentReportEmailMapper);
         when(paymentReportEmailMapper.map(paymentReportEmailModel)).thenReturn(emailDocument);
 
-        final ApiResponse<Void> apiResponse = new ApiResponse<>(200, Map.of());
-        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
+        final ApiResponse<Void> apiResponse = new ApiResponse<>(201, Map.of());        when(emailClient.sendEmail(emailDocument)).thenReturn(apiResponse);
 
         // when
         this.emailService.sendPaymentReportEmail(paymentReportEmailModel);

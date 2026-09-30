@@ -139,7 +139,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             final var response = emailClient.sendEmail(document);
 
-            if (response.getStatusCode() != HttpStatus.OK.value()) {
+            if (response.getStatusCode() != HttpStatus.CREATED.value()) {
                 LOGGER.error("Error sending document to email client: [%d]".formatted(response.getStatusCode()));
 
                 final var errorList = response.getErrors().stream().map(ApiError::getError).collect(Collectors.joining());
