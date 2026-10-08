@@ -19,12 +19,12 @@
         <skip.unit.tests>false</skip.unit.tests>
         <java.version>21</java.version>
 
-        <ch-bom.version>0.1.20</ch-bom.version>
+        <ch-bom.version>0.1.28</ch-bom.version>
 
         <spring-boot-dependencies.version>4.1.1</spring-boot-dependencies.version>
 
         <avro.version>1.12.1</avro.version>
-        <software.amazon.awssdk.version>2.51.3</software.amazon.awssdk.version>
+        <software.amazon.awssdk.version>2.55.11</software.amazon.awssdk.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <commons-io.version>2.19.0</commons-io.version>
         <equalsverifier.version>4.0.2</equalsverifier.version>
@@ -48,7 +48,7 @@
 
         <mockito-junit-jupiter.version>5.23.0</mockito-junit-jupiter.version>
         <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
-        <netty-bom.version>4.2.17.Final</netty-bom.version>
+        <netty-bom.version>4.2.18.Final</netty-bom.version>
         <bcprov-jdk180n.version>1.84</bcprov-jdk180n.version>
         <private-api-sdk-java.version>7.2.17</private-api-sdk-java.version>
         <sdk-manager-java.version>4.0.0</sdk-manager-java.version>
