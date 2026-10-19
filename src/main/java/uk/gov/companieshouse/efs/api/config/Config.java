@@ -314,7 +314,7 @@ public class Config {
     }
 
     @Bean("internalApiClient")
-    Supplier<InternalApiClient> internalApiClientSupplier(@Value("${chs.kafka.api.key}") final String chsKafkaApiKey,
+    Supplier<InternalApiClient> internalApiClientSupplier(@Value("${chs.internal.api.key}") final String chsKafkaApiKey,
                                                           @Value("${chs.kafka.api.url}") final String chsKafkaApiUrl) {
         InternalApiClient internalApiClient = new InternalApiClient(new ApiKeyHttpClient(chsKafkaApiKey));
         internalApiClient.setBasePath(chsKafkaApiUrl);
