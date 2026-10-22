@@ -36,7 +36,7 @@
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
         <json.version>20250517</json.version>
-        <kafka-clients.version>4.0.2</kafka-clients.version>
+        <kafka-clients.version>4.4.0</kafka-clients.version>
         <log4j-bom.version>2.26.1</log4j-bom.version>
         <ojdbc11.version>23.8.0.25.04</ojdbc11.version>
         <!-- Maven -->
@@ -47,10 +47,10 @@
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
 
         <mockito-junit-jupiter.version>5.23.0</mockito-junit-jupiter.version>
-        <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
+        <mockserver-client-java.version>7.0.0</mockserver-client-java.version>
         <netty-bom.version>4.2.18.Final</netty-bom.version>
-        <bcprov-jdk180n.version>1.84</bcprov-jdk180n.version>
-        <private-api-sdk-java.version>7.2.17</private-api-sdk-java.version>
+        <bcprov-jdk18on.version>1.86</bcprov-jdk18on.version>
+        <private-api-sdk-java.version>7.2.42</private-api-sdk-java.version>
         <sdk-manager-java.version>4.0.0</sdk-manager-java.version>
         <structured-logging.version>4.0.4</structured-logging.version>
         <snappy-java.version>1.1.10.7</snappy-java.version>
@@ -291,7 +291,7 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.2.0</version>
+            <version>3.2.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -454,7 +454,7 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk18on</artifactId>
-            <version>${bcprov-jdk180n.version}</version>
+            <version>${bcprov-jdk18on.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
