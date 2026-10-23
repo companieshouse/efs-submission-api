@@ -287,19 +287,6 @@
             <version>2.22</version>
             <scope>compile</scope>
         </dependency>
-        <!-- update from version in transient dependency of tools.jackson.dataformat -->
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>3.2.4</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.22.1</version>
-            <scope>compile</scope>
-        </dependency>
         <!-- update from version in transient dependency of software.amazon.awssdk:sqs -->
         <dependency>
             <groupId>org.apache.httpcomponents.core5</groupId>
