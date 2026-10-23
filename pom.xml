@@ -291,7 +291,7 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.2.3</version>
+            <version>3.2.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -312,6 +312,13 @@
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5-h2</artifactId>
             <version>5.4.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- update from version in transient dependency of org.apache.kafka:kafka-clients -->
+        <dependency>
+            <groupId>at.yawk.lz4</groupId>
+            <artifactId>lz4-java</artifactId>
+            <version>1.11.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
