@@ -61,7 +61,7 @@ class EmailSerialiserTest {
     private ObjectMapper mapper;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         // Use a real JsonMapper by default
         this.mapper = JsonMapper.builder().build();
         this.serialiser = new EmailSerialiser(mapper, encoderFactory, datumWriterFactory, genericRecordFactory);

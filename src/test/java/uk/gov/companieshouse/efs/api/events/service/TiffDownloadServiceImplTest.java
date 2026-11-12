@@ -40,7 +40,7 @@ class TiffDownloadServiceImplTest {
     private ResponseInputStream<GetObjectResponse> responseInputStream;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         service = new TiffDownloadServiceImpl(s3Client, bucket);
     }
 
