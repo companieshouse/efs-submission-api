@@ -46,7 +46,7 @@ class CompanyControllerTest {
     private @Valid @NotNull CompanyApi company;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
         controller = new CompanyController(service);
 	}
 

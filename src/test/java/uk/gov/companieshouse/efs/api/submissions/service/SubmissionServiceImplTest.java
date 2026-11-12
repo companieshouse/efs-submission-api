@@ -122,7 +122,7 @@ class SubmissionServiceImplTest {
     private Clock clock;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         clock = Clock.fixed(NOW.toInstant(ZoneOffset.UTC), ZoneId.of("UTC"));
         submissionService =
             new SubmissionServiceImpl(submissionRepository, submissionMapper, presenterMapper,

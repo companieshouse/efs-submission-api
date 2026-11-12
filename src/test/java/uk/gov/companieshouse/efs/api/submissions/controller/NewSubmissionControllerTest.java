@@ -36,7 +36,7 @@ class NewSubmissionControllerTest {
     private PresenterApi presenter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         controller = new NewSubmissionController(submissionService);
     }
 

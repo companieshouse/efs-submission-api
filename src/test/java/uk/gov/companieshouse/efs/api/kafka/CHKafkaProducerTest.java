@@ -46,7 +46,7 @@ class CHKafkaProducerTest {
     private KafkaProducerFactory mockProducerFactory;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         createTestMessage();
 
         when(mockProducerFactory.getProducer(any())).thenReturn(mockKafkaProducer);

@@ -69,7 +69,7 @@ class FesServiceImplTest {
     private static final String BARCODE = "123";
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         fesService = new FesServiceImpl(repository, emailService, chipsService, submissionService);
     }
 

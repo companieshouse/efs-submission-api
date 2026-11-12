@@ -40,7 +40,7 @@ class LoggingInterceptorTest {
      * Tests setup.
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         interceptor = new LoggingInterceptor(logger);
         when(request.getSession()).thenReturn(session);
     }
