@@ -30,12 +30,12 @@
         <equalsverifier.version>4.0.2</equalsverifier.version>
         <awaitility.version>4.3.0</awaitility.version>
         <google-oauth-client.version>1.39.0</google-oauth-client.version>
-        <guava.version>33.4.8-jre</guava.version>
+        <guava.version>33.8.0-jre</guava.version>
         <imageio.version>1.4.0</imageio.version>
         <jackson.version>3.2.0</jackson.version>
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
-        <json.version>20250517</json.version>
+        <json.version>20260814</json.version>
         <kafka-clients.version>4.4.0</kafka-clients.version>
         <log4j-bom.version>2.26.1</log4j-bom.version>
         <ojdbc11.version>23.8.0.25.04</ojdbc11.version>
@@ -53,11 +53,11 @@
         <private-api-sdk-java.version>7.2.42</private-api-sdk-java.version>
         <sdk-manager-java.version>4.0.0</sdk-manager-java.version>
         <structured-logging.version>4.0.4</structured-logging.version>
-        <snappy-java.version>1.1.10.7</snappy-java.version>
+        <snappy-java.version>1.1.10.12</snappy-java.version>
         <rest-service-common-library.version>2.0.4</rest-service-common-library.version>
         <testcontainers.version>2.0.5</testcontainers.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
-        <opentelemetry-instrumentation-bom.version>2.30.0</opentelemetry-instrumentation-bom.version>
+        <opentelemetry-instrumentation-bom.version>2.33.1</opentelemetry-instrumentation-bom.version>
         <!--sonar configuration-->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
         <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
@@ -191,7 +191,7 @@
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-logback-appender-1.0</artifactId>
-            <version>2.26.1-alpha</version>
+            <version>2.33.1-alpha</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
